@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Name>BCRGarantias</Name>
-  <DataSourceID>d77693e1-2d32-47cd-b06d-11c2654bc946</DataSourceID>
-  <ConnectionProperties>
-    <Extension>SQL</Extension>
-    <ConnectString>Data Source="BCR0106SQL86, 10039";Initial Catalog=BCRGarantias</ConnectString>
-  </ConnectionProperties>
-</RptDataSource>

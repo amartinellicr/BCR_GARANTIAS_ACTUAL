@@ -1,6 +1,0 @@
-bin\Debug\Utilidades.dll
-bin\Debug\Utilidades.pdb
-bin\Debug\ICSharpCode.SharpZipLib.dll
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\Utilidades.dll
-obj\Debug\Utilidades.pdb

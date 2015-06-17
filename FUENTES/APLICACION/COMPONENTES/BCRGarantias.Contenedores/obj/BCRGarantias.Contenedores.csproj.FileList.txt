@@ -1,9 +1,0 @@
-bin\Debug\BCRGarantias.Contenedores.dll
-bin\Debug\BCRGarantias.Contenedores.pdb
-bin\Debug\LiderSoft.FrameWork.Comun.dll
-bin\Debug\LiderSoft.FrameWork.Contenedores.dll
-bin\Debug\en-US\LiderSoft.FrameWork.Comun.resources.dll
-obj\Debug\ResolveAssemblyReference.cache
-obj\Debug\BCRGarantias.Contenedores.dll
-obj\Debug\BCRGarantias.Contenedores.pdb
-bin\Debug\BCR.Seguridad.dll
