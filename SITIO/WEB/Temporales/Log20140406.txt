@@ -1,0 +1,2249 @@
+Archivo creado 06/04/2014 07:31:55 AM
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:31:55 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (18400914.7000), Fecha Avalúo (30/07/2002), Porcentaje Aceptación (40.00) y Monto Mitigador Ingresado (8199395.61).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:32:59 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+381.49IPC: 
+66.79Tipo de Cambio Anterior: 
+362.16IPC Anterior: 
+63.75Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:32:59 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:32:59 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+401.28IPC: 
+69.80Tipo de Cambio Anterior: 
+381.49IPC Anterior: 
+66.79Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:32:59 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+420.73IPC: 
+74.15Tipo de Cambio Anterior: 
+401.28IPC Anterior: 
+69.80Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+440.05IPC: 
+78.48Tipo de Cambio Anterior: 
+420.73IPC Anterior: 
+74.15Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+461.06IPC: 
+84.10Tipo de Cambio Anterior: 
+440.05IPC Anterior: 
+78.48Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+479.97IPC: 
+89.26Tipo de Cambio Anterior: 
+461.06IPC Anterior: 
+84.10Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+498.67IPC: 
+95.19Tipo de Cambio Anterior: 
+479.97IPC Anterior: 
+89.26Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+514.96IPC: 
+100.00Tipo de Cambio Anterior: 
+498.67IPC Anterior: 
+95.19Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+516.58IPC: 
+103.95Tipo de Cambio Anterior: 
+514.96IPC Anterior: 
+100.00Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+516.53IPC: 
+108.75Tipo de Cambio Anterior: 
+516.58IPC Anterior: 
+103.95Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+493.99IPC: 
+114.92Tipo de Cambio Anterior: 
+516.53IPC Anterior: 
+108.75Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+546.42IPC: 
+124.16Tipo de Cambio Anterior: 
+493.99IPC Anterior: 
+114.92Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+555.16IPC: 
+130.44Tipo de Cambio Anterior: 
+546.42IPC Anterior: 
+124.16Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+581.27IPC: 
+132.73Tipo de Cambio Anterior: 
+555.16IPC Anterior: 
+130.44Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+555.00IPC: 
+137.41Tipo de Cambio Anterior: 
+581.27IPC Anterior: 
+132.73Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+515.33IPC: 
+140.27Tipo de Cambio Anterior: 
+555.00IPC Anterior: 
+137.41Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+500.85IPC: 
+144.05Tipo de Cambio Anterior: 
+515.33IPC Anterior: 
+140.27Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+499.72IPC: 
+147.56Tipo de Cambio Anterior: 
+500.85IPC Anterior: 
+144.05Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+502.45IPC: 
+150.12Tipo de Cambio Anterior: 
+499.72IPC Anterior: 
+147.56Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+495.11IPC: 
+153.39Tipo de Cambio Anterior: 
+502.45IPC Anterior: 
+150.12Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+495.30IPC: 
+158.74Tipo de Cambio Anterior: 
+495.11IPC Anterior: 
+153.39Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+492.94IPC: 
+162.31Tipo de Cambio Anterior: 
+495.30IPC Anterior: 
+158.74Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+10,328,454.70Tipo de Cambio: 
+505.12IPC: 
+163.66Tipo de Cambio Anterior: 
+492.94IPC Anterior: 
+162.31Porcentaje Depreciacion: 
+0.00
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:33:00 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '""', asociada a la operación '""'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":30/01/2003,"Tipo_Cambio":381.49,"IPC":66.79,"Tipo_Cambio_Anterior":362.16,"IPC_Anterior":63.75,"Total_Registros":24,"Porcentaje_Depreciacion":0,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":8457405.543529411764705882353,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":"""","Identificacion_Garantia":"""","Fecha_Hora_Calculo_Semestre":06/04/2014 07:32:59 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:34:50 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (18400914.7000), Fecha Avalúo (30/07/2002), Porcentaje Aceptación (40.00) y Monto Mitigador Ingresado (8199395.61).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:39:40 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un error al intentar normalizar el avalúo de la garantía '[H] 1-5119'. Detalle: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:39:40 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+No se pudo modificar la información de la garantía real. Detalle: Se ha presentado un error al intentar normalizar el avalúo de la garantía.
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:42:03 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (18400914.7000), Fecha Avalúo (30/07/2002), Porcentaje Aceptación (40.00) y Monto Mitigador Ingresado (8199395.61).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 08:22:08 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de garantías reales'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:00:51 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (18400914.7000), Fecha Avalúo (30/07/2002), Porcentaje Aceptación (40.00) y Monto Mitigador Ingresado (8199395.61).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:03:32 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (18400914.7000), Fecha Avalúo (30/07/2002), Porcentaje Aceptación (40.00) y Monto Mitigador Ingresado (8199395.61).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:22:07 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (239778030.0500), Fecha Avalúo (02/04/2012), Porcentaje Aceptación (78.80) y Monto Mitigador Ingresado (17122030.12).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+520.04IPC: 
+100.90Tipo de Cambio Anterior: 
+505.11IPC Anterior: 
+96.61Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.91IPC: 
+106.04Tipo de Cambio Anterior: 
+520.04IPC Anterior: 
+100.90Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.37IPC: 
+110.84Tipo de Cambio Anterior: 
+516.91IPC Anterior: 
+106.04Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+491.38IPC: 
+117.64Tipo de Cambio Anterior: 
+516.37IPC Anterior: 
+110.84Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+549.86IPC: 
+128.91Tipo de Cambio Anterior: 
+491.38IPC Anterior: 
+117.64Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+565.40IPC: 
+131.47Tipo de Cambio Anterior: 
+549.86IPC Anterior: 
+128.91Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+580.47IPC: 
+134.06Tipo de Cambio Anterior: 
+565.40IPC Anterior: 
+131.47Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+512.48IPC: 
+138.77Tipo de Cambio Anterior: 
+580.47IPC Anterior: 
+134.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+507.61IPC: 
+141.11Tipo de Cambio Anterior: 
+512.48IPC Anterior: 
+138.77Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.71IPC: 
+145.27Tipo de Cambio Anterior: 
+507.61IPC Anterior: 
+141.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:19 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+515.20IPC: 
+148.06Tipo de Cambio Anterior: 
+494.71IPC Anterior: 
+145.27Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+501.33IPC: 
+152.11Tipo de Cambio Anterior: 
+515.20IPC Anterior: 
+148.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+492.38IPC: 
+154.99Tipo de Cambio Anterior: 
+501.33IPC Anterior: 
+152.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.65IPC: 
+161.70Tipo de Cambio Anterior: 
+492.38IPC Anterior: 
+154.99Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+493.61IPC: 
+161.36Tipo de Cambio Anterior: 
+494.65IPC Anterior: 
+161.70Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:53:20 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 09:53:19 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 09:59:36 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (8457600.0000), Fecha Avalúo (08/08/2004), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (5000000.00).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+520.04IPC: 
+100.90Tipo de Cambio Anterior: 
+505.11IPC Anterior: 
+96.61Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.91IPC: 
+106.04Tipo de Cambio Anterior: 
+520.04IPC Anterior: 
+100.90Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.37IPC: 
+110.84Tipo de Cambio Anterior: 
+516.91IPC Anterior: 
+106.04Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+491.38IPC: 
+117.64Tipo de Cambio Anterior: 
+516.37IPC Anterior: 
+110.84Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+549.86IPC: 
+128.91Tipo de Cambio Anterior: 
+491.38IPC Anterior: 
+117.64Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:23 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+565.40IPC: 
+131.47Tipo de Cambio Anterior: 
+549.86IPC Anterior: 
+128.91Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+580.47IPC: 
+134.06Tipo de Cambio Anterior: 
+565.40IPC Anterior: 
+131.47Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+512.48IPC: 
+138.77Tipo de Cambio Anterior: 
+580.47IPC Anterior: 
+134.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+507.61IPC: 
+141.11Tipo de Cambio Anterior: 
+512.48IPC Anterior: 
+138.77Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.71IPC: 
+145.27Tipo de Cambio Anterior: 
+507.61IPC Anterior: 
+141.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+515.20IPC: 
+148.06Tipo de Cambio Anterior: 
+494.71IPC Anterior: 
+145.27Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+501.33IPC: 
+152.11Tipo de Cambio Anterior: 
+515.20IPC Anterior: 
+148.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+492.38IPC: 
+154.99Tipo de Cambio Anterior: 
+501.33IPC Anterior: 
+152.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.65IPC: 
+161.70Tipo de Cambio Anterior: 
+492.38IPC Anterior: 
+154.99Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+493.61IPC: 
+161.36Tipo de Cambio Anterior: 
+494.65IPC Anterior: 
+161.70Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:24 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:23 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+520.04IPC: 
+100.90Tipo de Cambio Anterior: 
+505.11IPC Anterior: 
+96.61Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.91IPC: 
+106.04Tipo de Cambio Anterior: 
+520.04IPC Anterior: 
+100.90Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.37IPC: 
+110.84Tipo de Cambio Anterior: 
+516.91IPC Anterior: 
+106.04Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+491.38IPC: 
+117.64Tipo de Cambio Anterior: 
+516.37IPC Anterior: 
+110.84Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+549.86IPC: 
+128.91Tipo de Cambio Anterior: 
+491.38IPC Anterior: 
+117.64Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+565.40IPC: 
+131.47Tipo de Cambio Anterior: 
+549.86IPC Anterior: 
+128.91Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+580.47IPC: 
+134.06Tipo de Cambio Anterior: 
+565.40IPC Anterior: 
+131.47Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+512.48IPC: 
+138.77Tipo de Cambio Anterior: 
+580.47IPC Anterior: 
+134.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:31 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+507.61IPC: 
+141.11Tipo de Cambio Anterior: 
+512.48IPC Anterior: 
+138.77Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.71IPC: 
+145.27Tipo de Cambio Anterior: 
+507.61IPC Anterior: 
+141.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+515.20IPC: 
+148.06Tipo de Cambio Anterior: 
+494.71IPC Anterior: 
+145.27Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+501.33IPC: 
+152.11Tipo de Cambio Anterior: 
+515.20IPC Anterior: 
+148.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+492.38IPC: 
+154.99Tipo de Cambio Anterior: 
+501.33IPC Anterior: 
+152.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.65IPC: 
+161.70Tipo de Cambio Anterior: 
+492.38IPC Anterior: 
+154.99Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+493.61IPC: 
+161.36Tipo de Cambio Anterior: 
+494.65IPC Anterior: 
+161.70Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:32 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:31 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+520.04IPC: 
+100.90Tipo de Cambio Anterior: 
+505.11IPC Anterior: 
+96.61Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.91IPC: 
+106.04Tipo de Cambio Anterior: 
+520.04IPC Anterior: 
+100.90Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.37IPC: 
+110.84Tipo de Cambio Anterior: 
+516.91IPC Anterior: 
+106.04Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+491.38IPC: 
+117.64Tipo de Cambio Anterior: 
+516.37IPC Anterior: 
+110.84Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+549.86IPC: 
+128.91Tipo de Cambio Anterior: 
+491.38IPC Anterior: 
+117.64Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+565.40IPC: 
+131.47Tipo de Cambio Anterior: 
+549.86IPC Anterior: 
+128.91Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+580.47IPC: 
+134.06Tipo de Cambio Anterior: 
+565.40IPC Anterior: 
+131.47Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+512.48IPC: 
+138.77Tipo de Cambio Anterior: 
+580.47IPC Anterior: 
+134.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+507.61IPC: 
+141.11Tipo de Cambio Anterior: 
+512.48IPC Anterior: 
+138.77Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.71IPC: 
+145.27Tipo de Cambio Anterior: 
+507.61IPC Anterior: 
+141.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+515.20IPC: 
+148.06Tipo de Cambio Anterior: 
+494.71IPC Anterior: 
+145.27Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+501.33IPC: 
+152.11Tipo de Cambio Anterior: 
+515.20IPC Anterior: 
+148.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+492.38IPC: 
+154.99Tipo de Cambio Anterior: 
+501.33IPC Anterior: 
+152.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.65IPC: 
+161.70Tipo de Cambio Anterior: 
+492.38IPC Anterior: 
+154.99Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+493.61IPC: 
+161.36Tipo de Cambio Anterior: 
+494.65IPC Anterior: 
+161.70Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 10:03:51 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 10:03:51 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+520.04IPC: 
+100.90Tipo de Cambio Anterior: 
+505.11IPC Anterior: 
+96.61Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.91IPC: 
+106.04Tipo de Cambio Anterior: 
+520.04IPC Anterior: 
+100.90Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+516.37IPC: 
+110.84Tipo de Cambio Anterior: 
+516.91IPC Anterior: 
+106.04Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:37 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+491.38IPC: 
+117.64Tipo de Cambio Anterior: 
+516.37IPC Anterior: 
+110.84Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+549.86IPC: 
+128.91Tipo de Cambio Anterior: 
+491.38IPC Anterior: 
+117.64Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+565.40IPC: 
+131.47Tipo de Cambio Anterior: 
+549.86IPC Anterior: 
+128.91Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+580.47IPC: 
+134.06Tipo de Cambio Anterior: 
+565.40IPC Anterior: 
+131.47Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+512.48IPC: 
+138.77Tipo de Cambio Anterior: 
+580.47IPC Anterior: 
+134.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+507.61IPC: 
+141.11Tipo de Cambio Anterior: 
+512.48IPC Anterior: 
+138.77Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.71IPC: 
+145.27Tipo de Cambio Anterior: 
+507.61IPC Anterior: 
+141.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+515.20IPC: 
+148.06Tipo de Cambio Anterior: 
+494.71IPC Anterior: 
+145.27Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+501.33IPC: 
+152.11Tipo de Cambio Anterior: 
+515.20IPC Anterior: 
+148.06Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+492.38IPC: 
+154.99Tipo de Cambio Anterior: 
+501.33IPC Anterior: 
+152.11Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+494.65IPC: 
+161.70Tipo de Cambio Anterior: 
+492.38IPC Anterior: 
+154.99Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"[H] 1-48608"', asociada a la operación '"1-919-2-2-5787412"'. Detalle: Alguno de los parámetros usados para el cálculo, del monto de la tasación actualziada del no terreno, no es válido. Valores de los parámetros:Monto Utima Tasación No Terreno: 
+0.00Monto Tasación Actualizada No Terreno Anterior: 
+0.00Tipo de Cambio: 
+493.61IPC: 
+161.36Tipo de Cambio Anterior: 
+494.65IPC Anterior: 
+161.70Porcentaje Depreciacion: 
+0.01
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:35:38 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado, de la garantía '"1-919-2-2-5787412"', asociada a la operación '"[H] 1-48608"'. Detalle: Se ha presentado un problema técnico al intentar aplicar el cálculo para obtener el monto de la tasación actualizada del terreno y no terreno calculado. Favor notificar al administrador del sistema. Los datos almacenado son: "Numero_Semestre":2,"Fecha_Semestre":07/10/2006,"Tipo_Cambio":520.04,"IPC":100.90,"Tipo_Cambio_Anterior":505.11,"IPC_Anterior":96.61,"Total_Registros":16,"Porcentaje_Depreciacion":0.009,"Monto_Ultima_Tasacion_Terreno":0,"Monto_Ultima_Tasacion_No_Terreno":0,"Monto_Tasacion_Actualizada_Terreno":3014617.9311650927520738057057,"Monto_Tasacion_Actualizada_No_Terreno":null,"Operacion_Crediticia":""1-919-2-2-5787412"","Identificacion_Garantia":""[H] 1-48608"","Fecha_Hora_Calculo_Semestre":06/04/2014 11:35:37 AM}
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:45:09 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (268197103.0000), Fecha Avalúo (18/06/2011), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (50698880.00).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:45:50 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (268197103.0000), Fecha Avalúo (18/06/2011), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (50698880.00).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:53:29 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (268197103.00), Fecha Avalúo (18/06/2011), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (50698880.00).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:56:16 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (15614908200.0000), Fecha Avalúo (29/04/2008), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (26427448.86).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 11:56:54 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (265299772.0000), Fecha Avalúo (23/04/2009), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (10035672.91).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 12:50:58 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (34311371.9300), Fecha Avalúo (09/05/2006), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (8700609.93).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 12:55:18 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (6669600.0000), Fecha Avalúo (17/11/1999), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (5537738.97).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 01:12:15 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (34311371.9300), Fecha Avalúo (09/05/2006), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (8700609.93).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 01:17:55 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (34311371.9300), Fecha Avalúo (09/05/2006), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (8700609.93).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 01:19:50 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (6669600.0000), Fecha Avalúo (17/11/1999), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (5537738.97).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 01:36:51 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (10635000.0000), Fecha Avalúo (09/03/2009), Porcentaje Aceptación (65.00) y Monto Mitigador Ingresado (3971500.00).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 03:02:43 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.59), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 03:05:24 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.5900), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 03:38:48 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.5900), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 03:48:19 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.5900), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:48:41 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.5900), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
+
+NUEVO EVENTO______Fecha y Hora:06/04/2014 07:51:59 PM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (105622644.5900), Fecha Avalúo (12/11/2013), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (55608044.71).
+
