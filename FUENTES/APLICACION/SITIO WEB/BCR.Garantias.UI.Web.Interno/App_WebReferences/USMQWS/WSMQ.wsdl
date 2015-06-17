@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/WSMQ/WSMQ" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tempuri.org/WSMQ/WSMQ" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/WSMQ/WSMQ">
+      <s:element name="MQSistar">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQSistarResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQSistarResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQPrest">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQPrestResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQPrestResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQTarjetas">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQTarjetasResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQTarjetasResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQLOGON">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQLOGONResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQLOGONResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQCDPS">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQCDPSResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQCDPSResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQSICC00">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQSICC00Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQSICC00Result" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQTASACION">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQTASACIONResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQTASACIONResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQPJ">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQPJResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQPJResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQMarchamos">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQMarchamosResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQMarchamosResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQConectividades">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQConectividadesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQConectividadesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQSociedades">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQSociedadesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQSociedadesResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQBCRMovil">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQBCRMovilResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQBCRMovilResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQBCRHistorico">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Mensaje" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="MQBCRHistoricoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="MQBCRHistoricoResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="MQSistarSoapIn">
+    <wsdl:part name="parameters" element="tns:MQSistar" />
+  </wsdl:message>
+  <wsdl:message name="MQSistarSoapOut">
+    <wsdl:part name="parameters" element="tns:MQSistarResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQPrestSoapIn">
+    <wsdl:part name="parameters" element="tns:MQPrest" />
+  </wsdl:message>
+  <wsdl:message name="MQPrestSoapOut">
+    <wsdl:part name="parameters" element="tns:MQPrestResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQTarjetasSoapIn">
+    <wsdl:part name="parameters" element="tns:MQTarjetas" />
+  </wsdl:message>
+  <wsdl:message name="MQTarjetasSoapOut">
+    <wsdl:part name="parameters" element="tns:MQTarjetasResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQLOGONSoapIn">
+    <wsdl:part name="parameters" element="tns:MQLOGON" />
+  </wsdl:message>
+  <wsdl:message name="MQLOGONSoapOut">
+    <wsdl:part name="parameters" element="tns:MQLOGONResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQCDPSSoapIn">
+    <wsdl:part name="parameters" element="tns:MQCDPS" />
+  </wsdl:message>
+  <wsdl:message name="MQCDPSSoapOut">
+    <wsdl:part name="parameters" element="tns:MQCDPSResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQSICC00SoapIn">
+    <wsdl:part name="parameters" element="tns:MQSICC00" />
+  </wsdl:message>
+  <wsdl:message name="MQSICC00SoapOut">
+    <wsdl:part name="parameters" element="tns:MQSICC00Response" />
+  </wsdl:message>
+  <wsdl:message name="MQTASACIONSoapIn">
+    <wsdl:part name="parameters" element="tns:MQTASACION" />
+  </wsdl:message>
+  <wsdl:message name="MQTASACIONSoapOut">
+    <wsdl:part name="parameters" element="tns:MQTASACIONResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQPJSoapIn">
+    <wsdl:part name="parameters" element="tns:MQPJ" />
+  </wsdl:message>
+  <wsdl:message name="MQPJSoapOut">
+    <wsdl:part name="parameters" element="tns:MQPJResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQMarchamosSoapIn">
+    <wsdl:part name="parameters" element="tns:MQMarchamos" />
+  </wsdl:message>
+  <wsdl:message name="MQMarchamosSoapOut">
+    <wsdl:part name="parameters" element="tns:MQMarchamosResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQConectividadesSoapIn">
+    <wsdl:part name="parameters" element="tns:MQConectividades" />
+  </wsdl:message>
+  <wsdl:message name="MQConectividadesSoapOut">
+    <wsdl:part name="parameters" element="tns:MQConectividadesResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQSociedadesSoapIn">
+    <wsdl:part name="parameters" element="tns:MQSociedades" />
+  </wsdl:message>
+  <wsdl:message name="MQSociedadesSoapOut">
+    <wsdl:part name="parameters" element="tns:MQSociedadesResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQBCRMovilSoapIn">
+    <wsdl:part name="parameters" element="tns:MQBCRMovil" />
+  </wsdl:message>
+  <wsdl:message name="MQBCRMovilSoapOut">
+    <wsdl:part name="parameters" element="tns:MQBCRMovilResponse" />
+  </wsdl:message>
+  <wsdl:message name="MQBCRHistoricoSoapIn">
+    <wsdl:part name="parameters" element="tns:MQBCRHistorico" />
+  </wsdl:message>
+  <wsdl:message name="MQBCRHistoricoSoapOut">
+    <wsdl:part name="parameters" element="tns:MQBCRHistoricoResponse" />
+  </wsdl:message>
+  <wsdl:portType name="WSMQSoap">
+    <wsdl:operation name="MQSistar">
+      <wsdl:input message="tns:MQSistarSoapIn" />
+      <wsdl:output message="tns:MQSistarSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQPrest">
+      <wsdl:input message="tns:MQPrestSoapIn" />
+      <wsdl:output message="tns:MQPrestSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQTarjetas">
+      <wsdl:input message="tns:MQTarjetasSoapIn" />
+      <wsdl:output message="tns:MQTarjetasSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQLOGON">
+      <wsdl:input message="tns:MQLOGONSoapIn" />
+      <wsdl:output message="tns:MQLOGONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQCDPS">
+      <wsdl:input message="tns:MQCDPSSoapIn" />
+      <wsdl:output message="tns:MQCDPSSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQSICC00">
+      <wsdl:input message="tns:MQSICC00SoapIn" />
+      <wsdl:output message="tns:MQSICC00SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQTASACION">
+      <wsdl:input message="tns:MQTASACIONSoapIn" />
+      <wsdl:output message="tns:MQTASACIONSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQPJ">
+      <wsdl:input message="tns:MQPJSoapIn" />
+      <wsdl:output message="tns:MQPJSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQMarchamos">
+      <wsdl:input message="tns:MQMarchamosSoapIn" />
+      <wsdl:output message="tns:MQMarchamosSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQConectividades">
+      <wsdl:input message="tns:MQConectividadesSoapIn" />
+      <wsdl:output message="tns:MQConectividadesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQSociedades">
+      <wsdl:input message="tns:MQSociedadesSoapIn" />
+      <wsdl:output message="tns:MQSociedadesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRMovil">
+      <wsdl:input message="tns:MQBCRMovilSoapIn" />
+      <wsdl:output message="tns:MQBCRMovilSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRHistorico">
+      <wsdl:input message="tns:MQBCRHistoricoSoapIn" />
+      <wsdl:output message="tns:MQBCRHistoricoSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="WSMQSoap" type="tns:WSMQSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="MQSistar">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSistar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQPrest">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQPrest" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQTarjetas">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQTarjetas" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQLOGON">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQLOGON" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQCDPS">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQCDPS" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQSICC00">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSICC00" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQTASACION">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQTASACION" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQPJ">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQPJ" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQMarchamos">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQMarchamos" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQConectividades">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQConectividades" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQSociedades">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSociedades" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRMovil">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQBCRMovil" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRHistorico">
+      <soap:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQBCRHistorico" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="WSMQSoap12" type="tns:WSMQSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="MQSistar">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSistar" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQPrest">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQPrest" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQTarjetas">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQTarjetas" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQLOGON">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQLOGON" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQCDPS">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQCDPS" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQSICC00">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSICC00" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQTASACION">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQTASACION" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQPJ">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQPJ" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQMarchamos">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQMarchamos" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQConectividades">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQConectividades" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQSociedades">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQSociedades" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRMovil">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQBCRMovil" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="MQBCRHistorico">
+      <soap12:operation soapAction="http://tempuri.org/WSMQ/WSMQ/MQBCRHistorico" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="WSMQ">
+    <wsdl:port name="WSMQSoap" binding="tns:WSMQSoap">
+      <soap:address location="http://usmqws/WSMQ/WSMQ.asmx" />
+    </wsdl:port>
+    <wsdl:port name="WSMQSoap12" binding="tns:WSMQSoap12">
+      <soap12:address location="http://usmqws/WSMQ/WSMQ.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

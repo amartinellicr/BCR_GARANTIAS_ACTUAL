@@ -1,0 +1,13 @@
+
+Antes de abrir la solución del proyecto:
+
+1. Se debe crear un direcorio virtual en el IIS denominado "BCR.Garantias", el cual apuntará a la carpeta física "BCR.Garantias.UI.Web.Interno", 
+   donde esta se encuentre. Al directorio virtual se le deben dar permisos (en el IIS) para usuario Anónimo y Autenticación Integrada de Windows.
+
+2. Se debe crear un direcorio virtual en el IIS denominado "BCR.Garantias.WSI", el cual apuntará a la carpeta física "BCR.Garantias.WSI", 
+   donde esta se encuentre. Al directorio virtual se le deben dar permisos (en el IIS) para usuario Anónimo.
+
+3. Se debe verificar la cadena de conexión a la base de datos, para ello se utilizará la herramienta llamada "Contraseñas", localizada en la carpeta "COMPONENTES", esto 
+   para encriptar y decriptar la cadena de conexión.
+
+4. Al montar el sitio en el ambiente de desarrollo se debe dar permisos de lectura\escritura al usuario "NETWORK SERVICE" sobre la carpeta Temporal y tmp.

@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{646A5EBB-35FD-4497-8C35-8D4EFC921541}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCRGarantias.Contenedores</RootNamespace>
+    <AssemblyName>BCRGarantias.Contenedores</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BCR.Seguridad, Version=1.0.2419.19161, Culture=neutral">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EXTERNOS\BCR.Seguridad.dll</HintPath>
+    </Reference>
+    <Reference Include="LiderSoft.FrameWork.Comun, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EXTERNOS\LiderSoft.FrameWork.Comun.dll</HintPath>
+    </Reference>
+    <Reference Include="LiderSoft.FrameWork.Contenedores, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EXTERNOS\LiderSoft.FrameWork.Contenedores.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ContenedorAvance_contratos_x_oficina_cliente.cs" />
+    <Compile Include="ContenedorAvance_operacion_x_oficina_cliente.cs" />
+    <Compile Include="ContenedorAvance_x_oficina_cliente.cs" />
+    <Compile Include="ContenedorBitacora.cs" />
+    <Compile Include="ContenedorCapacidad_pago.cs" />
+    <Compile Include="ContenedorCatalogo.cs" />
+    <Compile Include="ContenedorContratos_avance_x_oficina_cliente.cs" />
+    <Compile Include="ContenedorContratos_detalle_x_garantia.cs" />
+    <Compile Include="ContenedorDetalle_x_contrato.cs" />
+    <Compile Include="ContenedorDetalle_x_garantia.cs" />
+    <Compile Include="ContenedorDetalle_x_operacion.cs" />
+    <Compile Include="ContenedorDeudor.cs" />
+    <Compile Include="ContenedorDtproperties.cs" />
+    <Compile Include="ContenedorElemento.cs" />
+    <Compile Include="ContenedorEmpresa.cs" />
+    <Compile Include="ContenedorGarantias_fiduciarias_x_operacion.cs" />
+    <Compile Include="ContenedorGarantias_fiduciarias_x_tarjeta.cs" />
+    <Compile Include="ContenedorGarantias_reales_x_operacion.cs" />
+    <Compile Include="ContenedorGarantias_valor_x_operacion.cs" />
+    <Compile Include="ContenedorGarantias_x_giro.cs" />
+    <Compile Include="ContenedorGarantias_x_perfil_x_tarjeta.cs" />
+    <Compile Include="ContenedorGarantia_fiduciaria.cs" />
+    <Compile Include="ContenedorGarantia_real.cs" />
+    <Compile Include="ContenedorGarantia_valor.cs" />
+    <Compile Include="ContenedorGar_contratos.cs" />
+    <Compile Include="ContenedorGiros_garantias_fiduciarias.cs" />
+    <Compile Include="ContenedorGiros_garantias_reales.cs" />
+    <Compile Include="ContenedorGiros_garantias_valor.cs" />
+    <Compile Include="ContenedorInstrumentos.cs" />
+    <Compile Include="ContenedorIsin.cs" />
+    <Compile Include="ContenedorOficinas.cs" />
+    <Compile Include="ContenedorOperacion.cs" />
+    <Compile Include="ContenedorPerfil.cs" />
+    <Compile Include="ContenedorPerito.cs" />
+    <Compile Include="ContenedorRol.cs" />
+    <Compile Include="ContenedorRoles_x_perfil.cs" />
+    <Compile Include="ContenedorSicc_bsmcl.cs" />
+    <Compile Include="ContenedorSicc_bsmpc.cs" />
+    <Compile Include="ContenedorSicc_prhcs.cs" />
+    <Compile Include="ContenedorSicc_prmca.cs" />
+    <Compile Include="ContenedorSicc_prmgt.cs" />
+    <Compile Include="ContenedorSicc_prmoc.cs" />
+    <Compile Include="ContenedorSicc_prmsc.cs" />
+    <Compile Include="ContenedorTarjeta.cs" />
+    <Compile Include="ContenedorTarjeta_sicc.cs" />
+    <Compile Include="ContenedorTarjeta_sistar.cs" />
+    <Compile Include="ContenedorTar_bin_sistar.cs" />
+    <Compile Include="ContenedorUsuario.cs" />
+    <Compile Include="ContenedorValuaciones_fiador.cs" />
+    <Compile Include="ContenedorValuaciones_reales.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

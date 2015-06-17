@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BCR.GARANTIAS.Entidades</RootNamespace>
+    <AssemblyName>BCR.GARANTIAS.Entidades</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="clsBitacora.cs" />
+    <Compile Include="clsCapacidadPago.cs" />
+    <Compile Include="clsCapacidadesPago.cs" />
+    <Compile Include="clsCatalogo.cs" />
+    <Compile Include="clsCatalogos.cs" />
+    <Compile Include="clsComparadorGenerico.cs" />
+    <Compile Include="clsDeudor.cs" />
+    <Compile Include="clsEjecucionProceso.cs" />
+    <Compile Include="clsEjecucionProcesos.cs" />
+    <Compile Include="clsGarantiaReal.cs" />
+    <Compile Include="clsGarantiasReales.cs" />
+    <Compile Include="clsHistoricoPorcentajeAceptacion.cs" />
+    <Compile Include="clsHistoricosPorcentajesAceptacion.cs" />
+    <Compile Include="clsIndiceActualizacionAvaluo.cs" />
+    <Compile Include="clsIndicesActualizacionAvaluos.cs" />
+    <Compile Include="clsOperacionCrediticia.cs" />
+    <Compile Include="clsOperacionesCrediticias.cs" />
+    <Compile Include="clsPolizaSap.cs" />
+    <Compile Include="clsPolizasSap.cs" />
+    <Compile Include="clsPorcentajeAceptacion.cs" />
+    <Compile Include="clsPorcentajesAceptacion.cs" />
+    <Compile Include="clsRegistrosBitacoras.cs" />
+    <Compile Include="clsSemestre.cs" />
+    <Compile Include="clsSemestres.cs" />
+    <Compile Include="clsTipoBienRelacionado.cs" />
+    <Compile Include="clsTipoPolizaSugef.cs" />
+    <Compile Include="clsTiposBienRelacionados.cs" />
+    <Compile Include="clsTiposPolizasSugef.cs" />
+    <Compile Include="clsValuacionesReales.cs" />
+    <Compile Include="clsValuacionReal.cs" />
+    <Compile Include="clsValuador.cs" />
+    <Compile Include="clsValuadores.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BCR.GARANTIAS.Comun\BCR.GARANTIAS.Comun.csproj">
+      <Project>{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}</Project>
+      <Name>BCR.GARANTIAS.Comun</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Datos\Datos.csproj">
+      <Project>{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}</Project>
+      <Name>Datos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilidades\Utilidades.csproj">
+      <Project>{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}</Project>
+      <Name>Utilidades</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

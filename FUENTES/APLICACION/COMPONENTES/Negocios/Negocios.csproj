@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Negocios</RootNamespace>
+    <AssemblyName>Negocios</AssemblyName>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LiderSoft.FrameWork.Comun, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EXTERNOS\LiderSoft.FrameWork.Comun.dll</HintPath>
+    </Reference>
+    <Reference Include="LiderSoft.FrameWork.Contenedores, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EXTERNOS\LiderSoft.FrameWork.Contenedores.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Archivos.cs" />
+    <Compile Include="Bin_Tarjeta.cs" />
+    <Compile Include="Bitacora.cs" />
+    <Compile Include="Calificaciones.cs" />
+    <Compile Include="Capacidad_Pago.cs" />
+    <Compile Include="Catalogos.cs" />
+    <Compile Include="CGarantiaFiduciaria.cs" />
+    <Compile Include="CGarantiaReal.cs" />
+    <Compile Include="CGarantiaValor.cs" />
+    <Compile Include="CGenerarXML.cs" />
+    <Compile Include="EjeccucionProcesos.cs" />
+    <Compile Include="HistoricoPorcentajeAceptacion.cs" />
+    <Compile Include="IndicesActualizacionAvaluos.cs" />
+    <Compile Include="PorcentajeAceptacion.cs" />
+    <Compile Include="Procesos.cs" />
+    <Compile Include="ProcesosDatos.cs" />
+    <Compile Include="CreaXML.cs" />
+    <Compile Include="Deudores.cs" />
+    <Compile Include="Empresas.cs" />
+    <Compile Include="Garantias_Fiduciarias.cs" />
+    <Compile Include="Garantias_Fiduciarias_Tarjetas.cs" />
+    <Compile Include="Garantias_Giros.cs" />
+    <Compile Include="Garantias_Reales.cs" />
+    <Compile Include="Garantias_Valores.cs" />
+    <Compile Include="GenerarExcel.cs" />
+    <Compile Include="Gestor.cs" />
+    <Compile Include="Operaciones.cs" />
+    <Compile Include="Perfiles.cs" />
+    <Compile Include="Peritos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RolesXPerfil.cs" />
+    <Compile Include="Seguridad.cs" />
+    <Compile Include="Tarjetas.cs" />
+    <Compile Include="TiposBienRelacionados.cs" />
+    <Compile Include="TiposPolizasSugef.cs" />
+    <Compile Include="TraductordeCodigos.cs" />
+    <Compile Include="Usuarios.cs" />
+    <Compile Include="Utilitarios.cs" />
+    <Compile Include="Valuaciones_Fiador.cs" />
+    <Compile Include="Valuaciones_Reales.cs" />
+    <Compile Include="Web References\ActDirectory\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ActDirectory\</RelPath>
+      <UpdateFromURL>http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Negocios_ActDirectory_ActiveDirectory</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ActDirectory\activedirectory.disco" />
+    <None Include="Web References\ActDirectory\activedirectory.wsdl" />
+    <None Include="Web References\ActDirectory\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ActDirectory\Usuario.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BCR.GARANTIAS.Comun\BCR.GARANTIAS.Comun.csproj">
+      <Project>{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}</Project>
+      <Name>BCR.GARANTIAS.Comun</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BCR.GARANTIAS.Entidades\BCR.GARANTIAS.Entidades.csproj">
+      <Project>{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}</Project>
+      <Name>BCR.GARANTIAS.Entidades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BCRGarantias.Contenedores\BCRGarantias.Contenedores.csproj">
+      <Project>{646A5EBB-35FD-4497-8C35-8D4EFC921541}</Project>
+      <Name>BCRGarantias.Contenedores</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Datos\Datos.csproj">
+      <Project>{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}</Project>
+      <Name>Datos</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx?wsdl" docRef="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx" xmlns:q1="http://tempuri.org/bcr.servicios.web/ActiveDirectory" binding="q1:ActiveDirectorySoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx" xmlns:q2="http://tempuri.org/bcr.servicios.web/ActiveDirectory" binding="q2:ActiveDirectorySoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

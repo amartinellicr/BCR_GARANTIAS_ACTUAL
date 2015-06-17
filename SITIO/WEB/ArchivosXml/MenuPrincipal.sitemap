@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+	<siteMapNode url="frmPrincipal.aspx" title="Inicio"  description="" roles="">
+		<siteMapNode url="" title="Garantías"  description="" roles="">
+			<siteMapNode url="frmGarantiasXOperacion.aspx" title="Garantías por Operación"  description="" roles="" />
+			<siteMapNode url="" title="-----------------------------------"  description="" roles="" />
+			<siteMapNode url="frmGarantiasFiduciaria.aspx" title="Garantías Fiduciarias"  description="" roles="" />
+			<siteMapNode url="frmGarantiasporPerfil.aspx" title="Garantías por Perfil"  description="" roles="" />
+			<siteMapNode url="frmGarantiasReales.aspx" title="Garantías Reales"  description="" roles="" />
+			<siteMapNode url="frmGarantiasValor.aspx" title="Garantías de Valor"  description="" roles="" />
+			<siteMapNode url="frmGarantiasGiros.aspx" title="Relacionar Giros"  description="" roles="" />
+			<siteMapNode url="" title="-----------------------------------"  description="" roles="" />
+			<siteMapNode url="frmEmpresas.aspx" title="Empresas"  description="" roles="" />
+			<siteMapNode url="frmPeritos.aspx" title="Peritos"  description="" roles="" />
+		</siteMapNode>
+		<siteMapNode url="" title="Mantenimientos"  description="" roles="">
+			<siteMapNode url="frmCatalogos.aspx" title="Catálogos"  description="" roles=""/>
+			<siteMapNode url="frmMantenimientoBin.aspx" title="Bin"  description="" roles=""/>
+			<siteMapNode url="frmIndicesActualizacionAvaluos.aspx" title="Indices de Actualización de Avalúos"  description="" roles=""/>
+		</siteMapNode>
+		<siteMapNode url="" title="Reportes"  description="" roles="">
+			<siteMapNode url="frmConsultaAvanceXGarantia.aspx" title="Avance por Oficina"  description="" roles="" />
+			<siteMapNode url="Reportes/frmRptFiltroBitacora.aspx" title="Transacciones de Bitácora"  description="" roles="" />
+			<siteMapNode url="Reportes/frmConsultaProcesoReplica.aspx" title="Consulta de Ejecución de Procesos"  description="" roles="" />
+			<siteMapNode url="" title="----------------------------------------------------------------------"  description="" roles="" />
+			<siteMapNode url="frmArchivosSEGUI.aspx" title="Generar Archivos de Garantías"  description="" roles="" />
+			<siteMapNode url="frmDownload.aspx" title="Descargar Archivos de Garantías"  description="" roles="" />
+			<siteMapNode url="" title="----------------------------------------------------------------------"  description="" roles="" />
+			<siteMapNode url="Alertas/frmArchivosAlertas.aspx" title="Alertas"  description="" roles="" />
+			<siteMapNode url="" title="----------------------------------------------------------------------"  description="" roles="" />
+			<siteMapNode url="Consultas/frmConsultaHistoricoValuaciones.aspx" title="Consulta Histórico de Valuaciones"  description="" roles="" />
+			<siteMapNode url="Consultas/frmConsultaHistoricoIndicesValuaciones.aspx" title="Histórico de Indices de Valuaciones"  description="" roles="" />
+		</siteMapNode>
+		<siteMapNode url="" title="Seguridad"  description="" roles="">
+			<siteMapNode url="frmPerfiles.aspx" title="Perfiles"  description="" roles="" />
+			<siteMapNode url="frmRolesXPerfil.aspx" title="Roles por Perfil"  description="" roles="" />
+			<siteMapNode url="frmUsuarios.aspx" title="Usuarios"  description="" roles="" />
+		</siteMapNode>
+		<siteMapNode url="" title="Inconsistencias"  description="" roles="">
+			<siteMapNode url="Inconsistencias/frmGenerarInconsistencias.aspx" title="Generar Archivos de Inconsistencias"  description="" roles="" />
+			<siteMapNode url="Inconsistencias/frmDescargarInconsistencias.aspx" title="Descargar Archivos de Inconsistencias"  description="" roles="" />
+		</siteMapNode>
+		<siteMapNode url="frmSesionEnd.aspx" title="Desconexión"  description="" roles="">
+		</siteMapNode>
+	</siteMapNode>
+</siteMap>

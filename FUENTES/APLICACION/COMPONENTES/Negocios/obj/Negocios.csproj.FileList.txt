@@ -1,0 +1,14 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\Negocios.dll
+bin\Debug\Negocios.pdb
+bin\Debug\BCR.ActiveDirectory.dll
+bin\Debug\BCRGarantias.Contenedores.dll
+bin\Debug\Datos.dll
+bin\Debug\LiderSoft.FrameWork.Comun.dll
+bin\Debug\LiderSoft.FrameWork.Contenedores.dll
+bin\Debug\BCR.Seguridad.dll
+bin\Debug\BCRGarantias.Contenedores.pdb
+bin\Debug\Datos.pdb
+bin\Debug\en-US\LiderSoft.FrameWork.Comun.resources.dll
+obj\Debug\Negocios.dll
+obj\Debug\Negocios.pdb

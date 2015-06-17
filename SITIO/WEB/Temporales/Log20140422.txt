@@ -1,0 +1,93 @@
+Archivo creado 22/04/2014 07:57:52 AM
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 07:57:52 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 07:59:46 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:00:22 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.50), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:00:41 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.50), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:06:32 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (0.00) y Monto Mitigador Ingresado (36440341.33).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:08:56 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (36440341.33).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:13:14 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 08:15:20 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 09:03:13 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 09:05:49 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (337122012.72).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 09:06:54 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (36440341.33).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 09:08:06 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (36440341.33).
+
+
+NUEVO EVENTO______Fecha y Hora:22/04/2014 09:52:20 AM   -   Tipo: Information
+
+DESCRIPCION:
+
+El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (446824354.5000), Fecha Avalúo (08/01/2014), Porcentaje Aceptación (80.00) y Monto Mitigador Ingresado (36440341.33).
+
