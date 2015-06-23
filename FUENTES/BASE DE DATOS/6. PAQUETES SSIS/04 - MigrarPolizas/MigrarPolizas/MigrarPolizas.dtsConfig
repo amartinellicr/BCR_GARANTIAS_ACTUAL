@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<DTSConfiguration>
+  <DTSConfigurationHeading>
+    <DTSConfigurationFileInfo GeneratedBy="BCR\401640970" GeneratedFromPackageName="MigrarPolizas" GeneratedFromPackageID="{FD4E4F3D-EA4A-4C2F-A1E9-05B1E0DEB042}" GeneratedDate="07/01/2014 02:12:59 p.m."/>
+  </DTSConfigurationHeading>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::cadenaConexionGarantias].Properties[Value]" ValueType="String">
+    <ConfiguredValue>Data Source=BCR0106SQL81, 10015;User ID=AccesoGarantias;Password=123456Aa;Initial Catalog=SIGANEM;Provider=SQLNCLI10.1;Persist Security Info=True;</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::cadenaConexionSAP].Properties[Value]" ValueType="String">
+    
+    <!--<ConfiguredValue>Data Source=deseguros-bd,10031;Initial Catalog=SEGUROSV2;Integrated Security=SSPI;</ConfiguredValue>-->
+    
+    <ConfiguredValue>Data Source=deseguros-bd,10031;User ID=AccesoGARANTIAS;Password=123456Aa*;Initial Catalog=SEGUROSV2;Persist Security Info=True;</ConfiguredValue>
+
+    <!--<ConfiguredValue>Data Source=deseguros-bd,10031;User ID=AccesoGarantias;Password=123456Aa;Initial Catalog=SEGUROSV2;Persist Security Info=True;</ConfiguredValue>-->
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::nombreProcesoMigrarPolizas].Properties[Value]" ValueType="String">
+    <ConfiguredValue>MIGRARPOLIZAS</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::rutaArchivoBitacora].Properties[Value]" ValueType="String">
+    <ConfiguredValue>D:\ArchivosSEGUI\</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::archivoTemporalBitacora].Properties[Value]" ValueType="String">
+    <ConfiguredValue>D:\ArchivosSEGUI\bitacoraTemp.raw</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::rutaPaqueteSSIS].Properties[Value]" ValueType="String">
+    <ConfiguredValue>D:\BCR_GARANTIAS\ACTUAL\CONTRATO_MANTENIMIENTO\03 - ENTREGABLES\REQUERIMIENTOS 035-036\Scripts\Paquete SSIS\MigrarPolizas\</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Properties[VersionBuild]" ValueType="Int32">
+    <ConfiguredValue>19</ConfiguredValue>
+  </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Properties[VersionComments]" ValueType="String">
+    <ConfiguredValue></ConfiguredValue>
+  </Configuration>
+</DTSConfiguration>

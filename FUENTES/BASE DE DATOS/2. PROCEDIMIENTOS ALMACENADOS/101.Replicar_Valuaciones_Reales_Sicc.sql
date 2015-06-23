@@ -65,12 +65,14 @@ BEGIN
 			(
 				cod_garantia_real, 
 				fecha_valuacion, 
-				monto_total_avaluo
+				monto_total_avaluo,
+				Fecha_Replica
 			)
 			SELECT	DISTINCT 
 				GGR.cod_garantia_real, 
 				CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion, 
-				0 AS monto_total_avaluo
+				0 AS monto_total_avaluo,
+				GETDATE()
 			FROM	dbo.GAR_GARANTIA_REAL GGR
 				INNER JOIN (	SELECT	TOP 100 PERCENT 
 									GGR.cod_clase_garantia,
@@ -193,12 +195,14 @@ BEGIN
 			(
 				cod_garantia_real, 
 				fecha_valuacion, 
-				monto_total_avaluo
+				monto_total_avaluo,
+				Fecha_Replica
 			)
 			SELECT	DISTINCT 
 				GGR.cod_garantia_real, 
 				CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion, 
-				0 AS monto_total_avaluo
+				0 AS monto_total_avaluo,
+				GETDATE()
 			FROM	dbo.GAR_GARANTIA_REAL GGR
 				INNER JOIN (	SELECT	TOP 100 PERCENT 
 									GGR.cod_clase_garantia,
@@ -321,12 +325,14 @@ BEGIN
 			(
 				cod_garantia_real, 
 				fecha_valuacion, 
-				monto_total_avaluo
+				monto_total_avaluo,
+				Fecha_Replica
 			)
 			SELECT	DISTINCT 
 				GGR.cod_garantia_real, 
 				CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion, 
-				0 AS monto_total_avaluo
+				0 AS monto_total_avaluo,
+				GETDATE()
 			FROM	dbo.GAR_GARANTIA_REAL GGR
 				INNER JOIN (	SELECT	TOP 100 PERCENT 
 									GGR.cod_clase_garantia,
@@ -452,12 +458,14 @@ IF(@piIndicadorProceso = 4)
 				(
 					cod_garantia_real, 
 					fecha_valuacion, 
-					monto_total_avaluo
+					monto_total_avaluo,
+					Fecha_Replica
 				)
 				SELECT	DISTINCT 
 					GGR.cod_garantia_real, 
 					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion, 
-					0 AS monto_total_avaluo
+					0 AS monto_total_avaluo,
+					GETDATE()
 				FROM	dbo.GAR_GARANTIA_REAL GGR
 					INNER JOIN (	SELECT	TOP 100 PERCENT 
 										GGR.cod_clase_garantia,
@@ -579,7 +587,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -622,7 +631,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -665,7 +675,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -678,6 +689,7 @@ BEGIN
 				AND MGT.prmgt_pnu_oper = GO1.num_operacion
 			WHERE	GGR.cod_clase_garantia = 18
 				AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+				AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado) --Cambio del 16/04/2015
 				AND GGR.cod_partido	= MGT.prmgt_pnu_part
 				AND GGR.Identificacion_Sicc	= MGT.prmgt_pnuidegar
 				AND GO1.num_contrato = 0
@@ -708,7 +720,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -751,7 +764,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -795,7 +809,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -839,7 +854,8 @@ BEGIN
 													WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 													WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 													ELSE '19000101'
-												END
+												END,
+					GRO.Fecha_Replica = GETDATE()
 			FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 				ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -881,7 +897,8 @@ IF(@piIndicadorProceso = 12)
 														WHEN MGT.prmgt_pfeavaing = 0 THEN '19000101' 
 														WHEN ISDATE(CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MGT.prmgt_pfeavaing,103)
 														ELSE '19000101'
-													END
+													END,
+					GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN	dbo.GAR_GARANTIA_REAL GGR 
 					ON GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -999,7 +1016,8 @@ IF(@piIndicadorProceso = 13)
 		
 				UPDATE	GV1
 				SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
-						GV1.Indicador_Tipo_Registro = 1
+						GV1.Indicador_Tipo_Registro = 1,
+						GV1.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_VALUACIONES_REALES GV1
 					INNER JOIN (
 					SELECT	DISTINCT 
@@ -1206,7 +1224,8 @@ IF(@piIndicadorProceso = 13)
 		
 				UPDATE	GV1
 				SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
-						GV1.Indicador_Tipo_Registro = 1 
+						GV1.Indicador_Tipo_Registro = 1,
+						GV1.Fecha_Replica = GETDATE() 
 				FROM	dbo.GAR_VALUACIONES_REALES GV1
 					INNER JOIN (
 					SELECT	DISTINCT 
@@ -1413,7 +1432,8 @@ IF(@piIndicadorProceso = 13)
 		
 				UPDATE	GV1
 				SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
-						GV1.Indicador_Tipo_Registro = 1 
+						GV1.Indicador_Tipo_Registro = 1,
+						GV1.Fecha_Replica = GETDATE() 
 				FROM	dbo.GAR_VALUACIONES_REALES GV1
 					INNER JOIN (
 					SELECT	DISTINCT 
@@ -1629,7 +1649,8 @@ IF(@piIndicadorProceso = 13)
 		
 				UPDATE	GV1
 				SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
-						GV1.Indicador_Tipo_Registro = 1 
+						GV1.Indicador_Tipo_Registro = 1,
+						GV1.Fecha_Replica = GETDATE() 
 				FROM	dbo.GAR_VALUACIONES_REALES GV1
 					INNER JOIN (
 					SELECT	DISTINCT 

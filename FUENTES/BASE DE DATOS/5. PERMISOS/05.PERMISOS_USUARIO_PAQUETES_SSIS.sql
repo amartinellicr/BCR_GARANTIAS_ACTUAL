@@ -42,6 +42,12 @@ GRANT SELECT, INSERT, UPDATE ON dbo.GAR_SICC_DAMHT TO RAP_AccesoIntegracion
 GO
 GRANT SELECT, INSERT, UPDATE ON dbo.GAR_SICC_PRMSC TO RAP_AccesoIntegracion
 GO
+GRANT SELECT, INSERT, UPDATE ON dbo.GAR_POLIZAS TO RAP_AccesoIntegracion
+GO
+GRANT SELECT, INSERT, UPDATE ON dbo.GAR_POLIZAS_RELACIONADAS TO RAP_AccesoIntegracion
+GO
+GRANT SELECT, INSERT, UPDATE ON dbo.TMP_POLIZAS TO RAP_AccesoIntegracion
+GO
 
 GRANT SELECT, INSERT  ON dbo.GAR_EJECUCION_PROCESO TO RAP_AccesoIntegracion
 GO
@@ -63,6 +69,8 @@ GO
 GRANT EXECUTE ON dbo.Replicar_Valuaciones_Reales_Sicc TO RAP_AccesoIntegracion
 GO
 GRANT EXECUTE ON dbo.Replicar_Datos_Garantias_Reales_Sicc TO RAP_AccesoIntegracion
+GO
+GRANT EXECUTE ON dbo.Procesar_Polizas_Migradas TO RAP_AccesoIntegracion
 GO
 
 

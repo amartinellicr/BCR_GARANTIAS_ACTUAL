@@ -205,7 +205,11 @@ CREATE TABLE dbo.GAR_GARANTIA_FIDUCIARIA
 	CONSTRAINT DF_GAR_GARANTIA_FIDUCIARIA_ind_actualizo_cedulasugef
 		 DEFAULT  0 ,
 	tipo_id_sugef         numeric(2)  NULL ,
-	Identificacion_Sicc DECIMAL(12, 0) NULL
+	Identificacion_Sicc	DECIMAL(12, 0) NULL,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	
 )
  ON "PRIMARY"
 go
@@ -213,6 +217,17 @@ go
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación del fiador registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_FIDUCIARIA', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
 GO
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_FIDUCIARIA', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_FIDUCIARIA', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_FIDUCIARIA', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_FIDUCIARIA', 'column' , 'Fecha_Replica'
+GO
 
 
 CREATE TABLE dbo.GAR_GARANTIA_REAL
@@ -228,12 +243,31 @@ CREATE TABLE dbo.GAR_GARANTIA_REAL
 	cod_clase_bien        varchar(3)  NULL ,
 	num_placa_bien        varchar(25)  NULL ,
 	cod_tipo_bien         smallint  NULL,
-	Identificacion_Sicc DECIMAL(12, 0) NULL 
+	Identificacion_Sicc DECIMAL(12, 0) NULL,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	 
 )
  ON "PRIMARY"
 go
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación del bien registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_REAL', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_REAL', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_REAL', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_REAL', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_REAL', 'column' , 'Fecha_Replica'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la vivienda es habitada por el deudor.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_REAL', 'column' , 'Indicador_Vivienda_Habitada_Deudor'
 GO
 
 
@@ -258,12 +292,28 @@ CREATE TABLE dbo.GAR_GARANTIA_VALOR
 	cod_moneda_valor_mercado  smallint  NULL ,
 	cod_tenencia          smallint  NOT NULL ,
 	fecha_prescripcion    datetime  NOT NULL ,
-	Identificacion_Sicc DECIMAL(12, 0) NULL
+	Identificacion_Sicc DECIMAL(12, 0) NULL,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	 
 )
  ON "PRIMARY"
 go
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación de la seguridad registrada en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_VALOR', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_VALOR', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_VALOR', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_VALOR', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIA_VALOR', 'column' , 'Fecha_Replica'
 GO
 
 
@@ -280,11 +330,26 @@ CREATE TABLE dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION
 	cedula_acreedor       varchar(30)  NULL ,
 	cod_estado            smallint  NOT NULL 
 	CONSTRAINT DF_GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION_cod_estado
-		 DEFAULT  1 
+		 DEFAULT  1,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
 go
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Fecha_Replica'
+GO
 
 
 CREATE TABLE dbo.GAR_GARANTIAS_REALES_X_OPERACION
@@ -310,7 +375,11 @@ CREATE TABLE dbo.GAR_GARANTIAS_REALES_X_OPERACION
 	cod_estado            smallint  NOT NULL ,
 	Fecha_Valuacion_SICC  datetime  NULL 
 	CONSTRAINT DF_GAR_GARANTIAS_REALES_X_OPERACION_cod_estado
-		 DEFAULT  1 
+		 DEFAULT  1,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
 go
@@ -318,6 +387,17 @@ go
 exec sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del avalúo registrada en el SICC.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Valuacion_SICC'
 go
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Replica'
+GO
 
 
 CREATE TABLE dbo.GAR_GARANTIAS_VALOR_X_OPERACION
@@ -338,12 +418,26 @@ CREATE TABLE dbo.GAR_GARANTIAS_VALOR_X_OPERACION
 	cedula_acreedor       varchar(30)  NULL ,
 	cod_estado            smallint  NOT NULL 
 	CONSTRAINT DF_GAR_GARANTIAS_VALOR_X_OPERACION_cod_estado
-		 DEFAULT  1 
+		 DEFAULT  1,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
 go
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Usuario_Modifico'
+GO
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Fecha_Replica'
+GO
 
 CREATE TABLE dbo.GAR_GARANTIAS_X_GIRO
 (
@@ -867,10 +961,26 @@ CREATE TABLE dbo.GAR_VALUACIONES_FIADOR
 	cod_garantia_fiduciaria  bigint  NOT NULL ,
 	fecha_valuacion       datetime  NOT NULL ,
 	ingreso_neto          money  NOT NULL ,
-	cod_tiene_capacidad_pago  smallint  NULL 
+	cod_tiene_capacidad_pago  smallint  NULL,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
 go
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_FIADOR', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_FIADOR', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_FIADOR', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la inserción del registro.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_FIADOR', 'column' , 'Usuario_Inserto'
+GO
+
 
 
 
@@ -895,7 +1005,11 @@ CREATE TABLE dbo.GAR_VALUACIONES_REALES
 	Indicador_Actualizado_Calculo  bit  NOT NULL 
 	CONSTRAINT DF_GAR_VALUACIONES_REALES_Indicador_Actualizado_Calculo
 		 DEFAULT  0 ,
-	Fecha_Semestre_Calculado  datetime  NULL 
+	Fecha_Semestre_Calculado  datetime  NULL,
+	Usuario_Modifico VARCHAR(30) NULL,
+	Fecha_Modifico DATETIME NULL,
+	Fecha_Inserto DATETIME NULL,
+	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
 go
@@ -918,7 +1032,17 @@ go
 exec sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del semestre calculado.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Semestre_Calculado'
 go
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Usuario_Modifico'
+GO
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Replica'
+GO
 
 
 
@@ -2088,3 +2212,448 @@ CREATE TABLE dbo.GAR_SICC_DAMHT
 
 go
 
+CREATE TABLE dbo.CAT_TIPOS_POLIZAS_SUGEF
+(
+	Codigo_Tipo_Poliza_Sugef  integer  NOT NULL ,
+	Nombre_Tipo_Poliza    varchar(50)  NOT NULL ,
+	Descripcion_Tipo_Poliza  varchar(500)  NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Tabla que almacenará el catálogo de tipos de pólizas SUGEF.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_SUGEF'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código asignado, como campo llave, al tipo de póliza SUGEF.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_SUGEF', 'column' , 'Codigo_Tipo_Poliza_Sugef'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Nombre del tipo de póliza SUGEF.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_SUGEF', 'column' , 'Nombre_Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción del tipo de póliza, este texto aparecerá por medio de tooltip en la interfaz de usuario.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_SUGEF', 'column' , 'Descripcion_Tipo_Poliza'
+GO
+
+
+
+CREATE TABLE dbo.CAT_TIPOS_POLIZAS_X_TIPO_BIEN
+(
+	Consecutivo_Relacion  integer  IDENTITY (1,1), 
+	Codigo_Tipo_Poliza_Sap  integer  NOT NULL ,
+	Codigo_Tipo_Poliza_Sugef  integer  NOT NULL ,
+	Codigo_Tipo_Bien      integer  NOT NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Tabla que contendrá la relación entre el tipo de póliza SAP, el tipo de póliza SUGEF y el tipo de bien.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_X_TIPO_BIEN'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del catálogo de tipos de póliza SAP.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_X_TIPO_BIEN', 'column' , 'Codigo_Tipo_Poliza_Sap'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del catálogo del tipo de póliza SUGEF.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_X_TIPO_BIEN', 'column' , 'Codigo_Tipo_Poliza_Sugef'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del catálogo del tipo de bien.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_X_TIPO_BIEN', 'column' , 'Codigo_Tipo_Bien'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo, autoincremental, asignado al registro.' , 'user' , 'dbo' , 'table' , 'CAT_TIPOS_POLIZAS_X_TIPO_BIEN', 'column' , 'Consecutivo_Relacion'
+GO
+
+
+CREATE TABLE dbo.GAR_POLIZAS
+(
+	Codigo_SAP            numeric(8,0)  NOT NULL ,
+	cod_operacion         bigint  NOT NULL ,
+	Tipo_Poliza           numeric(3,0)  NOT NULL ,
+	Monto_Poliza          numeric(16,2)  NOT NULL ,
+	Moneda_Monto_Poliza   numeric(3,0)  NOT NULL ,
+	Fecha_Vencimiento     datetime  NULL ,
+	Cedula_Acreedor       varchar(30)  NOT NULL 
+	CONSTRAINT DF_GAR_POLIZAS_Cedula_Acreedor
+		 DEFAULT  '4000000019' ,
+	Nombre_Acreedor       varchar(60)  NOT NULL 
+	CONSTRAINT DF_GAR_POLIZAS_Nombre_Acreedor
+		 DEFAULT  'Banco de Costa Rica' ,
+	Descripcion_Moneda_Monto_Poliza  varchar(30) COLLATE SQL_Latin1_General_CP850_CS_AS NOT NULL ,
+	Simbolo_Moneda        char(5)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL ,
+	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL ,
+	Estado_Poliza         char(3)  NOT NULL ,
+	Estado_Registro       bit  NOT NULL ,
+	Fecha_Inserto         datetime  NOT NULL ,
+	Fecha_Replica         datetime  NOT NULL ,
+	Monto_Poliza_Anterior  numeric(16,2)  NULL ,
+	Fecha_Vencimiento_Anterior  datetime  NULL ,
+	Cedula_Acreedor_Anterior  varchar(30)  NULL,
+	Nombre_Acreedor_Anterior  varchar(60)  NULL,
+	Monto_Poliza_Colonizado  numeric(16,2)  NOT NULL 
+	CONSTRAINT DF_GAR_POLIZAS_MontoPolizaColonizado
+		 DEFAULT  0 
+)
+ ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacena la información de las pólizas registradas en el sistema de seguros (SAP), requerida por el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza dentro del sistema de pólizas (SAP).' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto asegurado.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción del código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Descripcion_Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Símbolo asignado a la moneda del monto del a póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Simbolo_Moneda'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de vencimiento de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Fecha_Vencimiento'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del acreedro de la póliza. Por defecto se establece la cédula 4000000019.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Cedula_Acreedor'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Nombre del acreedor. Por defecto se estable como "Banco de Costa Rica".' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Nombre_Acreedor'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Observaciones que puede poseer la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Detalle_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del estado de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Estado_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Estado del registro. Se manejan los siguientes valores:
+
+0 - Inactivo
+1 - Activo' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Estado_Registro'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación a la cual está asociada la póliza y que se encuentra registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'cod_operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro la primera vez.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Fecha_Inserto'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se actualizó la ultima vez por motivo de la réplica.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Fecha_Replica'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto del avalúo anterior, esto en caso de que haya sido modificado.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Monto_Poliza_Anterior'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de vencimiento anterior,  esto en caso de que haya sido modificada.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Fecha_Vencimiento_Anterior'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación anterior del acreedor de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Cedula_Acreedor_Anterior'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Nombre anterior del acreedor.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Nombre_Acreedor_Anterior'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Guardará el monto de la póliza colonizado, para lo cual debe usar el tipo de cambio de compra del dólar, almacenado en la tabla CAT_INDICES_ACTUALIZACION_AVALUO.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Monto_Poliza_Colonizado'
+GO
+
+
+
+CREATE TABLE dbo.GAR_POLIZAS_RELACIONADAS
+(
+	Codigo_SAP            numeric(8,0)  NOT NULL ,
+	cod_operacion         bigint  NOT NULL ,
+	cod_garantia_real     bigint  NOT NULL ,
+	Estado_Registro       bit  NOT NULL ,
+	Monto_Acreencia       numeric(16,2)  NOT NULL 
+	CONSTRAINT DF_GARPOLIZASRELACIONADAS_Monto_Acreencia
+		 DEFAULT  0 ,
+	Fecha_Inserto         datetime  NOT NULL ,
+	Usuario_Modifico      varchar(30)  NULL ,
+	Fecha_Modifico        datetime  NULL ,
+	Usuario_Inserto       varchar(30)  NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacena la relaciones existentes entre una determina póliza y una garantía específica de una operación determinada.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza dentro del sistema de pólizas (SAP).' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación a la cual está asociada la póliza y que se encuentra registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'cod_operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo del registro de la garantía a la cual se le asocia la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'cod_garantia_real'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Estado de la relación. Se manejan los siguientes valores:
+
+0 - Inactivo
+1 - Activo' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Estado_Registro'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto de la acreencia digitado por el usuario.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Monto_Acreencia'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro la primera vez.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Fecha_Inserto'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Usuario_Modifico'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Fecha_Modifico'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que provocó la inserción del registro.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS_RELACIONADAS', 'column' , 'Usuario_Inserto'
+GO
+
+CREATE TABLE dbo.TMP_POLIZAS
+(
+	Codigo_SAP            numeric(8,0)  NOT NULL ,
+	Tipo_Poliza           numeric(3,0)  NOT NULL ,
+	Codigo_Oficina_Operacion  numeric(4,0)  NOT NULL ,
+	Codigo_Moneda_Operacion  numeric(3,0)  NOT NULL ,
+	Codigo_Producto_Operacion  numeric(2,0)  NOT NULL ,
+	Numero_Operacion      numeric(7,0)  NOT NULL ,
+	Numero_Contrato       varchar(10)  NOT NULL ,
+	Consecutivo_Operacion_Garantias  bigint  NOT NULL 
+	CONSTRAINT DF_TMP_POLIZAS_Consecutivo_Operacion_Garantias
+		 DEFAULT  -1 ,
+	Monto_Poliza          numeric(16,2)  NOT NULL ,
+	Moneda_Monto_Poliza   numeric(3,0)  NOT NULL ,
+	Estado_Poliza         char(3)  NOT NULL ,
+	Simbolo_Moneda        char(5)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL ,
+	Fecha_Vencimiento     datetime  NULL ,
+	Descripcion_Moneda_Monto_Poliza  varchar(30)  COLLATE SQL_Latin1_General_CP850_CS_AS NOT NULL ,
+	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacena, de forma temporal, la información de las pólizas registradas en el sistema de seguros (SAP), requerida por el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza dentro del sistema de pólizas (SAP).' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto asegurado.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción del código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Descripcion_Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Símbolo asignado a la moneda del monto del a póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Simbolo_Moneda'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de vencimiento de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Fecha_Vencimiento'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Observaciones que puede poseer la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Detalle_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del estado de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Estado_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda de la operación o contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Moneda_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la oficina de la operación o contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Oficina_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del producto de la operación, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Producto_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de la operación, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Numero_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número del contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Numero_Contrato'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación, registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Consecutivo_Operacion_Garantias'
+GO
+
+CREATE TABLE [dbo].[CAT_PORCENTAJE_ACEPTACION](
+	[Codigo_Porcentaje_Aceptacion] [int] IDENTITY(1,1) NOT NULL,
+	[Codigo_Tipo_Garantia] [int] NOT NULL,
+	[Codigo_Tipo_Mitigador] [int] NOT NULL,
+	[Indicador_Sin_Calificacion] [bit] NOT NULL,
+	[Porcentaje_Aceptacion] [decimal](5, 2) NOT NULL,
+	[Porcentaje_Cero_Tres] [decimal](5, 2) NULL,
+	[Porcentaje_Cuatro] [decimal](5, 2) NULL,
+	[Porcentaje_Cinco] [decimal](5, 2) NULL,
+	[Porcentaje_Seis] [decimal](5, 2) NULL,
+	[Usuario_Inserto] [varchar](30) NOT NULL,
+	[Fecha_Inserto] [datetime] NOT NULL,
+	[Usuario_Modifico] [varchar](30) NULL,
+	[Fecha_Modifico] [datetime] NULL,
+ CONSTRAINT [PK_CAT_PORCENTAJE_ACEPTACION] PRIMARY KEY CLUSTERED 
+(
+	[Codigo_Porcentaje_Aceptacion] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON "PRIMARY"
+GO
+
+--PREGUNTAR
+EXEC sp_addextendedproperty 'MS_Description' , 'Tabla que almacenará el catálogo de Porcentaje de Aceptacion Calculado.' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificador único del registro.' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Codigo_Porcentaje_Aceptacion'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del catálogo de tipo de garantia. 1: Fiduciaria 2: Real 3:Valor' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Codigo_Tipo_Garantia'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del catálogo de tipo de mitigador.' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Codigo_Tipo_Mitigador'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Hace referencia a la clasificación del porcentaje  de aceptación a registrar.
+0:  No aplica calificación 1: Sin Calificación ' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Indicador_Sin_Calificacion'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número máximo digitado por el usuario para realizar la validación en los mantenimientos de garantías' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Porcentaje_Aceptacion'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número máximo digitado por el usuario para realizar la validación en los mantenimientos de garantías cuando el indicador _Sin_Clasificacion es 1' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Porcentaje_Cero_Tres'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número máximo digitado por el usuario para realizar la validación en los mantenimientos de garantías cuando el indicador _Sin_Clasificacion es 1' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Porcentaje_Cuatro'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número máximo digitado por el usuario para realizar la validación en los mantenimientos de garantías cuando el indicador _Sin_Clasificacion es 1' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Porcentaje_Cinco'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número máximo digitado por el usuario para realizar la validación en los mantenimientos de garantías cuando el indicador _Sin_Clasificacion es 1' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Porcentaje_Seis'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Usuario que insertó el registro' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Usuario_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el registro' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Usuario que modificó el registro' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se modifcó el registro' , 'user' , 'dbo' , 'table' , 'CAT_PORCENTAJE_ACEPTACION', 'column' , 'Fecha_Modifico'
+GO
+
+CREATE TABLE [dbo].[PORCENTAJE_ACEPTACION_HST](
+	[Codigo_Usuario] [varchar](30) NOT NULL,
+	[Codigo_Accion] [int] NOT NULL,
+	[Codigo_Consulta] [text] NULL,
+	[Codigo_Tipo_Garantia] [int] NOT NULL,
+	[Codigo_Tipo_Mitigador] [int] NOT NULL,
+	[Descripcion_Campo_Afectado] [varchar](30) NULL,
+	[Estado_Anterior_Campo_Afectado] [varchar](30) NULL,
+	[Estado_Actual_Campo_Afectado] [varchar](30) NULL,
+	[Fecha_Hora] [datetime] NOT NULL
+) ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Tabla que almacenará el histórico del catálogo de Porcentaje de Aceptacion Calculado.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecutó la operación.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Codigo_Usuario'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la operación ejecutada, ya sea consultar, agregar, modificar o borrar.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Codigo_Accion'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consulta SQL que fue ejecutada.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Codigo_Consulta'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo del Tipo de Garantia
+1: Fiduciaria 2: Real 3:Valor' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Codigo_Tipo_Garantia'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo del Tipo de Mitigador' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Codigo_Tipo_Mitigador'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Nombre del campo que ha sido afectado.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Descripcion_Campo_Afectado'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Contenido que posee el campo antes del cambio.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Estado_Anterior_Campo_Afectado'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Último contenido asignado al campo.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Estado_Actual_Campo_Afectado'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha y hora en que fue ejecutada la operación.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Fecha_Hora'
+GO

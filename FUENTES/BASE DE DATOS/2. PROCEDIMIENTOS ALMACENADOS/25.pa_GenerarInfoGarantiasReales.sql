@@ -8,7 +8,7 @@ GO
 
 IF OBJECT_ID ('pa_GenerarInfoGarantiasReales', 'P') IS NOT NULL
 BEGIN
-	DROP PROCEDURE pa_GenerarInfoGarantiasReales
+	DROP PROCEDURE dbo.pa_GenerarInfoGarantiasReales
 END
 GO
 
@@ -88,6 +88,23 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, Lidersoft Internacional S.A.</Autor>
+			<Requerimiento>Req_Pólizas, Siebel No. 1-24342731</Requerimiento>
+			<Fecha>19/06/2014</Fecha>
+			<Descripción>
+					Se agregan los campos referentes a la póliza asociada. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>leonardo Cortés Mora,Lidersoft Internacional S.A. </Autor>
+			<Requerimiento>Porcentaje de Aceptacion Caculado, Siebel No. 1-24613011</Requerimiento>
+			<Fecha>02/02/2015</Fecha>
+			<Descripción>
+					Se realiza la escogencia del valor menor entre el porcentaje de aceptacion y el porcentaje de aceptacion calculado del catalogo.
+					Se agrega otro if para el calculo respecto del valor menor del porcentaje de aceptacion 
+			</Descripción>
+		</Cambio>
+			<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -1926,6 +1943,550 @@ DECLARE
 				AND cod_tipo_operacion IN (1, 3)
 				AND ind_duplicidad = 2 
 
+	END
+	IF(@piEjecutarParte = 4)
+	BEGIN
+	
+		DECLARE @vdFechaActualSinHora	DATETIME  
+		SET @vdFechaActualSinHora		= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+	
+	
+		DECLARE @TMP_PORCENTAJE_ACEPTACION_CALCULADO TABLE (
+		          
+					 Cod_Operacion						BIGINT,
+					 Cod_Garantia_Real					BIGINT,
+					 Porcentaje_Aceptacion				DECIMAL (5,2),
+					 Porcentaje_Calculado_Original      DECIMAL (5,2),
+					 Fecha_Valuacion					DATETIME,
+					 Fecha_Ultimo_Seguimiento			DATETIME,
+					 Cod_Tipo_Garantia_Real				SMALLINT,
+					 Cod_Tipo_Bien						SMALLINT,
+					 Monto_Ultima_Tasacion_No_Terreno	DECIMAL(18,2),					 
+					 Cod_Usuario						VARCHAR(30),
+					 Deudor_Habita_Vivienda				BIT
+		       
+					 )
+
+		INSERT INTO @TMP_PORCENTAJE_ACEPTACION_CALCULADO (           
+					 Cod_Operacion,
+					 Cod_Garantia_Real,              
+					 Porcentaje_Aceptacion,
+					 Porcentaje_Calculado_Original,
+					 Fecha_Valuacion,
+					 Fecha_Ultimo_Seguimiento,
+					 Cod_Tipo_Garantia_Real,
+					 Cod_Tipo_Bien,
+					 Monto_Ultima_Tasacion_No_Terreno,
+					 Cod_Usuario,
+					 Deudor_Habita_Vivienda	 
+
+					 ) 
+
+		/*Se insertan todos los porcentajes de aceptacion con el monto original del catalogo*/      
+
+		 SELECT DISTINCT    
+		 TGR.cod_operacion,
+		 TGR.cod_garantia_real,
+		 CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  
+		 CPA.Porcentaje_Aceptacion AS Porcentaje_Calculado_Original,
+		 TGR.fecha_valuacion,
+		 TGR.fecha_ultimo_seguimiento,
+		 TGR.cod_tipo_garantia_real,
+		 TGR.cod_tipo_bien,
+		 TGR.monto_ultima_tasacion_no_terreno,
+		 @psCedula_Usuario,
+		 GGR.Indicador_Vivienda_Habitada_Deudor
+		     
+		 FROM dbo.TMP_GARANTIAS_REALES TGR   
+		 INNER JOIN  dbo.CAT_PORCENTAJE_ACEPTACION CPA
+		  ON CPA.Codigo_Tipo_Garantia = 2 
+			 AND CPA.Codigo_Tipo_Mitigador = TGR.cod_tipo_mitigador
+		 INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+		  ON GGR.cod_garantia_real = TGR.cod_garantia_real 
+		 WHERE 
+		 TGR.cod_usuario =  @psCedula_Usuario	   
+		 AND TGR.cod_tipo_operacion IN (1,3)
+		 AND TGR.cod_tipo_bien BETWEEN 1 AND 4
+		 
+		 
+		 
+		 
+		  			      					
+					
+		---------------------------------------------------------------------------------
+		/*ACTUALIZACION DEL CAMPO DE PORCENTAJE DE ACEPTACION CON LAS VALIDaCIONES */ 
+		---------------------------------------------------------------------------------
+		------------------------------
+		--INDICAROD DE INSCRIPCION
+		------------------------------
+
+			--Se actualiza el indicador de inconsistencia de inscripcion a 1 , de la información de las garantías reales asociadas a las operaciones 
+			--que no poseen asignado el indicador de inscripción. 
+				UPDATE  TPAC
+				SET TPAC.Porcentaje_Aceptacion =  0
+				FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
+					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
+					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
+				WHERE TMGR.cod_usuario			= @psCedula_Usuario
+				AND TMGR.cod_tipo_operacion	IN (1, 3)
+				AND TMGR.fecha_presentacion	IS NOT NULL
+				AND TMGR.cod_inscripcion		IS NULL
+			
+
+			--Se actualiza el indicador de inconsistencia de inscripcion a 1 , de la información de las garantías reales asociadas a las operaciones 
+			--que poseen asignado el indicador de inscripción "Anotada", pero cuya fecha de proceso (fecha actual) 
+			--supera la fecha resultante de sumarle 60 días a la fecha de constitución. 
+						
+				UPDATE  TPAC
+				SET TPAC.Porcentaje_Aceptacion =  0
+				FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
+					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
+					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
+				WHERE TMGR.cod_usuario			= @psCedula_Usuario
+				AND TMGR.cod_tipo_operacion	IN (1, 3)
+				AND TMGR.fecha_constitucion	IS NOT NULL
+				AND TMGR.cod_inscripcion	IS NOT NULL
+				AND TMGR.cod_inscripcion	= 2 
+				AND @vdFechaActualSinHora > DATEADD(DAY, 60, TMGR.fecha_constitucion)
+
+
+			--Se actualiza el indicador de inconsistencia de inscripcion a 1, de la información de las garantías reales asociadas a las operaciones 
+			--que poseen asignado el indicador de inscripción "No Anotada/No Inscrita", pero cuya fecha de proceso 
+			--(fecha actual) supera, o es igual a, la fecha resultante de sumarle 30 días a la fecha de constitución.  
+		    			
+				UPDATE  TPAC
+				SET TPAC.Porcentaje_Aceptacion =  0
+				FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
+					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
+					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
+				WHERE TMGR.cod_usuario				= @psCedula_Usuario
+				AND TMGR.cod_tipo_operacion		IN (1, 3)
+				AND TMGR.fecha_constitucion		IS NOT NULL
+				AND TMGR.cod_inscripcion			IS NOT NULL
+				AND TMGR.cod_inscripcion			= 1 
+				AND @vdFechaActualSinHora	>= DATEADD(DAY, 30, TMGR.fecha_constitucion)
+
+
+			--Se actualiza el indicador de inconsistencia de inscripcion a 1, de la información de las garantías reales asociadas a las operaciones 
+			--que poseen asignado el indicador de inscripción "No Aplica", pero que poseen un tipo de bien
+			--diferente a "Otros tipos de bienes". 
+				
+				UPDATE  TPAC
+				SET TPAC.Porcentaje_Aceptacion =  0
+				FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
+					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
+					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
+				WHERE TMGR.cod_usuario			= @psCedula_Usuario
+				AND TMGR.cod_tipo_operacion	IN (1, 3)
+				AND TMGR.cod_inscripcion		IS NOT NULL
+				AND TMGR.cod_inscripcion		= 0 
+				AND TMGR.cod_tipo_bien		<> 14								
+
+		------------------------------
+		--FIN INDICADOR DE INSCRIPCION
+		------------------------------
+
+		--------------------------------------------------------------------------
+		--SE REDUCEN A 0
+		--------------------------------------------------------------------------
+
+		-------------------
+		--TIPO DE BIEN: 1
+		-------------------
+				--------------
+				--POLIZA
+				--------------	
+				
+					--POLIZA ASOCIADA
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  0
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC						
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+								ON GPR.cod_operacion = TPAC.Cod_Operacion
+								AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion				
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 1	
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1
+				    AND TPAC.Cod_Usuario =  @psCedula_Usuario	  
+
+		-------------------
+		--TIPO DE BIEN: 3
+		-------------------
+				---------------
+				--SEGUIMIENTO
+				---------------	
+					--FECHA SEGUIMIENTO MAYOR A UN AÑO CONTRA SISTEMA
+				
+					--UPDATE  TPAC
+					--SET TPAC.Porcentaje_Aceptacion =  0
+					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--WHERE 
+					--TPAC.Cod_Tipo_Garantia_Real = 3 
+					--AND TPAC.Cod_Tipo_Bien = 3							
+					--AND  DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1 
+					--AND TPAC.Cod_Usuario =  @psCedula_Usuario	
+		        
+				--------------
+				--VALUACION
+				--------------	
+					
+					--FECHA VALUACION MAYOR A 5 AÑOS
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  0
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3 
+					AND TPAC.Cod_Tipo_Bien = 3							
+					AND DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 5	
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario		
+
+		-------------------------------------------------------------------
+		--SE REDUCEN A LA MITAD
+		-------------------------------------------------------------------
+		-------------------
+		--TIPO DE BIEN: 1
+		-------------------
+
+				---------------
+				--SEGUIMIENTO
+			   ---------------	
+			   
+					--FECHA SEGUIMIENTO MAYOR A UN AÑO CONTRA SISTEMA
+
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 1									
+					AND  DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1   	            
+					AND TPAC.Porcentaje_Aceptacion > 0     
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	   
+		            
+				--------------
+				--VALUACION
+				--------------
+				
+					--FECHA VALUACION MAYOR A 5 AÑOS	
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)	
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 1						
+					AND DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
+					AND TPAC.Porcentaje_Aceptacion > 0   
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario		
+			
+		-------------------
+		--TIPO DE BIEN: 2
+		-------------------
+				--------------
+				--VALUACION
+				--------------
+				
+					--FECHA VALUACION MAYOR A 18 MESES FECHA SISTEMA, MIENTAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA, PERO EL DEUDOR NO HABITA LA VIVIENDA 				
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2	
+					AND  DATEDIFF(MONTH,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 18
+					AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 3
+					AND TPAC.Deudor_Habita_Vivienda = 0
+					AND TPAC.Porcentaje_Aceptacion > 0 
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	 
+					
+					
+					
+					--FECHA VALUACION MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR HABITA LA VIVIENDA				
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2	
+					AND  DATEDIFF(MONTH,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 18
+					AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) <= 3
+					AND TPAC.Deudor_Habita_Vivienda = 1
+					AND TPAC.Porcentaje_Aceptacion > 0 
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	
+					
+					
+				---------------
+				--SEGUIMIENTO
+				---------------
+				
+					--FECHA SEGUIMIENTO MAYOR A UN AÑO CONTRA SISTEMA
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)		
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2
+					AND  DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1 	
+					AND TPAC.Porcentaje_Aceptacion > 0   
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	
+					
+				--------------
+				--POLIZA
+				--------------
+					--NO TIENE POLIZA ASOCIADA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2			
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.GAR_POLIZAS_RELACIONADAS GPR
+									WHERE	GPR.cod_operacion = TPAC.Cod_Operacion
+									AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real
+									AND GPR.Estado_Registro = 1)
+					 AND TPAC.Porcentaje_Aceptacion > 0 
+					 AND TPAC.Cod_Usuario =  @psCedula_Usuario	  
+									
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MENOR A LA DEL SISTEMA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2	
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1				
+					AND GPO.Fecha_Vencimiento < @vdFechaActualSinHora	
+					AND TPAC.Porcentaje_Aceptacion > 0
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	   
+					
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MAYOR A LA FECHA DE PROCESO Y MONTO DE POLIZA NO CUBRE EL MONTO DE ULTIMA TASACION NO TERRENO	
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					AND TPAC.Cod_Tipo_Bien = 2
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1
+					AND GPO.Fecha_Vencimiento > @vdFechaActualSinHora	
+					AND GPO.Monto_Poliza_Colonizado < TPAC.Monto_Ultima_Tasacion_No_Terreno
+					AND TPAC.Porcentaje_Aceptacion > 0 
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	  
+					
+					
+		-------------------
+		--TIPO DE BIEN: 3
+		-------------------					
+				--------------
+				--POLIZA
+				--------------
+				--NO TIENE POLIZA ASOCIADA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC				
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 3			
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.GAR_POLIZAS_RELACIONADAS GPR
+									WHERE	GPR.cod_operacion = TPAC.Cod_Operacion
+									AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real
+									AND GPR.Estado_Registro = 1	)
+					 AND TPAC.Porcentaje_Aceptacion > 0
+					 AND TPAC.Cod_Usuario =  @psCedula_Usuario	   				
+									
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MENOR A LA DEL SISTEMA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
+						ON TPAC.Cod_Garantia_Real = TPAC.Cod_Garantia_Real	
+						AND TPAC.Cod_Operacion = TPAC.Cod_Operacion				
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 3	
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1								
+					AND GPO.Fecha_Vencimiento < @vdFechaActualSinHora	
+					 AND TPAC.Porcentaje_Aceptacion > 0  
+					  AND TPAC.Cod_Usuario =  @psCedula_Usuario	 
+					
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MAYOR A LA FECHA DE PROCESO Y MONTO DE POLIZA NO CUBRE EL MONTO DE ULTIMA TASACION NO TERRENO	
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 3
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1
+					AND GPO.Fecha_Vencimiento > @vdFechaActualSinHora	
+					AND GPO.Monto_Poliza_Colonizado < TPAC.Monto_Ultima_Tasacion_No_Terreno
+					 AND TPAC.Porcentaje_Aceptacion > 0  
+					  AND TPAC.Cod_Usuario =  @psCedula_Usuario	 						
+						
+		-------------------
+		--TIPO DE BIEN: 4
+		-------------------
+				---------------
+				--SEGUIMIENTO
+				---------------			
+					--FECHA SEGUIMIENTO MAYOR A 6 MESES CONTRA SISTEMA
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3 
+					AND TPAC.Cod_Tipo_Bien = 4								
+					AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 6 
+					AND TPAC.Porcentaje_Aceptacion > 0 
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	  
+					
+				--------------
+				--VALUACION
+				--------------	
+				
+					--FECHA VALUACION MAYOR A 5 AÑOS
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3 
+					AND TPAC.Cod_Tipo_Bien = 4				
+					AND DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
+					AND TPAC.Porcentaje_Aceptacion > 0
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	   					
+					
+				--------------
+				--POLIZA
+				--------------
+				--NO TIENE POLIZA ASOCIADA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 4		
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.GAR_POLIZAS_RELACIONADAS GPR
+									WHERE	GPR.cod_operacion = TPAC.Cod_Operacion
+									AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real	
+									AND GPR.Estado_Registro = 1)
+					 AND TPAC.Porcentaje_Aceptacion > 0   
+					 AND TPAC.Cod_Usuario =  @psCedula_Usuario	
+									
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MENOR A LA DEL SISTEMA			
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 4	
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1			
+					AND GPO.Fecha_Vencimiento < @vdFechaActualSinHora	
+					 AND TPAC.Porcentaje_Aceptacion > 0  
+					  AND TPAC.Cod_Usuario =  @psCedula_Usuario	 
+					
+					--POLIZA ASOCIADA CON FECHA VENCIMIENTO MAYOR A LA FECHA DE PROCESO Y MONTO DE POLIZA NO CUBRE EL MONTO DE ULTIMA TASACION NO TERRENO	
+					
+					UPDATE  TPAC
+					SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
+					FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+						ON GPR.cod_operacion = TPAC.Cod_Operacion
+						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
+					INNER JOIN dbo.GAR_POLIZAS GPO
+						ON GPO.Codigo_SAP = GPR.Codigo_SAP
+						AND GPO.cod_operacion = GPR.cod_operacion	
+					WHERE 
+					TPAC.Cod_Tipo_Garantia_Real = 3
+					AND TPAC.Cod_Tipo_Bien = 4
+					AND GPO.Estado_Registro = 1
+					AND GPR.Estado_Registro = 1
+					AND GPO.Fecha_Vencimiento > @vdFechaActualSinHora	
+					AND GPO.Monto_Poliza_Colonizado < TPAC.Monto_Ultima_Tasacion_No_Terreno
+					AND TPAC.Porcentaje_Aceptacion > 0 
+					AND TPAC.Cod_Usuario =  @psCedula_Usuario	
+					
+		---------------------------------------------------------------------------------
+		/* FIN ACTUALIZACION DEL CAMPO DE PORCENTAJE DE ACEPTACION CON LAS VALIDaCIONES */
+		---------------------------------------------------------------------------------
+
+		/* ACTUALIZACION DEL CAMPO DE PORCENTAJE DE ACEPTACION DE LA TABLA TEMPORAL PRINCIPAL */ 
+
+			UPDATE TGR
+			SET   TGR.porcentaje_responsabilidad = 
+					(
+						CASE 
+							WHEN COALESCE(TGR.porcentaje_responsabilidad ,0)= 0 THEN TPAC.Porcentaje_Aceptacion
+							WHEN TGR.porcentaje_responsabilidad >  TPAC.Porcentaje_Aceptacion THEN TPAC.Porcentaje_Aceptacion
+							WHEN TPAC.Porcentaje_Aceptacion > TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad							
+						END			
+					)	
+			FROM TMP_GARANTIAS_REALES TGR
+			INNER JOIN @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				ON TGR.cod_operacion = TPAC.Cod_Operacion
+				AND TGR.cod_garantia_real = TPAC.Cod_Garantia_Real	
+			WHERE 
+			TGR.cod_usuario = @psCedula_Usuario
+			AND TGR.cod_tipo_operacion IN (1,3)
+
+
 	/***************************************************************************************************************************************************/
 
 	SELECT	DISTINCT
@@ -1943,11 +2504,11 @@ DECLARE
 		CASE 
 			WHEN TMP.cod_inscripcion IS NULL THEN GGR.cod_inscripcion
 			ELSE TMP.cod_inscripcion
-		END AS INDICADOR_INSCRIPCION,
+		END AS INDICADOR_INSCRIPCION,		
 		CASE 
 			WHEN TMP.porcentaje_responsabilidad IS NULL THEN GGR.porcentaje_responsabilidad
 			ELSE TMP.porcentaje_responsabilidad
-		END AS PORCENTAJE_ACEPTACION,
+		END AS PORCENTAJE_ACEPTACION,		
 		GGR.fecha_constitucion AS FECHA_CONSTITUCION,
 		GGR.cod_grado_gravamen AS GRADO_GRAVAMEN,
 		GGR.cod_tipo_acreedor AS TIPO_PERSONA_ACREEDOR,
@@ -1976,21 +2537,43 @@ DECLARE
 			WHEN GO1.num_contrato > 0 THEN 1
 			ELSE 0
 		END AS ES_GIRO,
-		TMP.cod_garantia_real
+		TMP.cod_garantia_real,
+		ISNULL((CONVERT(VARCHAR(100), TM1.Codigo_SAP)), '') AS CODIGO_SAP,
+		ISNULL((CONVERT(VARCHAR(100), TM1.Monto_Poliza_Colonizado)), '') AS MONTO_POLIZA,
+		ISNULL((CONVERT(VARCHAR(10), TM1.Fecha_Vencimiento, 103)), '') AS FECHA_VENCIMIENTO_POLIZA,
+		ISNULL((CONVERT(VARCHAR(5), TM1.Codigo_Tipo_Poliza_Sugef)), '') AS TIPO_POLIZA_SUGEF,
+		CASE
+			WHEN TM1.Codigo_SAP IS NOT NULL THEN 'S'
+			ELSE 'N'
+		END AS INDICADOR_POLIZA
 	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
-	INNER JOIN dbo.GAR_SICC_BSMPC MPC 
-	ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
-	INNER JOIN dbo.GAR_DEUDOR GD1 
-	ON GGR.cedula_deudor = GD1.cedula_deudor
-	INNER JOIN dbo.GAR_OPERACION GO1
-	ON GO1.cod_operacion = GGR.cod_operacion
-	LEFT OUTER JOIN dbo.TMP_GARANTIAS_REALES TMP
-	ON TMP.cod_oficina = GGR.cod_oficina
-		AND TMP.cod_moneda = GGR.cod_moneda
-		AND TMP.cod_producto = GGR.cod_producto
-		AND TMP.operacion = GGR.operacion
-		AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
-		AND TMP.cod_bien = GGR.cod_bien  
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		LEFT OUTER JOIN dbo.TMP_GARANTIAS_REALES TMP
+		ON TMP.cod_oficina = GGR.cod_oficina
+			AND TMP.cod_moneda = GGR.cod_moneda
+			AND TMP.cod_producto = GGR.cod_producto
+			AND TMP.operacion = GGR.operacion
+			AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
+			AND TMP.cod_bien = GGR.cod_bien  
+		LEFT OUTER JOIN (SELECT	GPO.Codigo_SAP, GPO.cod_operacion, GPR.cod_garantia_real,
+								GPO.Monto_Poliza_Colonizado, GPO.Fecha_Vencimiento, 
+								TPB.Codigo_Tipo_Poliza_Sugef, COALESCE(TPB.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien
+						 FROM	dbo.GAR_POLIZAS GPO
+							INNER JOIN	dbo.GAR_POLIZAS_RELACIONADAS GPR
+							ON GPR.Codigo_SAP = GPO.Codigo_SAP
+							AND GPR.cod_operacion = GPO.cod_operacion 
+							LEFT OUTER JOIN dbo.CAT_TIPOS_POLIZAS_X_TIPO_BIEN TPB
+							ON TPB.Codigo_Tipo_Poliza_Sap = GPO.Tipo_Poliza
+						WHERE	GPO.Estado_Registro = 1
+								AND GPR.Estado_Registro = 1) TM1
+		ON TM1.cod_operacion = GGR.cod_operacion
+		AND TM1.cod_garantia_real = GGR.cod_garantia_real
+		AND TM1.Codigo_Tipo_Bien = GGR.cod_tipo_bien
 	WHERE	GGR.cod_tipo_documento_legal IS NOT NULL
 		AND GGR.cod_estado = 1
 		AND MPC.bsmpc_estado = 'A'
@@ -2034,6 +2617,10 @@ DECLARE
 		TMP.monto_total_avaluo,
 		TMP.fecha_construccion,
 		TMP.cod_garantia_real,
-		GO1.num_contrato
+		GO1.num_contrato,
+		TM1.Codigo_SAP,
+		TM1.Monto_Poliza_Colonizado,
+		TM1.Fecha_Vencimiento,
+		TM1.Codigo_Tipo_Poliza_Sugef
 	END
 END

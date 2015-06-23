@@ -93,7 +93,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 3
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 4
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -171,7 +172,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 7
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 8
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -196,6 +198,7 @@ BEGIN
 					AND MOC.prmoc_estado = 'A'
 					AND MGT.prmgt_pcoclagar = 18
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
+					AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado) --Cambio del 16/04/2015
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
 					AND MGT.prmgt_estado = 'A'
@@ -210,8 +213,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Garoperch18
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garoperch18
 
 		--Actualizar datos de las cédulas hipotecarias, con clase diferente a 18, asociadas a operaciones
 		BEGIN TRANSACTION TRA_Act_Garoperch
@@ -249,7 +252,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 7
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 8
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -289,8 +293,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Garoperch
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garoperch
 
 		--Actualizar datos de las prendas asociadas a operaciones
 		BEGIN TRANSACTION TRA_Act_Garoperp
@@ -328,7 +332,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 11
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 12
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -366,8 +371,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Garoperp
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garoperp
 	END	
 
 	--Se actualizan los datos de las garantías reales asociadas a contratos
@@ -410,7 +415,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 3
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 4
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -428,6 +434,7 @@ BEGIN
 					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
 					AND MGT.prmgt_pcoclagar IN (10, 11, 12, 13, 14, 15, 16, 17, 19)
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
@@ -484,7 +491,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 7
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 8
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -502,8 +510,10 @@ BEGIN
 					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
 					AND MGT.prmgt_pcoclagar = 18
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
+					AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado) --Cambio del 16/04/2015
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
 					AND MGT.prmgt_estado = 'A'
@@ -518,8 +528,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Garcontrch18
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garcontrch18
 
 		--Actualizar datos de las cédulas hipotecarias, con clase diferente a 18, asociadas a contratos
 		BEGIN TRANSACTION TRA_Act_Garcontrch
@@ -558,7 +568,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 7
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 8
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -576,6 +587,7 @@ BEGIN
 					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
 					AND MGT.prmgt_pcoclagar BETWEEN 20 AND 29
 					AND MGT.prmgt_pcotengar = 1
 					AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
@@ -593,8 +605,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Garcontrch
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garcontrch
 
 		--Actualizar datos de las prendas asociadas a contratos
 		BEGIN TRANSACTION TRA_Act_Garcontrp
@@ -633,7 +645,8 @@ BEGIN
 															WHEN MGT.prmgt_pco_grado = 3 THEN 11
 															WHEN MGT.prmgt_pco_grado >= 4 THEN 12
 															ELSE NULL
-														END
+														END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GOP
 					ON GOP.cod_operacion = GRO.cod_operacion
@@ -651,6 +664,7 @@ BEGIN
 					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
 					AND MGT.prmgt_pcoclagar BETWEEN 30 AND 69
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
@@ -666,8 +680,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRAN	
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garcontrp	
 	END	
 
 	
@@ -681,7 +695,8 @@ BEGIN
 			BEGIN TRY
 	
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = 1
+				SET		GRO.cod_inscripcion = 1,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				WHERE	EXISTS (SELECT	1
 								FROM	dbo.GAR_OPERACION GO1
@@ -708,8 +723,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Indinsop
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Indinsop
 
 
 		--Se asigna el indicador 1 a todas las garantías reales asociadas a contratos vigentes
@@ -717,7 +732,8 @@ BEGIN
 			BEGIN TRY
 		
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = 1
+				SET		GRO.cod_inscripcion = 1,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				WHERE	EXISTS (SELECT	1	
 								FROM	dbo.GAR_OPERACION GO1
@@ -741,8 +757,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Indinscv
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Indinscv
 
 				
 		--Se asigna el indicador 1 a todas las garantías reales asociadas a contratos vencidos, pero con giros activos
@@ -750,7 +766,8 @@ BEGIN
 			BEGIN TRY
 		
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = 1
+				SET		GRO.cod_inscripcion = 1,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 				WHERE	EXISTS (SELECT	1	
 								FROM	dbo.GAR_OPERACION GO1
@@ -783,8 +800,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Indinscvga
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Indinscvga
 
 	END
 	
@@ -801,7 +818,8 @@ BEGIN
 												WHEN 1 THEN 2
 												WHEN 2 THEN 3
 												ELSE 1
-										  END
+										  END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
 					ON GO1.cod_operacion = GRO.cod_operacion
@@ -848,8 +866,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Grop
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grop
 
 	END
 	
@@ -866,7 +884,8 @@ BEGIN
 												WHEN 1 THEN 2
 												WHEN 2 THEN 3
 												ELSE 1
-										  END
+										  END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
 					ON GO1.cod_operacion = GRO.cod_operacion
@@ -911,9 +930,8 @@ BEGIN
 
 			END CATCH
 			
-			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Grocv
-
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocv
 
 	END
 	
@@ -931,7 +949,8 @@ BEGIN
 												WHEN 1 THEN 2
 												WHEN 2 THEN 3
 												ELSE 1
-										  END
+										  END,
+						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
 					ON GO1.cod_operacion = GRO.cod_operacion
@@ -985,8 +1004,240 @@ BEGIN
 
 			END CATCH
 			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvga
+			
+		--en caso de que se trate del proceso de replica que se encarga de cargar los contratos vencidos se debe actualzia la fecha de réplica en este procedimiento almacenado
+		IF(@psCodigoProceso = 'CARGARCONTRATVENCID')
+		BEGIN
+		
+			--Se actualiza la fecha de la replica, de la información básica de la garantía fiduciaria, a la mayor que posea cada registro en la relación
+			BEGIN TRANSACTION TRA_Act_Gf
+				BEGIN TRY	
+				
+					UPDATE	GGF
+					SET		GGF.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIA_FIDUCIARIA GGF
+						INNER JOIN (SELECT GRF.cod_garantia_fiduciaria, MAX(GRF.Fecha_Replica) AS Fecha_Replica
+									FROM	dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION GRF
+										INNER JOIN dbo.GAR_GARANTIA_FIDUCIARIA GF1
+										ON GF1.cod_garantia_fiduciaria = GRF.cod_garantia_fiduciaria
+									GROUP BY GRF.cod_garantia_fiduciaria) TMP
+						ON TMP.cod_garantia_fiduciaria = GGF.cod_garantia_fiduciaria
+					WHERE	TMP.Fecha_Replica > ISNULL(GGF.Fecha_Replica, '19000101')
+
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Gf
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la información básica de la garantía fiduciaria. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
 			IF (@@TRANCOUNT > 0)
-				COMMIT TRANSACTION TRA_Act_Grocvga
+				COMMIT TRANSACTION TRA_Act_Gf
+			
+			--Se actualiza la fecha de la replica, de la información de la relación de la garantía fiduciaria, a la mayor que posea cada registro en la información básica
+			BEGIN TRANSACTION TRA_Act_Grf
+				BEGIN TRY	
+				
+					UPDATE	GRF
+					SET		GRF.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION GRF
+						INNER JOIN (SELECT	GF1.cod_garantia_fiduciaria, MAX(GF1.Fecha_Replica) AS Fecha_Replica
+									FROM	dbo.GAR_GARANTIA_FIDUCIARIA GF1
+										INNER JOIN dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION GR1
+										ON GR1.cod_garantia_fiduciaria = GF1.cod_garantia_fiduciaria
+									GROUP BY GF1.cod_garantia_fiduciaria) TMP
+							ON TMP.cod_garantia_fiduciaria = GRF.cod_garantia_fiduciaria
+						WHERE	TMP.Fecha_Replica > ISNULL(GRF.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Grf
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la relación de la garantía fiduciaria. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Grf
+				
+			
+			--Se actualiza la fecha de la replica, de la información básica de la garantía real, a la mayor que posea cada registro en la relación
+			BEGIN TRANSACTION TRA_Act_Gr
+				BEGIN TRY	
+					
+					UPDATE	GGR
+					SET		GGR.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIA_REAL GGR
+						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIA_REAL GG1
+											
+											 UNION ALL 
+											 
+											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+											 
+											 UNION ALL
+											 
+											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
+									GROUP BY TM1.cod_garantia_real) TMP
+						ON TMP.cod_garantia_real = GGR.cod_garantia_real
+					WHERE	TMP.Fecha_Replica > ISNULL(GGR.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Gr
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la información básica de la garantía real. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Gr
+			
+			--Se actualiza la fecha de la replica, de la información de la relación de la garantía real, a la mayor que posea cada registro en la información básica
+			BEGIN TRANSACTION TRA_Act_Gro
+				BEGIN TRY	
+				
+					UPDATE	GRO
+					SET		GRO.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIA_REAL GG1
+											
+											 UNION ALL 
+											 
+											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+											 
+											 UNION ALL
+											 
+											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
+									GROUP BY TM1.cod_garantia_real) TMP
+						ON TMP.cod_garantia_real = GRO.cod_garantia_real
+					WHERE	TMP.Fecha_Replica > ISNULL(GRO.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Gro
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la relación de la garantía real. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Gro
+				
+			
+			--Se actualiza la fecha de la replica, de la información de la relación de la garantía real, a la mayor que posea cada registro en la información básica
+			BEGIN TRANSACTION TRA_Act_Grv
+				BEGIN TRY	
+				
+					UPDATE	GRV
+					SET		GRV.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_VALUACIONES_REALES GRV
+						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIA_REAL GG1
+											
+											 UNION ALL 
+											 
+											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+											 
+											 UNION ALL
+											 
+											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
+									GROUP BY TM1.cod_garantia_real) TMP
+						ON TMP.cod_garantia_real = GRV.cod_garantia_real
+					WHERE	TMP.Fecha_Replica > ISNULL(GRV.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Grv
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros del avalúo de la garantía real. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Grv
+			
+			--Se actualiza la fecha de la replica, de la información básica de la garantía de valor, a la mayor que posea cada registro en la relación
+			BEGIN TRANSACTION TRA_Act_Gv
+				BEGIN TRY	
+				
+					UPDATE	GGV
+					SET		GGV.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIA_VALOR GGV
+						INNER JOIN (SELECT	GVO.cod_garantia_valor, MAX(GVO.Fecha_Replica) AS Fecha_Replica
+									FROM	dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO
+										INNER JOIN dbo.GAR_GARANTIA_VALOR GV1
+										ON GV1.cod_garantia_valor = GVO.cod_garantia_valor
+									GROUP BY GVO.cod_garantia_valor) TMP
+						ON TMP.cod_garantia_valor = GGV.cod_garantia_valor
+					WHERE	TMP.Fecha_Replica > ISNULL(GGV.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Gv
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la información básica de la garantía de valor. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Gv
+			
+			--Se actualiza la fecha de la replica, de la información de la relación de la garantía de valor, a la mayor que posea cada registro en la información básica
+			BEGIN TRANSACTION TRA_Act_Gvo
+				BEGIN TRY	
+				
+					UPDATE	GVO
+					SET		GVO.Fecha_Replica = TMP.Fecha_Replica
+					FROM	dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO
+						INNER JOIN (SELECT	GGV.cod_garantia_valor, MAX(GGV.Fecha_Replica) AS Fecha_Replica
+									FROM	dbo.GAR_GARANTIA_VALOR GGV
+										INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GV1
+										ON GV1.cod_garantia_valor = GGV.cod_garantia_valor
+									GROUP BY GGV.cod_garantia_valor) TMP
+							ON TMP.cod_garantia_valor = GVO.cod_garantia_valor
+						WHERE	TMP.Fecha_Replica > ISNULL(GVO.Fecha_Replica, '19000101')
+				
+				END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Act_Gvo
+
+					SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al normalizar la fecha de la réplica entre los registros de la relación de la garantía de valor. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+				END CATCH
+			
+			IF (@@TRANCOUNT > 0)
+				COMMIT TRANSACTION TRA_Act_Gvo
+				
+		END
 	END
 END
 GO
