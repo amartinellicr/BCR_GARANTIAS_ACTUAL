@@ -115,7 +115,7 @@
 															        MaxLength="3"></asp:textbox></td>
 													        <td class="td_Texto" width="16%"><asp:label id="lblFinca" Font-Size="11px" runat="server" Font-Italic="true">Número Finca:</asp:label></td>
 													        <td width="12%"><asp:textbox id="txtNumFinca" Enabled="False" tabIndex="11" runat="server" BackColor="AntiqueWhite" Width="100px"
-															        MaxLength="19"></asp:textbox></td>
+															        MaxLength="25"></asp:textbox></td>
 													        <td class="td_Texto" width="11%"><asp:label id="lblGrado" Font-Size="11px" runat="server" Font-Italic="true">Grado:</asp:label></td>
 													        <td width="5%"><asp:textbox id="txtGrado" tabIndex="12" runat="server" BackColor="AntiqueWhite" Width="42px"
 															        MaxLength="2"></asp:textbox></td>

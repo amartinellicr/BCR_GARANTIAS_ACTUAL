@@ -3326,6 +3326,7 @@ namespace BCRGARANTIAS.Forms
             if (!ListaCatalogosGR.ErrorDatos)
             {
                 int tipoGR = ((tipoGarantiaReal.HasValue) ? tipoGarantiaReal.Value : ((cbTipoGarantiaReal.Items.Count > 0) ? (int.Parse(cbTipoGarantiaReal.SelectedItem.Value)) : -1));
+                int tipoClase = ((cbClase.Items.Count > 0) ? (int.Parse(cbClase.SelectedItem.Value)) : -1);
 
                 List<clsCatalogo> listaTiposBien = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_BIEN));
 
@@ -3335,7 +3336,18 @@ namespace BCRGARANTIAS.Forms
                         listaTiposBien = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_BIEN)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 1 || catalogo.IDElemento == 2 || catalogo.IDElemento == -1; }));
                         break;
                     case 2: break;
-                    case 3: break;
+                    case 3:
+                        switch (tipoClase)
+                        {
+                            case 38:
+                                listaTiposBien = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_BIEN)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 3 || catalogo.IDElemento == 4 || catalogo.IDElemento == -1; }));
+                                break;
+                            case 43:
+                                listaTiposBien = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_BIEN)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 3 || catalogo.IDElemento == 4 || catalogo.IDElemento == -1; }));
+                                break;
+                            default: break;
+                        }
+                        break;
                     default: break;
                 }
 

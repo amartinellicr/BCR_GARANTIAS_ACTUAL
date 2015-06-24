@@ -5,11 +5,6 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-/*  OJO --- DESCOMENTAR ESTO CUANDO SE PASE A PRUEBAS O PRODUCCION LA PRIMERA VEZ*/
-IF OBJECT_ID ('pa_Inconsistencias_Tipo_Garantia_Real', 'P') IS NOT NULL
-	DROP PROCEDURE pa_Inconsistencias_Tipo_Garantia_Real;
-GO
-
 IF OBJECT_ID ('Inconsistencias_Tipo_Garantia_Real', 'P') IS NOT NULL
 DROP PROCEDURE Inconsistencias_Tipo_Garantia_Real;
 GO
@@ -51,6 +46,14 @@ BEGIN
 				También se realiza un ajuste general, con le fin de aplicar el estándar de programación
 				de base de datos.
             </Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>01/07/2015</Fecha>
+			<Descripción>
+				Se elimina la sentencia "WITH (NOLOCK)", esto porque permite extraer datos sucios. 
+			</Descripción>
 		</Cambio>
 		<Cambio>
 			<Autor></Autor>
@@ -210,7 +213,7 @@ BEGIN
 			ISNULL(TGR.Codigo_Grado_Gravamen, -1) AS Codigo_Grado_Gravamen,
 			TGR.Codigo_Usuario
 	FROM	dbo.VALUACIONES_GARANTIAS_REALES_VW VRV
-		INNER JOIN dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR WITH (NOLOCK)
+		INNER JOIN dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
 		ON TGR.Codigo_Garantia_Real = VRV.cod_garantia_real
 	WHERE	TGR.Codigo_Usuario = @vsIdentificacion_Usuario
 			
@@ -264,7 +267,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Clase de Garantía',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -290,7 +293,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Clase de Garantía',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -319,7 +322,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Clase de Garantía',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -345,7 +348,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Clase de Garantía',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -377,7 +380,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo de Bien',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -408,7 +411,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo de Bien',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -443,7 +446,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -473,7 +476,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -499,7 +502,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -532,7 +535,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -561,7 +564,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -587,7 +590,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Mitigador',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -623,7 +626,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -654,7 +657,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -686,7 +689,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -721,7 +724,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -752,7 +755,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -784,7 +787,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Tipo Documento Legal',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -822,7 +825,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -846,7 +849,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -870,7 +873,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -894,7 +897,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -918,7 +921,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -950,7 +953,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -974,7 +977,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -998,7 +1001,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -1022,7 +1025,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))
@@ -1047,7 +1050,7 @@ BEGIN
 			@vsIdentificacion_Usuario,
 			'Grado Gravamen',
 			Codigo_Bien
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION WITH (NOLOCK) 
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION 
 	WHERE	Codigo_Usuario					= @vsIdentificacion_Usuario
 		AND ((Codigo_Tipo_Operacion			= 1)
 			OR (Codigo_Tipo_Operacion		= 2))

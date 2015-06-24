@@ -4518,8 +4518,8 @@ namespace BCR.GARANTIAS.Entidades
                 #region Se aplica la validación correspondiente al número de finca
 
                 //Se verifica que el número de la finca sea válido, esto en cuanto a la cantidad de dígitos que la componen. Se aplica sólo 
-                //a las hipotecas comunes y cédulas hipotecarias
-                if ((this.codTipoGarantiaReal != ((short)Enumeradores.Tipos_Garantia_Real.Prenda)) && (this.numeroFinca.Trim().Length > 6))
+                //a las hipotecas comunes y cédulas hipotecarias, con clase de garantía distinta a 11 (este código es el destinado para datos alfanuméricos)
+                if ((this.codTipoGarantiaReal != ((short)Enumeradores.Tipos_Garantia_Real.Prenda)) && (this.codClaseGarantia != 11) && (this.numeroFinca.Trim().Length > 6))
                 {
                     esValida = false;
                     errorValidaciones = true;

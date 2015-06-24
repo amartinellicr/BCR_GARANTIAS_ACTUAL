@@ -1,6 +1,9 @@
-set ANSI_NULLS ON
-set QUOTED_IDENTIFIER ON
-go
+USE [GARANTIAS]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
 
 IF OBJECT_ID ('pa_Alertas_Indicador_Inscripcion_Garantias_Reales', 'P') IS NOT NULL
 DROP PROCEDURE pa_Alertas_Indicador_Inscripcion_Garantias_Reales;
@@ -47,6 +50,16 @@ BEGIN
 			<Descripción>
 				Se ajusta la forma en que se compara la identificación de la garantía entre el SICC y el
 				sistema de garantías, se cambia de una comparación numperica a una de texto.
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>03/07/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -277,11 +290,18 @@ BEGIN
 					 AND GSP.prmgt_pco_moned	= ROV.cod_moneda_contrato
 					 AND GSP.prmgt_pco_produ	= 10
 					 AND GSP.prmgt_pco_conta	= 1
-					 --RQ: 1-23923921. Se cambia el tipo de dato de la compración, pasando de numérica a texto.
-					 AND CONVERT(VARCHAR(25), GSP.prmgt_pnuidegar)	= CASE WHEN GGR.cod_tipo_garantia_real = 1 THEN GGR.numero_finca
-																		   WHEN GGR.cod_tipo_garantia_real = 2 THEN GGR.numero_finca
-																		   ELSE GGR.num_placa_bien
-																	  END) /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura del SICC*/
+					AND GSP.prmgt_pnuidegar = CASE
+												WHEN GGR.cod_clase_garantia = 11 THEN GSP.prmgt_pnuidegar
+												WHEN GGR.cod_clase_garantia = 38 THEN GSP.prmgt_pnuidegar
+												WHEN GGR.cod_clase_garantia = 43 THEN GSP.prmgt_pnuidegar
+												ELSE GGR.Identificacion_Sicc
+											  END
+					AND GSP.prmgt_pnuide_alf =	CASE
+													WHEN GGR.cod_clase_garantia = 11 THEN GGR.numero_finca
+													WHEN GGR.cod_clase_garantia = 38 THEN GGR.num_placa_bien
+													WHEN GGR.cod_clase_garantia = 43 THEN GGR.num_placa_bien
+													ELSE GSP.prmgt_pnuide_alf
+												END)
 
 	ORDER BY
 		ROV.cod_operacion,
@@ -664,7 +684,7 @@ BEGIN
 			TMP.cod_inscripcion,
 			CE1.cat_descripcion AS Des_Indicador_Inscripcion,
 			TMP.fecha_constitucion,
-			DATEDIFF(day, TMP.fec_constitucion, GETDATE()) AS Dias_Acumulados
+			DATEDIFF(DAY, TMP.fec_constitucion, GETDATE()) AS Dias_Acumulados
 			
 	FROM @TMP_GARANTIAS_REALES_X_OPERACION TMP
 		LEFT OUTER JOIN dbo.CAT_ELEMENTO CE1
@@ -694,7 +714,7 @@ BEGIN
 			TMP.cod_inscripcion,
 			CE1.cat_descripcion AS Des_Indicador_Inscripcion,
 			TMP.fecha_constitucion,
-			DATEDIFF(day, TMP.fec_constitucion, GETDATE()) AS Dias_Acumulados
+			DATEDIFF(DAY, TMP.fec_constitucion, GETDATE()) AS Dias_Acumulados
 			
 	FROM @TMP_GARANTIAS_REALES_X_OPERACION TMP
 		LEFT OUTER JOIN dbo.CAT_ELEMENTO CE1

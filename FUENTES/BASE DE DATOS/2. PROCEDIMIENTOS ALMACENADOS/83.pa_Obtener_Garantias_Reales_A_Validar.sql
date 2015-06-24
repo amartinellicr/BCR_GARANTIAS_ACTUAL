@@ -36,6 +36,16 @@ AS
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>02/07/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -110,10 +120,10 @@ BEGIN
 		ISNULL(GGR.numero_finca,'') AS Numero_Finca,
 		ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario
-	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV WITH (NOLOCK)
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK) 
+	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV 
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion		= GRO.cod_operacion 
-		INNER JOIN dbo.GAR_GARANTIA_REAL GGR WITH (NOLOCK)
+		INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
 		ON GRO.cod_garantia_real	= GGR.cod_garantia_real 
 	WHERE	ROV.cod_tipo_operacion	= 1
 		AND GRO.cod_estado			= 1
@@ -171,24 +181,32 @@ BEGIN
 		ISNULL(GGR.numero_finca,'') AS Numero_Finca,
 		ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario
-	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV WITH (NOLOCK) 
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK) 
+	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV  
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion		= GRO.cod_operacion 
-		INNER JOIN dbo.GAR_GARANTIA_REAL GGR WITH (NOLOCK) 
+		INNER JOIN dbo.GAR_GARANTIA_REAL GGR  
 		ON GRO.cod_garantia_real	= GGR.cod_garantia_real 
 	WHERE	ROV.cod_tipo_operacion	= 2
 		AND EXISTS	(	SELECT	1
-						FROM	dbo.GAR_SICC_PRMGT GSP WITH (NOLOCK)
+						FROM	dbo.GAR_SICC_PRMGT GSP 
 						WHERE	GSP.prmgt_pco_conta	 = 1
 							AND GSP.prmgt_pco_ofici  = ROV.cod_oficina_contrato
 							AND GSP.prmgt_pco_moned  = ROV.cod_moneda_contrato
 							AND GSP.prmgt_pnu_oper   = ROV.num_contrato
 							AND GSP.prmgt_pcoclagar  = GGR.cod_clase_garantia
 							AND GSP.prmgt_pco_grado  = ISNULL(GGR.cod_grado, GSP.prmgt_pco_grado)
-							AND CONVERT(VARCHAR(25), GSP.prmgt_pnuidegar)  =	CASE 
-																				   WHEN GGR.cod_tipo_garantia_real = 3 THEN GGR.num_placa_bien
-																				   ELSE GGR.numero_finca
-																				END
+							AND GSP.prmgt_pnuidegar = CASE
+														WHEN GGR.cod_clase_garantia = 11 THEN GSP.prmgt_pnuidegar
+														WHEN GGR.cod_clase_garantia = 38 THEN GSP.prmgt_pnuidegar
+														WHEN GGR.cod_clase_garantia = 43 THEN GSP.prmgt_pnuidegar
+														ELSE GGR.Identificacion_Sicc
+													  END
+							AND GSP.prmgt_pnuide_alf =	CASE
+															WHEN GGR.cod_clase_garantia = 11 THEN GGR.numero_finca
+															WHEN GGR.cod_clase_garantia = 38 THEN GGR.num_placa_bien
+															WHEN GGR.cod_clase_garantia = 43 THEN GGR.num_placa_bien
+															ELSE GSP.prmgt_pnuide_alf
+														END
 							AND GSP.prmgt_pco_produ  = 10
 							AND GSP.prmgt_estado     = 'A') /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura 
 												   del SICC*/
@@ -212,7 +230,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -232,7 +250,7 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS	(	SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 						WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 							AND TGR.Codigo_Moneda				= TOD.cod_moneda
 							AND TGR.Codigo_Producto				= TOD.cod_producto
@@ -293,7 +311,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 1 
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -319,7 +337,7 @@ BEGIN
 			AND GR1.Operacion					= TOD.operacion
 			AND ISNULL(GR1.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina				= TOD.cod_oficina
 										AND GR2.Codigo_Moneda				= TOD.cod_moneda
 										AND GR2.Codigo_Producto				= TOD.cod_producto
@@ -341,7 +359,7 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS (SELECT	1 
-					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 					WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 						AND TGR.Codigo_Moneda				= TOD.cod_moneda
 						AND TGR.Codigo_Producto				= TOD.cod_producto
@@ -390,7 +408,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			Codigo_Grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 2
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -418,7 +436,7 @@ BEGIN
 			AND ISNULL(GR1.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
 			AND GR1.Codigo_Grado				= TOD.cod_grado
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina				= TOD.cod_oficina
 										AND GR2.Codigo_Moneda				= TOD.cod_moneda
 										AND GR2.Codigo_Producto				= TOD.cod_producto
@@ -441,7 +459,7 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS	(	SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 						WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 							AND TGR.Codigo_Moneda				= TOD.cod_moneda
 							AND TGR.Codigo_Producto				= TOD.cod_producto
@@ -489,7 +507,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 3
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -515,7 +533,7 @@ BEGIN
 			AND GR1.Operacion						= TOD.operacion
 			AND ISNULL(GR1.Numero_Placa_Bien, '')	= ISNULL(TOD.cod_garantia_sicc, '')
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina					= TOD.cod_oficina
 										AND GR2.Codigo_Moneda					= TOD.cod_moneda
 										AND GR2.Codigo_Producto					= TOD.cod_producto
@@ -537,7 +555,7 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS (SELECT	1 
-					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 					WHERE	TGR.Codigo_Oficina					= TOD.cod_oficina
 						AND TGR.Codigo_Moneda					= TOD.cod_moneda
 						AND TGR.Codigo_Producto					= TOD.cod_producto
@@ -616,11 +634,11 @@ BEGIN
 			ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 			TGR.Codigo_Usuario
 		
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR WITH (NOLOCK)
-		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
+		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GRO.cod_operacion		= TGR.Codigo_Operacion
 		AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
-		INNER JOIN GAR_GARANTIA_REAL GGR WITH (NOLOCK)
+		INNER JOIN GAR_GARANTIA_REAL GGR 
 		ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
 	WHERE	TGR.Codigo_Usuario				= @psCedula_Usuario
 		AND ((TGR.Codigo_Tipo_Operacion		= 1)
