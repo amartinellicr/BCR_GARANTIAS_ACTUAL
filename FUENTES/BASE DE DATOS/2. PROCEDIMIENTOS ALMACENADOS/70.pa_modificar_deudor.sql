@@ -3,6 +3,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+IF OBJECT_ID ('pa_Modificar_Deudor', 'P') IS NOT NULL
+	DROP PROCEDURE dbo.pa_Modificar_Deudor;
+GO
+
 CREATE PROCEDURE dbo.pa_Modificar_Deudor
 
 	@psCedula_Deudor		VARCHAR(30),

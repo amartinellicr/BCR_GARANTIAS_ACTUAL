@@ -7,8 +7,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+IF  EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID(N'[dbo].[ufn_ObtenerTipoCambioSICC]') AND xtype in (N'FN', N'IF', N'TF'))
+DROP FUNCTION [dbo].[ufn_ObtenerTipoCambioSICC]
+GO
 
-ALTER FUNCTION [dbo].[ufn_ObtenerTipoCambioSICC] 
+
+CREATE FUNCTION [dbo].[ufn_ObtenerTipoCambioSICC] 
 (
 	@Fecha DateTime
 )

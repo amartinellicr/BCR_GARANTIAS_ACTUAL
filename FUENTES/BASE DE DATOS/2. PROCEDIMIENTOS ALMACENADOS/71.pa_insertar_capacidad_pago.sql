@@ -3,6 +3,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+IF OBJECT_ID ('pa_Insertar_Capacidad_Pago', 'P') IS NOT NULL
+	DROP PROCEDURE pa_Insertar_Capacidad_Pago;
+GO
+
 CREATE PROCEDURE dbo.pa_Insertar_Capacidad_Pago
 
 	@psCedula_Deudor			VARCHAR(30),

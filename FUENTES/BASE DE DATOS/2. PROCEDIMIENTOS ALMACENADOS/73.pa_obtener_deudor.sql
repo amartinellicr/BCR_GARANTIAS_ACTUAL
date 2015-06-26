@@ -3,6 +3,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
+IF OBJECT_ID ('pa_Obtener_Deudor', 'P') IS NOT NULL
+	DROP PROCEDURE pa_Obtener_Deudor;
+GO
+
 CREATE PROCEDURE dbo.pa_Obtener_Deudor
 
 	@psCedula_Deudor		VARCHAR(30),
@@ -97,8 +101,8 @@ BEGIN
 				NULL						AS [Deudor!3!cod_tipo_asignacion!element], 
 				NULL						AS [Deudor!3!cod_generador_divisas!element], 
 				NULL						AS [Deudor!3!cod_vinculado_entidad!element], 
-				NULL						AS [Deudor!3!cod_tipo_registro!element], 
-				NULL						AS [Deudor!3!des_tipo_registro!element],
+				--NULL						AS [Deudor!3!cod_tipo_registro!element], 
+				--NULL						AS [Deudor!3!des_tipo_registro!element],
 				NULL						AS [CAPACIDADES!4!],
 				NULL						AS [CAPACIDAD!5!fecha_capacidad_pago!element],
 				NULL						AS [CAPACIDAD!5!cod_capacidad_pago!element],
@@ -125,8 +129,8 @@ BEGIN
 				NULL						AS [Deudor!3!cod_tipo_asignacion!element], 
 				NULL						AS [Deudor!3!cod_generador_divisas!element], 
 				NULL						AS [Deudor!3!cod_vinculado_entidad!element], 
-				NULL						AS [Deudor!3!cod_tipo_registro!element], 
-				NULL						AS [Deudor!3!des_tipo_registro!element],
+				--NULL						AS [Deudor!3!cod_tipo_registro!element], 
+				--NULL						AS [Deudor!3!des_tipo_registro!element],
 				NULL						AS [CAPACIDADES!4!],
 				NULL						AS [CAPACIDAD!5!fecha_capacidad_pago!element],
 				NULL						AS [CAPACIDAD!5!cod_capacidad_pago!element],
@@ -153,12 +157,12 @@ BEGIN
 				ISNULL(A.cod_tipo_asignacion, 2)		AS [Deudor!3!cod_tipo_asignacion!element], 
 				ISNULL(A.cod_generador_divisas, -1)		AS [Deudor!3!cod_generador_divisas!element], 
 				ISNULL(A.cod_vinculado_entidad, 2)		AS [Deudor!3!cod_vinculado_entidad!element], 
-				A.cod_tipo_registro			AS [Deudor!3!cod_tipo_registro!element], 
-				CASE WHEN A.cod_tipo_registro = 0 THEN 'Deudor'
-					 WHEN A.cod_tipo_registro = 1 THEN 'Codeudor'
-					 WHEN A.cod_tipo_registro = 2 THEN 'Deudor/Codeudor'
-					 ELSE 'Indef'
-				END							AS [Deudor!3!des_tipo_registro!element],
+				--A.cod_tipo_registro			AS [Deudor!3!cod_tipo_registro!element], 
+				--CASE WHEN A.cod_tipo_registro = 0 THEN 'Deudor'
+				--	 WHEN A.cod_tipo_registro = 1 THEN 'Codeudor'
+				--	 WHEN A.cod_tipo_registro = 2 THEN 'Deudor/Codeudor'
+				--	 ELSE 'Indef'
+				--END							AS [Deudor!3!des_tipo_registro!element],
 				NULL						AS [CAPACIDADES!4!],
 				NULL						AS [CAPACIDAD!5!fecha_capacidad_pago!element],
 				NULL						AS [CAPACIDAD!5!cod_capacidad_pago!element],
@@ -185,8 +189,8 @@ BEGIN
 				NULL						AS [Deudor!3!cod_tipo_asignacion!element], 
 				NULL						AS [Deudor!3!cod_generador_divisas!element], 
 				NULL						AS [Deudor!3!cod_vinculado_entidad!element], 
-				NULL						AS [Deudor!3!cod_tipo_registro!element], 
-				NULL						AS [Deudor!3!des_tipo_registro!element],
+				--NULL						AS [Deudor!3!cod_tipo_registro!element], 
+				--NULL						AS [Deudor!3!des_tipo_registro!element],
 				NULL						AS [CAPACIDADES!4!],
 				NULL						AS [CAPACIDAD!5!fecha_capacidad_pago!element],
 				NULL						AS [CAPACIDAD!5!cod_capacidad_pago!element],
@@ -213,8 +217,8 @@ BEGIN
 				NULL						AS [Deudor!3!cod_tipo_asignacion!element], 
 				NULL						AS [Deudor!3!cod_generador_divisas!element], 
 				NULL						AS [Deudor!3!cod_vinculado_entidad!element], 
-				NULL						AS [Deudor!3!cod_tipo_registro!element], 
-				NULL						AS [Deudor!3!des_tipo_registro!element],
+				--NULL						AS [Deudor!3!cod_tipo_registro!element], 
+				--NULL						AS [Deudor!3!des_tipo_registro!element],
 				NULL						AS [CAPACIDADES!4!],
 				(CONVERT(VARCHAR(10),A.fecha_capacidad_pago,103))	AS [CAPACIDAD!5!fecha_capacidad_pago!element],
 				ISNULL(A.cod_capacidad_pago, -1)					AS [CAPACIDAD!5!cod_capacidad_pago!element],

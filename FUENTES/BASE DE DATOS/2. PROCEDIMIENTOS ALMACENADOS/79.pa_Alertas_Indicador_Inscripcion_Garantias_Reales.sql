@@ -1,6 +1,6 @@
-set ANSI_NULLS ON
-set QUOTED_IDENTIFIER ON
-go
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
 
 IF OBJECT_ID ('pa_Alertas_Indicador_Inscripcion_Garantias_Reales', 'P') IS NOT NULL
 DROP PROCEDURE pa_Alertas_Indicador_Inscripcion_Garantias_Reales;

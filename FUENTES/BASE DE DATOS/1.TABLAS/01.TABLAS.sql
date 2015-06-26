@@ -247,7 +247,8 @@ CREATE TABLE dbo.GAR_GARANTIA_REAL
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
-	Fecha_Replica DATETIME NULL	 
+	Fecha_Replica DATETIME NULL,
+	Indicador_Vivienda_Habitada_Deudor BIT NOT NULL CONSTRAINT [DF_GAR_GARANTIA_REAL_Indicador_Vivienda_Habitada_Deudor]  DEFAULT (0)	 
 )
  ON "PRIMARY"
 go
@@ -963,6 +964,7 @@ CREATE TABLE dbo.GAR_VALUACIONES_FIADOR
 	ingreso_neto          money  NOT NULL ,
 	cod_tiene_capacidad_pago  smallint  NULL,
 	Usuario_Modifico VARCHAR(30) NULL,
+	Usuario_Inserto VARCHAR(30) COLLATE DATABASE_DEFAULT DEFAULT NULL, 
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
 	Fecha_Replica DATETIME NULL	  

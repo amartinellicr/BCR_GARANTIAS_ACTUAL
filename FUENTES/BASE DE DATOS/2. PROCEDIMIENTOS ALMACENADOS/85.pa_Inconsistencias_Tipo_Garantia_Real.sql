@@ -5,11 +5,6 @@ SET ANSI_NULLS ON
 SET QUOTED_IDENTIFIER ON
 GO
 
-/*  OJO --- DESCOMENTAR ESTO CUANDO SE PASE A PRUEBAS O PRODUCCION LA PRIMERA VEZ*/
-IF OBJECT_ID ('pa_Inconsistencias_Tipo_Garantia_Real', 'P') IS NOT NULL
-	DROP PROCEDURE pa_Inconsistencias_Tipo_Garantia_Real;
-GO
-
 IF OBJECT_ID ('Inconsistencias_Tipo_Garantia_Real', 'P') IS NOT NULL
 DROP PROCEDURE Inconsistencias_Tipo_Garantia_Real;
 GO
