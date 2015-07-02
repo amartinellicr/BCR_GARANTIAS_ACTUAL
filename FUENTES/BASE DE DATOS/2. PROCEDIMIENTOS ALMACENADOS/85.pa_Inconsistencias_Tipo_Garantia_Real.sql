@@ -205,12 +205,12 @@ BEGIN
 			CONVERT(DATETIME, TGR.Fecha_Presentacion),
 			TGR.Codigo_Tipo_Operacion,
 			TGR.Codigo_Bien,
-			ISNULL(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
+			COALESCE(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
 			TGR.Codigo_Tipo_Garantia_Real,
 			TGR.Codigo_Clase_Garantia,
-			ISNULL(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
-			ISNULL(TGR.Codigo_Tipo_Documento_Legal, -1) AS Codigo_Tipo_Documento_Legal,
-			ISNULL(TGR.Codigo_Grado_Gravamen, -1) AS Codigo_Grado_Gravamen,
+			COALESCE(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(TGR.Codigo_Tipo_Documento_Legal, -1) AS Codigo_Tipo_Documento_Legal,
+			COALESCE(TGR.Codigo_Grado_Gravamen, -1) AS Codigo_Grado_Gravamen,
 			TGR.Codigo_Usuario
 	FROM	dbo.VALUACIONES_GARANTIAS_REALES_VW VRV
 		INNER JOIN dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
@@ -1087,8 +1087,8 @@ BEGIN
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
 		AND Codigo_Tipo_Bien			= 1
-		AND ((ISNULL(Monto_Ultima_Tasacion_Terreno, 0)		= 0)
-		 OR (ISNULL(Monto_Tasacion_Actualizada_Terreno, 0)	= 0))
+		AND ((COALESCE(Monto_Ultima_Tasacion_Terreno, 0)		= 0)
+		 OR (COALESCE(Monto_Tasacion_Actualizada_Terreno, 0)	= 0))
 
 
 	/*INCONSISTENCIAS DEL CAMPO: VALUACIONES NO TERRENO*/
@@ -1117,10 +1117,10 @@ BEGIN
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
 		AND Codigo_Tipo_Bien			= 2
-		AND ((ISNULL(Monto_Ultima_Tasacion_Terreno, 0)				= 0)
-			 OR (ISNULL(Monto_Ultima_Tasacion_No_Terreno, 0 )		= 0)
-			 OR (ISNULL(Monto_Tasacion_Actualizada_Terreno, 0)		= 0)
-			 OR (ISNULL(Monto_Tasacion_Actualizada_No_Terreno , 0)	= 0))
+		AND ((COALESCE(Monto_Ultima_Tasacion_Terreno, 0)				= 0)
+			 OR (COALESCE(Monto_Ultima_Tasacion_No_Terreno, 0 )		= 0)
+			 OR (COALESCE(Monto_Tasacion_Actualizada_Terreno, 0)		= 0)
+			 OR (COALESCE(Monto_Tasacion_Actualizada_No_Terreno , 0)	= 0))
 
 /************************************************************************************************
  *                                                                                              * 
@@ -1188,13 +1188,13 @@ BEGIN
          CONVERT(VARCHAR(5), Moneda)							+ CHAR(9) +
 		 CONVERT(VARCHAR(5), Producto)							+ CHAR(9) + 
          CONVERT(VARCHAR(20), Operacion)						+ CHAR(9) + 
-		 ISNULL(CONVERT(VARCHAR(5), Tipo_Garantia_Real), '')	+ CHAR(9) +
-	     ISNULL(Garantia_Real, '')								+ CHAR(9) +
-         ISNULL(CONVERT(VARCHAR(5), Clase_Garantia), '')		+ CHAR(9) +
-		 ISNULL(CONVERT(VARCHAR(5), Tipo_Bien), '')				+ CHAR(9) + 
-         ISNULL(CONVERT(VARCHAR(5), Tipo_Mitigador), '')		+ CHAR(9) +
-		 ISNULL(CONVERT(VARCHAR(5), Tipo_Documento_Legal), '')	+ CHAR(9) + 
-		 ISNULL(CONVERT(VARCHAR(5), Grado_Gravamen), '')		+ CHAR(9) + 
+		 COALESCE(CONVERT(VARCHAR(5), Tipo_Garantia_Real), '')	+ CHAR(9) +
+	     COALESCE(Garantia_Real, '')								+ CHAR(9) +
+         COALESCE(CONVERT(VARCHAR(5), Clase_Garantia), '')		+ CHAR(9) +
+		 COALESCE(CONVERT(VARCHAR(5), Tipo_Bien), '')				+ CHAR(9) + 
+         COALESCE(CONVERT(VARCHAR(5), Tipo_Mitigador), '')		+ CHAR(9) +
+		 COALESCE(CONVERT(VARCHAR(5), Tipo_Documento_Legal), '')	+ CHAR(9) + 
+		 COALESCE(CONVERT(VARCHAR(5), Grado_Gravamen), '')		+ CHAR(9) + 
 		 Tipo_Inconsistencia + CHAR(9))	AS [Inconsistencia!3!DATOS!element],
 		Usuario							AS [Inconsistencia!3!Usuario!hide]
 	FROM	@TMP_INCONSISTENCIAS 

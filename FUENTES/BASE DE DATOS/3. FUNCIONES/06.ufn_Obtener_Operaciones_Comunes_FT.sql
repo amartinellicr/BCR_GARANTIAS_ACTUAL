@@ -155,12 +155,12 @@ BEGIN
 													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
 													ELSE GR3.Identificacion_Sicc
 												  END
-						AND MGT.prmgt_pnuide_alf =	CASE
-														WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-														WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-														WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-														ELSE MGT.prmgt_pnuide_alf
-													END
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
+																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
+																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
+																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
+																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
+																	END
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -225,12 +225,12 @@ BEGIN
 													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
 													ELSE GR3.Identificacion_Sicc
 												  END
-						AND MGT.prmgt_pnuide_alf =	CASE
-														WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-														WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-														WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-														ELSE MGT.prmgt_pnuide_alf
-													END
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
+																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
+																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
+																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
+																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
+																	END
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -295,12 +295,12 @@ BEGIN
 													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
 													ELSE GR3.Identificacion_Sicc
 												  END
-						AND MGT.prmgt_pnuide_alf =	CASE
-														WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-														WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-														WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-														ELSE MGT.prmgt_pnuide_alf
-													END
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
+																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
+																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
+																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
+																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
+																	END
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
