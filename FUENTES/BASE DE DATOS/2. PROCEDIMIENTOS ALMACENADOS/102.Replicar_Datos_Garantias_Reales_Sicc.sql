@@ -211,7 +211,8 @@ BEGIN
 					AND MGT.prmgt_pcoclagar = 11
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-					AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 					AND MGT.prmgt_estado = 'A'
 					
 			END TRY
@@ -533,7 +534,8 @@ BEGIN
 					AND ((MGT.prmgt_pcoclagar = 38)
 						OR (MGT.prmgt_pcoclagar = 43))
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-					AND COALESCE(GGR.num_placa_bien, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 					AND MGT.prmgt_estado = 'A'
 
 			END TRY
@@ -691,7 +693,8 @@ BEGIN
 					AND MGT.prmgt_pcoclagar = 11
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-					AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 					AND MGT.prmgt_estado = 'A'
 					
 			END TRY
@@ -1000,7 +1003,8 @@ BEGIN
 					AND ((MGT.prmgt_pcoclagar = 38)
 						OR (MGT.prmgt_pcoclagar = 43))
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-					AND COALESCE(GGR.num_placa_bien, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 					AND MGT.prmgt_estado = 'A'
 
 			END TRY
@@ -1303,7 +1307,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMOC MOC
 								WHERE	 MOC.prmoc_estado = 'A'
@@ -1366,7 +1371,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMOC MOC
 								WHERE	 MOC.prmoc_estado = 'A'
@@ -1815,7 +1821,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.num_placa_bien, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMOC MOC
 								WHERE	 MOC.prmoc_estado = 'A'
@@ -1878,7 +1885,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.num_placa_bien, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMOC MOC
 								WHERE	 MOC.prmoc_estado = 'A'
@@ -2070,7 +2078,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2131,7 +2140,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2313,14 +2323,14 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2375,14 +2385,14 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2568,7 +2578,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2629,7 +2640,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE MCA.prmca_estado = 'A'
@@ -2838,7 +2850,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'
@@ -2908,7 +2921,8 @@ BEGIN
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'
@@ -3117,14 +3131,14 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'
@@ -3188,14 +3202,14 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'
@@ -3408,7 +3422,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'
@@ -3478,7 +3493,8 @@ BEGIN
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
 													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
-													AND COALESCE(GGR.numero_finca, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
 								WHERE	MCA.prmca_estado = 'A'

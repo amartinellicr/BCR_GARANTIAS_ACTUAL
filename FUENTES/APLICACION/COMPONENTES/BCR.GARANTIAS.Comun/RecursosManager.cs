@@ -38,6 +38,9 @@ namespace BCR.GARANTIAS.Comun
 					nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name +  "." + nombreClase;
 					resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetExecutingAssembly());
 					texto = resourceManager.GetString(llave);
+
+                    UtilitariosComun.RegistraEventLog("Error encontrando llave, nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
+
 				}
 				else
 				{
@@ -53,17 +56,23 @@ namespace BCR.GARANTIAS.Comun
 					resourceManager = new ResourceManager (nombreLargoClase, assembly);
 					texto = resourceManager.GetString(llave);
 
+                    UtilitariosComun.RegistraEventLog("Error encontrando llave, ruta: " + rutaLibreria + "; nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
+
 					if (texto == null)
 					{
 						nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name +  "." + nombreClase;
 						resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetExecutingAssembly());
 						texto = resourceManager.GetString(llave);
+
+                        UtilitariosComun.RegistraEventLog("Error encontrando llave, nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
 					}
 				}				
 				if (texto == null)
 				{
 					nombreLargoClase = Assembly.GetEntryAssembly().GetName().Name +  "." + nombreClase;
 					resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetEntryAssembly());
+
+                    UtilitariosComun.RegistraEventLog("Error encontrando llave, nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
 				}
 				return texto;
 			}

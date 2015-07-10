@@ -66,7 +66,7 @@ AS
 				'' AS cod_clase_bien,
 				GGR.numero_finca AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + ISNULL(GGR.numero_finca, '') AS Codigo_Bien
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
@@ -107,13 +107,14 @@ AS
 				'' AS cod_clase_bien,
 				GGR.numero_finca AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + ISNULL(GGR.numero_finca, '') AS Codigo_Bien
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
 			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
 							prmgt_pnu_part,
-							prmgt_pnuide_alf AS prmgt_pnuidegar,
+							prmgt_pnuide_alf,
+							prmgt_pnuidegar,
 							CASE 
 									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
 									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
@@ -122,11 +123,12 @@ AS
 						FROM	dbo.GAR_SICC_PRMGT 
 						WHERE	prmgt_estado = 'A'
 							AND prmgt_pcoclagar = 11
-						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuide_alf, prmgt_pfeavaing
-						ORDER BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuide_alf) MGT
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing
+						ORDER BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf) MGT
 			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 			AND MGT.prmgt_pnu_part = GGR.cod_partido
-			AND MGT.prmgt_pnuidegar = GGR.numero_finca
+			AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+			AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 			WHERE	GGR.cod_clase_garantia = 11
 			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
 			ORDER BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
@@ -148,7 +150,7 @@ AS
 				'' AS cod_clase_bien,
 				GGR.numero_finca AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + ISNULL(GGR.numero_finca, '') AS Codigo_Bien
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
@@ -189,7 +191,7 @@ AS
 				'' AS cod_clase_bien,
 				GGR.numero_finca AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + ISNULL(GGR.numero_finca, '') AS Codigo_Bien
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
@@ -228,10 +230,10 @@ AS
 		(	SELECT	TOP 100 PERCENT 
 				GGR.cod_clase_garantia,
 				GGR.cod_partido,
-				ISNULL(GGR.cod_clase_bien, '') AS cod_clase_bien,
+				COALESCE(GGR.cod_clase_bien, '') AS cod_clase_bien,
 				GGR.num_placa_bien AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL(GGR.cod_clase_bien, '') + ISNULL(GGR.num_placa_bien, '') AS Codigo_Bien
+				COALESCE(GGR.cod_clase_bien, '') + COALESCE(GGR.num_placa_bien, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
@@ -272,15 +274,16 @@ AS
 		(	SELECT	TOP 100 PERCENT 
 				GGR.cod_clase_garantia,
 				GGR.cod_partido,
-				ISNULL(GGR.cod_clase_bien, '') AS cod_clase_bien,
+				COALESCE(GGR.cod_clase_bien, '') AS cod_clase_bien,
 				GGR.num_placa_bien AS Identificacion_Garantia,
 				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
-				ISNULL(GGR.cod_clase_bien, '') + ISNULL(GGR.num_placa_bien, '') AS Codigo_Bien
+				COALESCE(GGR.num_placa_bien, '') AS Codigo_Bien
 			FROM	dbo.GAR_GARANTIA_REAL GGR 
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
 			ON GVR.cod_garantia_real = GGR.cod_garantia_real
 			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
 							prmgt_pnu_part,
+							prmgt_pnuidegar,
 							prmgt_pnuide_alf,
 							CASE 
 									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
@@ -291,10 +294,11 @@ AS
 						WHERE	prmgt_estado = 'A'
 							AND ((prmgt_pcoclagar = 38)
 								OR (prmgt_pcoclagar = 43))
-						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuide_alf, prmgt_pfeavaing
-						ORDER BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuide_alf) MGT
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing
+						ORDER BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf) MGT
 			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-			AND MGT.prmgt_pnuide_alf = GGR.num_placa_bien
+			AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+			AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 			WHERE	((GGR.cod_clase_garantia = 38)
 						OR (GGR.cod_clase_garantia = 43))
 			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.cod_clase_bien, GGR.num_placa_bien

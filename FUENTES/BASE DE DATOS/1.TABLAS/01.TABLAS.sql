@@ -244,6 +244,7 @@ CREATE TABLE dbo.GAR_GARANTIA_REAL
 	num_placa_bien        varchar(25)  NULL ,
 	cod_tipo_bien         smallint  NULL,
 	Identificacion_Sicc DECIMAL(12, 0) NULL,
+	Identificacion_Alfanumerica_Sicc VARCHAR(25) NULL,
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
@@ -252,7 +253,10 @@ CREATE TABLE dbo.GAR_GARANTIA_REAL
 	 
 )
  ON "PRIMARY"
-go
+GO
+
+EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación alfanumérica del bien registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_REAL', @level2type=N'COLUMN',@level2name=N'Identificacion_Alfanumerica_Sicc'
+GO
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación del bien registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_REAL', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
 GO

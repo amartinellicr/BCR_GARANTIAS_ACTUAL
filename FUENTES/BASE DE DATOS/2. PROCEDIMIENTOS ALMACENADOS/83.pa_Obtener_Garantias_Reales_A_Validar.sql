@@ -108,11 +108,12 @@ BEGIN
 		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
 		COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-		CASE GGR.cod_tipo_garantia_real  
-			WHEN 1 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '')  
-			WHEN 2 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') 
-			WHEN 3 THEN COALESCE(GGR.cod_clase_bien, '') + '-' + COALESCE(GGR.num_placa_bien, '')
-		END AS Codigo_Bien, 
+		CASE 
+			WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+			WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+		END	AS Codigo_Bien, 
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Presentacion,
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
@@ -169,11 +170,12 @@ BEGIN
 		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
 		COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-		CASE GGR.cod_tipo_garantia_real  
-			WHEN 1 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '')  
-			WHEN 2 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') 
-			WHEN 3 THEN COALESCE(GGR.cod_clase_bien, '') + '-' + COALESCE(GGR.num_placa_bien, '')
-		END AS Codigo_Bien, 
+		CASE 
+			WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+			WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+		END	AS Codigo_Bien, 
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Presentacion,
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
@@ -195,18 +197,8 @@ BEGIN
 							AND GSP.prmgt_pnu_oper   = ROV.num_contrato
 							AND GSP.prmgt_pcoclagar  = GGR.cod_clase_garantia
 							AND GSP.prmgt_pco_grado  = COALESCE(GGR.cod_grado, GSP.prmgt_pco_grado)
-							AND GSP.prmgt_pnuidegar = CASE
-														WHEN GGR.cod_clase_garantia = 11 THEN GSP.prmgt_pnuidegar
-														WHEN GGR.cod_clase_garantia = 38 THEN GSP.prmgt_pnuidegar
-														WHEN GGR.cod_clase_garantia = 43 THEN GSP.prmgt_pnuidegar
-														ELSE GGR.Identificacion_Sicc
-													  END
-							AND COALESCE(GSP.prmgt_pnuide_alf, '') =	CASE
-																			WHEN GGR.cod_clase_garantia = 11 THEN COALESCE(GGR.numero_finca, '')
-																			WHEN GGR.cod_clase_garantia = 38 THEN COALESCE(GGR.num_placa_bien, '')
-																			WHEN GGR.cod_clase_garantia = 43 THEN COALESCE(GGR.num_placa_bien, '')
-																			ELSE COALESCE(GSP.prmgt_pnuide_alf, '')
-																		END
+							AND COALESCE(GSP.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+							AND COALESCE(GSP.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 							AND GSP.prmgt_pco_produ  = 10
 							AND GSP.prmgt_estado     = 'A') /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura 
 												   del SICC*/
@@ -621,11 +613,12 @@ BEGIN
 			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
 			COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-			CASE GGR.cod_tipo_garantia_real  
-				WHEN 1 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '')  
-				WHEN 2 THEN COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') 
-				WHEN 3 THEN COALESCE(GGR.cod_clase_bien, '') + '-' + COALESCE(GGR.num_placa_bien, '')
-			END AS Codigo_Bien, 
+			CASE 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+			END	AS Codigo_Bien, 
 			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 			AS Fecha_Constitucion, 
 			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 

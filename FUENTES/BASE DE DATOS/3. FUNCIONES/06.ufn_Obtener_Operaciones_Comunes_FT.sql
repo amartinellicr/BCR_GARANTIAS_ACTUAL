@@ -149,18 +149,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmoc_pco_moned
 						AND MGT.prmgt_pco_produ = GSP.prmoc_pco_produ
 						AND MGT.prmgt_pco_conta = GSP.prmoc_pco_conta
-						AND MGT.prmgt_pnuidegar = CASE
-													WHEN GR3.cod_clase_garantia = 11 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 38 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
-													ELSE GR3.Identificacion_Sicc
-												  END
-						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
-																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
-																	END
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -219,18 +209,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
 						AND MGT.prmgt_pco_produ = 10
 						AND MGT.prmgt_pco_conta = GSP.prmca_pco_conta
-						AND MGT.prmgt_pnuidegar = CASE
-													WHEN GR3.cod_clase_garantia = 11 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 38 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
-													ELSE GR3.Identificacion_Sicc
-												  END
-						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
-																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
-																	END
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -289,18 +269,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
 						AND MGT.prmgt_pco_produ = 10
 						AND MGT.prmgt_pco_conta = GSP.prmca_pco_conta
-						AND MGT.prmgt_pnuidegar = CASE
-													WHEN GR3.cod_clase_garantia = 11 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 38 THEN MGT.prmgt_pnuidegar
-													WHEN GR3.cod_clase_garantia = 43 THEN MGT.prmgt_pnuidegar
-													ELSE GR3.Identificacion_Sicc
-												  END
-						AND COALESCE(MGT.prmgt_pnuide_alf, '') =	CASE
-																		WHEN GR3.cod_clase_garantia = 11 THEN GR3.numero_finca
-																		WHEN GR3.cod_clase_garantia = 38 THEN GR3.num_placa_bien
-																		WHEN GR3.cod_clase_garantia = 43 THEN GR3.num_placa_bien
-																		ELSE COALESCE(MGT.prmgt_pnuide_alf, '')
-																	END
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido

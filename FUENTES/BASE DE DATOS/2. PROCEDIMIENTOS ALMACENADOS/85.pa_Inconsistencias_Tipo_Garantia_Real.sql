@@ -1117,10 +1117,10 @@ BEGIN
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
 		AND Codigo_Tipo_Bien			= 2
-		AND ((COALESCE(Monto_Ultima_Tasacion_Terreno, 0)				= 0)
-			 OR (COALESCE(Monto_Ultima_Tasacion_No_Terreno, 0 )		= 0)
-			 OR (COALESCE(Monto_Tasacion_Actualizada_Terreno, 0)		= 0)
-			 OR (COALESCE(Monto_Tasacion_Actualizada_No_Terreno , 0)	= 0))
+		AND ((COALESCE(Monto_Ultima_Tasacion_Terreno, 0)			 = 0)
+			 OR (COALESCE(Monto_Ultima_Tasacion_No_Terreno, 0 )		 = 0)
+			 OR (COALESCE(Monto_Tasacion_Actualizada_Terreno, 0)	 = 0)
+			 OR (COALESCE(Monto_Tasacion_Actualizada_No_Terreno , 0) = 0))
 
 /************************************************************************************************
  *                                                                                              * 

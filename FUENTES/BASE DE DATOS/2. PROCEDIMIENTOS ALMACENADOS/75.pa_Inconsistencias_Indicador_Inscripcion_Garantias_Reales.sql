@@ -281,18 +281,8 @@ BEGIN
 					 AND GSP.prmgt_pco_moned	= ROV.cod_moneda_contrato
 					 AND GSP.prmgt_pco_produ	= 10
 					 AND GSP.prmgt_pco_conta	= 1
-					 AND GSP.prmgt_pnuidegar = CASE
-												WHEN GGR.cod_clase_garantia = 11 THEN GSP.prmgt_pnuidegar
-												WHEN GGR.cod_clase_garantia = 38 THEN GSP.prmgt_pnuidegar
-												WHEN GGR.cod_clase_garantia = 43 THEN GSP.prmgt_pnuidegar
-												ELSE GGR.Identificacion_Sicc
-											   END
-					 AND COALESCE(GSP.prmgt_pnuide_alf, '') =	CASE
-																	WHEN GGR.cod_clase_garantia = 11 THEN COALESCE(GGR.numero_finca, '')
-																	WHEN GGR.cod_clase_garantia = 38 THEN COALESCE(GGR.num_placa_bien, '')
-																	WHEN GGR.cod_clase_garantia = 43 THEN COALESCE(GGR.num_placa_bien, '')
-																	ELSE COALESCE(GSP.prmgt_pnuide_alf, '')
-																END)
+					 AND COALESCE(GSP.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+					 AND COALESCE(GSP.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, ''))
 
 	ORDER BY
 		ROV.cod_operacion,
@@ -337,7 +327,7 @@ BEGIN
 					AND TGR.cod_producto				= TOD.cod_producto
 					AND TGR.operacion					= TOD.operacion
 					AND COALESCE(TGR.cod_bien, '')		= COALESCE(TOD.cod_garantia_sicc, '')
-					AND COALESCE(TGR.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+					AND COALESCE(TGR.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 					AND TOD.cod_tipo_operacion			IN (1, 2)
 					AND TOD.cod_tipo_garantia			= 2
 					AND TGR.cod_tipo_documento_legal	IS NULL
@@ -397,7 +387,7 @@ BEGIN
 								AND GR2.operacion					= TOD.operacion
 								AND COALESCE(GR2.numero_finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 								AND GR2.cod_tipo_garantia_real		= 1
-								AND COALESCE(GR2.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+								AND COALESCE(GR2.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 								AND TOD.cod_tipo_garantia			= 2
 								AND GR2.cod_tipo_operacion			IN (1, 2))
 	AND GR1.cod_tipo_garantia_real	= 1
@@ -417,7 +407,7 @@ BEGIN
 					AND TGR.operacion					= TOD.operacion
 					AND COALESCE(TGR.numero_finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 					AND TGR.cod_llave					<> TOD.cod_garantia
-					AND COALESCE(TGR.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+					AND COALESCE(TGR.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 					AND TGR.cod_tipo_garantia_real		= 1
 					AND TGR.cod_tipo_operacion			IN (1, 2)
 					AND TOD.cod_tipo_garantia			= 2)
@@ -473,7 +463,7 @@ BEGIN
 								AND COALESCE(GR2.numero_finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 								AND GR2.cod_grado					= TOD.cod_grado
 								AND GR2.cod_tipo_garantia_real		= 2
-								AND COALESCE(GR2.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+								AND COALESCE(GR2.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 								AND TOD.cod_tipo_garantia			= 2
 								AND GR2.cod_tipo_operacion			IN (1, 2))
 	AND GR1.cod_tipo_garantia_real	= 2
@@ -495,7 +485,7 @@ BEGIN
 					AND TGR.cod_grado					= TOD.cod_grado
 					AND TGR.cod_llave					<> TOD.cod_garantia
 					AND TGR.cod_tipo_garantia_real		= 2
-					AND COALESCE(TGR.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+					AND COALESCE(TGR.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 					AND TOD.cod_tipo_garantia			= 2
 					AND TGR.cod_tipo_operacion			IN (1, 2))
 	AND TGR.cod_tipo_garantia_real	= 2
@@ -547,7 +537,7 @@ BEGIN
 								AND GR2.operacion					= TOD.operacion
 								AND COALESCE(GR2.num_placa_bien, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 								AND GR2.cod_tipo_garantia_real		= 3
-								AND COALESCE(GR2.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+								AND COALESCE(GR2.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 								AND TOD.cod_tipo_garantia			= 2
 								AND GR2.cod_tipo_operacion			IN (1, 2))
 	AND GR1.cod_tipo_garantia_real	= 3
@@ -568,7 +558,7 @@ BEGIN
 					AND COALESCE(TGR.num_placa_bien, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 					AND TGR.cod_llave					<> TOD.cod_garantia
 					AND TGR.cod_tipo_garantia_real		= 3
-					AND COALESCE(TGR.cod_usuario, '')		= COALESCE(TOD.cod_usuario, '')
+					AND COALESCE(TGR.cod_usuario, '')	= COALESCE(TOD.cod_usuario, '')
 					AND TOD.cod_tipo_garantia			= 2
 					AND TGR.cod_tipo_operacion			IN (1, 2))
 	AND TGR.cod_tipo_garantia_real	= 3

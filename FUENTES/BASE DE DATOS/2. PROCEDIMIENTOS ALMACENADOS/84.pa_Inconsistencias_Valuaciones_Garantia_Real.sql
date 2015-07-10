@@ -324,7 +324,10 @@ BEGIN
 		prmgt_pcoclagar ,
 		prmgt_pcotengar	,
 		prmgt_pnu_part  ,
-		COALESCE(prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+		CASE 
+			WHEN prmgt_pnuide_alf IS NULL THEN CONVERT(VARCHAR(25), prmgt_pnuidegar)
+			ELSE COALESCE(prmgt_pnuide_alf, '') 
+		END AS prmgt_pnuidegar,
 		prmgt_pmoavaing	
 	FROM	dbo.GAR_SICC_PRMGT
 	WHERE	prmgt_estado = 'A'
@@ -375,7 +378,10 @@ BEGIN
 		prmgt_pcoclagar ,
 		prmgt_pcotengar	,
 		prmgt_pnu_part  ,
-		COALESCE(prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+		CASE 
+			WHEN prmgt_pnuide_alf IS NULL THEN CONVERT(VARCHAR(25), prmgt_pnuidegar)
+			ELSE COALESCE(prmgt_pnuide_alf, '') 
+		END AS prmgt_pnuidegar,
 		prmgt_pmoavaing	
 	FROM	dbo.GAR_SICC_PRMGT
 	WHERE	prmgt_estado = 'A'
@@ -702,7 +708,7 @@ BEGIN
 		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
 		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
 			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
-								
+									
 	
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato,
 					   Tipo_Garantia_Real, Garantia_Real, Clase_Garantia, 

@@ -2267,13 +2267,23 @@ namespace BCRGARANTIAS.Forms
                     Session["Accion"] = "CARGACOMBO";
 
                     tipoBien = int.Parse(((cbTipoBien.Items.Count > 0) ? cbTipoBien.SelectedItem.Value : "-1"));
-
+                    
                     if (tipoBien == -1)
                     {
                         txtPorcentajeAceptacionCalculado.Text = "0.00";
                         txtPorcentajeAceptacion.Text = "0.00";
                         btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, "0.00");
                         ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, 0);
+                    }
+
+                    if ((tipoGarantiaReal != 1) && (porcentajeAceptacionCalculado == 0))
+                    {
+                        int tipoMitigador = int.Parse(((cbMitigador.Items.Count > 0) ? cbMitigador.SelectedItem.Value : "-1"));
+
+                        if (tipoMitigador != -1)
+                        {
+                            porcentajeAceptacionCalculado = Gestor.ObtenerValorPorcentajeAceptacion(null, 2, tipoMitigador, 4);
+                        }
                     }
 
                     if ((tipoBien > 4) || (porcentajeAceptacionCalculado == 0))
@@ -2289,7 +2299,7 @@ namespace BCRGARANTIAS.Forms
 
                         if (cbMitigador.SelectedItem.Value.CompareTo("-1") != 0)
                         {
-                            int tipoMitigador = int.Parse(((cbMitigador.Items.Count > 0) ? cbMitigador.SelectedItem.Value : "-1"));
+                            int tipoMitigadorSel = int.Parse(((cbMitigador.Items.Count > 0) ? cbMitigador.SelectedItem.Value : "-1"));
                         }
 
                         if (tipoBien != -1)
@@ -4025,7 +4035,7 @@ namespace BCRGARANTIAS.Forms
                 else if (nTGarantiaReal == int.Parse(Application["PRENDAS"].ToString()))
                 {
                     lblPartido.Text = "Clase Bien: ";
-                    txtPartido.Enabled = true;
+                    txtPartido.Enabled = (((entidadGarantia.CodClaseGarantia == 38) || (entidadGarantia.CodClaseGarantia == 43)) ? false : true);
                     txtPartido.Text = entidadGarantia.CodClaseBien;
                     lblFinca.Text = "Id Bien: ";
                     txtNumFinca.Text = entidadGarantia.NumPlacaBien;

@@ -282,12 +282,13 @@ BEGIN
 			Codigo_Bien_Bitacora)
 		SELECT	DISTINCT
 			GGR.cod_garantia_real,
-			CASE   
-				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '')  
-				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') 
-				WHEN GGR.cod_tipo_garantia_real = 3 THEN '[P] '  + COALESCE(GGR.cod_clase_bien, '') + '-' + COALESCE(GGR.num_placa_bien, '')
+			CASE 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN '[P] '  + COALESCE(GGR.num_placa_bien,'') 
 				ELSE '[-] ' + @psCodigo_Bien
-			END AS Codigo_Bien_Bitacora
+			END	AS Codigo_Bien_Bitacora
 		FROM	dbo.GAR_GARANTIA_REAL GGR 
 		WHERE	GGR.cod_clase_garantia	= @viClaseGarantia 
 			AND GGR.cod_partido			= @viPartido 
@@ -711,16 +712,18 @@ BEGIN
 						INNER JOIN (	SELECT	TOP 100 PERCENT 
 											GGR.cod_clase_garantia,
 											GGR.cod_partido,
-											GGR.numero_finca,
+											GGR.Identificacion_Sicc,
+											GGR.Identificacion_Alfanumerica_Sicc,
 											MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
 											MIN(MG3.prmgt_pmoavaing) AS monto_total_avaluo
 										FROM	dbo.GAR_GARANTIA_REAL GGR 
-											INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, COALESCE(MG2.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf, 
+											INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
 																MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
 														FROM	
 														(		SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -743,7 +746,8 @@ BEGIN
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -763,7 +767,8 @@ BEGIN
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -790,16 +795,18 @@ BEGIN
 																							AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
 																							AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
 														) MG2
-														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
+														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
 										ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 										AND MGT.prmgt_pnu_part = GGR.cod_partido
-										AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.numero_finca, '')
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, COALESCE(MG2.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf, 
+										AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+										AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
+										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
 															MG2.prmgt_pfeavaing, MIN(MG2.prmgt_pmoavaing) AS prmgt_pmoavaing
 														FROM	
 														(		SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -823,7 +830,8 @@ BEGIN
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -844,7 +852,8 @@ BEGIN
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
 																	MG1.prmgt_pnu_part,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -872,17 +881,19 @@ BEGIN
 																							AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
 																							AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
 														) MG2
-														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MG3
+														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MG3
 										ON MG3.prmgt_pcoclagar = MGT.prmgt_pcoclagar
 										AND MG3.prmgt_pnu_part = MGT.prmgt_pnu_part
+										AND COALESCE(MG3.prmgt_pnuidegar, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
 										AND COALESCE(MG3.prmgt_pnuide_alf, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 										AND MG3.prmgt_pfeavaing = MGT.prmgt_pfeavaing
 										WHERE	GGR.cod_clase_garantia = 11
-										GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
+										GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
 									) GHC
 						ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
 						AND GHC.cod_partido = GGR.cod_partido
-						AND GHC.numero_finca = GGR.numero_finca
+						AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+						AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 					WHERE	GHC.fecha_valuacion > '19000101') TMP
 				ON TMP.cod_garantia_real = GV1.Consecutivo_Garantia_Real
 				AND GV1.Fecha_Valuacion = CONVERT(DATETIME, TMP.fecha_valuacion)
@@ -1921,12 +1932,13 @@ BEGIN
 			Codigo_Bien_Bitacora)
 		SELECT	DISTINCT
 			GGR.cod_garantia_real,
-			CASE   
-				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '')  
-				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') 
-				WHEN GGR.cod_tipo_garantia_real = 3 THEN '[P] '  + COALESCE(GGR.cod_clase_bien, '') + '-' + COALESCE(GGR.num_placa_bien, '')
+			CASE 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN '[P] '  + COALESCE(GGR.num_placa_bien,'') 
 				ELSE '[-] ' + @psCodigo_Bien
-			END AS Codigo_Bien_Bitacora
+			END	AS Codigo_Bien_Bitacora
 		FROM	dbo.GAR_GARANTIA_REAL GGR 
 		WHERE	GGR.cod_clase_garantia	= @viClaseGarantia 
 			AND GGR.num_placa_bien		= @vsIdentificacionGarantia
@@ -2358,15 +2370,17 @@ BEGIN
 					FROM	dbo.GAR_GARANTIA_REAL GGR
 						INNER JOIN (	SELECT	TOP 100 PERCENT 
 											GGR.cod_clase_garantia,
-											GGR.num_placa_bien,
+											GGR.Identificacion_Sicc,
+											GGR.Identificacion_Alfanumerica_Sicc,
 											MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
 											MIN(MG3.prmgt_pmoavaing) AS monto_total_avaluo
 										FROM	dbo.GAR_GARANTIA_REAL GGR 
-											INNER JOIN (SELECT	MG2.prmgt_pcoclagar, COALESCE(MG2.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf, 
+											INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
 																MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
 														FROM	
 														(		SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2389,7 +2403,8 @@ BEGIN
 																					AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2409,7 +2424,8 @@ BEGIN
 																					AND MG1.prmgt_pco_produ = 10)
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2437,14 +2453,16 @@ BEGIN
 																							AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
 																							AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
 														) MG2
-														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
+														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
 										ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-										AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.num_placa_bien, '')
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, COALESCE(MG2.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf, 
+										AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+										AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
+										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
 															MG2.prmgt_pfeavaing, MIN(MG2.prmgt_pmoavaing) AS prmgt_pmoavaing
 														FROM	
 														(		SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2468,7 +2486,8 @@ BEGIN
 																					AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2489,7 +2508,8 @@ BEGIN
 																					AND MG1.prmgt_pco_produ = 10)
 																UNION ALL
 																SELECT	MG1.prmgt_pcoclagar,
-																	COALESCE(MG1.prmgt_pnuide_alf, '') AS prmgt_pnuide_alf,
+																	MG1.prmgt_pnuidegar,
+																	MG1.prmgt_pnuide_alf,
 																	CASE 
 																		WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
 																		WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
@@ -2518,16 +2538,18 @@ BEGIN
 																							AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
 																							AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
 														) MG2
-														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MG3
+														GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MG3
 										ON MG3.prmgt_pcoclagar = MGT.prmgt_pcoclagar
+										AND COALESCE(MG3.prmgt_pnuidegar, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
 										AND COALESCE(MG3.prmgt_pnuide_alf, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
 										AND MG3.prmgt_pfeavaing = MGT.prmgt_pfeavaing
 										WHERE	((GGR.cod_clase_garantia = 38)
 													OR (GGR.cod_clase_garantia = 43))
-										GROUP BY GGR.cod_clase_garantia, GGR.num_placa_bien
+										GROUP BY GGR.cod_clase_garantia, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
 									) GHC
 						ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-						AND GHC.num_placa_bien = GGR.num_placa_bien
+						AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+						AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 					WHERE	GHC.fecha_valuacion > '19000101') TMP
 				ON TMP.cod_garantia_real = GV1.Consecutivo_Garantia_Real
 				AND GV1.Fecha_Valuacion = CONVERT(DATETIME, TMP.fecha_valuacion)
