@@ -215,9 +215,9 @@ BEGIN
 		c.cod_partido,
 		c.cod_tipo_garantia,
 		CASE 
-			WHEN c.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + COALESCE(c.numero_finca,'')  
-			WHEN c.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + COALESCE(c.numero_finca,'')
-			WHEN ((c.cod_tipo_garantia_real = 3) AND (c.cod_clase_garantia <> 38) AND (c.cod_clase_garantia <> 43)) THEN COALESCE(c.cod_clase_bien,'') + COALESCE(c.num_placa_bien,'') 
+			WHEN c.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + COALESCE(c.numero_finca,'')  
+			WHEN c.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + COALESCE(c.numero_finca,'')
+			WHEN ((c.cod_tipo_garantia_real = 3) AND (c.cod_clase_garantia <> 38) AND (c.cod_clase_garantia <> 43)) THEN COALESCE(c.cod_clase_bien,'') + '-' + COALESCE(c.num_placa_bien,'') 
 			WHEN ((c.cod_tipo_garantia_real = 3) AND ((c.cod_clase_garantia = 38) OR (c.cod_clase_garantia = 43))) THEN COALESCE(c.num_placa_bien,'') 
 		END AS cod_garantias_listado,
 		CASE 

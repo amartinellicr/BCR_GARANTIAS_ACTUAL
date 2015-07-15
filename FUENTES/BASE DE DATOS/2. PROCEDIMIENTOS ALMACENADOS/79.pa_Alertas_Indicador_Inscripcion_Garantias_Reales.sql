@@ -2,7 +2,7 @@ USE [GARANTIAS]
 GO
 
 SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
+SET QUOTED_IDENTIFIER ON 
 GO
 
 IF OBJECT_ID ('pa_Alertas_Indicador_Inscripcion_Garantias_Reales', 'P') IS NOT NULL
@@ -202,9 +202,9 @@ BEGIN
 		COALESCE(GRO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
 		COALESCE(GRO.monto_mitigador, 0) AS monto_mitigador,
 		CASE 
-			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')  
-			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')
-			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + COALESCE(GR.num_placa_bien,'') 
+			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')  
+			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')
+			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + '-' + COALESCE(GR.num_placa_bien,'') 
 			WHEN ((GR.cod_tipo_garantia_real = 3) AND ((GR.cod_clase_garantia = 38) OR (GR.cod_clase_garantia = 43))) THEN COALESCE(GR.num_placa_bien,'') 
 		END	AS cod_bien, 
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
@@ -261,9 +261,9 @@ BEGIN
 		COALESCE(GRO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
 		COALESCE(GRO.monto_mitigador, 0) AS monto_mitigador,
 		CASE 
-			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')  
-			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')
-			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + COALESCE(GR.num_placa_bien,'') 
+			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')  
+			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')
+			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + '-' + COALESCE(GR.num_placa_bien,'') 
 			WHEN ((GR.cod_tipo_garantia_real = 3) AND ((GR.cod_clase_garantia = 38) OR (GR.cod_clase_garantia = 43))) THEN COALESCE(GR.num_placa_bien,'') 
 		END	AS cod_bien, 
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
@@ -620,9 +620,9 @@ BEGIN
 		COALESCE(GRO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
 		COALESCE(GRO.monto_mitigador, 0) AS monto_mitigador,
 		CASE 
-			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')  
-			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + COALESCE(GR.numero_finca,'')
-			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + COALESCE(GR.num_placa_bien,'') 
+			WHEN GR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')  
+			WHEN GR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GR.cod_partido),'') + '-' + COALESCE(GR.numero_finca,'')
+			WHEN ((GR.cod_tipo_garantia_real = 3) AND (GR.cod_clase_garantia <> 38) AND (GR.cod_clase_garantia <> 43)) THEN COALESCE(GR.cod_clase_bien,'') + '-' + COALESCE(GR.num_placa_bien,'') 
 			WHEN ((GR.cod_tipo_garantia_real = 3) AND ((GR.cod_clase_garantia = 38) OR (GR.cod_clase_garantia = 43))) THEN COALESCE(GR.num_placa_bien,'') 
 		END	AS cod_bien, 
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_constitucion, 

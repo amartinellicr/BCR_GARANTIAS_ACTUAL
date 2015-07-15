@@ -283,9 +283,9 @@ BEGIN
 		SELECT	DISTINCT
 			GGR.cod_garantia_real,
 			CASE 
-				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
-				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
-				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + '-' + COALESCE(GGR.num_placa_bien,'') 
 				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN '[P] '  + COALESCE(GGR.num_placa_bien,'') 
 				ELSE '[-] ' + @psCodigo_Bien
 			END	AS Codigo_Bien_Bitacora
@@ -1933,9 +1933,9 @@ BEGIN
 		SELECT	DISTINCT
 			GGR.cod_garantia_real,
 			CASE 
-				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
-				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
-				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN '[H] '  + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN '[CH] ' + COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN '[P] '  + COALESCE(GGR.cod_clase_bien,'') + '-' + COALESCE(GGR.num_placa_bien,'') 
 				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN '[P] '  + COALESCE(GGR.num_placa_bien,'') 
 				ELSE '[-] ' + @psCodigo_Bien
 			END	AS Codigo_Bien_Bitacora
