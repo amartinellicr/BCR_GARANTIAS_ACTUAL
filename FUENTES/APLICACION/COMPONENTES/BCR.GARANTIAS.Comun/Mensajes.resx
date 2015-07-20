@@ -292,10 +292,10 @@
     <value>La información de la garantía @1 se modificó satisfactoriamente.</value>
   </data>
   <data name="ERROR_MONTO_MITIGADOR_CALCULADO_MAYOR" xml:space="preserve">
-    <value>El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (@1), Fecha Avalúo (@2), Porcentaje Aceptación (@3) y Monto Mitigador Ingresado (@4).</value>
+    <value>El monto mitigador calculado es mayor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (@1), Fecha Avalúo (@2), Porcentaje Aceptación (@3) y Monto Mitigador Ingresado (@4); para la operación: @5.</value>
   </data>
   <data name="ERROR_MONTO_MITIGADOR_CALCULADO_MENOR" xml:space="preserve">
-    <value>El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (@1), Fecha Avalúo (@2), Porcentaje Aceptación (@3) y Monto Mitigador Ingresado (@4).</value>
+    <value>El monto mitigador calculado es menor al ingresado por el usuario. Se utilizaron los siguientes datos: Monto Total Avalúo (@1), Fecha Avalúo (@2), Porcentaje Aceptación (@3) y Monto Mitigador Ingresado (@4); para la operación: @5.</value>
   </data>
   <data name="ERROR_OBTENIENDO_DATOS_AVALUO" xml:space="preserve">
     <value>Se ha presentado un problema al obtener la información del avalúo de la garantía '@1'.</value>

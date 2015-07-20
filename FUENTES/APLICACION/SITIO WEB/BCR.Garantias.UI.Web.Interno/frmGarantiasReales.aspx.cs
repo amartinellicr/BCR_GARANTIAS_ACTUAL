@@ -4217,30 +4217,33 @@ namespace BCRGARANTIAS.Forms
                     {
                         clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaSapSeleccionada();
 
-                        cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
-                        txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
-                        cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
-                        txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
-                        txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
-                        txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
-                        txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
-                        txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
-                        rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
+                        if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
+                        {
+                            cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
+                            txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
+                            cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
+                            txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
+                            txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
+                            txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
+                            txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
+                            txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
+                            rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
 
-                        if (requestSM != null && requestSM.IsInAsyncPostBack)
-                        {
-                            ScriptManager.RegisterClientScriptBlock(this,
-                                                                    typeof(Page),
-                                                                    Guid.NewGuid().ToString(),
-                                                                    "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                    false);
-                        }
-                        else
-                        {
-                            this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
-                                                                   Guid.NewGuid().ToString(),
-                                                                   "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                   false);
+                            if (requestSM != null && requestSM.IsInAsyncPostBack)
+                            {
+                                ScriptManager.RegisterClientScriptBlock(this,
+                                                                        typeof(Page),
+                                                                        Guid.NewGuid().ToString(),
+                                                                        "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
+                                                                        false);
+                            }
+                            else
+                            {
+                                this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                       Guid.NewGuid().ToString(),
+                                                                       "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
+                                                                       false);
+                            }
                         }
                     }
                 }
@@ -5780,6 +5783,7 @@ namespace BCRGARANTIAS.Forms
                                     parametrosCalculo.Add(entidadGarantiaReal.FechaValuacion.ToShortDateString());
                                     parametrosCalculo.Add(entidadGarantiaReal.PorcentajeResponsabilidad.ToString());
                                     parametrosCalculo.Add(entidadGarantiaReal.MontoMitigador.ToString());
+                                    parametrosCalculo.Add(((DatosOperacion.Length > 0) ? DatosOperacion.Replace('_', '-'): "--"));
 
                                     Utilitarios.RegistraEventLog((Mensajes.Obtener(Mensajes.ERROR_MONTO_MITIGADOR_CALCULADO_MAYOR, parametrosCalculo, Mensajes.ASSEMBLY)), EventLogEntryType.Information);
 
@@ -5791,6 +5795,7 @@ namespace BCRGARANTIAS.Forms
                                     parametrosCalculo.Add(entidadGarantiaReal.FechaValuacion.ToShortDateString());
                                     parametrosCalculo.Add(entidadGarantiaReal.PorcentajeResponsabilidad.ToString());
                                     parametrosCalculo.Add(entidadGarantiaReal.MontoMitigador.ToString());
+                                    parametrosCalculo.Add(((DatosOperacion.Length > 0) ? DatosOperacion.Replace('_', '-') : "--"));
 
                                     Utilitarios.RegistraEventLog((Mensajes.Obtener(Mensajes.ERROR_MONTO_MITIGADOR_CALCULADO_MENOR, parametrosCalculo, Mensajes.ASSEMBLY)), EventLogEntryType.Information);
                                     break;
