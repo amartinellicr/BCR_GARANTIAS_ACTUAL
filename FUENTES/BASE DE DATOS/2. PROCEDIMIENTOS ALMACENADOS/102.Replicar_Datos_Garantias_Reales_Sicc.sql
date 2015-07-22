@@ -1301,8 +1301,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1366,8 +1365,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1818,8 +1816,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1883,8 +1880,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2076,8 +2072,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2139,8 +2134,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2579,8 +2573,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2642,8 +2635,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2852,8 +2844,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2924,8 +2915,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3427,8 +3417,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3499,8 +3488,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(MRI.prmri_pnuidegar, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
