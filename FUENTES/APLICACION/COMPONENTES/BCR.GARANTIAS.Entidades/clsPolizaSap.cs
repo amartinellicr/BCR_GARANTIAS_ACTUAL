@@ -629,9 +629,9 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append(_detallePoliza);
             formatoJSON.Append('"');
             formatoJSON.Append(':');
-            formatoJSON.Append('"');
-            formatoJSON.Append(detallePolizaSap);
-            formatoJSON.Append('"');
+            //formatoJSON.Append('"');
+            formatoJSON.Append(UtilitariosComun.EnquoteJSON(detallePolizaSap));
+            //formatoJSON.Append('"');
             formatoJSON.Append(",");
 
             formatoJSON.Append('"');
