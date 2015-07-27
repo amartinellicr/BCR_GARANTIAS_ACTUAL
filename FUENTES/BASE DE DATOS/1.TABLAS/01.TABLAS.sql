@@ -2473,16 +2473,16 @@ CREATE TABLE dbo.TMP_POLIZAS
 	Codigo_Producto_Operacion  numeric(2,0)  NOT NULL ,
 	Numero_Operacion      numeric(7,0)  NOT NULL ,
 	Numero_Contrato       varchar(10)  NOT NULL ,
-	Consecutivo_Operacion_Garantias  bigint  NOT NULL 
-	CONSTRAINT DF_TMP_POLIZAS_Consecutivo_Operacion_Garantias
-		 DEFAULT  -1 ,
+	Consecutivo_Operacion_Garantias  bigint  NULL,
 	Monto_Poliza          numeric(16,2)  NOT NULL ,
 	Moneda_Monto_Poliza   numeric(3,0)  NOT NULL ,
 	Estado_Poliza         char(3)  NOT NULL ,
 	Simbolo_Moneda        char(5)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL ,
 	Fecha_Vencimiento     datetime  NULL ,
 	Descripcion_Moneda_Monto_Poliza  varchar(30)  COLLATE SQL_Latin1_General_CP850_CS_AS NOT NULL ,
-	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL 
+	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL,
+	Fecha_Replica	DATETIME NULL,
+	Registro_Activo BIT NULL	
 )
  ON "PRIMARY"
 GO
@@ -2550,6 +2550,12 @@ EXEC sp_addextendedproperty 'MS_Description' , 'Número del contrato, dentro del 
 GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación, registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Consecutivo_Operacion_Garantias'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue replicado.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Fecha_Replica'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el registro está activo (1) para ser procesado o no (0)' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Registro_Activo'
 GO
 
 CREATE TABLE [dbo].[CAT_PORCENTAJE_ACEPTACION](

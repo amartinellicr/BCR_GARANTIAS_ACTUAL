@@ -44,7 +44,6 @@ public partial class frmMantenimientoPorcentajeAceptacion : BCR.Web.SystemFramew
 
     #endregion
 
-
     #region Propiedades
 
     /// <summary>
@@ -554,7 +553,6 @@ public partial class frmMantenimientoPorcentajeAceptacion : BCR.Web.SystemFramew
     }
     #endregion
 
-
     #region Metodos Privados
 
     /// <summary>
@@ -593,9 +591,9 @@ public partial class frmMantenimientoPorcentajeAceptacion : BCR.Web.SystemFramew
                 bRespuesta = false;
             }
 
-            if (bRespuesta && (decimal.Parse(txtPorcentajeAceptacion.Text) >= 100))
+            if (bRespuesta && (decimal.Parse(txtPorcentajeAceptacion.Text) > 100))
             {
-                lblMensaje.Text = "El Porcentaje debe ser menor a 100.";
+                lblMensaje.Text = "El Porcentaje debe ser menor o igual a 100.";
                 bRespuesta = false;
             }
 
