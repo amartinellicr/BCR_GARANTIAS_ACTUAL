@@ -1616,6 +1616,8 @@
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
 
+                        $$('btnValidarOperacion').attr('EIFVM', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -1664,7 +1666,10 @@
                 buttons: {
                     "Aceptar": function () {
                         $(this).dialog("close");
-                        document.body.style.cursor = 'default';   
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFVM', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -1685,6 +1690,9 @@
                     "Aceptar": function () {
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -1710,6 +1718,9 @@
                     "Aceptar": function () {
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -1736,6 +1747,9 @@
                     "Aceptar": function () {
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
                   }
                 }
             });            
@@ -3033,7 +3047,9 @@ function MensajeMontoMitigadorMayor()
               && (($$('btnValidarOperacion').attr("LISTAOPERACREDIF")) == '1')
               && (($$('btnValidarOperacion').attr("EISP")) == '1')
               && (($$('btnValidarOperacion').attr("EIPI")) == '1')
-              && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')) 
+              && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')
+              && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
+              && (($$('btnValidarOperacion').attr('EIFVM')) == '1')) 
         {
             __doPostBack('btnModificar','Metodo');
         }
@@ -3727,50 +3743,57 @@ function MensajeMontoMitigadorMayor()
 
             if ((tipoBien === 2) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  
             {
-                if ((fechaValu.length > 0) && (fechaSegui.length > 0)) 
-                {
-                    var diferenciaMesesFechaValuacion =  parseInt((getDateDiff(fechaValuacion, fechaActual, "months")));
-                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
+//                if ((fechaValu.length > 0) && (fechaSegui.length > 0)) 
+//                {
+//                    var diferenciaMesesFechaValuacion =  parseInt((getDateDiff(fechaValuacion, fechaActual, "months")));
+//                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
 
-                     //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
+//                     //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
 
-                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!indicadorDeudorHabitaVivienda)) {
+//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!indicadorDeudorHabitaVivienda)) {
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                    }
+
+//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (indicadorDeudorHabitaVivienda)) {
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                    }            
+//                }
+
+                if (fechaValu.length > 0) {
+                    //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
                         $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+
                     }
-
-                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (indicadorDeudorHabitaVivienda)) {
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                    }            
-                }
-    
+                }   
 
                 //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
-               
-                if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1)) {
+
+                if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) && (!indicadorDeudorHabitaVivienda)) {
                     $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     
                 }
 
                 //Poliza Seleccionada
                
-                if (datoCodigoSap !== -1) {
-                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                   
-                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
-                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
-                    }
+//                if (datoCodigoSap !== -1) {
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                   
+//                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
+//                    }
 
-                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                   
-                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
-                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
-                  
-                    }
-                }
-                else 
-                {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
-                }
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                   
+//                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
+//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+//                  
+//                    }
+//                }
+//                else 
+//                {
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
+//                }
             } 
             //fin if tipo bien 2
 
@@ -3780,25 +3803,25 @@ function MensajeMontoMitigadorMayor()
 
                 //Poliza Seleccionada
                 
-                if (datoCodigoSap !== -1) {
+//                if (datoCodigoSap !== -1) {
 
-                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                    
-                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
-                                         
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
-                    }
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                    
+//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
+//                                         
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
+//                    }
 
-                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                    
-                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                    
+//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
 
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
-                    }
-                }
-                else {              
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                }
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
+//                    }
+//                }
+//                else {              
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                }
 
 
             } 
@@ -3837,26 +3860,26 @@ function MensajeMontoMitigadorMayor()
 
                 //Poliza Seleccionada
                
-                if (datoCodigoSap !== -1) {
+//                if (datoCodigoSap !== -1) {
 
-                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                   
-                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
-                                     
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
-                    }
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                   
+//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
+//                                     
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+//                    }
 
-                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                    
-                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
-                                         
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
-               }
-                }
-                else {             
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                    
+//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
+//                                         
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+//               }
+//                }
+//                else {             
 
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                }
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                }
             }  
     }
 

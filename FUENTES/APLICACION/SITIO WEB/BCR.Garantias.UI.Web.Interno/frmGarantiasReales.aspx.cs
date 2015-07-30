@@ -72,6 +72,9 @@ namespace BCRGARANTIAS.Forms
         private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_INVALIDA = "EIPI";
         private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_NO_CUBRE_BIEN = "EIPNCB";
 
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO = "EIFUSM";
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR = "EIFVM";
+
         #endregion Constantes
 
         #region Variables Globales
@@ -1327,6 +1330,74 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de último seguimiento mayor a un año debe mostrarse (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorFechaUltimoSeguimientoMayor
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de valuación mayor a cinco años debe mostrarse (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorFechaValuacionMayor
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR, "0");
+                }
+            }
+        }
+
+
+
         #endregion Propiedades
 
         #region Eventos
@@ -1532,6 +1603,8 @@ namespace BCRGARANTIAS.Forms
             MostrarErrorSinPolizaAsociada = false;
             MostrarErrorPolizaInvalida = false;
             MostrarErrorMontoPolizaCubreBien = false;
+            MostrarErrorFechaUltimoSeguimientoMayor = false;
+            MostrarErrorFechaValuacionMayor = false;
 
             btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INDICADOR_INCONSISTENCIA, "0");
 
@@ -1562,6 +1635,8 @@ namespace BCRGARANTIAS.Forms
                             MostrarErrorSinPolizaAsociada = true;
                             MostrarErrorPolizaInvalida = true;
                             MostrarErrorMontoPolizaCubreBien = true;
+                            MostrarErrorFechaUltimoSeguimientoMayor = true;
+                            MostrarErrorFechaValuacionMayor = true;
                         }
 
                         AplicarCalculoMontoMitigador();                                            
@@ -1661,6 +1736,8 @@ namespace BCRGARANTIAS.Forms
                                 MostrarErrorSinPolizaAsociada = true;
                                 MostrarErrorPolizaInvalida = true;
                                 MostrarErrorMontoPolizaCubreBien = true;
+                                MostrarErrorFechaUltimoSeguimientoMayor = true;
+                                MostrarErrorFechaValuacionMayor = true;
 
                                 CargarDatosSession(true);
 
@@ -1758,6 +1835,8 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorSinPolizaAsociada = true;
                     MostrarErrorPolizaInvalida = true;
                     MostrarErrorMontoPolizaCubreBien = true;
+                    MostrarErrorFechaUltimoSeguimientoMayor = true;
+                    MostrarErrorFechaValuacionMayor = true;
                     btnModificar_Click(sender, e);
                 }
             }
@@ -2025,13 +2104,17 @@ namespace BCRGARANTIAS.Forms
                 if (entidadValida)
                 {
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
-                        || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien))
+                        || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien)
+                        || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaInvalida))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien))))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            )
                         {
                             MostrarMensajesInformativos();
                             return;
@@ -3122,12 +3205,14 @@ namespace BCRGARANTIAS.Forms
                 entidadGarantia.FechaPrescripcion = dFechaPrescripcion;
                 entidadGarantia.Operacion = strOperacionCrediticia;
                 entidadGarantia.Garantia = strGarantia;
-                entidadGarantia.FechaModifico = DateTime.Now;                            
+                entidadGarantia.FechaModifico = DateTime.Now;
 
-                entidadGarantia.PorcentajeAceptacionCalculado = Convert.ToDecimal(txtPorcentajeAceptacionCalculado.Text);
+                string porAceptCalc = (((ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO] != null) && (ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString().Length > 0)) ? ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString() : "0.00");
 
-                porcentajeAceptacionCalculado = decimal.Parse(ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString());
+                entidadGarantia.PorcentajeAceptacionCalculado = Convert.ToDecimal((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : porAceptCalc);
 
+                porcentajeAceptacionCalculado = decimal.Parse(porAceptCalc);
+               
                 entidadGarantia.IndicadorViviendaHabitadaDeudor = ((nTipoBien != 2) ? false: chkDeudorHabitaVivienda.Checked);
 
                //Datos del avalúo
@@ -4397,8 +4482,7 @@ namespace BCRGARANTIAS.Forms
                         txtPorcentajeAceptacionCalculado.Text = "0.00";
                     }
                     else
-                    {       
-         
+                    {
                         ////se debe validar para que  cuando da error el % calculado no sea borrado por el original                    
                         if (entidadGarantia.InconsistenciaPorcentajeAceptacionCalculado)
                         {
@@ -4532,6 +4616,8 @@ namespace BCRGARANTIAS.Forms
 
                         #region Inconsistencia de % Aceptacion Calculado, porcentaje aceptacion mayor al porcentaje de aceptacion calculado
 
+                        txtPorcentajeAceptacionCalculado.Text = porcentajeAceptacionCalculado.ToString("N2");
+
                         if (entidadGarantiaReal.InconsistenciaPorceAcepMayorPorceAcepCalculado)
                         {
                             estadoVerificacion = false;
@@ -4619,6 +4705,8 @@ namespace BCRGARANTIAS.Forms
                             {
                                 estadoVerificacion = false;
 
+                                MostrarErrorFechaValuacionMayor = false;
+
                                 switch (cbTipoBien.SelectedItem.Value)
                                 {
                                     case "3":
@@ -4641,14 +4729,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
                                                                                false);
                                     }
                                 }
@@ -4661,7 +4749,7 @@ namespace BCRGARANTIAS.Forms
 
                         #endregion Inconsistencia de % Aceptacion Calculado, que fecha de valuacion es mayor en 5 años en relacion a la del sistema tipo de bien 3
 
-                        #region Inconsistencia de % Aceptacion Calculado, que lafecha de seguimiento es mayor a un año en relacion a la del sistema tipo de bien 3
+                        #region Inconsistencia de % Aceptacion Calculado, que la fecha de seguimiento es mayor a un año en relacion a la del sistema tipo de bien 3
 
                         //Se valida si el error es debido a la 
                         if (entidadGarantiaReal.InconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres)
@@ -4669,6 +4757,8 @@ namespace BCRGARANTIAS.Forms
                             estadoVerificacion = false;
                             txtPorcentajeAceptacionCalculado.Text = "0.00";
                             porceAceptaCalculadoMenor = 0;
+
+                            MostrarErrorFechaUltimoSeguimientoMayor = false;
 
                             if (mostrarErrorEmergente)
                             {
@@ -4678,20 +4768,20 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                            false);
                                 }
                             }
                         }
 
-                        #endregion Inconsistencia de % Aceptacion Calculado, que lafecha de seguimiento es mayor a un año en relacion a la del sistema tipo de bien 3
+                        #endregion Inconsistencia de % Aceptacion Calculado, que la fecha de seguimiento es mayor a un año en relacion a la del sistema tipo de bien 3
 
                         //VALIDACIONES REDUCEN A 0
 
@@ -4704,8 +4794,10 @@ namespace BCRGARANTIAS.Forms
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienUno ) && ( porceAceptaCalculadoMenor == -1))
                         {
                             estadoVerificacion = false;                  
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                      
-                            
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+
+                            MostrarErrorFechaValuacionMayor = false;
+
                             if (mostrarErrorEmergente)
                             {
                                 //Se obtiene el error de la lista de errores
@@ -4714,14 +4806,14 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
                                                                            false);
                                 }
                             }
@@ -4735,7 +4827,29 @@ namespace BCRGARANTIAS.Forms
                         if ((entidadGarantiaReal.InconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses) && (porceAceptaCalculadoMenor == -1))
                         {
                             estadoVerificacion = false;
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                            
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+
+                            MostrarErrorFechaValuacionMayor = false;
+
+                            if (mostrarErrorEmergente)
+                            {
+                                //Se obtiene el error de la lista de errores
+                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                {
+                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                            typeof(Page),
+                                                                            Guid.NewGuid().ToString(),
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                            false);
+                                }
+                                else
+                                {
+                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                           Guid.NewGuid().ToString(),
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                           false);
+                                }
+                            }
                         }
 
                         #endregion Inconsistencia de % Aceptacion Calculado, que la fecha de valuacion es mayor a 18 meses tipo de bien 2             
@@ -4746,8 +4860,10 @@ namespace BCRGARANTIAS.Forms
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepFechaSeguimientoMayorSeisMeses ) && (porceAceptaCalculadoMenor == -1))
                         {
                             estadoVerificacion = false;                  
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");       
-             
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+
+                            MostrarErrorFechaUltimoSeguimientoMayor = false;
+
                             if (mostrarErrorEmergente)
                             {
                                 //Se obtiene el error de la lista de errores
@@ -4756,14 +4872,14 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                            false);
                                 }
                             }
@@ -4779,6 +4895,8 @@ namespace BCRGARANTIAS.Forms
                             estadoVerificacion = false;                       
                             txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
 
+                            MostrarErrorFechaUltimoSeguimientoMayor = false;
+
                             if (mostrarErrorEmergente)
                             {
                                 //Se obtiene el error de la lista de errores
@@ -4787,14 +4905,14 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
                                                                            false);
                                 }
                             }
@@ -4808,7 +4926,7 @@ namespace BCRGARANTIAS.Forms
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepNoPolizaAsociada ) && (porceAceptaCalculadoMenor == -1))
                         {
                             estadoVerificacion = false;
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
                             
                            MostrarErrorSinPolizaAsociada = false;
 
@@ -4852,7 +4970,7 @@ namespace BCRGARANTIAS.Forms
                         if ((entidadGarantiaReal.InconsistenciaPorceAcepPolizaFechaVencimientoMenor) && (porceAceptaCalculadoMenor == -1) )
                         {
                             estadoVerificacion = false;
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                            
+                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                            
 
                             if (mostrarErrorEmergente)
                             {
@@ -4882,8 +5000,8 @@ namespace BCRGARANTIAS.Forms
                         //Se valida si el error es debido a la 
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno )  && (porceAceptaCalculadoMenor == -1))
                         {
-                            estadoVerificacion = false;                       
-                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+                            estadoVerificacion = false;
+                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
 
                         }
 
@@ -6860,6 +6978,7 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorPolizaInvalida = true;
                 }
 
+                //
                 if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
                 {
                     existeMensaje = true;
@@ -6913,6 +7032,62 @@ namespace BCRGARANTIAS.Forms
                 else
                 {
                     MostrarErrorMontoPolizaCubreBien = true;
+                }
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaUltimoSeguimientoMayor = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaUltimoSeguimientoMayor = true;
+                }
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaValuacionMayor = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.FechaValuacionMayor)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaValuacionMayor = true;
                 }
                 //
 

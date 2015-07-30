@@ -5254,7 +5254,11 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienUno = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienUno);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienUno);
+                            }
                         }     
            
                         //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
@@ -5265,7 +5269,11 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
+                            }
                         }
 
                         //Se verifica si tiene una poliza asociada
@@ -5288,46 +5296,67 @@ namespace BCR.GARANTIAS.Entidades
                     if ((this.codTipoBien == 2) && ( (this.codTipoGarantiaReal == 1) || (this.codTipoGarantiaReal == 2) )  )
                     {
 
-                        if ((this.fechaValuacion != fechaNula) && (this.fechaUltimoSeguimiento != fechaNula) 
-                            && (this.fechaValuacion !=  DateTime.MinValue) && (this.fechaUltimoSeguimiento !=  DateTime.MinValue))
-                        {
-                            double diferenciaMesesFechaValuacion = UtilitariosComun.DateDiff("M", this.fechaValuacion, fechaActualSistema); // (this.fechaValuacion.Month - fechaActualSistema.Month) + 12 * (this.fechaValuacion.Year - fechaActualSistema.Year);
-                            double diferenciaMesesFechaUltSegui = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); //(this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
+                        //if ((this.fechaValuacion != fechaNula) && (this.fechaUltimoSeguimiento != fechaNula) 
+                        //    && (this.fechaValuacion !=  DateTime.MinValue) && (this.fechaUltimoSeguimiento !=  DateTime.MinValue))
+                        //{
+                        //    double diferenciaMesesFechaValuacion = UtilitariosComun.DateDiff("M", this.fechaValuacion, fechaActualSistema); // (this.fechaValuacion.Month - fechaActualSistema.Month) + 12 * (this.fechaValuacion.Year - fechaActualSistema.Year);
+                        //    double diferenciaMesesFechaUltSegui = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); //(this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
 
-                                //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTRAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR NO HABITE LA VIVIENDA
+                            //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTRAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR NO HABITE LA VIVIENDA
                     
-                            if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!this.indicadorViviendaHabitadaDeudor))
+                            //Se solicita eliminar esta validación, mediante el IRQA:
+                            //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!this.indicadorViviendaHabitadaDeudor))
+                            //{
+                            //    esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //    //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorDieciochoMeses);
+                            //}
+
+                            //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (this.indicadorViviendaHabitadaDeudor))
+                            //{
+                            //    esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
+                            // }   
+                       
+                        //}                     
+
+                        //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
+                        if ((this.fechaValuacion != fechaNula) && (this.fechaValuacion != DateTime.MinValue) &&
+                            (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5))
+                        {
+                            //esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
                             {
-                                esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                                inconsistenciaPorcentajeAceptacionCalculado = true;
-                                //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorDieciochoMeses);
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
                             }
 
-                            if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (this.indicadorViviendaHabitadaDeudor))
-                            {
-                                esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                                inconsistenciaPorcentajeAceptacionCalculado = true;
-                             }   
-                       
-                        }                     
-                     
+                        }
 
                         //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
                         if ((this.fechaUltimoSeguimiento != fechaNula) && (this.fechaUltimoSeguimiento != DateTime.MinValue) &&
-                            (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1))
-                       {
-                            esValida = false;
+                            (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1) && (!this.indicadorViviendaHabitadaDeudor))
+                        {
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
+                            }
 
                         }
                    
@@ -5336,7 +5365,7 @@ namespace BCR.GARANTIAS.Entidades
                         if ((this.polizaSapAsociada == null) 
                             || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
                         {
-                            esValida = false;
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepNoPolizaAsociada = true;
@@ -5397,12 +5426,16 @@ namespace BCR.GARANTIAS.Entidades
                         //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
                         if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
                         {
-                            esValida = false;
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                            }
                         }
                     
                         //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
@@ -5420,7 +5453,7 @@ namespace BCR.GARANTIAS.Entidades
                         //Se verifica si no tiene una poliza asociada
                         if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
                         {
-                            esValida = false;
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepNoPolizaAsociada = true;
@@ -5475,12 +5508,16 @@ namespace BCR.GARANTIAS.Entidades
                         //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
                         if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
                         {
-                            esValida = false;
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                            }
                         }
 
                         if (this.fechaUltimoSeguimiento != fechaNula)
@@ -5490,19 +5527,23 @@ namespace BCR.GARANTIAS.Entidades
                             //Se verifica que la fecha de ultimo seguimiento es mayor 6 meses en realacion a la fecha del sistema                  
                             if (diferenciaMesesFechaSeguimiento > 6)
                             {
-                                esValida = false;
+                                //esValida = false;
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
                                 inconsistenciaPorceAcepFechaSeguimientoMayorSeisMeses = true;
                                 inconsistenciaPorcentajeAceptacionCalculado = true;
-                                listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorSeisMeses);
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorSeisMeses);
+                                }
                             }                                           
                         }
 
                         //Se verifica si tiene no una poliza asociada
                         if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
                         {
-                            esValida = false;
+                            //esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepNoPolizaAsociada = true;
