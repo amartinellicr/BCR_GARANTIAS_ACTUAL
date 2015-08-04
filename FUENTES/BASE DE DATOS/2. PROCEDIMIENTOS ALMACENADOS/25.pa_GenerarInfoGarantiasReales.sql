@@ -3065,7 +3065,8 @@ DECLARE
 							CASE 
 								WHEN COALESCE(TGR.porcentaje_responsabilidad ,0)= 0 THEN TPAC.Porcentaje_Aceptacion
 								WHEN TGR.porcentaje_responsabilidad >  TPAC.Porcentaje_Aceptacion THEN TPAC.Porcentaje_Aceptacion
-								WHEN TPAC.Porcentaje_Aceptacion > TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad							
+								WHEN TPAC.Porcentaje_Aceptacion > TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad
+								WHEN TPAC.Porcentaje_Aceptacion = TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad														
 							END			
 						)	
 			FROM	TMP_GARANTIAS_REALES TGR

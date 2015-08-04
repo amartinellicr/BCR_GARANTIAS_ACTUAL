@@ -236,7 +236,7 @@ BEGIN
 					INNER JOIN dbo.TMP_POLIZAS TMP
 					ON TMP.Codigo_SAP = GPO.Codigo_SAP
 					AND TMP.Consecutivo_Operacion_Garantias = GPO.cod_operacion
-				WHERE	TMP.Consecutivo_Operacion_Garantias > -1
+				WHERE   COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
 					AND TMP.Registro_Activo = 1
 					AND EXISTS (SELECT	1
 								FROM	dbo.CAT_ELEMENTO CE1
@@ -296,7 +296,7 @@ BEGIN
 						ELSE ISNULL(TMP.Monto_Poliza, 0)
 					END AS Monto_Poliza_Colonizado
 				FROM	dbo.TMP_POLIZAS TMP
-				WHERE	TMP.Consecutivo_Operacion_Garantias > -1
+				WHERE	COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
 					AND TMP.Registro_Activo = 1
 					AND EXISTS (SELECT	1
 								FROM	dbo.CAT_ELEMENTO CE1
@@ -305,7 +305,7 @@ BEGIN
 					AND NOT EXISTS (SELECT	1
 									FROM	dbo.GAR_POLIZAS GPO
 									WHERE	GPO.Codigo_SAP = TMP.Codigo_SAP
-										AND GPO.cod_operacion = TMP.Consecutivo_Operacion_Garantias)
+										AND GPO.cod_operacion = COALESCE(TMP.Consecutivo_Operacion_Garantias, -1))
 
 			END TRY
 			BEGIN CATCH
