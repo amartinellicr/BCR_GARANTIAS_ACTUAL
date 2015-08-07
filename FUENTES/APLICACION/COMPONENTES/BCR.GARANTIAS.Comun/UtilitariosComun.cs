@@ -156,7 +156,7 @@ namespace BCR.GARANTIAS.Comun
             return respuest;
         }
 
-		#region Metodo para simular el Datediff
+		#region Método para simular el Datediff
 		/// <summary>
 		/// Devuelve la diferecia entre dos fechas segun se indique en howtocompare
 		/// </summary>
@@ -194,6 +194,66 @@ namespace BCR.GARANTIAS.Comun
 			return diff;
 		}
 		#endregion
+
+        #region Método para tratar los caracteres especiales para le formato JSON
+
+        /// <summary>
+        /// Modifica los caracteres especiales de la cadena entrante, esto para el formato JSON
+        /// </summary>
+        /// <param name="texto">Texto al cual se le modificarán los caracteres especiales</param>
+        /// <returns>Cadena formateada para JSON</returns>
+        public static string EnquoteJSON(string texto)
+        {
+            if (texto == null || texto.Length == 0)
+            {
+                return "\"\"";
+            }
+            char caracter;
+            int i;
+            int len = texto.Length;
+            StringBuilder sb = new StringBuilder(len + 4);
+            string t;
+
+            sb.Append('"');
+            for (i = 0; i < len; i += 1)
+            {
+                caracter = texto[i];
+                if ((caracter == '\\') || (caracter == '"') || (caracter == '>'))
+                {
+                    sb.Append('\\');
+                    sb.Append('\\');
+                    sb.Append(caracter);
+                }
+                else if (caracter == '\b')
+                    sb.Append("\\\\b");
+                else if (caracter == '\t')
+                    sb.Append("\\\\t");
+                else if (caracter == '\n')
+                    sb.Append("\\\\n");
+                else if (caracter == '\f')
+                    sb.Append("\\\\f");
+                else if (caracter == '\r')
+                    sb.Append("\\\\r");
+                else
+                {
+                    if (caracter < ' ')
+                    {
+                        //t = "000" + Integer.toHexString(c); 
+                        string tmp = new string(caracter, 1);
+                        t = "000" + int.Parse(tmp, System.Globalization.NumberStyles.HexNumber);
+                        sb.Append("\\\\u" + t.Substring(t.Length - 4));
+                    }
+                    else
+                    {
+                        sb.Append(caracter);
+                    }
+                }
+            }
+            sb.Append('"');
+            return sb.ToString();
+        } 
+
+        #endregion
 
         public static string GetStringFromStream(Stream stream)
         {

@@ -136,11 +136,20 @@ namespace BCRGARANTIAS.Forms
 
         private void btnInsertar_Click(object sender, System.EventArgs e)
         {
+            string CodigoElemento = string.Empty;
+
             try
             {
                 if (ValidarDatos())
                 {
-                    Gestor.CrearCampoCatalogo(int.Parse(Request.QueryString["nCatalogo"].ToString()), txtCodigo.Text,
+                    CodigoElemento = txtCodigo.Text;
+
+                    if (CodigoCatalogo == int.Parse(Application["CAT_TIPOS_POLIZAS_SAP"].ToString()))
+                    {
+                        CodigoElemento = int.Parse(txtCodigo.Text).ToString();
+                    }
+
+                    Gestor.CrearCampoCatalogo(int.Parse(Request.QueryString["nCatalogo"].ToString()), CodigoElemento,
                                               txtDescripcion.Text, Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
                     Response.Redirect("frmMensaje.aspx?" +
                                     "bError=0" +
@@ -202,6 +211,7 @@ namespace BCRGARANTIAS.Forms
         {
             bool modificarElemento = true;
             int elemento;
+            string CodigoElemento = string.Empty;
 
             try
             {
@@ -299,7 +309,14 @@ namespace BCRGARANTIAS.Forms
 
                     if (modificarElemento)
                     {
-                        Gestor.ModificarCampoCatalogo(int.Parse(lblElemento.Text), txtCodigo.Text,
+                        CodigoElemento = txtCodigo.Text;
+
+                        if (CodigoCatalogo == int.Parse(Application["CAT_TIPOS_POLIZAS_SAP"].ToString()))
+                        {
+                            CodigoElemento = int.Parse(txtCodigo.Text).ToString();
+                        }
+
+                        Gestor.ModificarCampoCatalogo(int.Parse(lblElemento.Text), CodigoElemento,
                                                       txtDescripcion.Text, Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
 
                         Response.Redirect("frmMensaje.aspx?" +

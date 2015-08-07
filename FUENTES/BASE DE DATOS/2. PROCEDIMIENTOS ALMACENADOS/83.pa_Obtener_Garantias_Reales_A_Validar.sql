@@ -36,6 +36,16 @@ AS
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>02/07/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -81,39 +91,40 @@ BEGIN
 		ROV.cod_moneda, 
 		ROV.cod_producto, 
 		ROV.num_operacion AS Operacion, 
-		ISNULL(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
-		ISNULL(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
-		ISNULL(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
-		ISNULL(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
+		COALESCE(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
+		COALESCE(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
+		COALESCE(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
+		COALESCE(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
 		GGR.cod_tipo_garantia_real,
 		1 AS Codigo_Estado,
-		ISNULL(GRO.cod_grado_gravamen, -1) AS Codigo_Grado_Gravamen,
+		COALESCE(GRO.cod_grado_gravamen, -1) AS Codigo_Grado_Gravamen,
 		GGR.cod_clase_garantia,
-		ISNULL(GGR.cod_partido, 0) AS Codigo_Partido,
+		COALESCE(GGR.cod_partido, 0) AS Codigo_Partido,
 		GGR.cod_tipo_garantia,
 		1 AS Codigo_Tipo_Operacion,
 		1 AS Indicador_Duplicidad,
-		ISNULL(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
-		ISNULL(GRO.monto_mitigador, 0) AS Monto_Mitigador,
-		ISNULL(GGR.cod_grado,'') AS Codigo_Grado,
-		ISNULL(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
-		ISNULL(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-		CASE GGR.cod_tipo_garantia_real  
-			WHEN 1 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '')  
-			WHEN 2 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '') 
-			WHEN 3 THEN ISNULL(GGR.cod_clase_bien, '') + '-' + ISNULL(GGR.num_placa_bien, '')
-		END AS Codigo_Bien, 
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+		COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+		COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
+		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
+		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
+		COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
+		CASE 
+			WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
+			WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + '-' + COALESCE(GGR.num_placa_bien,'') 
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+		END	AS Codigo_Bien, 
+		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Presentacion,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Constitucion, 
-		ISNULL(GGR.numero_finca,'') AS Numero_Finca,
-		ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
+		COALESCE(GGR.numero_finca,'') AS Numero_Finca,
+		COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario
-	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV WITH (NOLOCK)
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK) 
+	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV 
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion		= GRO.cod_operacion 
-		INNER JOIN dbo.GAR_GARANTIA_REAL GGR WITH (NOLOCK)
+		INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
 		ON GRO.cod_garantia_real	= GGR.cod_garantia_real 
 	WHERE	ROV.cod_tipo_operacion	= 1
 		AND GRO.cod_estado			= 1
@@ -142,53 +153,52 @@ BEGIN
 		ROV.cod_moneda_contrato, 
 		ROV.cod_producto_contrato, 
 		ROV.num_contrato AS Operacion, 
-		ISNULL(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
-		ISNULL(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
-		ISNULL(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
-		ISNULL(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
+		COALESCE(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
+		COALESCE(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
+		COALESCE(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
+		COALESCE(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
 		GGR.cod_tipo_garantia_real,
 		1 AS Codigo_Estado,
-		ISNULL(GRO.cod_grado_gravamen, -1) AS Codigo_Grado_Gravamen,
+		COALESCE(GRO.cod_grado_gravamen, -1) AS Codigo_Grado_Gravamen,
 		GGR.cod_clase_garantia,
-		ISNULL(GGR.cod_partido, 0) AS Codigo_Partido,
+		COALESCE(GGR.cod_partido, 0) AS Codigo_Partido,
 		GGR.cod_tipo_garantia,
 		2 AS Codigo_Tipo_Operacion,
 		1 AS Indicador_Duplicidad,
-		ISNULL(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
-		ISNULL(GRO.monto_mitigador, 0) AS Monto_Mitigador,
-		ISNULL(GGR.cod_grado,'') AS Codigo_Grado,
-		ISNULL(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
-		ISNULL(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-		CASE GGR.cod_tipo_garantia_real  
-			WHEN 1 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '')  
-			WHEN 2 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '') 
-			WHEN 3 THEN ISNULL(GGR.cod_clase_bien, '') + '-' + ISNULL(GGR.num_placa_bien, '')
-		END AS Codigo_Bien, 
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+		COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+		COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
+		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
+		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
+		COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
+		CASE 
+			WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
+			WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + '-' + COALESCE(GGR.num_placa_bien,'') 
+			WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+		END	AS Codigo_Bien, 
+		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Presentacion,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 		AS Fecha_Constitucion, 
-		ISNULL(GGR.numero_finca,'') AS Numero_Finca,
-		ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
+		COALESCE(GGR.numero_finca,'') AS Numero_Finca,
+		COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario
-	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV WITH (NOLOCK) 
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK) 
+	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV  
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion		= GRO.cod_operacion 
-		INNER JOIN dbo.GAR_GARANTIA_REAL GGR WITH (NOLOCK) 
+		INNER JOIN dbo.GAR_GARANTIA_REAL GGR  
 		ON GRO.cod_garantia_real	= GGR.cod_garantia_real 
 	WHERE	ROV.cod_tipo_operacion	= 2
 		AND EXISTS	(	SELECT	1
-						FROM	dbo.GAR_SICC_PRMGT GSP WITH (NOLOCK)
+						FROM	dbo.GAR_SICC_PRMGT GSP 
 						WHERE	GSP.prmgt_pco_conta	 = 1
 							AND GSP.prmgt_pco_ofici  = ROV.cod_oficina_contrato
 							AND GSP.prmgt_pco_moned  = ROV.cod_moneda_contrato
 							AND GSP.prmgt_pnu_oper   = ROV.num_contrato
 							AND GSP.prmgt_pcoclagar  = GGR.cod_clase_garantia
-							AND GSP.prmgt_pco_grado  = ISNULL(GGR.cod_grado, GSP.prmgt_pco_grado)
-							AND CONVERT(VARCHAR(25), GSP.prmgt_pnuidegar)  =	CASE 
-																				   WHEN GGR.cod_tipo_garantia_real = 3 THEN GGR.num_placa_bien
-																				   ELSE GGR.numero_finca
-																				END
+							AND GSP.prmgt_pco_grado  = COALESCE(GGR.cod_grado, GSP.prmgt_pco_grado)
+							AND COALESCE(GSP.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+							AND COALESCE(GSP.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
 							AND GSP.prmgt_pco_produ  = 10
 							AND GSP.prmgt_estado     = 'A') /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura 
 												   del SICC*/
@@ -212,7 +222,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
 			OR (Codigo_Tipo_Operacion	= 2))
@@ -232,13 +242,13 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS	(	SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 						WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 							AND TGR.Codigo_Moneda				= TOD.cod_moneda
 							AND TGR.Codigo_Producto				= TOD.cod_producto
 							AND TGR.Operacion					= TOD.operacion
-							AND ISNULL(TGR.Codigo_Bien, '')		= ISNULL(TOD.cod_garantia_sicc, '')
-							AND ISNULL(TGR.Codigo_Usuario, '')	= ISNULL(TOD.cod_usuario, '')
+							AND COALESCE(TGR.Codigo_Bien, '')		= COALESCE(TOD.cod_garantia_sicc, '')
+							AND COALESCE(TGR.Codigo_Usuario, '')	= COALESCE(TOD.cod_usuario, '')
 							AND ((TOD.cod_tipo_operacion		= 1)
 								OR (TOD.cod_tipo_operacion		= 2))
 							AND TOD.cod_tipo_garantia			= 2
@@ -293,7 +303,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 1 
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -317,16 +327,16 @@ BEGIN
 			AND GR1.Codigo_Moneda				= TOD.cod_moneda
 			AND GR1.Codigo_Producto				= TOD.cod_producto
 			AND GR1.Operacion					= TOD.operacion
-			AND ISNULL(GR1.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+			AND COALESCE(GR1.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina				= TOD.cod_oficina
 										AND GR2.Codigo_Moneda				= TOD.cod_moneda
 										AND GR2.Codigo_Producto				= TOD.cod_producto
 										AND GR2.Operacion					= TOD.operacion
-										AND ISNULL(GR2.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+										AND COALESCE(GR2.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 										AND GR2.Codigo_Tipo_Garantia_Real	= 1
-										AND ISNULL(GR2.Codigo_Usuario, '')	= ISNULL(TOD.cod_usuario, '')
+										AND COALESCE(GR2.Codigo_Usuario, '')	= COALESCE(TOD.cod_usuario, '')
 										AND ((GR2.Codigo_Tipo_Operacion		= 1)
 											OR (GR2.Codigo_Tipo_Operacion	= 2))
 										AND TOD.cod_tipo_garantia			= 2)
@@ -341,14 +351,14 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS (SELECT	1 
-					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 					WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 						AND TGR.Codigo_Moneda				= TOD.cod_moneda
 						AND TGR.Codigo_Producto				= TOD.cod_producto
 						AND TGR.Operacion					= TOD.operacion
-						AND ISNULL(TGR.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+						AND COALESCE(TGR.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 						AND TGR.Codigo_Tipo_Garantia_Real	= 1
-						AND ISNULL(TGR.Codigo_Usuario, '')	= ISNULL(TOD.cod_usuario, '')
+						AND COALESCE(TGR.Codigo_Usuario, '')	= COALESCE(TOD.cod_usuario, '')
 						AND ((TGR.Codigo_Tipo_Operacion		= 1)
 							OR (TGR.Codigo_Tipo_Operacion	= 2))
 						AND TOD.cod_tipo_garantia			= 2
@@ -390,7 +400,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			Codigo_Grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 2
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -415,18 +425,18 @@ BEGIN
 			AND GR1.Codigo_Moneda				= TOD.cod_moneda
 			AND GR1.Codigo_Producto				= TOD.cod_producto
 			AND GR1.Operacion					= TOD.operacion
-			AND ISNULL(GR1.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+			AND COALESCE(GR1.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 			AND GR1.Codigo_Grado				= TOD.cod_grado
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina				= TOD.cod_oficina
 										AND GR2.Codigo_Moneda				= TOD.cod_moneda
 										AND GR2.Codigo_Producto				= TOD.cod_producto
 										AND GR2.Operacion					= TOD.operacion
-										AND ISNULL(GR2.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+										AND COALESCE(GR2.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 										AND GR2.Codigo_Grado				= TOD.cod_grado
 										AND GR2.Codigo_Tipo_Garantia_Real	= 2
-										AND ISNULL(GR2.Codigo_Usuario, '')	= ISNULL(TOD.cod_usuario, '')
+										AND COALESCE(GR2.Codigo_Usuario, '')	= COALESCE(TOD.cod_usuario, '')
 										AND ((GR2.Codigo_Tipo_Operacion		= 1)
 											OR (GR2.Codigo_Tipo_Operacion	= 2))
 										AND TOD.cod_tipo_garantia			= 2)
@@ -441,15 +451,15 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS	(	SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 						WHERE	TGR.Codigo_Oficina				= TOD.cod_oficina
 							AND TGR.Codigo_Moneda				= TOD.cod_moneda
 							AND TGR.Codigo_Producto				= TOD.cod_producto
 							AND TGR.Operacion					= TOD.operacion
-							AND ISNULL(TGR.Numero_Finca, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+							AND COALESCE(TGR.Numero_Finca, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 							AND TGR.Codigo_Grado				= TOD.cod_grado
 							AND TGR.Codigo_Tipo_Garantia_Real	= 2
-							AND ISNULL(TGR.Codigo_Usuario, '')	= ISNULL(TOD.cod_usuario, '')
+							AND COALESCE(TGR.Codigo_Usuario, '')	= COALESCE(TOD.cod_usuario, '')
 							AND ((TGR.Codigo_Tipo_Operacion		= 1)
 								OR (TGR.Codigo_Tipo_Operacion	= 2))
 							AND TOD.cod_tipo_garantia			= 2
@@ -489,7 +499,7 @@ BEGIN
 			@psCedula_Usuario AS cod_usuario,
 			MAX(Codigo_Garantia_Real) AS cod_garantia,
 			NULL AS cod_grado
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES 
 	WHERE	Codigo_Tipo_Garantia_Real	= 3
 		AND Codigo_Usuario				= @psCedula_Usuario
 		AND ((Codigo_Tipo_Operacion		= 1)
@@ -513,16 +523,16 @@ BEGIN
 			AND GR1.Codigo_Moneda					= TOD.cod_moneda
 			AND GR1.Codigo_Producto					= TOD.cod_producto
 			AND GR1.Operacion						= TOD.operacion
-			AND ISNULL(GR1.Numero_Placa_Bien, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+			AND COALESCE(GR1.Numero_Placa_Bien, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 	WHERE	GR1.Codigo_Llave =	(	SELECT	MIN(GR2.Codigo_Llave)
-									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 WITH (NOLOCK)
+									FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES GR2 
 									WHERE	GR2.Codigo_Oficina					= TOD.cod_oficina
 										AND GR2.Codigo_Moneda					= TOD.cod_moneda
 										AND GR2.Codigo_Producto					= TOD.cod_producto
 										AND GR2.Operacion						= TOD.operacion
-										AND ISNULL(GR2.Numero_Placa_Bien, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+										AND COALESCE(GR2.Numero_Placa_Bien, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 										AND GR2.Codigo_Tipo_Garantia_Real		= 3
-										AND ISNULL(GR2.Codigo_Usuario, '')		= ISNULL(TOD.cod_usuario, '')
+										AND COALESCE(GR2.Codigo_Usuario, '')		= COALESCE(TOD.cod_usuario, '')
 										AND ((GR2.Codigo_Tipo_Operacion			= 1)
 											OR (GR2.Codigo_Tipo_Operacion		= 2))
 										AND TOD.cod_tipo_garantia				= 2)
@@ -537,14 +547,14 @@ BEGIN
 	SET		Indicador_Duplicidad = 2
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	EXISTS (SELECT	1 
-					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD WITH (NOLOCK)
+					FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD 
 					WHERE	TGR.Codigo_Oficina					= TOD.cod_oficina
 						AND TGR.Codigo_Moneda					= TOD.cod_moneda
 						AND TGR.Codigo_Producto					= TOD.cod_producto
 						AND TGR.Operacion						= TOD.operacion
-						AND ISNULL(TGR.Numero_Placa_Bien, '')	= ISNULL(TOD.cod_garantia_sicc, '')
+						AND COALESCE(TGR.Numero_Placa_Bien, '')	= COALESCE(TOD.cod_garantia_sicc, '')
 						AND TGR.Codigo_Tipo_Garantia_Real		= 3
-						AND ISNULL(TGR.Codigo_Usuario, '')		= ISNULL(TOD.cod_usuario, '')
+						AND COALESCE(TGR.Codigo_Usuario, '')		= COALESCE(TOD.cod_usuario, '')
 						AND ((TGR.Codigo_Tipo_Operacion			= 1)
 							OR (TGR.Codigo_Tipo_Operacion		= 2))
 						AND TOD.cod_tipo_garantia				= 2
@@ -588,39 +598,40 @@ BEGIN
 			TGR.Codigo_Moneda, 
 			TGR.Codigo_Producto, 
 			TGR.Operacion, 
-			ISNULL(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
-			ISNULL(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
-			ISNULL(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
-			ISNULL(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
+			COALESCE(GGR.cod_tipo_bien, -1) AS Codigo_Tipo_Bien, 
+			COALESCE(GRO.cod_tipo_mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(GRO.cod_tipo_documento_legal, -1) AS Codigo_Tipo_Documento_Legal,
+			COALESCE(GRO.cod_inscripcion, -1) AS Codigo_Inscripcion, 
 			GGR.cod_tipo_garantia_real,
 			TGR.Codigo_Grado_Gravamen,
 			TGR.Codigo_Clase_Garantia,
-			ISNULL(GGR.cod_partido, 0) AS Codigo_Partido,
+			COALESCE(GGR.cod_partido, 0) AS Codigo_Partido,
 			GGR.cod_tipo_garantia,
 			TGR.Codigo_Tipo_Operacion,
-			ISNULL(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
-			ISNULL(GRO.monto_mitigador, 0) AS Monto_Mitigador,
-			ISNULL(GGR.cod_grado,'') AS Codigo_Grado,
-			ISNULL(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
-			ISNULL(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
-			CASE GGR.cod_tipo_garantia_real  
-				WHEN 1 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '')  
-				WHEN 2 THEN ISNULL((CONVERT(varchar(2),GGR.cod_partido)), '') + '-' + ISNULL(GGR.numero_finca, '') 
-				WHEN 3 THEN ISNULL(GGR.cod_clase_bien, '') + '-' + ISNULL(GGR.num_placa_bien, '')
-			END AS Codigo_Bien, 
-			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+			COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+			COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
+			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
+			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
+			COALESCE(GGR.cedula_hipotecaria,'') AS Cedula_Hipotecaria,
+			CASE 
+				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
+				WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + '-' + COALESCE(GGR.num_placa_bien,'') 
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+			END	AS Codigo_Bien, 
+			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 			AS Fecha_Constitucion, 
-			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
+			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) 
 			AS Fecha_Presentacion,
-			ISNULL(GGR.numero_finca,'') AS Numero_Finca,
-			ISNULL(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
+			COALESCE(GGR.numero_finca,'') AS Numero_Finca,
+			COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 			TGR.Codigo_Usuario
 		
-	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR WITH (NOLOCK)
-		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
+		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GRO.cod_operacion		= TGR.Codigo_Operacion
 		AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
-		INNER JOIN GAR_GARANTIA_REAL GGR WITH (NOLOCK)
+		INNER JOIN GAR_GARANTIA_REAL GGR 
 		ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
 	WHERE	TGR.Codigo_Usuario				= @psCedula_Usuario
 		AND ((TGR.Codigo_Tipo_Operacion		= 1)

@@ -293,37 +293,37 @@ namespace BCR.GARANTIAS.Entidades
         public List<clsPolizaSap> ObtenerPolizasPorTipoBien(int tipoBien)
         {
             List<clsPolizaSap> listaItems = new List<clsPolizaSap>();
+            clsPolizaSap entidadSeleccionada = null;
 
             errorRelacionTipoBienTipoPolizaSAP = false;
-            //bool cambioEstadoRelacion = false;
 
             foreach (clsPolizaSap entidadPoliza in InnerList)
             {
                 if (entidadPoliza.CodigoSapValido)
                 {
-                    //errorRelacionTipoBienTipoPolizaSAP = ((cambioEstadoRelacion) ? false : true);
-
                     if (entidadPoliza.TipoBienPoliza == tipoBien)
                     {
                         listaItems.Add(entidadPoliza);
-
-                        //if (entidadPoliza.PolizaSapSeleccionada)
-                        //{
-                        //    errorRelacionTipoBienTipoPolizaSAP = false;
-                        //    cambioEstadoRelacion = true;                           
-                        //}
                     }
                     else if ((entidadPoliza.TipoBienPoliza == -1) && (entidadPoliza.PolizaSapSeleccionada))
                     {
                         errorRelacionTipoBienTipoPolizaSAP = true;
-                        //cambioEstadoRelacion = false;
                     }
                 }
                 else if ((!entidadPoliza.CodigoSapValido) && (entidadPoliza.PolizaAsociada))
                 {
                     errorRelacionTipoBienTipoPolizaSAP = true;
-                    //cambioEstadoRelacion = false;
                 }
+
+                if (entidadPoliza.PolizaSapSeleccionada)
+                {
+                    entidadSeleccionada = entidadPoliza;
+                }
+            }
+
+            if ((entidadSeleccionada != null) && (!listaItems.Contains(entidadSeleccionada)))
+            {
+                errorRelacionTipoBienTipoPolizaSAP = true;
             }
 
             listaItems.Sort(new clsComparadorGenerico<clsPolizaSap>("CodigoPolizaSap", clsComparadorGenerico<clsPolizaSap>.SortOrder.Ascending));

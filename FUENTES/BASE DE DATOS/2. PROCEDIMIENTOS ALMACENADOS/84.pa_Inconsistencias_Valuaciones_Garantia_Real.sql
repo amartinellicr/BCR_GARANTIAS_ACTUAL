@@ -51,6 +51,16 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>02/07/2015</Fecha>
+			<Descripción>
+				Se ajusta el subproceso #5. El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -237,44 +247,44 @@ BEGIN
 			GRO.Codigo_Partido,
 			GRO.Numero_Finca,
 			GRO.Numero_Placa_Bien,
-			ISNULL(GRO.Porcentaje_Responsabilidad, 0 ) AS Porcentaje_Aceptacion,
+			COALESCE(GRO.Porcentaje_Responsabilidad, 0 ) AS Porcentaje_Aceptacion,
 			NULL AS Monto_Total_Avaluo,
 			NULL AS Antiguedad_Annos_Avaluo, 
 			LEN(GRO.Numero_Finca) AS Tamanno_Finca,
 			LEN(GRO.Numero_Placa_Bien) AS Tamanno_Placa,
 			GRO.Codigo_Usuario
-	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION GRO WITH (NOLOCK)
+	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION GRO
 	WHERE	GRO.Codigo_Usuario = @vsIdentificacion_Usuario
 	
 	--Se actualizan aquellos avalúos cuya fecha de valuación es igual al a registrada en el SICC
 	UPDATE	@TMP_VALUACIONES
-	SET		Monto_Ultima_Tasacion_Terreno = ISNULL(GVR.monto_ultima_tasacion_terreno, 0),
-			Monto_Ultima_Tasacion_No_Terreno = ISNULL(GVR.monto_ultima_tasacion_no_terreno, 0),
-			Monto_Tasacion_Actualizada_Terreno = ISNULL(GVR.monto_tasacion_actualizada_terreno, 0),
-			Monto_Tasacion_Actualizada_No_Terreno = ISNULL(GVR.monto_tasacion_actualizada_no_terreno, 0),
-			Fecha_Ultimo_Seguimiento = ISNULL(GVR.fecha_ultimo_seguimiento, '19000101'),
+	SET		Monto_Ultima_Tasacion_Terreno = COALESCE(GVR.monto_ultima_tasacion_terreno, 0),
+			Monto_Ultima_Tasacion_No_Terreno = COALESCE(GVR.monto_ultima_tasacion_no_terreno, 0),
+			Monto_Tasacion_Actualizada_Terreno = COALESCE(GVR.monto_tasacion_actualizada_terreno, 0),
+			Monto_Tasacion_Actualizada_No_Terreno = COALESCE(GVR.monto_tasacion_actualizada_no_terreno, 0),
+			Fecha_Ultimo_Seguimiento = COALESCE(GVR.fecha_ultimo_seguimiento, '19000101'),
 			Fecha_Valuacion = GVR.fecha_valuacion,
-			Fecha_Construccion = ISNULL(GVR.fecha_construccion, '19000101'),
-			Monto_Total_Avaluo = (ISNULL(GVR.monto_ultima_tasacion_terreno, 0) + ISNULL(GVR.monto_ultima_tasacion_no_terreno, 0)),
+			Fecha_Construccion = COALESCE(GVR.fecha_construccion, '19000101'),
+			Monto_Total_Avaluo = (COALESCE(GVR.monto_ultima_tasacion_terreno, 0) + COALESCE(GVR.monto_ultima_tasacion_no_terreno, 0)),
 			Antiguedad_Annos_Avaluo = (DATEDIFF(year, GVR.fecha_valuacion, GETDATE()))
 	FROM	@TMP_VALUACIONES TMP
-		INNER JOIN	dbo.GAR_VALUACIONES_REALES GVR WITH (NOLOCK)
+		INNER JOIN	dbo.GAR_VALUACIONES_REALES GVR
 		ON GVR.cod_garantia_real = TMP.Codigo_Garantia_Real
 	WHERE	GVR.Indicador_Tipo_Registro = 2
 
 	--Se actualizan aquellos avalúos cuya fecha de valuación es igual al a registrada en el SICC
 	UPDATE	@TMP_VALUACIONES
-	SET		Monto_Ultima_Tasacion_Terreno = ISNULL(GVR.monto_ultima_tasacion_terreno, 0),
-			Monto_Ultima_Tasacion_No_Terreno = ISNULL(GVR.monto_ultima_tasacion_no_terreno, 0),
-			Monto_Tasacion_Actualizada_Terreno = ISNULL(GVR.monto_tasacion_actualizada_terreno, 0),
-			Monto_Tasacion_Actualizada_No_Terreno = ISNULL(GVR.monto_tasacion_actualizada_no_terreno, 0),
-			Fecha_Ultimo_Seguimiento = ISNULL(GVR.fecha_ultimo_seguimiento, '19000101'),
+	SET		Monto_Ultima_Tasacion_Terreno = COALESCE(GVR.monto_ultima_tasacion_terreno, 0),
+			Monto_Ultima_Tasacion_No_Terreno = COALESCE(GVR.monto_ultima_tasacion_no_terreno, 0),
+			Monto_Tasacion_Actualizada_Terreno = COALESCE(GVR.monto_tasacion_actualizada_terreno, 0),
+			Monto_Tasacion_Actualizada_No_Terreno = COALESCE(GVR.monto_tasacion_actualizada_no_terreno, 0),
+			Fecha_Ultimo_Seguimiento = COALESCE(GVR.fecha_ultimo_seguimiento, '19000101'),
 			Fecha_Valuacion = GVR.fecha_valuacion,
-			Fecha_Construccion = ISNULL(GVR.fecha_construccion, '19000101'),
-			Monto_Total_Avaluo = (ISNULL(GVR.monto_ultima_tasacion_terreno, 0) + ISNULL(GVR.monto_ultima_tasacion_no_terreno, 0)),
+			Fecha_Construccion = COALESCE(GVR.fecha_construccion, '19000101'),
+			Monto_Total_Avaluo = (COALESCE(GVR.monto_ultima_tasacion_terreno, 0) + COALESCE(GVR.monto_ultima_tasacion_no_terreno, 0)),
 			Antiguedad_Annos_Avaluo = (DATEDIFF(year, GVR.fecha_valuacion, GETDATE()))
 	FROM	@TMP_VALUACIONES TMP
-		INNER JOIN	dbo.GAR_VALUACIONES_REALES GVR WITH (NOLOCK)
+		INNER JOIN	dbo.GAR_VALUACIONES_REALES GVR
 		ON GVR.cod_garantia_real = TMP.Codigo_Garantia_Real
 	WHERE	GVR.Indicador_Tipo_Registro = 1
 	
@@ -302,10 +312,29 @@ BEGIN
 		prmgt_pmoavaing	
 	FROM	dbo.GAR_SICC_PRMGT
 	WHERE	prmgt_estado = 'A'
-		AND prmgt_pcoclagar BETWEEN 10 AND 19
+		AND prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 18, 19)
 
 	UNION ALL
 
+	SELECT	prmgt_pco_conta	,
+		prmgt_pco_ofici ,
+		prmgt_pco_moned ,
+		prmgt_pco_produ ,
+		prmgt_pnu_oper  ,
+		prmgt_pcoclagar ,
+		prmgt_pcotengar	,
+		prmgt_pnu_part  ,
+		CASE 
+			WHEN prmgt_pnuide_alf IS NULL THEN CONVERT(VARCHAR(25), prmgt_pnuidegar)
+			ELSE COALESCE(prmgt_pnuide_alf, '') 
+		END AS prmgt_pnuidegar,
+		prmgt_pmoavaing	
+	FROM	dbo.GAR_SICC_PRMGT
+	WHERE	prmgt_estado = 'A'
+		AND prmgt_pcoclagar = 11
+
+	UNION ALL
+	
 	SELECT	prmgt_pco_conta	,
 		prmgt_pco_ofici ,
 		prmgt_pco_moned ,
@@ -335,7 +364,29 @@ BEGIN
 		prmgt_pmoavaing	
 	FROM	dbo.GAR_SICC_PRMGT
 	WHERE	prmgt_estado = 'A'
-		AND prmgt_pcoclagar BETWEEN 30 AND 69
+		AND ((prmgt_pcoclagar BETWEEN 30 AND 37)
+			OR (prmgt_pcoclagar BETWEEN 39 AND 42)
+			OR (prmgt_pcoclagar BETWEEN 44 AND 69))
+			
+	UNION ALL
+
+	SELECT	prmgt_pco_conta	,
+		prmgt_pco_ofici ,
+		prmgt_pco_moned ,
+		prmgt_pco_produ ,
+		prmgt_pnu_oper  ,
+		prmgt_pcoclagar ,
+		prmgt_pcotengar	,
+		prmgt_pnu_part  ,
+		CASE 
+			WHEN prmgt_pnuide_alf IS NULL THEN CONVERT(VARCHAR(25), prmgt_pnuidegar)
+			ELSE COALESCE(prmgt_pnuide_alf, '') 
+		END AS prmgt_pnuidegar,
+		prmgt_pmoavaing	
+	FROM	dbo.GAR_SICC_PRMGT
+	WHERE	prmgt_estado = 'A'
+		AND ((prmgt_pcoclagar = 38)
+			OR (prmgt_pcoclagar = 43))
 
 
 	/************************************************************************************************
@@ -657,7 +708,7 @@ BEGIN
 		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
 		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
 			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
-								
+									
 	
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato,
 					   Tipo_Garantia_Real, Garantia_Real, Clase_Garantia, 
@@ -943,20 +994,20 @@ BEGIN
 		CONVERT(VARCHAR(5), Oficina)      		+ CHAR(9) + 
  		CONVERT(VARCHAR(5), Moneda)	   			+ CHAR(9) +
 		CONVERT(VARCHAR(5), Producto)	   		+ CHAR(9) + 
- 		ISNULL(CONVERT(VARCHAR(20), Operacion), '')	+ CHAR(9) + 
- 		ISNULL(CONVERT(VARCHAR(20), Contrato), '')	+ CHAR(9) + 
+ 		COALESCE(CONVERT(VARCHAR(20), Operacion), '')	+ CHAR(9) + 
+ 		COALESCE(CONVERT(VARCHAR(20), Contrato), '')	+ CHAR(9) + 
 		CONVERT(VARCHAR(5), Tipo_Garantia_Real)	+ CHAR(9) +
 	    Garantia_Real							+ CHAR(9) +
- 		ISNULL(CONVERT(VARCHAR(5), Clase_Garantia), '')					+ CHAR(9) +
+ 		COALESCE(CONVERT(VARCHAR(5), Clase_Garantia), '')					+ CHAR(9) +
 		CONVERT(VARCHAR(10), Porcentaje_Aceptacion)						+ CHAR(9) +
 		CONVERT(VARCHAR(10), Fecha_Valuacion, 105)						+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(10), Fecha_Presentacion, 105), '')		+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(10), Fecha_Ultimo_Seguimiento, 105), '')	+ CHAR(9) +
-		CONVERT(VARCHAR(100), (ISNULL(Monto_Total_Avaluo, 0)))			+ CHAR(9) +
-		CONVERT(VARCHAR(100), (ISNULL(Monto_Ultima_Tasacion_Terreno, 0)))			+ CHAR(9) +
-		CONVERT(VARCHAR(100), (ISNULL(Monto_Tasacion_Actualizada_Terreno, 0)))		+ CHAR(9) +
-		CONVERT(VARCHAR(100), (ISNULL(Monto_Ultima_Tasacion_No_Terreno, 0)))		+ CHAR(9) +
-		CONVERT(VARCHAR(100), (ISNULL(Monto_Tasacion_Actualizada_No_Terreno, 0)))	+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(10), Fecha_Presentacion, 105), '')		+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(10), Fecha_Ultimo_Seguimiento, 105), '')	+ CHAR(9) +
+		CONVERT(VARCHAR(100), (COALESCE(Monto_Total_Avaluo, 0)))			+ CHAR(9) +
+		CONVERT(VARCHAR(100), (COALESCE(Monto_Ultima_Tasacion_Terreno, 0)))			+ CHAR(9) +
+		CONVERT(VARCHAR(100), (COALESCE(Monto_Tasacion_Actualizada_Terreno, 0)))		+ CHAR(9) +
+		CONVERT(VARCHAR(100), (COALESCE(Monto_Ultima_Tasacion_No_Terreno, 0)))		+ CHAR(9) +
+		CONVERT(VARCHAR(100), (COALESCE(Monto_Tasacion_Actualizada_No_Terreno, 0)))	+ CHAR(9) +
 		Tipo_Inconsistencia						+ CHAR(9)) AS [Inconsistencia!3!DATOS!element],
 		Usuario									AS [Inconsistencia!3!Usuario!hide]
 	FROM	@TMP_INCONSISTENCIAS 

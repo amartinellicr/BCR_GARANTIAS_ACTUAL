@@ -70,6 +70,16 @@ BEGIN
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>07/07/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -193,11 +203,12 @@ BEGIN
 		a.cod_producto, 
 		a.num_operacion AS operacion, 
 		ISNULL(c.cod_tipo_bien, -1) AS cod_tipo_bien, 
-		CASE c.cod_tipo_garantia_real  
-			WHEN 1 THEN ISNULL((CONVERT(varchar(2),c.cod_partido)), '') + ISNULL(c.numero_finca, '')  
-			WHEN 2 THEN ISNULL((CONVERT(varchar(2),c.cod_partido)), '') + ISNULL(c.numero_finca, '') 
-			WHEN 3 THEN ISNULL(c.cod_clase_bien, '') + ISNULL(c.num_placa_bien, '')
-		END AS cod_bien, 
+		CASE 
+			WHEN c.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + COALESCE(c.numero_finca,'')  
+			WHEN c.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + COALESCE(c.numero_finca,'')
+			WHEN ((c.cod_tipo_garantia_real = 3) AND (c.cod_clase_garantia <> 38) AND (c.cod_clase_garantia <> 43)) THEN COALESCE(c.cod_clase_bien,'') + COALESCE(c.num_placa_bien,'') 
+			WHEN ((c.cod_tipo_garantia_real = 3) AND ((c.cod_clase_garantia = 38) OR (c.cod_clase_garantia = 43))) THEN COALESCE(c.num_placa_bien,'') 
+		END	AS cod_bien, 
 		ISNULL(b.cod_tipo_mitigador, -1) AS cod_tipo_mitigador, 
 		ISNULL(b.cod_tipo_documento_legal, -1) AS cod_tipo_documento_legal,
 		ISNULL(b.monto_mitigador, 0) AS monto_mitigador,
@@ -238,16 +249,18 @@ BEGIN
 		ISNULL(b.cod_moneda,-1) AS cod_moneda_garantia, 
 		c.cod_partido,
 		c.cod_tipo_garantia,
-		CASE c.cod_tipo_garantia_real 
-			WHEN 1 THEN  ISNULL(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + ISNULL(c.numero_finca,'')  
-			WHEN 2 THEN  ISNULL(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + ISNULL(c.numero_finca,'') 
-			WHEN 3 THEN  ISNULL(c.cod_clase_bien,'') + '-' + ISNULL(c.num_placa_bien,'') 
+		CASE 
+			WHEN c.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + COALESCE(c.numero_finca,'')  
+			WHEN c.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + '-' + COALESCE(c.numero_finca,'')
+			WHEN ((c.cod_tipo_garantia_real = 3) AND (c.cod_clase_garantia <> 38) AND (c.cod_clase_garantia <> 43)) THEN COALESCE(c.cod_clase_bien,'') + '-' + COALESCE(c.num_placa_bien,'') 
+			WHEN ((c.cod_tipo_garantia_real = 3) AND ((c.cod_clase_garantia = 38) OR (c.cod_clase_garantia = 43))) THEN COALESCE(c.num_placa_bien,'') 
 		END AS cod_garantias_listado,
-		CASE c.cod_tipo_garantia_real 
-			WHEN 1 THEN 'Partido: ' + ISNULL(CONVERT(VARCHAR(2), c.cod_partido),'') + ' - Finca: ' + ISNULL(c.numero_finca,'')  
-			WHEN 2 THEN 'Partido: ' + ISNULL(CONVERT(VARCHAR(2), c.cod_partido),'') + ' - Finca: ' + ISNULL(c.numero_finca,'') + ' - Grado: ' + ISNULL(CONVERT(VARCHAR(2),c.cod_grado),'') + ' - Cédula Hipotecaria: ' + ISNULL(CONVERT(VARCHAR(2),c.cedula_hipotecaria),'') 
-			WHEN 3 THEN 'Clase Bien: ' + ISNULL(c.cod_clase_bien,'') + ' - Número Placa: ' + ISNULL(c.num_placa_bien,'') 
-		END AS Garantia_Real,
+		CASE 
+			WHEN c.cod_tipo_garantia_real = 1 THEN 'Partido: ' + COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + ' - Finca: ' + COALESCE(c.numero_finca,'')  
+			WHEN c.cod_tipo_garantia_real = 2 THEN 'Partido: ' + COALESCE(CONVERT(VARCHAR(2), c.cod_partido),'') + ' - Finca: ' + COALESCE(c.numero_finca,'') + ' - Grado: ' + COALESCE(CONVERT(VARCHAR(2),c.cod_grado),'') + ' - Cédula Hipotecaria: ' + COALESCE(CONVERT(VARCHAR(2),c.cedula_hipotecaria),'') 
+			WHEN ((c.cod_tipo_garantia_real = 3) AND (c.cod_clase_garantia <> 38) AND (c.cod_clase_garantia <> 43)) THEN 'Clase Bien: ' + COALESCE(c.cod_clase_bien,'') + ' - Número Placa: ' + COALESCE(c.num_placa_bien,'') 
+			WHEN ((c.cod_tipo_garantia_real = 3) AND ((c.cod_clase_garantia = 38) OR (c.cod_clase_garantia = 43))) THEN 'Número Placa: ' + COALESCE(c.num_placa_bien,'') 
+		END	AS Garantia_Real,
 		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(b.fecha_prescripcion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_prescripcion,
 		CASE WHEN @bEsGiro = 1 THEN 3
 			 ELSE 1
@@ -266,25 +279,6 @@ BEGIN
 		AND b.cod_estado = CASE	WHEN @bEsGiro = 1 THEN b.cod_estado
 								ELSE 1
 							END
---		AND EXISTS (SELECT 1
---					FROM dbo.GAR_SICC_PRMGT g
---					WHERE g.prmgt_pco_conta = a.cod_contabilidad
---					 AND g.prmgt_pco_ofici  = a.cod_oficina
---					 AND g.prmgt_pco_moned  = a.cod_moneda
---					 AND g.prmgt_pco_produ  = CASE	WHEN @bEsGiro = 0 THEN a.cod_producto 
---													ELSE 10
---											  END
---					 AND g.prmgt_pnu_oper   = CASE	WHEN @bEsGiro = 0 THEN a.num_operacion 
---													ELSE a.num_contrato
---											  END
---					 AND g.prmgt_pcoclagar  = c.cod_clase_garantia
---					 AND g.prmgt_pnu_part   = ISNULL(c.cod_partido, g.prmgt_pnu_part)
---					 AND g.prmgt_pco_grado  = ISNULL(c.cod_grado, g.prmgt_pco_grado)
---					 AND g.prmgt_pnuidegar  = CASE WHEN c.cod_tipo_garantia_real = 1 THEN dbo.ufn_ConvertirCodigoGarantia(c.numero_finca)
---												   WHEN c.cod_tipo_garantia_real = 2 THEN dbo.ufn_ConvertirCodigoGarantia(c.numero_finca)
---												   ELSE dbo.ufn_ConvertirCodigoGarantia(c.num_placa_bien)
---											  END
---					 AND g.prmgt_estado = 'A') /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura del SICC*/
 
 	ORDER BY
 		a.cod_operacion,
@@ -569,9 +563,9 @@ BEGIN
 	IF(@nObtenerSoloCodigo = 1)
 	BEGIN
 		SELECT DISTINCT CASE a.cod_tipo_garantia_real  
-							WHEN 1 THEN '[Hipoteca] Partido: ' + ISNULL(Garantia_Real,'') 
-							WHEN 2 THEN '[Cédula Hipotecaria] Partido: ' + ISNULL(Garantia_Real,'')
-							WHEN 3 THEN '[Prenda] Clase Bien: ' + ISNULL(Garantia_Real,'') 
+							WHEN 1 THEN '[Hipoteca] ' + ISNULL(Garantia_Real,'') 
+							WHEN 2 THEN '[Cédula Hipotecaria] ' + ISNULL(Garantia_Real,'')
+							WHEN 3 THEN '[Prenda] ' + ISNULL(Garantia_Real,'') 
 						END AS garantia
 		FROM 
 			@TMP_GARANTIAS_REALES_OPERACIONES a

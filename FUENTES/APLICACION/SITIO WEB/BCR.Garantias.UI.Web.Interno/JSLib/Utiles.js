@@ -1,5 +1,5 @@
 ﻿    //El archivo debe ser minimizado, se usó la herramienta http://jscompress.com/, el resultado se copia en el archivo Utiles_min.js
-    
+
     //Función donde inicializamos el dialog 
     function PageInit() { 
     
@@ -11,7 +11,6 @@
         $arregloCamposValuacion[0] = '';
         $arregloCamposValuacion[1] = '';
         $arregloCamposValuacion[2] = '';
-        
 
 /************************************************************************/        
         /* VALIDACIONES DEL CAMPO REFERENTE A LA FECHA DE PRESENTACION */ 
@@ -90,6 +89,7 @@
 	                modal: true,
 	                buttons: {
 		                "Aceptar": function() { 
+
     			            
 			                document.body.style.cursor = 'default';
                            
@@ -158,11 +158,6 @@
 			                $( this ).dialog( "close" );
     			            
 			                document.body.style.cursor = 'default';
-			            
-//			                if(($$('btnValidarOperacion').attr("MEMM")) == '1')
-//			                {
-//			                   ModificarGarantia();
-//			                }
 		                }
 	                }
                 });
@@ -187,15 +182,10 @@
     			            
 			                document.body.style.cursor = 'default';
 
-//			            if(($$('btnValidarOperacion').attr("MEMM")) == '1')
-//			            {
-//			                ModificarGarantia();
-//			            }
-//			            else
-                        if(($$('btnValidarOperacion').attr("MEMM")) == '0')
-			            {
-			                ValidarPorcentajeAceptacion();
-                        }
+                            if(($$('btnValidarOperacion').attr("MEMM")) == '0')
+			                {
+			                    ValidarPorcentajeAceptacion();
+                            } 
 		              }
 	               }
                 });
@@ -220,15 +210,10 @@
     			            
 			                document.body.style.cursor = 'default';
 
-//			            if(($$('btnValidarOperacion').attr("MEMM")) == '1')
-//			            {
-//			                ModificarGarantia();
-//			            }
-//			            else
-                        if(($$('btnValidarOperacion').attr("MEMM")) == '0')
-			            {
-			                ValidarPorcentajeAceptacion();
-                        }
+                            if(($$('btnValidarOperacion').attr("MEMM")) == '0')
+			                {
+			                    ValidarPorcentajeAceptacion();
+                            }
 		              }
 	               }
                 });
@@ -996,7 +981,6 @@
 
 
  
- 
   /***********************************************************************/        
          /* VALIDACIONES DEL CAMPO REFERENTE A LA FECHA DE PRESCRIPCION */ 
            
@@ -1255,7 +1239,612 @@
                 });
 
 
-   } 
+ /***********************************************************************/        
+         /* VALIDACIONES DEL CATALOGO DEL TIPO DE BIEN */ 
+           
+        //Función que muestra el mensaje de alerta cuando se intenta modificar o eliminar un tipo de bien
+        $MensajeCatalogoTipoBien = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El tipo de bien a borrar o modificar tiene asociado una póliza, favor eliminar esta relación antes de ejecutar la acción, además su desenlace puede ocasionar problemas en mitigador y relaciones de pólizas y tipos de bien.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Tipo de Bien Relacionado', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+	                    }
+                    }
+                });
+
+
+
+ /***********************************************************************/        
+         /* VALIDACIONES DE LA POLIZA */ 
+           
+        //Función que muestra el mensaje de alerta cuando se selecciona una póliza vencida
+        $MensajePolizaVencida = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>La póliza a relacionar se encuentra vencida, esto implicaría un castigo en el mitigador de riesgo y aumento en la estimación, favor normalizar esta situación antes de continuar.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Póliza Vencida', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+		                    
+		                    $$('txtMontoAcreenciaPoliza').attr('disabled', 'disabled');
+	                    }
+                    }
+                });
+
+
+        //Función que muestra el mensaje de alerta cuando se selecciona una póliza inválida
+        $MensajePolizaInvalida = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El campo código SAP relacionado a esta garantía dejó de existir por lo que esta garantía no cuenta con una póliza asociada favor realizar su vinculo nuevamente al nuevo código SAP o consultar a seguros la eliminación del mismo.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Póliza Inválida', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';
+
+		                    $$('btnValidarOperacion').attr('EIPI', '1');
+		                    ModificarGarantia();
+	                    }
+                    }
+                });
+                
+
+        //Función que muestra el mensaje de alerta cuando se selecciona una póliza cuyo monto de póliza ha variado
+        $MensajeCambioMontoPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El campo \"Montos de pólizas\" relacionado a esta garantía ha disminuido por lo que esta garantía cuenta con un infra seguro. Favor realizar o consultar a seguros su disminución.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Cambio en Monto de la Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';	
+		                    
+		                   // LimpiarCamposPolizas();	
+	                    }
+                    }
+                });
+
+
+       //Función que muestra el mensaje de alerta cuando se selecciona una póliza cuyo acreedor ha variado
+       $MensajeCambioAcreedorPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El sistema de seguros a cambiado el nombre del acreedor por lo que la garantía a quedado al descubierto completamente y sufriría un castigo en su mitigador. Favor verificar la situación con seguros.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Cambio en Acreedor de la Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+	                    }
+                    }
+                });
+                
+
+       //Función que muestra el mensaje de alerta cuando se selecciona una póliza cuya identificación del acreedor ha variado
+       $MensajeCambioCedulaAcreedorPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El sistema de seguros a cambiado la identificación del acreedor por lo que la garantía a quedado al descubierto completamente y sufriría un castigo en su mitigador. Favor verificar la situación con seguros.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Cambio en Acreedor de la Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+	                    }
+                    }
+                });
+
+
+       //Función que muestra el mensaje de alerta cuando se selecciona una póliza cuyo acreedor e identificación ha variado
+       $MensajeCambioDatosAcreedorPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El sistema de seguros a cambiado la identificación y el nombre del acreedor por lo que la garantía a quedado al descubierto completamente y sufriría un castigo en su mitigador. Favor verificar la situación con seguros.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Cambio en Acreedor de la Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+	                    }
+                    }
+                });
+
+
+       //Función que muestra el mensaje de alerta cuando se selecciona una póliza cuya fecha de vencimiento ha variado
+       $MensajeCambioFechaVencimientoPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El sistema de seguros ha cambiado la fecha de vencimiento por lo que la garantía ha quedado sin póliza completamente. Ante esta situación la garantía será castigada en su mitigador. Favor verificar la situación con seguros.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Cambio en Fecha de Vencimiento de la Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';
+
+		                    $$('txtMontoAcreenciaPoliza').attr('disabled', 'disabled');
+
+		                    //LimpiarCamposPolizas();
+	                    }
+                    }
+                });
+                
+
+       //Función que muestra el mensaje de alerta cuando se ingresa un monto de acreencia que es mayor al monto de la póliza
+       $MensajeMontoAcreenciaDigitadoInvalido = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El monto de acreencia ingresado es mayor al monto de la póliza. Favor de corregir.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Monto Acreencia Inválido', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';		
+	                    }
+                    }
+                });
+
+
+ 
+       //Función que muestra el mensaje de alerta cuando el monto de la póliza es menor al monto de la última tasación del no terreno
+       $MensajeMontoPolizaMenorMontoUltimaTasacionNoTerreno = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>La póliza a relacionar no cubre el valor real efectivo \"valor neto de reposición, que incluye el costo de construir o reparar el bien siniestrado, con base en el precio de los materiales, el acarreo y la mano de obra\".</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Bien No Cubierto Por Póliza', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+
+		                    document.body.style.cursor = 'default';
+
+		                    $$('btnValidarOperacion').attr('EIPNCB', '1'); 
+                            ModificarGarantia();              
+	                    }
+                    }
+		        });
+
+
+		//Función que muestra el mensaje de alerta cuando la póliza asociada a la garantía no puede ser mostrada debido a que la relación entre el tipo de bien y el tipo de póliza SAP no existe
+		$MensajePolizaInvalidaRelacionTipoBienPoliza = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>La póliza relacionada no puede ser mostrada debido a que no es válida para el tipo de bien seleccionado.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Póliza Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+
+                        $$('txtMontoAcreenciaPoliza').attr('disabled', 'disabled');
+                    }
+                }
+            });
+
+
+
+        /***********************************************************************/
+        /* VALIDACIONES DEL CATALOGO DE PORCENTAJE DE ACEPTACION */
+
+        //Función que muestra el mensaje de alerta cuando se intenta eliminar o modificar un tipo de garantia
+        $MensajeCatalogoPorcentajeTipoGarantia = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El tipo de garantia a eliminar o modificar tiene asociado un porcentaje de aceptación, favor eliminar esta relación antes de ejecutar la acción.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Tipo de Garantia Relacionada',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+        //Función que muestra el mensaje de alerta cuando se intenta eliminar o modificar un tipo de mitigador
+        $MensajeCatalogoPorcentajeTipoMitigador = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El tipo de mitigador a eliminiar o modificar  tiene asociado un porcentaje de aceptación, favor eliminar esta relación antes de ejecutar la acción.</p></div></div>')
+        .dialog({
+            autoOpen: false,
+            title: 'Tipo de Mitigador de Riesgo Relacionado',
+            resizable: false,
+            draggable: false,
+            height: 235,
+            width: 650,
+            closeOnEscape: false,
+            open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+            modal: true,
+            buttons: {
+                "Aceptar": function () {
+                    $(this).dialog("close");
+
+                    document.body.style.cursor = 'default';
+                }
+            }
+        });
+
+        /************************************************************************/
+        /* VALIDACIONES DEL CAMPO REFERENTE AL PORCENTAJE DE ACEPTACION CALCULADO */
+
+
+        //Función que muestra el mensaje de alerta cuando el tipo de mitigador no está relacionado en el catalogo de porcentaje de Aceptacion
+        $MensajePorceAcepTipoMitigadorNoRelacionado = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> El tipo de mitigador de riesgo no se encuentra relacionado dentro del catálogo Porcentaje de Aceptación. Favor realizar dicha asociación en el catálogo correspondiente.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Tipo Mitigador No Relacionado',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que muestra el mensaje de alerta cuando el % aceptacion es mayor al % aceptacion calculado
+            $MensajePorceAcepMayorPorceAcepCalculado = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span> El valor del campo % de aceptación es mayor al indicado en el campo % de aceptación calculado y este valor no puede ser mayor,favor verificar el valor incluido en el campo % de aceptación antes de continuar.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Porcentaje Aceptación Inválido',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });   
+
+        //*************
+        //TIPO BIEN 1 
+        //*************
+
+        //Función que muestra el mensaje de alerta cuando la fecha de valuacion es mayor en 5 años en relacion a la del sistema
+        $MensajePorceAcepFechaValuacionMayorCincoAnnosBienUno = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>La fecha de valuación es mayor a cinco años,esta garantía necesita un nuevo avalúo, favor solventar la situación para evitar inconvenientes con el monto mitigador y porcentaje de aceptación. </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Valuación Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFVM', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+
+        //*************
+        //TIPO BIEN 2
+        //*************
+
+        //Función que muestra el mensaje de alerta cuando la fecha de valuacion es mayor a 18 meses 
+        $MensajePorceAcepFechaValuacionMayorDieciochoMeses = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>PREGUNTAR JONATHAN MENSAJE.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Valuación Invalida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+        //*************
+        //TIPO BIEN 3
+        //*************
+
+        //Función que muestra el mensaje de alerta cuando la fecha de valuacion es mayor en 5 años en relacion a la del sistema
+        $MensajePorceAcepFechaValuacionMayorCincoAnnosBienTres = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>La fecha de valuacion para este tipo de bien supera el tiempo definido por SUGEF, verifique los datos; si son correctos esta garantía no debe mitigar.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Valuación Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFVM', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+        //Función que muestra el mensaje de alerta cuando la fecha de seguimiento es mayor a un año en relacion a la del sistema
+        $MensajePorceAcepFechaSeguimientoMayorUnAnnoBienTres = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Este tipo de bien no presenta un seguimiento adecuado, favor normalizar la situación ya que puede afectar el porcentaje de aceptación y mitigador de riesgo. </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Último Seguimiento Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+
+        //*************
+        //TIPO BIEN 4
+        //*************
+
+        //Función que muestra el mensaje de alerta cuando la fecha de seguimiento es mayor a seis meses
+        $MensajePorceAcepFechaSeguimientoMayorSeisMeses = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Este tipo de bien no presenta un seguimiento adecuado, favor normalizar la situación ya que puede afectar el porcentaje de aceptación y mitigador de riesgo. </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Último Seguimiento Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+
+        //************
+        //SEMEJANTES
+        //************
+
+
+        //Función que muestra el mensaje de alerta cuando la fecha de seguimiento es mayor a un año en relacion a la del sistema
+        $MensajePorceAcepFechaSeguimientoMayorUnAnno = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>La finca no presenta seguimiento y su fecha de seguimiento es mayor a un año, favor solventar la situación para evitar inconvenientes con el monto mitigador y porcentaje aceptación. </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Último Seguimiento Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSM', '1');
+                        ModificarGarantia();
+                  }
+                }
+            });            
+
+
+        //Función que muestra el mensaje de alerta cuando el tipo de bien es igual a 1 y tiene una poliza asociada
+        $MensajePorceAcepTipoBienUnoPolizaAsociada = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span> Favor verificar el tipo de bien ya que según nuestros registros tiene una póliza asociada a No terreno y el tipo de bien es Terreno  . </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Póliza Asociada Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';                     
+                    }
+                }
+            });
+
+
+        //Función que muestra el mensaje de alerta cuando no tiene poliza asociada 
+        $MensajePorceAcepNoPolizaAsociada = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Esta garantía no tiene una póliza asociada, favor solventar la situación para evitar inconvenientes con el monto mitigador y porcentaje aceptación. </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Póliza No Asociada',
+                resizable: false,
+                draggable: false, 
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EISP', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+
+        //Función que muestra el mensaje de alerta cuando tiene una poliza asociada y tiene la fecha de vencimiento es menor a la fecha del sistema
+        $MensajePorceAcepPolizaFechaVencimientoMenor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Esta garantía su póliza se encuentra vencida, favor solventar la situación para evitar inconvenientes con el monto mitigador y porcentaje aceptación.  </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Póliza Asociada Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+
+        //Función que muestra el mensaje de alerta cuando tiene una poliza asociada y tiene la fecha de vencimiento es mayor a la fecha del sistema, y monto de la poliza no cubre el monto ultima tasacion no terreno
+        $MensajePorceAcepPolizaFechaVencimientoMontoNoTerreno = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>  PREGUNTAR JONATHAN.  </p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Póliza Asociada Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+
+                    }
+                }
+            });    
+
+
+
+   } //FIN METODO DEL DIALOGO
 
 
  /*********************************************************************************/        
@@ -1337,7 +1926,7 @@
             {
                 var partesFecha = parteFechaActual.split('|');
                 
-                fechaActual = new Date(partesFecha[0], partesFecha[1], partesFecha[2]);
+                fechaActual = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
             }
                 
             switch(indicador)
@@ -1349,7 +1938,10 @@
                     
                     $$('txtMontoMitigador').attr('disabled', 'disabled');
                     $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                    
+
+                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                    $$('btnValidarOperacion').attr('EII','1');
+
                     $MensajeIndicadorInscripcionInvalido.dialog('open');
                     
                 break;
@@ -1399,7 +1991,10 @@
                             
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
 	                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-        	                
+
+	                        $$('txtPorcentajeAceptacionCalculado').val('0.00');
+	                        $$('btnValidarOperacion').attr('EII', '1');
+
 	                        if((montoMitigador == 0) && (porcentajeAceptacion == 0))
 	                        {
 	                            $MensajeIndicadorInscripcionFCInvalida.dialog('open');
@@ -1452,9 +2047,12 @@
                             
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
 	                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-        	                
+
+	                        $$('txtPorcentajeAceptacionCalculado').val('0.00');
+	                        $$('btnValidarOperacion').attr('EII', '1');
+
                             var montoMitigador          = parseFloat($$('txtMontoMitigador').val());
-                            var porcentajeAceptacion    = parseFloat($$('txtPorcentajeAceptacion').val());
+                            var porcentajeAceptacion    = parseFloat($$('txtPorcentajeAceptacion').val());                           
 
 	                        if((montoMitigador == 0) && (porcentajeAceptacion == 0))
 	                        {
@@ -1494,7 +2092,11 @@
                             $$('btnValidarOperacion').attr('BCPA', '0');
                             
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
-	                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                            $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+
+                            $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                            $$('btnValidarOperacion').attr('EII', '1');
+
                 break;
                default: break;
             }
@@ -1510,8 +2112,17 @@
     }
 
     //Función que valida el porcentaje de aceptación que fue ingresado por el usuario
-    function ValidarPorcentajeAceptacion()
-    {
+    function ValidarPorcentajeAceptacion() 
+    {      
+        
+        var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();      
+
+        if (($$('txtPorcentajeAceptacion').val().length === 0))
+        {
+            $$('txtPorcentajeAceptacion').val(porcentajeAceptacionCalculado);                    
+        } 
+
+
         if(($$('btnValidarOperacion').attr("IEG")) == '0')
         {
             var fecPresentacion = $.trim($$('txtFechaRegistro').val().replace("__/__/____", ""));
@@ -1543,7 +2154,7 @@
                         {
                             var partesFecha = parteFechaActual.split('|');
                             
-                            fechaActual = new Date(partesFecha[0], partesFecha[1], partesFecha[2]);
+                            fechaActual = new Date(partesFecha[0], partesFecha[1] - 1 , partesFecha[2]);
                         }
                             
                         switch(indicador)
@@ -1595,6 +2206,8 @@
     	                                    }
                                         }
                                         
+                                        ValidarExistenciaAvaluo();
+
                                         if(($$('btnValidarOperacion').attr("HAYAVAL")) == '0')
                                         {
                                             $$('btnValidarOperacion').attr('BCMM', '0');
@@ -1649,7 +2262,9 @@
     	                                        $MensajePorcentajeAceptacionInvalido.dialog('open');
     	                                    }
                                         }
-                                        
+
+    	                                ValidarExistenciaAvaluo();
+
                                         if(($$('btnValidarOperacion').attr("HAYAVAL")) == '0')
                                         {
                                             $$('btnValidarOperacion').attr('BCMM', '0');
@@ -1669,39 +2284,37 @@
                                 }
                                 
                             break;
-                            case '3': 
-                            
-                                $$('btnValidarOperacion').attr('BCMM', '1');
-                                $$('btnValidarOperacion').attr('BCPA', '1');
+                        case '3':
 
-                                $$('txtMontoMitigador').removeAttr('disabled');
-                                $$('txtPorcentajeAceptacion').removeAttr('disabled');
+                            $$('btnValidarOperacion').attr('BCMM', '1');
+                            $$('btnValidarOperacion').attr('BCPA', '1');
+
+                            $$('txtMontoMitigador').removeAttr('disabled');
+                            $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                            var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
+                            var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+
+                            if ((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80)) {
+                                $$('btnValidarOperacion').attr('BCMM', '0');
+                                $$('txtMontoMitigador').attr('disabled', 'disabled');
+
+                                if (porcentajeAceptacion != 0) {
+                                    $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                }
+
+                                if (porcentajeAceptacion === 0) {
+                                    $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
+                                }
+                            }
+
+                            ValidarExistenciaAvaluo();
                             
-                                var datoPorcentajeAcep      = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                var porcentajeAceptacion    = parseFloat(datoPorcentajeAcep);
-                                
-                                if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
-                                {
-                                    $$('btnValidarOperacion').attr('BCMM', '0');
-                                    $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                    
-                                    if(porcentajeAceptacion != 0)
-                                    {
-                                        $MensajePorcentajeAceptacionInvalido.dialog('open');
-                                    }
-                                    
-                                    if(porcentajeAceptacion === 0)
-                                    {
-                                        $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
-                                    }                               
-                                }
-                                
-                                if(($$('btnValidarOperacion').attr("HAYAVAL")) == '0')
-                                {
-                                    $$('btnValidarOperacion').attr('BCMM', '0');
-                                    $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                }
-                                                                    
+                            if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                                $$('btnValidarOperacion').attr('BCMM', '0');
+                                $$('txtMontoMitigador').attr('disabled', 'disabled');
+                            }
+
                             break;
                             case '-1':
                                         $$('btnValidarOperacion').attr('BCMM', '0');
@@ -1742,78 +2355,6 @@
         CalcularMontoMitigador();
     }
 
-    //Se ajusta, de forma automática, el tipo de documento legal, según el código del grado de gravamen y el tipo de garantía real
-    function ActualizarDocumentoLegal()
-    {
-        var tipoDocumentoLegal  = $$('cbTipoDocumento').val();
-        var tipoGarantiaReal    = $$('cbTipoGarantiaReal').val();
-        var gradoGravamen       = $$('cbGravamen').val();
-        var existeOpcion        = false;
-        var mapeoDocumentoLegal = "";
-    
-        $$('cbTipoDocumento').val("-1");   
-        
-        switch(tipoGarantiaReal)
-        {
-            case '1': 
-                    $$('cbTipoDocumento').each(function() {
-                                            if($(this).val() == gradoGravamen){
-                                                $(this).attr("selected","selected");
-                                                return false;
-                                            }
-                                          });
-            break;
-            
-            case '2': 
-                    switch(gradoGravamen)
-                    {
-                        case '1':  mapeoDocumentoLegal = "5"; 
-                        break;
-                        case '2':  mapeoDocumentoLegal = "6"; 
-                        break;
-                        case '3':  mapeoDocumentoLegal = "7"; 
-                        break;
-                        case '4':  mapeoDocumentoLegal = "8"; 
-                        break;
-                        default:   mapeoDocumentoLegal = "-1"; 
-                        break;
-                    }  
-                    
-                    $$('cbTipoDocumento').each(function() {
-                                            if($(this).val() == mapeoDocumentoLegal){
-                                                $(this).attr("selected","selected");
-                                                return false;
-                                            }
-                                          });
-            break;
-            
-            case '3':
-                    switch(gradoGravamen)
-                    {
-                        case '1':  mapeoDocumentoLegal = "9"; 
-                        break;
-                        case '2':  mapeoDocumentoLegal = "10"; 
-                        break;
-                        case '3':  mapeoDocumentoLegal = "11"; 
-                        break;
-                        case '4':  mapeoDocumentoLegal = "12"; 
-                        break;
-                        default:   mapeoDocumentoLegal = "-1"; 
-                        break;
-                    }  
-                    
-                    $$('cbTipoDocumento').each(function() {
-                                            if($(this).val() == mapeoDocumentoLegal){
-                                                $(this).attr("selected","selected");
-                                                return false;
-                                            }
-                                          });
-            break;
-            
-            default: $$('cbTipoDocumento').val("-1");  
-            break;
-        }
-    }
     
 //Función que permite hacer el llamado asíncrono al método que permite calcular el monto mitigador
 //Siebel 1-23914481. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
@@ -1898,11 +2439,6 @@ function MensajeMontoMitigadorMenor()
         			            
 	                            document.body.style.cursor = 'default';
 
-//	                            if(($$('btnValidarOperacion').attr("MEMM")) == '1')
-//	                            {
-//	                                ModificarGarantia();
-//	                            }
-//	                            else
                                 if(($$('btnValidarOperacion').attr("MEMM")) == '0')
 	                            {
 	                                ValidarPorcentajeAceptacion();
@@ -2017,10 +2553,11 @@ function MensajeMontoMitigadorMayor()
         hour = minute * 60,
         day = hour * 24,
         week = day * 7;
-        date1 = new Date(date1).getTime();
-        date2 = (date2 == 'now') ? new Date().getTime() : new Date(date2).getTime();
-        var timediff = date2 - date1;
+        date_1 = new Date(date1).getTime();
+        date_2 = (date2 == 'now') ? new Date().getTime() : new Date(date2).getTime();
+        var timediff = date_2 - date_1;
         if (isNaN(timediff)) return NaN;
+
         switch (interval) {
         case "years":
             return date2.getFullYear() - date1.getFullYear();
@@ -2171,11 +2708,348 @@ function MensajeMontoMitigadorMayor()
     }
     
   
+  
+      /* VALIDACIONES DE LOS DATOS DE LA POLIZA */ 
+           
+    //Función que muestra el mensaje de alerta cuando el monto de la póliza no cubre el bien en garantía, usando la última satación del no terreno.
+    //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
+    function MostrarErrorInfraSeguros(listaOperacionesRelacionadas, listaContratosRelacionados)
+    {
+        var $mensaje = '';
+        var mostrarMensaje = false;
+        
+        if((listaOperacionesRelacionadas.length > 0) && (listaContratosRelacionados.length > 0))
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'Las siguientes operaciones: <br /><br /><CENTER>' + 
+                                    listaOperacionesRelacionadas + ' </CENTER><br />' +
+                                    ' y a los siguientes contratos: <br /><br /><CENTER>' +
+                                    listaContratosRelacionados + ' </CENTER><br />' +
+                                    ' presenta un infra seguro, favor verificar su estado antes de realizar el vinculo ya que esto' +
+                                    ' puede afectar el monto mitigador de la garantía.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Operaciones con Infra Seguro', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            
+                                    $$('btnValidarOperacion').attr('LISTAOPERINFRASEG', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+        else if(listaOperacionesRelacionadas.length > 0) 
+        {
+            mostrarMensaje = true;
+        
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'Las siguientes operaciones: <br /><br /><CENTER>' + 
+                                    listaOperacionesRelacionadas + ' </CENTER><br />' +
+                                    ' presenta un infra seguro, favor verificar su estado antes de realizar el vinculo ya que esto' +
+                                    ' puede afectar el monto mitigador de la garantía.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Operaciones con Infra Seguro', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';		
+		                            
+                                    $$('btnValidarOperacion').attr('LISTAOPERINFRASEG', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+        else if(listaContratosRelacionados.length > 0)
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'Los siguientes contratos: <br /><br /><CENTER>' + 
+                                    listaContratosRelacionados + ' </CENTER><br />' +
+                                    ' presentan un infra seguro, favor verificar su estado antes de realizar el vinculo ya que esto' +
+                                    ' puede afectar el monto mitigador de la garantía.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Operaciones con Infra Seguro', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            	
+                                    $$('btnValidarOperacion').attr('LISTAOPERINFRASEG', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+        else
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    ' La garantía asociada a esta operación/contrato presenta un infra seguro, favor verificar su estado' +
+                                    ' antes de realizar el vinculo ya que esto puede afectar el monto mitigador de la garantía.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Operaciones con Infra Seguro', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            
+                                    $$('btnValidarOperacion').attr('LISTAOPERINFRASEG', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+
+        if(mostrarMensaje)
+        {   
+            $mensaje.dialog('open');
+        }
+    }
+  
+
+    //Función que muestra el mensaje de alerta cuando el monto de la acreencia de una miema garantía y póliza es diferente en las relaciones con diferentes operaciones.
+    //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
+    function MostrarErrorMontoAcreenciaDiferente(listaOperacionesRelacionadas, listaContratosRelacionados)
+    {
+        var $mensaje = '';
+        var mostrarMensaje = false;
+        
+        if((listaOperacionesRelacionadas.length > 0) && (listaContratosRelacionados.length > 0))
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'El valor de la acreencia es diferente al valor de la póliza asociada a las siguientes operaciones: <br /><br /><CENTER>' + 
+                                    listaOperacionesRelacionadas + ' </CENTER><br />' +
+                                    ' y a los siguientes contratos: <br /><br /><CENTER>' +
+                                    listaContratosRelacionados + ' </CENTER><br />' +
+                                    ' favor verificar antes de continuar.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Monto Acreencia Diferente', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            
+                                    $$('btnValidarOperacion').attr('LISTAOPERACREDIF', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+        else if(listaOperacionesRelacionadas.length > 0) 
+        {
+            mostrarMensaje = true;
+        
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'El valor de la acreencia es diferente al valor de la póliza asociada a las siguientes operaciones: <br /><br /><CENTER>' + 
+                                    listaOperacionesRelacionadas + ' </CENTER><br />' +
+                                    ' favor verificar antes de continuar.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Monto Acreencia Diferente', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';		
+		                            
+                                    $$('btnValidarOperacion').attr('LISTAOPERACREDIF', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+       }
+        else if(listaContratosRelacionados.length > 0)
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'El valor de la acreencia es diferente al valor de la póliza asociada a los siguientes contratos: <br /><br /><CENTER>' + 
+                                    listaContratosRelacionados + ' </CENTER><br />' +
+                                    ' favor verificar antes de continuar.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Monto Acreencia Diferente', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            	
+                                    $$('btnValidarOperacion').attr('LISTAOPERACREDIF', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+        else
+        {
+            mostrarMensaje = true;
+            
+            $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' + 
+                            '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' + 
+                                '<p>' +
+                                    '<span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>' + 
+                                    'El valor de la acreencia es diferente al valor de la póliza asociada a esta operación/contrato,' +
+                                    ' favor verificar antes de continuar.' + 
+                                '</p>' +
+                            '</div>' +
+                        '</div>')
+                        .dialog({
+                            autoOpen: false, 
+                            title: 'Monto Acreencia Diferente', 
+                            resizable: false,
+                            draggable: false,
+                            height:235,
+                            width:650,
+                            closeOnEscape: false,
+                            open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                            modal: true,
+                            buttons: {
+	                            "Aceptar": function() {
+		                            $( this ).dialog( "close" );
+            			            
+		                            document.body.style.cursor = 'default';	
+		                            	
+                                    $$('btnValidarOperacion').attr('LISTAOPERACREDIF', '1');	
+                                    ModificarGarantia();
+	                            }
+                            }
+                    });
+        }
+
+        
+        if(mostrarMensaje)
+        {   
+            $mensaje.dialog('open');
+        }
+    }
+
+
+
+
+  
     function ModificarGarantia()
     {
         if((($$('btnValidarOperacion').attr("CARGAINICIAL")) == '0') 
               && (($$('btnValidarOperacion').attr("MEMM")) == '1') 
-              && (($$('btnValidarOperacion').attr("LISTAOPER")) == '1'))
+              && (($$('btnValidarOperacion').attr("LISTAOPER")) == '1')
+              && (($$('btnValidarOperacion').attr("LISTAOPERINFRASEG")) == '1')
+              && (($$('btnValidarOperacion').attr("LISTAOPERACREDIF")) == '1')
+              && (($$('btnValidarOperacion').attr("EISP")) == '1')
+              && (($$('btnValidarOperacion').attr("EIPI")) == '1')
+              && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')
+              && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
+              && (($$('btnValidarOperacion').attr('EIFVM')) == '1')) 
         {
             __doPostBack('btnModificar','Metodo');
         }
@@ -2240,6 +3114,58 @@ function MensajeMontoMitigadorMayor()
         });
     };
     
+    //CONTROL DEL TIPO ACORDEON DEL DETALLE DE LA POLIZA
+    function MostrarPoliza(habilitarControl) {
+
+        var panelActivado = parseInt((($$('hdnIndiceAccordionPolizaActivo').val() != null) ? $$('hdnIndiceAccordionPolizaActivo').val() : "-1"));
+        var activarPanel = parseInt((($$('hdnHabilitarPoliza').val() != null) ? $$('hdnHabilitarPoliza').val() : "0"));
+
+        if (panelActivado === -1) {
+            panelActivado = false;
+        }
+
+        if (activarPanel === 1) {
+            if (!habilitarControl) {
+                habilitarControl = true;
+            }
+        }
+
+        $("#accPoliza").accordion({
+            icons: { "header": "ui-icon-circle-arrow-e", "activeHeader": "ui-icon-circle-arrow-s" },
+            collapsible: true,
+            active: panelActivado,
+            header: "h3",
+            activate: function (event, ui) {
+                var index = $(this).accordion("option", "active");
+
+                if (index === 0) {
+                    $$('hdnIndiceAccordionPolizaActivo').val("0");
+                }
+                else {
+                    $$('hdnIndiceAccordionPolizaActivo').val("-1");
+                }
+            },
+            beforeActivate: function (event, ui) {
+
+                if ((habilitarControl == false) && (activarPanel === 0)) {
+                    event.preventDefault();
+                }
+            },
+            create: function (event, ui) {
+
+                if ((habilitarControl) || (panelActivado === 0)) {
+                    $(this).accordion("enable");
+                }
+                else {
+                    $(this).accordion("disable");
+                    $(this).accordion("option", "disabled", true);
+                }
+            }
+        });
+
+        IndicarPolizaViegente('-1');
+    }   
+    
     //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
     function HabilitarAvaluoReal(habiltarControl)
     {
@@ -2255,12 +3181,33 @@ function MensajeMontoMitigadorMayor()
         }
     }
     
-    //DESHABILITA Y RETRAE EL CONTROL ACODEON DEL AVALUO DE GARANTIAS REALES
+    //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DE LA POLIZA
+    function HabilitarPoliza(habiltarControl)
+    {
+        if(habiltarControl)
+        {
+            $( "#accPoliza" ).accordion( "enable" );
+            
+        }
+        else
+        {
+            $( "#accPoliza" ).accordion( "disable" );
+            $( "#accPoliza" ).accordion( "option", "disabled", true );
+        }
+    }
+    
+    //DESHABILITA Y RETRAE EL CONTROL ACORDEON DEL AVALUO DE GARANTIAS REALES
     function ContraerAvaluo()
     {  
         $$('hdnIndiceAccordionActivo').val("-1");
     }
-    
+ 
+     //DESHABILITA Y RETRAE EL CONTROL ACORDEON DE LA POLIZA DE GARANTIAS REALES
+    function ContraerPoliza()
+    {  
+        $$('hdnIndiceAccordionPolizaActivo').val("-1");
+    }
+   
     //Función que permite calcular la fecha de prescripción y actualizar este valor en el campo respectivo
     function ActualizarFechaPrescripcion()
     {
@@ -2331,11 +3278,40 @@ function MensajeMontoMitigadorMayor()
         
         if(habilitarCampo)
         {
-              $$('txtMontoMitigador').removeAttr('disabled');
-              CalcularMontoMitigador();
+            $$('txtMontoMitigador').removeAttr('disabled');
+            $$('btnValidarOperacion').attr('HAYAVAL', '1');
+            CalcularMontoMitigador();
         }
     }
 
+    //Función que se encargará de verificar si se ha ingresado la información básica del avalúo.
+    function ValidarExistenciaAvaluo() 
+    {       
+        var habilitarCampo = true;
+        var valuadorEmpresa = parseInt((($$('cbEmpresa').val().length > 0) ? $$('cbEmpresa').val() : '-1'));
+        var valuadorPerito = parseInt((($$('cbPerito').val().length > 0) ? $$('cbPerito').val() : '-1'));
+        var montoUTT = parseFloat((($$('txtMontoUltTasacionTerreno').val().length > 0) ? $$('txtMontoUltTasacionTerreno').val() : '0'));
+        var montoUTNT = parseFloat((($$('txtMontoUltTasacionNoTerreno').val().length > 0) ? $$('txtMontoUltTasacionNoTerreno').val() : '0'));
+        var fechaSeguimiento = $.trim($$('txtFechaSeguimiento').val().replace("__/__/____", ""));
+
+
+        if ((valuadorPerito === -1) && (valuadorEmpresa === -1)) //Se verifica si se ingresó el perito o empresa
+        {
+            habilitarCampo = false;
+        }
+        else if ((habilitarCampo) && (montoUTT === 0) && (montoUTNT === 0)) //Se revisa si se ingresó el monto de la última tasación terreno o no terreno
+        {
+            habilitarCampo = false;
+        }
+        else if ((habilitarCampo) && (fechaSeguimiento.length === 0)) //Se verifica si se ingresó la fecha de seguimiento
+        {
+            habilitarCampo = false;
+        }
+
+        if (habilitarCampo) {
+            $$('btnValidarOperacion').attr('HAYAVAL', '1');
+        }
+    }
 
     //Función que permite hacer el llamado asíncrono al método que permite calcular el monto de la tasación actualizada dle terreno y no terreno calculado
     //Siebel 1-24077731. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 29/11/2013.
@@ -2422,4 +3398,491 @@ function MensajeMontoMitigadorMayor()
            $$('txtFechaSeguimiento').attr('disabled', 'disabled');
            $$('igbCalendarioSeguimiento').attr('disabled', 'disabled');
        }
+
+       ValidarPorcentajeAceptacionCalculado();
     }
+    
+    //Función que asigna la lista de semestres que deberán ser evaluados en el cáclulo
+    function AsignarListaPolizasSap(listaPolizasSap)
+    {
+        $listaPolizas = listaPolizasSap;
+    }
+    
+    //Limpia los campos de las pólizas
+    function LimpiarCamposPolizas()
+    {
+        $$('txtMontoPoliza').val('');
+        $$('cbMonedaPoliza').val('-1');
+        $$('txtFechaVencimientoPoliza').val('');
+        $$('txtCedulaAcreedorPoliza').val('');
+        $$('txtNombreAcreedorPoliza').val('');
+        $$('txtMontoAcreenciaPoliza').val('');
+        $$('txtDetallePoliza').val('');
+        $$('rdlEstadoPoliza').find("input[value='0']").removeAttr("checked");
+        $$('rdlEstadoPoliza').find("input[value='1']").removeAttr("checked");
+        $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+        $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+    }
+
+    //Se carga la información de la póliza seleccionada
+    function cargarDatosPoliza()
+    {
+         var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+              
+        
+         if(datoCodigoSap === -1)
+         {
+             LimpiarCamposPolizas();             
+         }
+         else if((datoCodigoSap > 0) && ($listaPolizas.length > 0))
+         {
+            var polizasSap = eval('(' + $listaPolizas + ')') 
+            for(var i = 0; i < polizasSap.length; i++ )  
+            {
+                var codigoSap = parseInt(polizasSap[i].Codigo_SAP);
+
+                if(codigoSap === datoCodigoSap)
+                {
+                    $$('txtMontoPoliza').val(polizasSap[i].Monto_Poliza_Colonizado);
+                    $$('cbMonedaPoliza').val(polizasSap[i].Moneda_Monto_Poliza);
+                    $$('txtFechaVencimientoPoliza').val(polizasSap[i].Fecha_Vencimiento);
+                    $$('txtCedulaAcreedorPoliza').val(polizasSap[i].Cedula_Acreedor);
+                    $$('txtNombreAcreedorPoliza').val(polizasSap[i].Nombre_Acreedor);
+                    $$('txtMontoAcreenciaPoliza').val(polizasSap[i].Monto_Acreencia);
+                    $$('txtDetallePoliza').val(polizasSap[i].Detalle_Poliza);
+                    $$('rdlEstadoPoliza').find("input[value='" + polizasSap[i].Poliza_Vigente + "']").attr("checked", "checked");
+
+                    $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
+
+                    if(polizasSap[i].Codigo_Sap_Valido === '0')
+                    {
+                        if(typeof($MensajePolizaInvalida) !== 'undefined')
+                        {
+                            $MensajePolizaInvalida.dialog('open');
+                        }
+                    }
+                    else if(polizasSap[i].Monto_Poliza_Menor === '1')
+                    {
+                        if(typeof($MensajeCambioMontoPoliza) !== 'undefined')
+                        {
+                            $MensajeCambioMontoPoliza.dialog('open');
+                        }
+                    }
+                    else if(polizasSap[i].Fecha_Vencimiento_Menor === '1')
+                    {
+                        if (typeof ($MensajeCambioFechaVencimientoPoliza) !== 'undefined') {
+
+                            $MensajeCambioFechaVencimientoPoliza.dialog('open');
+                        }
+                    }
+
+                    if(polizasSap[i].Poliza_Vigente === 0)
+                    {
+                        $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
+                        $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+                        
+                        $MensajePolizaVencida.dialog('open');
+                    }
+                    else
+                    {
+                        $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+                        $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
+                    }
+                    
+                    break;
+               }
+            }
+        }
+
+        ValidarPorcentajeAceptacionCalculado();
+    }
+
+    //Función que se encarga de pintar el recuadro de si la póliza es vigente o no
+    function IndicarPolizaViegente(codigoIndicador) {
+
+        var codigoIndicadorUsar = ((codigoIndicador === undefined) ? '-1' : codigoIndicador);
+
+        if (codigoIndicadorUsar === '-1') {
+            codigoIndicadorUsar = (($$('rdlEstadoPoliza').find("input:checked").val() !== undefined) ? $$('rdlEstadoPoliza').find("input:checked").val() : '-1');
+        }
+
+        if ($$('rdlEstadoPoliza').find("input:checked").val() === undefined) 
+        {
+            $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+            $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+        }
+        else if (codigoIndicadorUsar === -1) 
+        {
+            $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+            $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+        }
+        else if (codigoIndicador === 0) {
+            $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
+            $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+
+            $$('txtMontoAcreenciaPoliza').attr('disabled', 'disabled');
+        }
+        else {
+            $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+            $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
+            
+            $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
+        }
+    }
+
+    //Función que muestra el mensaje de alerta cuando se inserta un registro ya existente en el tipo de Poliza y Bien Relacionado
+    function MensajeTipoBienRelacionadoDuplicado() {
+        var $mensaje = '';
+
+        var tipoPolizaSap = $$('cbTipoPolizaSap').find(":selected").text();
+        var tipoPolizaSugef = $$('cbTipoPolizaSugef').find(":selected").text();
+        var tipoBien = $$('cbTipoBien').find(":selected").text();
+
+        $mensaje = $('<div class="ui-widget" style="padding-top:2.2em;">' +
+                        '<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">' +
+                            '<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>' +
+                                'Para esta Póliza SAP:' + tipoPolizaSap +
+                                ', Póliza SUGEF:' + tipoPolizaSugef +
+                                ', Tipo de Bien:' + tipoBien +
+                                ', ya existe un valor asociado,favor verificar antes de continuar. Si desea observar el registro, seleccione "Visualizar" en los botones de abajo.' +
+                            '</p>' +
+                        '</div>' +
+                    '</div>')
+             .dialog({
+                 autoOpen: false,
+                 title: 'Registro Existente',
+                 resizable: false,
+                 draggable: false,
+                 height: 235,
+                 width: 650,
+                 closeOnEscape: false,
+                 open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                 modal: true,
+                 buttons: {
+                     "Cancelar": function () {
+                         $(this).dialog("close");
+
+                         document.body.style.cursor = 'default';
+                     },
+
+                     "Visualizar": function () {
+                         $(this).dialog("close");
+
+                         document.body.style.cursor = 'default';
+
+                         //alert($$('cbTipoPolizaSap').children(":selected").text());
+                         //alert($$('cbTipoPolizaSap').find(":selected").text());
+                         
+                         __doPostBack('btnInsertar', 'Metodo');
+
+                     }
+                 }
+             });
+
+
+        $mensaje.dialog('open');
+    }
+
+     
+    //Se aplica las validaciones del requerimiento
+    function ValidarPorcentajeAceptacionCalculado() 
+    {
+
+        var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : '-1'));    
+        var tipoBien = parseInt((($$('cbTipoBien').val() != null) ? $$('cbTipoBien').val() : "-1"));
+        var tipoGarantiaReal = parseInt((($$('cbTipoGarantiaReal').val() != null) ? $$('cbTipoGarantiaReal').val() : '-1'));
+        var tipoMitigador = parseInt((($$('cbMitigador').val() != null) ? $$('cbMitigador').val() : '-1'));
+        var porceAceptCalculadoOriginal = parseFloat($$('btnValidarOperacion').attr('MOPAC').toString('N2')).toFixed(2);
+        var fechaValu = $.trim($$('txtFechaValuacion').val().replace("__/__/____", "")); 
+        var fechaSegui = $.trim($$('txtFechaSeguimiento').val().replace("__/__/____", ""));     
+        var fechaActual = new Date();
+        var parteFechaActual = ($$('hdnFechaActual').val().length != 0) ? $$('hdnFechaActual').val() : '';
+        var montoUltTasNoTerr = parseFloat((($$('txtMontoUltTasacionNoTerreno').val().length > 0) ? $$('txtMontoUltTasacionNoTerreno').val().replace(/[^0-9-.]/g, '') : '0'));
+        var porceAceptaCalculadoMenor = -1;
+        var porceAceptaCalculadoMitad = (porceAceptCalculadoOriginal / 2).toFixed(2);
+        var errorIndicadorInscripcion = parseFloat($$('btnValidarOperacion').attr('EII').toString());
+        var porcentajeAceptacion = $$('txtPorcentajeAceptacion').val().toString('N2');
+        var indicadorDeudorHabitaVivienda = $$('chkDeudorHabitaVivienda').prop('checked');
+
+        if( (tipoBien === -1) || (tipoMitigador === -1)  ) {      
+            $$('txtPorcentajeAceptacionCalculado').val('0.00');
+            $$('txtPorcentajeAceptacion').val('0.00');          
+           return;
+       }
+
+       if ((tipoBien > 4) || (porceAceptCalculadoOriginal === 0)) {
+
+           $$('txtPorcentajeAceptacionCalculado').val(porcentajeAceptacion);    
+           return;        
+       }
+
+       $$('txtPorcentajeAceptacionCalculado').val(porceAceptCalculadoOriginal);                 
+                
+        if(parteFechaActual.length > 0)
+        {
+            var partesFecha = parteFechaActual.split('|');
+
+            //parametros : año-mes-dia
+
+            fechaActual = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
+        }            
+
+        if(fechaValu.length > 0)
+        {
+            var fecValu              = fechaValu.split('/');
+            var fechaValuacion       = new Date(fecValu[2], fecValu[1] - 1, fecValu[0]);
+        }
+
+        if(fechaSegui.length > 0)                        
+        {
+                
+            var fecSegui              = fechaSegui.split('/');
+            var fechaSeguimiento      = new Date(fecSegui[2], fecSegui[1] - 1, fecSegui[0]);
+        }
+
+
+        if (datoCodigoSap !== -1) 
+        {   
+
+            var fechaVenciPoliza =  $.trim($$('txtFechaVencimientoPoliza').val().replace("__/__/____", ""));
+            var montoPoliza = parseFloat((($$('txtMontoPoliza').val().length > 0) ? $$('txtMontoPoliza').val().replace(/[^0-9-.]/g, '') : '0'));
+                        
+            if (fechaVenciPoliza.length > 0)
+            {
+                var fecVenci = fechaVenciPoliza.split('/');
+                var fechaVencimientoPoliza = new Date(fecVenci[2], fecVenci[1] - 1, fecVenci[0]);
+            }
+        }
+        
+        /**********************************************************************************************/
+        //VALIDACIONES SE REDUCEN  0
+
+
+        if (errorIndicadorInscripcion === 1) {           
+            $$('txtPorcentajeAceptacionCalculado').val('0.00');
+            porceAceptaCalculadoMenor = 0.00;
+            return;
+
+        }
+
+        if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2))) {
+
+            //Se verifica si tiene una poliza asociada
+
+            if (datoCodigoSap !== -1) {
+                $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                porceAceptaCalculadoMenor = 0;                
+            }
+        
+        
+        }
+
+        if ((tipoBien === 3) && (tipoGarantiaReal === 3)) {
+        
+            if (fechaValu.length > 0) {
+
+                //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                    porceAceptaCalculadoMenor = 0.00;                    
+                }
+
+            }
+
+//            if (fechaSegui.length > 0) {
+
+//                //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+
+//                if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
+//                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+//                    porceAceptaCalculadoMenor = 0.00;                    
+//                }
+
+//            }
+
+        }
+
+        /**********************************************************************************************/
+
+        //VALIDACIONES SE REDUCEN  MITAD
+
+        if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  //--1 es decir que no ha entrado en las validaciones
+            {            
+                if(fechaValu.length > 0)
+                {
+                    //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5)
+                    {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                                                                                          
+                    }
+
+                }                 
+
+                if(fechaSegui.length > 0)                        
+                {
+                    //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+
+                    if((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1)
+                    {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                 
+                        
+                    }
+
+                }
+
+                //Se verifica si tiene una poliza asociada
+
+                if (datoCodigoSap !== -1) {
+                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                    porceAceptaCalculadoMenor = 0;                   
+                }
+               
+
+            }
+
+            if ((tipoBien === 2) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  
+            {
+//                if ((fechaValu.length > 0) && (fechaSegui.length > 0)) 
+//                {
+//                    var diferenciaMesesFechaValuacion =  parseInt((getDateDiff(fechaValuacion, fechaActual, "months")));
+//                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
+
+//                     //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
+
+//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!indicadorDeudorHabitaVivienda)) {
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                    }
+
+//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (indicadorDeudorHabitaVivienda)) {
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                    }            
+//                }
+
+                if (fechaValu.length > 0) {
+                    //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+
+                    }
+                }   
+
+                //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+
+                if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) && (!indicadorDeudorHabitaVivienda)) {
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                    
+                }
+
+                //Poliza Seleccionada
+               
+//                if (datoCodigoSap !== -1) {
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                   
+//                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
+//                    }
+
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                   
+//                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
+//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+//                  
+//                    }
+//                }
+//                else 
+//                {
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
+//                }
+            } 
+            //fin if tipo bien 2
+
+
+            if ((tipoBien === 3) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) 
+            {         
+
+                //Poliza Seleccionada
+                
+//                if (datoCodigoSap !== -1) {
+
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                    
+//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
+//                                         
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
+//                    }
+
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                    
+//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
+
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
+//                    }
+//                }
+//                else {              
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                }
+
+
+            } 
+            //fin if tipo bien 3
+
+
+            if ((tipoBien === 4) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) 
+            {        
+                   
+                if (fechaValu.length > 0) {
+                    
+                    //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                    
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                     
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+                    }
+
+                }
+
+                if (fechaSegui.length > 0) 
+                {
+                    //getDateDiff(date1, date2, interval);
+                    //date1: fecha actual, date2: fecha seguimi, fecha valuacion, interval:  years , months
+
+                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
+
+                    //Se verifica que la fecha de ultimo seguimiento es mayor 6 meses en realacion a la fecha del sistema
+                    
+                    if (diferenciaMesesFechaUltSegui > 6) {
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+                    }
+                                 
+                }
+
+                //Poliza Seleccionada
+               
+//                if (datoCodigoSap !== -1) {
+
+//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+//                   
+//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
+//                                     
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+//                    }
+
+//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+//                    
+//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
+//                                         
+//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+//               }
+//                }
+//                else {             
+
+//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+//                }
+            }  
+    }
+
+ 
+
+    

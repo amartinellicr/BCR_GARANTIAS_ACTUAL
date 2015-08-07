@@ -115,7 +115,7 @@
 															        MaxLength="3"></asp:textbox></td>
 													        <td class="td_Texto" width="16%"><asp:label id="lblFinca" Font-Size="11px" runat="server" Font-Italic="true">Número Finca:</asp:label></td>
 													        <td width="12%"><asp:textbox id="txtNumFinca" Enabled="False" tabIndex="11" runat="server" BackColor="AntiqueWhite" Width="100px"
-															        MaxLength="19"></asp:textbox></td>
+															        MaxLength="25"></asp:textbox></td>
 													        <td class="td_Texto" width="11%"><asp:label id="lblGrado" Font-Size="11px" runat="server" Font-Italic="true">Grado:</asp:label></td>
 													        <td width="5%"><asp:textbox id="txtGrado" tabIndex="12" runat="server" BackColor="AntiqueWhite" Width="42px"
 															        MaxLength="2"></asp:textbox></td>
@@ -242,13 +242,13 @@
 														            <td style="width:2px;"></td>
 														            <td style="height:15px; font-size:15px;">
 														                <asp:TextBox ID="txtFechaValuacion" BackColor="AliceBlue" Enabled="False" tabIndex="25" runat="server" Width="136px" 
-								                                                     style="text-align:justify" ValidationGroup="MKE" ToolTip="Fecha de Valuación del Bien" />
+								                                                     style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ValidationGroup="MKE" ToolTip="Fecha de Valuación del Bien" />
                                                                     </td>
                                                                     <td style="width:450px; min-width:450px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Fecha de Valuación SICC:</td>
                                                                     <td style="width:2px;"></td>
                                                                     <td style="width:140px; height:15px; font-size:15px;">
                                                                         <asp:TextBox ID="txtFechaValuacionSICC" BackColor="AliceBlue" Enabled="False" tabIndex="25" runat="server" Width="136px" 
-								                                                     style="text-align:justify" ValidationGroup="MKE" ToolTip="Fecha de Valuación del Bien Registrada en el SICC" />
+								                                                     style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ValidationGroup="MKE" ToolTip="Fecha de Valuación del Bien Registrada en el SICC" />
                                                                     </td>
 													            </tr>
 													           <tr>
@@ -414,7 +414,7 @@
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Identificación del Acreedor:</td>
 														            <td style="width:2px;"></td>
 										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtCedulaAcreedorPoliza" tabIndex="24" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
-												                            Width="140px" MaxLength="30" ToolTip="Cédula del acreedor de la póliza" Enabled="false"></asp:textbox></td>
+												                            Width="140px" MaxLength="30" style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ToolTip="Cédula del acreedor de la póliza" Enabled="false"></asp:textbox></td>
 															        <td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
 															        <td style="width:140px;"></td>
@@ -423,7 +423,7 @@
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Nombre del Acreedor:</td>
 														            <td style="width:2px;"></td>
 										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtNombreAcreedorPoliza" tabIndex="24" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
-												                            Width="140px" MaxLength="30" ToolTip="Nombre del acreedor de la póliza" Enabled="false"></asp:textbox></td>
+												                            Width="140px" MaxLength="30" style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ToolTip="Nombre del acreedor de la póliza" Enabled="false"></asp:textbox></td>
 															        <td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
 															        <td style="width:140px;"></td>
@@ -433,7 +433,7 @@
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:15px;">
 														                <asp:TextBox ID="txtFechaVencimientoPoliza" BackColor="AliceBlue" Enabled="false" tabIndex="25" runat="server" Width="140px" 
-								                                                     style="text-align:justify" ValidationGroup="MKE" ToolTip="Fecha de vencimiento de la póliza" />
+								                                                      style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ValidationGroup="MKE" ToolTip="Fecha de vencimiento de la póliza" />
                                                                     </td>
 															        <td style="width:200px;"></td>
 															        <td style="width:2px;"></td>

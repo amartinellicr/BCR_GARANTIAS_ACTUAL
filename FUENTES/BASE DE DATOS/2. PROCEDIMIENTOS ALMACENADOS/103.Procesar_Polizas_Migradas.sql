@@ -68,10 +68,45 @@ BEGIN
 	
 	IF(@piEjecutarParte = 0)
 	BEGIN
-		TRUNCATE TABLE dbo.TMP_POLIZAS
+	
+		DELETE	FROM dbo.TMP_POLIZAS 
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+	
+		UPDATE dbo.TMP_POLIZAS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_POLIZAS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
 	END
 	ELSE IF(@piEjecutarParte = 1)
 	BEGIN
+	
+		--Se actualiza el valor correspondiente a la fecha de réplica y al indicador de registro activo.
+		BEGIN TRANSACTION TRA_Act_Pol
+			BEGIN TRY
+					UPDATE	TMP
+					SET		Fecha_Replica = GETDATE(),
+							Registro_Activo = 1
+					FROM	dbo.TMP_POLIZAS TMP
+					WHERE	TMP.Registro_Activo IS NULL
+						AND TMP.Fecha_Replica IS NULL
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Pol
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar la fecha de réplica y el indicadro de registro activo, dentro de la tabla temporal de pólizas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Pol
 	
 		/************************************************************************************************
 		 *                                                                                              * 
@@ -92,6 +127,7 @@ BEGIN
 						AND GO1.cod_producto = TMP.Codigo_Producto_Operacion
 						AND GO1.num_operacion = TMP.Numero_Operacion
 					WHERE	TMP.Numero_Contrato = '-1'
+						AND TMP.Registro_Activo = 1
 						AND GO1.num_contrato = 0
 		
 			END TRY
@@ -121,6 +157,7 @@ BEGIN
 					AND GO1.num_contrato = CONVERT(DECIMAL(7,0), TMP.Numero_Contrato) 
 				WHERE	TMP.Numero_Operacion = -1
 					AND TMP.Codigo_Producto_Operacion = -1
+					AND TMP.Registro_Activo = 1
 					AND GO1.num_operacion IS NULL
 		
 			END TRY
@@ -199,7 +236,8 @@ BEGIN
 					INNER JOIN dbo.TMP_POLIZAS TMP
 					ON TMP.Codigo_SAP = GPO.Codigo_SAP
 					AND TMP.Consecutivo_Operacion_Garantias = GPO.cod_operacion
-				WHERE	TMP.Consecutivo_Operacion_Garantias > -1
+				WHERE   COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
+					AND TMP.Registro_Activo = 1
 					AND EXISTS (SELECT	1
 								FROM	dbo.CAT_ELEMENTO CE1
 								WHERE	CE1.cat_catalogo = @ciCatalogo_Tipo_Poliza
@@ -258,7 +296,8 @@ BEGIN
 						ELSE ISNULL(TMP.Monto_Poliza, 0)
 					END AS Monto_Poliza_Colonizado
 				FROM	dbo.TMP_POLIZAS TMP
-				WHERE	TMP.Consecutivo_Operacion_Garantias > -1
+				WHERE	COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
+					AND TMP.Registro_Activo = 1
 					AND EXISTS (SELECT	1
 								FROM	dbo.CAT_ELEMENTO CE1
 								WHERE	CE1.cat_catalogo = @ciCatalogo_Tipo_Poliza
@@ -266,7 +305,7 @@ BEGIN
 					AND NOT EXISTS (SELECT	1
 									FROM	dbo.GAR_POLIZAS GPO
 									WHERE	GPO.Codigo_SAP = TMP.Codigo_SAP
-										AND GPO.cod_operacion = TMP.Consecutivo_Operacion_Garantias)
+										AND GPO.cod_operacion = COALESCE(TMP.Consecutivo_Operacion_Garantias, -1))
 
 			END TRY
 			BEGIN CATCH

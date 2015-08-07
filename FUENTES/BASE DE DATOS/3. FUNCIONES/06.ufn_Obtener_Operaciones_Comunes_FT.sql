@@ -64,6 +64,16 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>24/06/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>		
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -139,7 +149,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmoc_pco_moned
 						AND MGT.prmgt_pco_produ = GSP.prmoc_pco_produ
 						AND MGT.prmgt_pco_conta = GSP.prmoc_pco_conta
-						AND MGT.prmgt_pnuidegar = GR3.Identificacion_Sicc 
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -198,7 +209,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
 						AND MGT.prmgt_pco_produ = 10
 						AND MGT.prmgt_pco_conta = GSP.prmca_pco_conta
-						AND MGT.prmgt_pnuidegar = GR3.Identificacion_Sicc 
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido
@@ -257,7 +269,8 @@ BEGIN
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
 						AND MGT.prmgt_pco_produ = 10
 						AND MGT.prmgt_pco_conta = GSP.prmca_pco_conta
-						AND MGT.prmgt_pnuidegar = GR3.Identificacion_Sicc 
+						AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GR3.Identificacion_Sicc, 0)
+						AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GR3.Identificacion_Alfanumerica_Sicc, '')
 						AND MGT.prmgt_pnu_part =	CASE
 														WHEN MGT.prmgt_pcoclagar BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 														ELSE GR3.cod_partido

@@ -141,7 +141,23 @@ BEGIN
 										   ) --Almacenará la información de los avalúos de las garantías prendarias.
 									   	
 
-	--Inicialización de variables locales
+	DECLARE @TMP_AVALUOS_SICC_HC TABLE (
+											cod_clase_garantia SMALLINT,
+											cod_partido SMALLINT,
+											Identificacion_Garantia VARCHAR(25), 
+											fecha_valuacion DATETIME,
+											Codigo_Bien VARCHAR(50)
+									    )
+									    
+	DECLARE @TMP_AVALUOS_SICC_PR TABLE (
+											cod_clase_garantia SMALLINT,
+											cod_clase_bien VARCHAR(3),
+											Identificacion_Garantia VARCHAR(25), 
+											fecha_valuacion DATETIME,
+											Codigo_Bien VARCHAR(50)
+									    )
+
+	--Inicializacion de variables locales
 	SET @vsIdentificacion_Usuario = @psCedula_Usuario
 
 	/************************************************************************************************
@@ -219,9 +235,19 @@ BEGIN
 		INNER JOIN @TMP_GARANTIAS_HIPOTECARIAS_DUPLICADAS TMP
 		ON TMP.Codigo_Partido = GGR.Codigo_Partido
 		AND TMP.Numero_Finca  = GGR.Numero_Finca
-	WHERE	EXISTS (SELECT	1
+	WHERE	GGR.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND ((GGR.Codigo_Tipo_Operacion = 1)
+			OR (GGR.Codigo_Tipo_Operacion = 2))
+		AND ((GGR.Codigo_Tipo_Garantia_Real = 1) 
+			OR (GGR.Codigo_Tipo_Garantia_Real = 2))
+		AND GGR.Codigo_Clase_Garantia BETWEEN 10 AND 29
+		AND EXISTS (SELECT	1
 					FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION GG1
-					WHERE	GG1.Codigo_Partido = TMP.Codigo_Partido
+					WHERE	GG1.Codigo_Usuario = @vsIdentificacion_Usuario
+						AND GG1.Codigo_Tipo_Operacion = GGR.Codigo_Tipo_Operacion
+						AND GG1.Codigo_Tipo_Garantia_Real = GGR.Codigo_Tipo_Garantia_Real
+						AND GG1.Codigo_Clase_Garantia BETWEEN 10 AND 29
+						AND GG1.Codigo_Partido = TMP.Codigo_Partido
 						AND	GG1.Numero_Finca = TMP.Numero_Finca
 						AND (GG1.Codigo_Clase_Garantia < GGR.Codigo_Clase_Garantia
 							OR GG1.Codigo_Clase_Garantia > GGR.Codigo_Clase_Garantia))
@@ -235,9 +261,18 @@ BEGIN
 	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION GGR
 		INNER JOIN @TMP_GARANTIAS_PRENDARIAS_DUPLICADAS TMP
 		ON TMP.Numero_Placa_Bien = GGR.Numero_Placa_Bien
-	WHERE	EXISTS (SELECT	1
+	WHERE	GGR.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND ((GGR.Codigo_Tipo_Operacion = 1)
+			OR (GGR.Codigo_Tipo_Operacion = 2))
+		AND GGR.Codigo_Tipo_Garantia_Real = 3
+		AND GGR.Codigo_Clase_Garantia BETWEEN 30 AND 69
+		AND EXISTS (SELECT	1
 					FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION GG1
-					WHERE	GG1.Numero_Placa_Bien = TMP.Numero_Placa_Bien
+					WHERE	GG1.Codigo_Usuario = @vsIdentificacion_Usuario
+						AND GG1.Codigo_Tipo_Operacion  = GGR.Codigo_Tipo_Operacion
+						AND GG1.Codigo_Tipo_Garantia_Real = GGR.Codigo_Tipo_Garantia_Real
+						AND GG1.Codigo_Clase_Garantia BETWEEN 30 AND 69
+						AND GG1.Numero_Placa_Bien = TMP.Numero_Placa_Bien
 						AND (GG1.Codigo_Clase_Garantia < GGR.Codigo_Clase_Garantia
 							OR GG1.Codigo_Clase_Garantia > GGR.Codigo_Clase_Garantia))
 
@@ -278,8 +313,8 @@ BEGIN
 			NULL AS Fecha_Valuacion,
 			NULL AS Monto_Total_Avaluo,
 			TGR.Monto_Mitigador,
-			ISNULL(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
-			ISNULL(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
+			COALESCE(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
 			0 AS Indicador_Inconsistencia,
 			TGR.Codigo_Usuario
 	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
@@ -307,8 +342,8 @@ BEGIN
 			NULL AS Fecha_Valuacion,
 			NULL AS Monto_Total_Avaluo,
 			TGR.Monto_Mitigador,
-			ISNULL(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
-			ISNULL(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
+			COALESCE(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
 			0 AS Indicador_Inconsistencia,
 			TGR.Codigo_Usuario
 	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
@@ -336,8 +371,8 @@ BEGIN
 			NULL AS Fecha_Valuacion,
 			NULL AS Monto_Total_Avaluo,
 			TGR.Monto_Mitigador,
-			ISNULL(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
-			ISNULL(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
+			COALESCE(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
 			0 AS Indicador_Inconsistencia,
 			TGR.Codigo_Usuario
 	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
@@ -364,8 +399,8 @@ BEGIN
 			NULL AS Fecha_Valuacion,
 			NULL AS Monto_Total_Avaluo,
 			TGR.Monto_Mitigador,
-			ISNULL(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
-			ISNULL(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
+			COALESCE(TGR.Codigo_Tipo_Bien, -1) AS Codigo_Tipo_Bien,
+			COALESCE(TGR.Codigo_Tipo_Mitigador, -1) AS Codigo_Tipo_Mitigador, 
 			0 AS Indicador_Inconsistencia,
 			TGR.Codigo_Usuario
 	FROM	dbo.TMP_GARANTIAS_REALES_X_OPERACION TGR
@@ -454,8 +489,8 @@ BEGIN
 		GHA.Codigo_Partido, 
 		GHA.Numero_Finca,
 		GHA.Clase_Garantia, 
-		ISNULL(GVR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
-		ISNULL(GVR.monto_total_avaluo, 0) AS Monto_Total_Avaluo
+		COALESCE(GVR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
+		COALESCE(GVR.monto_total_avaluo, 0) AS Monto_Total_Avaluo
 	FROM	@TMP_GARANTIAS_HIPOTECARIAS_AVALUOS GHA
 		LEFT OUTER JOIN dbo.GAR_VALUACIONES_REALES GVR
 		ON GVR.cod_garantia_real = GHA.Consecutivo_Garantia_Real
@@ -474,7 +509,168 @@ BEGIN
 		AND ACH.Numero_Finca	= GHA.Numero_Finca
 		AND ACH.Clase_Garantia	= GHA.Clase_Garantia
 	
-	--Se obtiene la fecha de avalúo que sea igual a la registrada en el SICC, esto para uina misma finca
+	
+	--Se obtienen los avaluos del SICC correspondientes a los registros evaluados de hipotecas
+	INSERT INTO @TMP_AVALUOS_SICC_HC (
+		cod_clase_garantia,
+		cod_partido,
+		Identificacion_Garantia,
+		fecha_valuacion,
+		Codigo_Bien)
+	SELECT	DISTINCT 
+		GHC.cod_clase_garantia,
+		GHC.cod_partido,
+		GHC.Identificacion_Garantia, 
+		CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion,
+		GHC.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				GGR.cod_partido,
+				'' AS cod_clase_bien,
+				GGR.numero_finca AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnu_part,
+							prmgt_pnuidegar,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND MGT.prmgt_pnu_part = GGR.cod_partido
+			AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
+			WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17, 19)
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
+		) GHC
+		
+	UNION ALL
+	
+	SELECT	DISTINCT 
+		GHC11.cod_clase_garantia,
+		GHC11.cod_partido,
+		GHC11.Identificacion_Garantia, 
+		CONVERT(DATETIME, GHC11.fecha_valuacion) AS fecha_valuacion,
+		GHC11.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				GGR.cod_partido,
+				'' AS cod_clase_bien,
+				GGR.numero_finca AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnu_part,
+							prmgt_pnuide_alf,
+							prmgt_pnuidegar,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND prmgt_pcoclagar = 11
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND MGT.prmgt_pnu_part = GGR.cod_partido
+			AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+			AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
+			WHERE	GGR.cod_clase_garantia = 11
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
+		) GHC11
+		
+	UNION ALL
+	
+	SELECT	DISTINCT 
+		GCH18.cod_clase_garantia,
+		GCH18.cod_partido,
+		GCH18.Identificacion_Garantia, 
+		CONVERT(DATETIME, GCH18.fecha_valuacion) AS fecha_valuacion,
+		GCH18.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				GGR.cod_partido,
+				'' AS cod_clase_bien,
+				GGR.numero_finca AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnu_part,
+							prmgt_pnuidegar,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND prmgt_pcoclagar = 18
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND MGT.prmgt_pnu_part = GGR.cod_partido
+			AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
+			WHERE	GGR.cod_clase_garantia = 18
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
+		) GCH18
+		
+	UNION ALL
+	
+	SELECT	DISTINCT 
+		GCH.cod_clase_garantia,
+		GCH.cod_partido,
+		GCH.Identificacion_Garantia, 
+		CONVERT(DATETIME, GCH.fecha_valuacion) AS fecha_valuacion,
+		GCH.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				GGR.cod_partido,
+				'' AS cod_clase_bien,
+				GGR.numero_finca AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + COALESCE(GGR.numero_finca, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnu_part,
+							prmgt_pnuidegar,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND prmgt_pcotengar = 1
+							AND prmgt_pcoclagar BETWEEN 20 AND 29
+						GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND MGT.prmgt_pnu_part = GGR.cod_partido
+			AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
+			WHERE	GGR.cod_clase_garantia BETWEEN 20 AND 29
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.numero_finca
+		) GCH
+	
+	--Se obtiene la fecha de avaluo que sea igual a la registrada en el SICC, esto para uina misma finca
 	UPDATE	@TMP_GARANTIAS_HIPOTECARIAS_AVALUOS
 	SET		Fecha_Avaluo_Igual_SICC = GVR.Fecha_Valuacion
 	FROM	@TMP_GARANTIAS_HIPOTECARIAS_AVALUOS GHA
@@ -483,13 +679,11 @@ BEGIN
 		AND GVR.Codigo_Partido	= GHA.Codigo_Partido
 		AND GVR.Numero_Finca	= GHA.Numero_Finca
 	WHERE	EXISTS (SELECT	1
-					FROM	dbo.VALUACIONES_GARANTIAS_REALES_SICC_VW VGR
-					WHERE	VGR.cod_clase_garantia BETWEEN 10 AND 29
-						AND VGR.cod_partido IS NOT NULL
-						AND VGR.cod_clase_garantia		= GHA.Clase_Garantia
+					FROM	@TMP_AVALUOS_SICC_HC VGR
+					WHERE	VGR.cod_clase_garantia		= GHA.Clase_Garantia
 						AND VGR.cod_partido				= GHA.Codigo_Partido
 						AND VGR.Identificacion_Garantia = GHA.Numero_Finca
-						AND CONVERT(DATETIME, VGR.fecha_valuacion) = GVR.Fecha_Valuacion)
+						AND VGR.fecha_valuacion = GVR.Fecha_Valuacion)
 	
 	--Se obtiene el monto total del avalúo registrado para una misma finca
 	UPDATE	@TMP_GARANTIAS_HIPOTECARIAS_AVALUOS
@@ -552,8 +746,8 @@ BEGIN
 	SELECT	DISTINCT 
 		GPA.Numero_Placa_Bien, 
 		GPA.Clase_Garantia, 
-		ISNULL(GVR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
-		ISNULL(GVR.monto_total_avaluo, 0) AS Monto_Total_Avaluo
+		COALESCE(GVR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
+		COALESCE(GVR.monto_total_avaluo, 0) AS Monto_Total_Avaluo
 	FROM	@TMP_GARANTIAS_PRENDARIAS_AVALUOS GPA
 		LEFT OUTER JOIN dbo.GAR_VALUACIONES_REALES GVR
 		ON GVR.cod_garantia_real = GPA.Consecutivo_Garantia_Real
@@ -570,7 +764,91 @@ BEGIN
 		ON ACH.Numero_Placa_Bien	= GPA.Numero_Placa_Bien
 		AND ACH.Clase_Garantia		= GPA.Clase_Garantia
 
-	--Se obtiene la fecha de valuación que es igual a la registrada en el SICC, esto para una misma prenda
+	
+	--Se obtienen los avaluos del SICC correspondientes a los registros evaluados de prendas
+	INSERT INTO @TMP_AVALUOS_SICC_PR (
+		cod_clase_garantia,
+		cod_clase_bien,
+		Identificacion_Garantia,
+		fecha_valuacion,
+		Codigo_Bien)
+	SELECT	DISTINCT 
+		GPR.cod_clase_garantia,
+		GPR.cod_clase_bien,
+		GPR.Identificacion_Garantia, 
+		GPR.fecha_valuacion,
+		GPR.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				COALESCE(GGR.cod_clase_bien, '') AS cod_clase_bien,
+				GGR.num_placa_bien AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE(GGR.cod_clase_bien, '') + COALESCE(GGR.num_placa_bien, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnuidegar,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND ((prmgt_pcoclagar BETWEEN 30 AND 37)
+								OR (prmgt_pcoclagar BETWEEN 39 AND 42)
+								OR (prmgt_pcoclagar BETWEEN 44 AND 69))
+						GROUP BY prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
+			WHERE	((GGR.cod_clase_garantia BETWEEN 30 AND 37)
+						OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
+						OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_clase_bien, GGR.num_placa_bien
+		) GPR
+		
+		UNION ALL
+
+	SELECT	DISTINCT 
+		GP3.cod_clase_garantia,
+		GP3.cod_clase_bien,
+		GP3.Identificacion_Garantia, 
+		GP3.fecha_valuacion,
+		GP3.Codigo_Bien
+	FROM
+		(	SELECT	TOP 100 PERCENT 
+				GGR.cod_clase_garantia,
+				COALESCE(GGR.cod_clase_bien, '') AS cod_clase_bien,
+				GGR.num_placa_bien AS Identificacion_Garantia,
+				MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion,
+				COALESCE(GGR.num_placa_bien, '') AS Codigo_Bien
+			FROM	dbo.GAR_GARANTIA_REAL GGR 
+			INNER JOIN dbo.GAR_VALUACIONES_REALES GVR 
+			ON GVR.cod_garantia_real = GGR.cod_garantia_real
+			INNER JOIN (SELECT	TOP 100 PERCENT prmgt_pcoclagar,
+							prmgt_pnuidegar,
+							prmgt_pnuide_alf,
+							CASE 
+									WHEN prmgt_pfeavaing = 0 THEN '19000101' 
+									WHEN ISDATE(CONVERT(VARCHAR(10), prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MAX(prmgt_pfeavaing),103)
+									ELSE '19000101'
+							END AS prmgt_pfeavaing
+						FROM	dbo.GAR_SICC_PRMGT 
+						WHERE	prmgt_estado = 'A'
+							AND ((prmgt_pcoclagar = 38)
+								OR (prmgt_pcoclagar = 43))
+						GROUP BY prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing) MGT
+			ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
+			AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
+			AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
+			WHERE	((GGR.cod_clase_garantia = 38)
+						OR (GGR.cod_clase_garantia = 43))
+			GROUP BY GGR.cod_clase_garantia, GGR.cod_clase_bien, GGR.num_placa_bien
+		) GP3
+	
+	--Se obtiene la fecha de valuacion que es igual a la registrada en el SICC, esto para una misma prenda
 	UPDATE	@TMP_GARANTIAS_PRENDARIAS_AVALUOS
 	SET		Fecha_Avaluo_Igual_SICC = GVR.Fecha_Valuacion
 	FROM	@TMP_GARANTIAS_PRENDARIAS_AVALUOS GPA
@@ -578,11 +856,10 @@ BEGIN
 		ON GVR.Clase_Garantia		= GPA.Clase_Garantia
 		AND GVR.Numero_Placa_Bien	= GPA.Numero_Placa_Bien
 	WHERE	EXISTS (SELECT	1
-					FROM	dbo.VALUACIONES_GARANTIAS_REALES_SICC_VW VGR
-					WHERE	VGR.cod_clase_garantia BETWEEN 30 AND 69
-						AND VGR.cod_clase_garantia		= GPA.Clase_Garantia
+					FROM	@TMP_AVALUOS_SICC_PR VGR
+					WHERE	VGR.cod_clase_garantia		= GPA.Clase_Garantia
 						AND VGR.Identificacion_Garantia = GPA.Numero_Placa_Bien	
-						AND CONVERT(DATETIME, VGR.fecha_valuacion) = GVR.Fecha_Valuacion)
+						AND VGR.fecha_valuacion = GVR.Fecha_Valuacion)
 
 	--Se obtiene el monto total del avalúo registrado para la fecha más reciente, esto para una misma prenda
 	UPDATE	@TMP_GARANTIAS_PRENDARIAS_AVALUOS
@@ -633,24 +910,21 @@ BEGIN
 	UPDATE	@TMP_INCONSISTENCIAS
 	SET		Fecha_Valuacion_SICC = CONVERT(DATETIME, VGR.fecha_valuacion)
 	FROM	@TMP_INCONSISTENCIAS TMP
-		INNER JOIN dbo.VALUACIONES_GARANTIAS_REALES_SICC_VW VGR
+		INNER JOIN @TMP_AVALUOS_SICC_HC VGR
 		ON VGR.cod_clase_garantia		= TMP.Clase_Garantia
 		AND VGR.cod_partido				= TMP.Codigo_Partido
 		AND VGR.Identificacion_Garantia = TMP.Numero_Finca
 	WHERE	TMP.Clase_Garantia BETWEEN 10 AND 29
-		AND VGR.cod_clase_garantia BETWEEN 10 AND 29
-		AND VGR.cod_partido IS NOT NULL
 	
 	--Se actualizan los datos de la estructura de las inconsistencias
 	UPDATE	@TMP_INCONSISTENCIAS
 	SET		Fecha_Valuacion_SICC = CONVERT(DATETIME, VGR.fecha_valuacion)
 	FROM	@TMP_INCONSISTENCIAS TMP
-		INNER JOIN dbo.VALUACIONES_GARANTIAS_REALES_SICC_VW VGR
+		INNER JOIN @TMP_AVALUOS_SICC_PR VGR
 		ON VGR.cod_clase_garantia		= TMP.Clase_Garantia
-		AND VGR.cod_clase_bien			= ISNULL(TMP.Clase_Bien, '')
+		AND COALESCE(VGR.cod_clase_bien, '') = COALESCE(TMP.Clase_Bien, '')
 		AND VGR.Identificacion_Garantia = TMP.Numero_Placa_Bien
 	WHERE	TMP.Clase_Garantia BETWEEN 30 AND 69
-		AND VGR.cod_clase_garantia BETWEEN 30 AND 69
 
 	UPDATE	@TMP_INCONSISTENCIAS
 	SET		Fecha_Valuacion_SICC = NULL
@@ -713,18 +987,18 @@ BEGIN
 		CONVERT(VARCHAR(5), Codigo_Partido) 							+ CHAR(9) + 
 		Clase_Bien 														+ CHAR(9) + 
 		Numero_Placa_Bien 												+ CHAR(9) + 
-		ISNULL(CONVERT(VARCHAR(5), Clase_Garantia), '')					+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(5), Oficina), '')      					+ CHAR(9) + 
- 		ISNULL(CONVERT(VARCHAR(5), Moneda), '')	   						+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(5), Producto), '')	   					+ CHAR(9) + 
- 		ISNULL(CONVERT(VARCHAR(20), Operacion), '')   					+ CHAR(9) + 
- 		ISNULL(CONVERT(VARCHAR(20), Contrato), '')  					+ CHAR(9) + 
-		ISNULL(CONVERT(VARCHAR(10), Fecha_Valuacion_SICC, 105), '')		+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(10), Fecha_Valuacion, 105), '')			+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(100), Monto_Total_Avaluo), '')			+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(100), Monto_Mitigador_Riesgo), '')		+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(5), Tipo_Bien), '')						+ CHAR(9) +
-		ISNULL(CONVERT(VARCHAR(5), Tipo_Mitigador_Riesgo), '')			+ CHAR(9)) AS [Inconsistencia!3!DATOS!element],
+		COALESCE(CONVERT(VARCHAR(5), Clase_Garantia), '')					+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(5), Oficina), '')      					+ CHAR(9) + 
+ 		COALESCE(CONVERT(VARCHAR(5), Moneda), '')	   						+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(5), Producto), '')	   					+ CHAR(9) + 
+ 		COALESCE(CONVERT(VARCHAR(20), Operacion), '')   					+ CHAR(9) + 
+ 		COALESCE(CONVERT(VARCHAR(20), Contrato), '')  					+ CHAR(9) + 
+		COALESCE(CONVERT(VARCHAR(10), Fecha_Valuacion_SICC, 105), '')		+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(10), Fecha_Valuacion, 105), '')			+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(100), Monto_Total_Avaluo), '')			+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(100), Monto_Mitigador_Riesgo), '')		+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(5), Tipo_Bien), '')						+ CHAR(9) +
+		COALESCE(CONVERT(VARCHAR(5), Tipo_Mitigador_Riesgo), '')			+ CHAR(9)) AS [Inconsistencia!3!DATOS!element],
 		Usuario									AS [Inconsistencia!3!Usuario!hide]
 	FROM	@TMP_INCONSISTENCIAS 
 	WHERE	Usuario	=  @vsIdentificacion_Usuario

@@ -9,22 +9,41 @@ namespace BCR.GARANTIAS.Comun
     public class Impersonalizacion
     {
 
-        enum LogonSessionType : uint
+        public enum LogonSessionType : uint
         {
-            Interactive = 2,  //Esta tiene permisos sobre los recursos de red
-            Network, //Esta No tiene permisos sobre los recursos de red (curioso no?)
-            Batch,
-            Service,
-            NetworkCleartext = 8,
-            NewCredentials
-        }
-        enum LogonProvider : uint
+            LOGON32_LOGON_INTERACTIVE = 2,
+            LOGON32_LOGON_NETWORK = 3,
+            LOGON32_LOGON_BATCH = 4,
+            LOGON32_LOGON_SERVICE = 5,
+            LOGON32_LOGON_UNLOCK = 7,
+            LOGON32_LOGON_NETWORK_CLEARTEXT = 8, // Win2K or higher
+            LOGON32_LOGON_NEW_CREDENTIALS = 9 // Win2K or higher
+        };
+
+        public enum LogonProvider
         {
-            Default = 0, // default (usar esta)
-            WinNT35,     // usa una señales dummy para autenticar (sends smoke signals to authority)
-            WinNT40,     // usa NTLM
-            WinNT50      // usa Kerberos o NTLM
-        }
+            LOGON32_PROVIDER_DEFAULT = 0,
+            LOGON32_PROVIDER_WINNT35 = 1,
+            LOGON32_PROVIDER_WINNT40 = 2,
+            LOGON32_PROVIDER_WINNT50 = 3
+        };
+
+        //enum LogonSessionType : uint
+        //{
+        //    Interactive = 2,  //Esta tiene permisos sobre los recursos de red
+        //    Network, //Esta No tiene permisos sobre los recursos de red (curioso no?)
+        //    Batch,
+        //    Service,
+        //    NetworkCleartext = 8,
+        //    NewCredentials
+        //}
+        //enum LogonProvider : uint
+        //{
+        //    Default = 0, // default (usar esta)
+        //    WinNT35,     // usa una señales dummy para autenticar (sends smoke signals to authority)
+        //    WinNT40,     // usa NTLM
+        //    WinNT50      // usa Kerberos o NTLM
+        //}
 
 
         //[DllImport("advapi32.dll", SetLastError = true)]
@@ -47,7 +66,7 @@ namespace BCR.GARANTIAS.Comun
         {
             IntPtr tokenDuplicate = new IntPtr(0);
             IntPtr tokenHandle = new IntPtr(0);
-            if (LogonUser(strUsuario, strDominio, strClave, LogonSessionType.Interactive, LogonProvider.Default, out tokenHandle))
+            if (LogonUser(strUsuario, strDominio, strClave, LogonSessionType.LOGON32_LOGON_INTERACTIVE, LogonProvider.LOGON32_PROVIDER_DEFAULT, out tokenHandle))
             {
                 if (DuplicateToken(tokenHandle, 2, ref tokenDuplicate) != 0)
                 {

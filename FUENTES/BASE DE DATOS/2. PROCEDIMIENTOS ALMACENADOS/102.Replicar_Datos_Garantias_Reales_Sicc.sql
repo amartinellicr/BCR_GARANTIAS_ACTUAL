@@ -31,6 +31,16 @@ BEGIN
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Requerimiento de Placas Alfauméricas</Requerimiento>
+			<Fecha>26/06/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación de placas alfanuméricas, 
+				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
+				11, 38 o 43. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -57,7 +67,7 @@ BEGIN
 	--Se actualizan los datos de las garantías reales asociadas a operaciones directas
 	IF(@piIndicadorProceso = 1)
 	BEGIN
-		--Actualizar datos de las hipotecas comunes asociadas a operaciones
+		--Actualizar datos de las hipotecas comunes (con clase distinta a 11) asociadas a operaciones
 		BEGIN TRANSACTION TRA_Act_Garoperhc
 			BEGIN TRY
 
@@ -117,7 +127,7 @@ BEGIN
 					AND ((MOC.prmoc_pcoctamay < 815)
 						OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
 					AND MOC.prmoc_estado = 'A'
-					AND MGT.prmgt_pcoclagar IN (10, 11, 12, 13, 14, 15, 16, 17, 19)
+					AND MGT.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
@@ -128,13 +138,97 @@ BEGIN
 				IF (@@TRANCOUNT > 0)
 					ROLLBACK TRANSACTION TRA_Act_Garoperhc
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de hipoteca común. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de hipoteca común (con clase distinta a 11). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 		
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garoperhc
+					
+					
+		
+		--Actualizar datos de las hipotecas comunes (con clase igual a 11) asociadas a operaciones
+		BEGIN TRANSACTION TRA_Act_Garoperhc11
+			BEGIN TRY
+
+				UPDATE  GRO
+				SET     GRO.fecha_constitucion = CASE 
+													WHEN MOC.prmoc_pfe_const = 0 THEN NULL
+													WHEN (ISDATE(CONVERT(VARCHAR(8), MOC.prmoc_pfe_const)) = 1) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MOC.prmoc_pfe_const))
+													ELSE NULL
+												 END,
+						GRO.fecha_vencimiento = CASE 
+													WHEN MOC.prmoc_pfe_defin = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MOC.prmoc_pfe_defin)) = 1) 
+														  AND (LEN(MOC.prmoc_pfe_defin) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MOC.prmoc_pfe_defin))
+													ELSE NULL
+												 END,
+						GRO.cod_grado_gravamen =	CASE 
+														WHEN ((MGT.prmgt_pco_grado >= 1) AND (MGT.prmgt_pco_grado <= 3)) THEN MGT.prmgt_pco_grado
+														WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+														ELSE NULL			
+													END, 
+						GRO.fecha_prescripcion = CASE 
+													WHEN MGT.prmgt_pfe_prescr = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8),MGT.prmgt_pfe_prescr)) = 1) 
+														  AND (LEN(MGT.prmgt_pfe_prescr) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MGT.prmgt_pfe_prescr))
+													ELSE NULL
+												 END,
+						GRO.cod_tipo_documento_legal =	CASE 
+															WHEN MGT.prmgt_pco_grado = 1 THEN 1
+															WHEN MGT.prmgt_pco_grado = 2 THEN 2
+															WHEN MGT.prmgt_pco_grado = 3 THEN 3
+															WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+															ELSE NULL
+														END,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GOP
+					ON GOP.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+					ON GGR.cod_garantia_real = GRO.cod_garantia_real
+					INNER JOIN dbo.GAR_SICC_PRMOC MOC
+					ON MOC.prmoc_pco_ofici = GOP.cod_oficina
+					AND MOC.prmoc_pco_moned = GOP.cod_moneda
+					AND MOC.prmoc_pco_produ = GOP.cod_producto
+					AND MOC.prmoc_pnu_oper = GOP.num_operacion
+					INNER JOIN dbo.GAR_SICC_PRMGT MGT
+					ON MGT.prmgt_pco_ofici = MOC.prmoc_pco_ofici
+					AND MGT.prmgt_pco_moned = MOC.prmoc_pco_moned
+					AND MGT.prmgt_pco_produ = MOC.prmoc_pco_produ
+					AND MGT.prmgt_pnu_oper = MOC.prmoc_pnu_oper
+				WHERE	GOP.num_contrato = 0
+					AND GOP.num_operacion IS NOT NULL
+					AND MOC.prmoc_pnu_contr = 0
+					AND MOC.prmoc_pse_proces = 1		--Operaciones activas
+					AND ((MOC.prmoc_pcoctamay < 815)
+						OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+					AND MOC.prmoc_estado = 'A'
+					AND MGT.prmgt_pcoclagar = 11
+					AND GGR.cod_partido = MGT.prmgt_pnu_part
+					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND MGT.prmgt_estado = 'A'
+					
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Garoperhc11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de hipoteca común (con clase igual a 11). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+		
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garoperhc11			
+					
+					
 					
 		--Actualizar datos de las cédulas hipotecarias, con clase 18, asociadas a operaciones
 		BEGIN TRANSACTION TRA_Act_Garoperch18
@@ -296,7 +390,7 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garoperch
 
-		--Actualizar datos de las prendas asociadas a operaciones
+		--Actualizar datos de las prendas (con clase distinta a 38 o 43) asociadas a operaciones
 		BEGIN TRANSACTION TRA_Act_Garoperp
 			BEGIN TRY
 			
@@ -356,7 +450,9 @@ BEGIN
 					AND ((MOC.prmoc_pcoctamay < 815)
 						OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
 					AND MOC.prmoc_estado = 'A'
-					AND MGT.prmgt_pcoclagar BETWEEN 30 AND 69
+					AND ((MGT.prmgt_pcoclagar BETWEEN 30 AND 37)
+						OR (MGT.prmgt_pcoclagar BETWEEN 39 AND 42)
+						OR (MGT.prmgt_pcoclagar BETWEEN 44 AND 69))
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
 					AND MGT.prmgt_estado = 'A'
@@ -366,19 +462,101 @@ BEGIN
 				IF (@@TRANCOUNT > 0)
 					ROLLBACK TRANSACTION TRA_Act_Garoperp
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de prenda. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de prenda (con clase distinta a 38 o 43). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garoperp
+			
+		
+		--Actualizar datos de las prendas (con clase igual a 38 o 43) asociadas a operaciones
+		BEGIN TRANSACTION TRA_Act_Garoperp3843
+			BEGIN TRY
+			
+				UPDATE  GRO
+				SET     GRO.fecha_constitucion = CASE 
+													WHEN MOC.prmoc_pfe_const = 0 THEN NULL
+													WHEN (ISDATE(CONVERT(VARCHAR(8), MOC.prmoc_pfe_const)) = 1) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MOC.prmoc_pfe_const))
+													ELSE NULL
+												 END,
+						GRO.fecha_vencimiento = CASE 
+													WHEN MOC.prmoc_pfe_defin = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MOC.prmoc_pfe_defin)) = 1) 
+														  AND (LEN(MOC.prmoc_pfe_defin) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MOC.prmoc_pfe_defin))
+													ELSE NULL
+												 END,
+						GRO.cod_grado_gravamen =	CASE 
+														WHEN ((MGT.prmgt_pco_grado >= 1) AND (MGT.prmgt_pco_grado <= 3)) THEN MGT.prmgt_pco_grado
+														WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+														ELSE NULL			
+													END, 
+						GRO.fecha_prescripcion = CASE 
+													WHEN MGT.prmgt_pfe_prescr = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8),MGT.prmgt_pfe_prescr)) = 1) 
+														  AND (LEN(MGT.prmgt_pfe_prescr) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MGT.prmgt_pfe_prescr))
+													ELSE NULL
+												 END,
+						GRO.cod_tipo_documento_legal =	CASE 
+															WHEN MGT.prmgt_pco_grado = 1 THEN 9
+															WHEN MGT.prmgt_pco_grado = 2 THEN 10
+															WHEN MGT.prmgt_pco_grado = 3 THEN 11
+															WHEN MGT.prmgt_pco_grado >= 4 THEN 12
+															ELSE NULL
+														END,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GOP
+					ON GOP.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+					ON GGR.cod_garantia_real = GRO.cod_garantia_real
+					INNER JOIN dbo.GAR_SICC_PRMOC MOC
+					ON MOC.prmoc_pco_ofici = GOP.cod_oficina
+					AND MOC.prmoc_pco_moned = GOP.cod_moneda
+					AND MOC.prmoc_pco_produ = GOP.cod_producto
+					AND MOC.prmoc_pnu_oper = GOP.num_operacion
+					INNER JOIN dbo.GAR_SICC_PRMGT MGT
+					ON MGT.prmgt_pco_ofici = MOC.prmoc_pco_ofici
+					AND MGT.prmgt_pco_moned = MOC.prmoc_pco_moned
+					AND MGT.prmgt_pco_produ = MOC.prmoc_pco_produ
+					AND MGT.prmgt_pnu_oper = MOC.prmoc_pnu_oper
+				WHERE	GOP.num_contrato = 0
+					AND GOP.num_operacion IS NOT NULL
+					AND MOC.prmoc_pnu_contr = 0
+					AND MOC.prmoc_pse_proces = 1		--Operaciones activas
+					AND ((MOC.prmoc_pcoctamay < 815)
+						OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+					AND MOC.prmoc_estado = 'A'
+					AND ((MGT.prmgt_pcoclagar = 38)
+						OR (MGT.prmgt_pcoclagar = 43))
+					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND MGT.prmgt_estado = 'A'
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Garoperp3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre operaciones y garantías reales de prenda (con clase igual a 38 o 43). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garoperp3843
 	END	
 
 	--Se actualizan los datos de las garantías reales asociadas a contratos
 	IF(@piIndicadorProceso = 2)
 	BEGIN
-		--Actualizar datos de las hipotecas comunes asociadas a contratos
+	
+		--Actualizar datos de las hipotecas comunes (con clase distinta a 11) asociadas a contratos
 		BEGIN TRANSACTION TRA_Act_Garcontrhc
 			BEGIN TRY
 
@@ -435,7 +613,7 @@ BEGIN
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
 					AND MCA.prmca_estado = 'A'
-					AND MGT.prmgt_pcoclagar IN (10, 11, 12, 13, 14, 15, 16, 17, 19)
+					AND MGT.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
 					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
@@ -446,13 +624,92 @@ BEGIN
 				IF (@@TRANCOUNT > 0)
 					ROLLBACK TRANSACTION TRA_Act_Garcontrhc
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de hipoteca común. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de hipoteca común (con clase distinta a 11). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 		
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garcontrhc
+			
+		
+		--Actualizar datos de las hipotecas comunes (con clase igual a 11) asociadas a contratos
+		BEGIN TRANSACTION TRA_Act_Garcontrhc11
+			BEGIN TRY
+
+				UPDATE  GRO
+				SET     GRO.fecha_constitucion = CASE 
+													WHEN MCA.prmca_pfe_const = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MCA.prmca_pfe_const)) = 1) 
+														  AND (LEN(MCA.prmca_pfe_const) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MCA.prmca_pfe_const))
+													ELSE NULL
+												 END,
+						GRO.fecha_vencimiento = CASE 
+													WHEN MCA.prmca_pfe_defin = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MCA.prmca_pfe_defin)) = 1) 
+														  AND (LEN(MCA.prmca_pfe_defin) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MCA.prmca_pfe_defin))
+													ELSE NULL
+												 END,
+						GRO.cod_grado_gravamen =	CASE 
+														WHEN ((MGT.prmgt_pco_grado >= 1) AND (MGT.prmgt_pco_grado <= 3)) THEN MGT.prmgt_pco_grado
+														WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+														ELSE NULL			
+													END, 
+						GRO.fecha_prescripcion = CASE 
+													WHEN MGT.prmgt_pfe_prescr = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8),MGT.prmgt_pfe_prescr)) = 1) 
+														  AND (LEN(MGT.prmgt_pfe_prescr) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MGT.prmgt_pfe_prescr))
+													ELSE NULL
+												 END,
+						GRO.cod_tipo_documento_legal =	CASE 
+															WHEN MGT.prmgt_pco_grado = 1 THEN 1
+															WHEN MGT.prmgt_pco_grado = 2 THEN 2
+															WHEN MGT.prmgt_pco_grado = 3 THEN 3
+															WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+															ELSE NULL
+														END,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GOP
+					ON GOP.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+					ON GGR.cod_garantia_real = GRO.cod_garantia_real
+					INNER JOIN dbo.GAR_SICC_PRMCA MCA
+					ON MCA.prmca_pco_ofici = GOP.cod_oficina
+					AND MCA.prmca_pco_moned = GOP.cod_moneda
+					AND MCA.prmca_pco_produc = GOP.cod_producto
+					AND MCA.prmca_pnu_contr = GOP.num_contrato
+					INNER JOIN dbo.GAR_SICC_PRMGT MGT
+					ON MGT.prmgt_pco_ofici = MCA.prmca_pco_ofici
+					AND MGT.prmgt_pco_moned = MCA.prmca_pco_moned
+					AND MGT.prmgt_pco_produ = 10
+					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
+				WHERE	GOP.num_contrato > 0
+					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
+					AND MGT.prmgt_pcoclagar = 11
+					AND GGR.cod_partido = MGT.prmgt_pnu_part
+					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND MGT.prmgt_estado = 'A'
+					
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Garcontrhc11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de hipoteca común (con clase igual a 11). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+		
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garcontrhc11
+		
 					
 		--Actualizar datos de las cédulas hipotecarias, con clase 18, asociadas a contratos
 		BEGIN TRANSACTION TRA_Act_Garcontrch18
@@ -608,7 +865,7 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garcontrch
 
-		--Actualizar datos de las prendas asociadas a contratos
+		--Actualizar datos de las prendas (con clase distinta a 38 o 43) asociadas a contratos
 		BEGIN TRANSACTION TRA_Act_Garcontrp
 			BEGIN TRY
 			
@@ -665,7 +922,9 @@ BEGIN
 				WHERE	GOP.num_contrato > 0
 					AND GOP.num_operacion IS NULL
 					AND MCA.prmca_estado = 'A'
-					AND MGT.prmgt_pcoclagar BETWEEN 30 AND 69
+					AND ((MGT.prmgt_pcoclagar BETWEEN 30 AND 37)
+						OR (MGT.prmgt_pcoclagar BETWEEN 39 AND 42)
+						OR (MGT.prmgt_pcoclagar BETWEEN 44 AND 69))
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
 					AND MGT.prmgt_estado = 'A'
@@ -675,13 +934,91 @@ BEGIN
 				IF (@@TRANCOUNT > 0)
 					ROLLBACK TRANSACTION TRA_Act_Garcontrp
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de prenda. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de prenda (con clase distinta a 38 o 43). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Garcontrp	
+			
+		
+		--Actualizar datos de las prendas (con clase igual a 38 o 43) asociadas a contratos
+		BEGIN TRANSACTION TRA_Act_Garcontrp3843
+			BEGIN TRY
+			
+				UPDATE  GRO
+				SET     GRO.fecha_constitucion = CASE 
+													WHEN MCA.prmca_pfe_const = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MCA.prmca_pfe_const)) = 1) 
+														  AND (LEN(MCA.prmca_pfe_const) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MCA.prmca_pfe_const))
+													ELSE NULL
+												 END,
+						GRO.fecha_vencimiento = CASE 
+													WHEN MCA.prmca_pfe_defin = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8), MCA.prmca_pfe_defin)) = 1) 
+														  AND (LEN(MCA.prmca_pfe_defin) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MCA.prmca_pfe_defin))
+													ELSE NULL
+												 END,
+						GRO.cod_grado_gravamen =	CASE 
+														WHEN ((MGT.prmgt_pco_grado >= 1) AND (MGT.prmgt_pco_grado <= 3)) THEN MGT.prmgt_pco_grado
+														WHEN MGT.prmgt_pco_grado >= 4 THEN 4
+														ELSE NULL			
+													END, 
+						GRO.fecha_prescripcion = CASE 
+													WHEN MGT.prmgt_pfe_prescr = 0 THEN NULL
+													WHEN ((ISDATE(CONVERT(VARCHAR(8),MGT.prmgt_pfe_prescr)) = 1) 
+														  AND (LEN(MGT.prmgt_pfe_prescr) = 8)) 
+														  THEN CONVERT(DATETIME, CONVERT(VARCHAR(8), MGT.prmgt_pfe_prescr))
+													ELSE NULL
+												 END,
+						GRO.cod_tipo_documento_legal =	CASE 
+															WHEN MGT.prmgt_pco_grado = 1 THEN 9
+															WHEN MGT.prmgt_pco_grado = 2 THEN 10
+															WHEN MGT.prmgt_pco_grado = 3 THEN 11
+															WHEN MGT.prmgt_pco_grado >= 4 THEN 12
+															ELSE NULL
+														END,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GOP
+					ON GOP.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+					ON GGR.cod_garantia_real = GRO.cod_garantia_real
+					INNER JOIN dbo.GAR_SICC_PRMCA MCA
+					ON MCA.prmca_pco_ofici = GOP.cod_oficina
+					AND MCA.prmca_pco_moned = GOP.cod_moneda
+					AND MCA.prmca_pco_produc = GOP.cod_producto
+					AND MCA.prmca_pnu_contr = GOP.num_contrato
+					INNER JOIN dbo.GAR_SICC_PRMGT MGT
+					ON MGT.prmgt_pco_ofici = MCA.prmca_pco_ofici
+					AND MGT.prmgt_pco_moned = MCA.prmca_pco_moned
+					AND MGT.prmgt_pco_produ = 10
+					AND MGT.prmgt_pnu_oper = MCA.prmca_pnu_contr
+				WHERE	GOP.num_contrato > 0
+					AND GOP.num_operacion IS NULL
+					AND MCA.prmca_estado = 'A'
+					AND ((MGT.prmgt_pcoclagar = 38)
+						OR (MGT.prmgt_pcoclagar = 43))
+					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+					AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+					AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')
+					AND MGT.prmgt_estado = 'A'
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Garcontrp3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar la información de las relaciones entre contratos y garantías reales de prenda (con clase igual a 38 o 43). Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Garcontrp3843
 	END	
 
 	
@@ -809,16 +1146,12 @@ BEGIN
 	IF(@piIndicadorProceso = 4)
 	BEGIN
 
-		--Se realiza el ajuste del indicador de inscripción de las garantías reales asociadas a operaciones activas registradas en el sistema
-		BEGIN TRANSACTION TRA_Act_Grop
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grophc3
 			BEGIN TRY
 		
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = CASE MRI.prmri_pcoestins
-												WHEN 1 THEN 2
-												WHEN 2 THEN 3
-												ELSE 1
-										  END,
+				SET		GRO.cod_inscripcion = 3,
 						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
@@ -828,12 +1161,16 @@ BEGIN
 					AND	GO1.cod_moneda = MRI.prmri_pco_moned
 					AND GO1.cod_producto = MRI.prmri_pco_produ
 					AND GO1.num_operacion = MRI.prmri_pnu_opera
-				WHERE	GO1.num_contrato = 0
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_contrato = 0
 					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMGT MGT
 								WHERE	MGT.prmgt_estado = 'A'
-									AND  MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
 									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
@@ -842,6 +1179,8 @@ BEGIN
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMOC MOC
@@ -859,15 +1198,720 @@ BEGIN
 			END TRY
 			BEGIN CATCH
 				IF (@@TRANCOUNT > 0)
-					ROLLBACK TRANSACTION TRA_Act_Grop
+					ROLLBACK TRANSACTION TRA_Act_Grophc3
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción de las garantías reales asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Grop
+			COMMIT TRANSACTION TRA_Act_Grophc3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grophc2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grophc2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grophc2
+		
+		
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grophc11_3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grophc11_3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grophc11_3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grophc11_2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grophc11_2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grophc11_2
+		
+		
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropch3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropch3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropch3
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropch2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropch2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropch2
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropch3_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropch3_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropch3_18
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropch2_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropch2_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropch2_18
+			
+			
+	    --Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropp3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropp3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropp3
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropp2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropp2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropp2
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropp3_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropp3_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropp3_3843
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Gropp2_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND GO1.cod_producto = MRI.prmri_pco_produ
+					AND GO1.num_operacion = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND	GO1.num_contrato = 0
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	 MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1	--Operaciones activas
+									AND ((MOC.prmoc_pcoctamay < 815)
+										OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+									AND MOC.prmoc_pnu_contr = 0
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion)
+							
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Gropp2_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a operaciones activas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Gropp2_3843
 
 	END
 	
@@ -875,16 +1919,12 @@ BEGIN
 	IF(@piIndicadorProceso = 5)
 	BEGIN
 	
-		--Se realiza el ajuste del indicador de inscripción de las garantías reales asociadas a contratos vigentes registradas en el sistema
-		BEGIN TRANSACTION TRA_Act_Grocv
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocv3
 			BEGIN TRY
 		
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = CASE MRI.prmri_pcoestins
-												WHEN 1 THEN 2
-												WHEN 2 THEN 3
-												ELSE 1
-										  END,
+				SET		GRO.cod_inscripcion = 3,
 						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
@@ -894,13 +1934,17 @@ BEGIN
 					AND	GO1.cod_moneda = MRI.prmri_pco_moned
 					AND MRI.prmri_pco_produ = 10
 					AND GO1.num_contrato = MRI.prmri_pnu_opera
-				WHERE	GO1.num_operacion IS NULL
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
 					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMGT MGT
 								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
 									AND MGT.prmgt_pco_produ = 10
-									AND  MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
 									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
@@ -909,6 +1953,8 @@ BEGIN
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
@@ -923,33 +1969,23 @@ BEGIN
 			END TRY
 			BEGIN CATCH
 				IF (@@TRANCOUNT > 0)
-					ROLLBACK TRANSACTION TRA_Act_Grocv
+					ROLLBACK TRANSACTION TRA_Act_Grocv3
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción de las garantías reales asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Grocv
-
-	END
-	
-	--Actualiza el indicador de inscripción de garantías reales asociadas a contratos vencidos con giros activos
-	IF(@piIndicadorProceso = 6)
-	BEGIN
-
-		--Se realiza el ajuste del indicador de inscripción de las garantías reales asociadas a contratos vencidos, 
-		--pero con giros activos, registradas en el sistema
-		BEGIN TRANSACTION TRA_Act_Grocvga
+			COMMIT TRANSACTION TRA_Act_Grocv3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocv2
 			BEGIN TRY
 		
 				UPDATE	GRO
-				SET		GRO.cod_inscripcion = CASE MRI.prmri_pcoestins
-												WHEN 1 THEN 2
-												WHEN 2 THEN 3
-												ELSE 1
-										  END,
+				SET		GRO.cod_inscripcion = 2,
 						GRO.Fecha_Replica = GETDATE()
 				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 					INNER JOIN dbo.GAR_OPERACION GO1
@@ -959,13 +1995,17 @@ BEGIN
 					AND	GO1.cod_moneda = MRI.prmri_pco_moned
 					AND MRI.prmri_pco_produ = 10
 					AND GO1.num_contrato = MRI.prmri_pnu_opera
-				WHERE	GO1.num_operacion IS NULL
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
 					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMGT MGT
 								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
 									AND MGT.prmgt_pco_produ = 10
-									AND  MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
 									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
@@ -974,6 +2014,701 @@ BEGIN
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocv2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocv2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocv3_11
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocv3_11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocv3_11
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocv2_11
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocv2_11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocv2_11
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvch3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvch3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvch3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvch2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvch2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvch2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvch3_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvch3_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvch3_18
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvch2_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvch2_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvch2_18
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvp3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvp3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvp3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvp2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvp2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvp2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvp3_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvp3_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvp3_3843
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vigentes registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvp2_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	>= @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvp2_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vigentes. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvp2_3843
+
+	END
+	
+	--Actualiza el indicador de inscripción de garantías reales asociadas a contratos vencidos con giros activos
+	IF(@piIndicadorProceso = 6)
+	BEGIN
+
+		--Se realiza el ajuste del indicador de inscripción de las garantías reales asociadas a contratos vencidos, 
+		--pero con giros activos, registradas en el sistema 
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvga3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
 													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
 					AND EXISTS (SELECT	1
 								FROM	dbo.GAR_SICC_PRMCA MCA
@@ -997,15 +2732,802 @@ BEGIN
 			END TRY
 			BEGIN CATCH
 				IF (@@TRANCOUNT > 0)
-					ROLLBACK TRANSACTION TRA_Act_Grocvga
+					ROLLBACK TRANSACTION TRA_Act_Grocvga3
 
-				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción de las garantías reales asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
 
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Grocvga
+			COMMIT TRANSACTION TRA_Act_Grocvga3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvga2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar IN (10, 12, 13, 14, 15, 16, 17, 19)
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvga2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase distinta a 11) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvga2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvga3_11
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvga3_11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvga3_11
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvga2_11
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 11
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvga2_11
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de hipoteca común (con clase igual a 11) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvga2_11
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgach3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgach3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgach3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgach2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar BETWEEN 20 AND 29
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pcotengar = 1
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgach2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase distinta a 18) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgach2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgach3_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgach3_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgach3_18
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgach2_18
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND MRI.prmri_pcoclagar = 18
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.cod_partido = MGT.prmgt_pnu_part
+													AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgach2_18
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de cédula hipotecaria (con clase igual a 18) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgach2_18
+			
+			
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgap3
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgap3
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgap3
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgap2
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar BETWEEN 30 AND 37)
+						OR (MRI.prmri_pcoclagar BETWEEN 39 AND 42)
+						OR (MRI.prmri_pcoclagar BETWEEN 44 AND 69))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgap2
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase distinta a 38 o 43) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgap2
+			
+			
+
+		--Se realiza el ajuste del indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgap3_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 3,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 2
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgap3_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Inscrita" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgap3_3843
+			
+		
+		--Se realiza el ajuste del indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vencidos con giros activos registradas en el sistema
+		BEGIN TRANSACTION TRA_Act_Grocvgap2_3843
+			BEGIN TRY
+		
+				UPDATE	GRO
+				SET		GRO.cod_inscripcion = 2,
+						GRO.Fecha_Replica = GETDATE()
+				FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_operacion = GRO.cod_operacion
+					INNER JOIN dbo.GAR_SICC_PRMRI MRI
+					ON GO1.cod_oficina = MRI.prmri_pco_ofici
+					AND	GO1.cod_moneda = MRI.prmri_pco_moned
+					AND MRI.prmri_pco_produ = 10
+					AND GO1.num_contrato = MRI.prmri_pnu_opera
+				WHERE	GRO.cod_inscripcion = 1
+					AND GO1.num_operacion IS NULL
+					AND MRI.prmri_estado = 'A'
+					AND MRI.prmri_pcoestins = 1
+					AND ((MRI.prmri_pcoclagar = 38)
+						OR (MRI.prmri_pcoclagar = 43))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMGT MGT
+								WHERE	MGT.prmgt_estado = 'A'
+									AND MGT.prmgt_pcoclagar = MRI.prmri_pcoclagar
+									AND MGT.prmgt_pco_produ = 10
+									AND MGT.prmgt_pco_conta = MRI.prmri_pco_conta
+									AND MGT.prmgt_pco_ofici = MRI.prmri_pco_ofici
+									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
+									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
+									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_GARANTIA_REAL GGR
+												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
+													AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
+													AND COALESCE(GGR.Identificacion_Sicc, 0) = COALESCE(MGT.prmgt_pnuidegar, 0)
+													AND COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '') = COALESCE(MGT.prmgt_pnuide_alf, '')))
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pfe_defin	< @viFechaActualEntera
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND EXISTS (SELECT	1
+												FROM	dbo.GAR_SICC_PRMOC MOC
+												WHERE	MOC.prmoc_pse_proces = 1		--Operaciones activas
+													AND ((MOC.prmoc_pcoctamay < 815)
+														OR (MOC.prmoc_pcoctamay > 815))	--Operaciones no insolutas
+													AND MOC.prmoc_estado = 'A'
+													AND MOC.prmoc_pnu_contr	= MCA.prmca_pnu_contr	
+													AND MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+													AND MOC.prmoc_pcomonint	= MCA.prmca_pco_moned))
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Grocvgap2_3843
+
+				SELECT @vsDescripcionBitacoraErrores = 'Se produjo un error al actualizar el indicador de inscripción "Anotada" de las garantías reales de prenda (con clase igual a 38 o 43) asociadas a contratos vencidos con giros activos. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFechaActualSinHora, @vsDescripcionBitacoraErrores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Grocvgap2_3843
+			
+	
 			
 		--en caso de que se trate del proceso de replica que se encarga de cargar los contratos vencidos se debe actualzia la fecha de réplica en este procedimiento almacenado
 		IF(@psCodigoProceso = 'CARGARCONTRATVENCID')
@@ -1024,7 +3546,7 @@ BEGIN
 										ON GF1.cod_garantia_fiduciaria = GRF.cod_garantia_fiduciaria
 									GROUP BY GRF.cod_garantia_fiduciaria) TMP
 						ON TMP.cod_garantia_fiduciaria = GGF.cod_garantia_fiduciaria
-					WHERE	TMP.Fecha_Replica > ISNULL(GGF.Fecha_Replica, '19000101')
+					WHERE	TMP.Fecha_Replica > COALESCE(GGF.Fecha_Replica, '19000101')
 
 				
 				END TRY
@@ -1053,7 +3575,7 @@ BEGIN
 										ON GR1.cod_garantia_fiduciaria = GF1.cod_garantia_fiduciaria
 									GROUP BY GF1.cod_garantia_fiduciaria) TMP
 							ON TMP.cod_garantia_fiduciaria = GRF.cod_garantia_fiduciaria
-						WHERE	TMP.Fecha_Replica > ISNULL(GRF.Fecha_Replica, '19000101')
+						WHERE	TMP.Fecha_Replica > COALESCE(GRF.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
@@ -1077,21 +3599,21 @@ BEGIN
 					SET		GGR.Fecha_Replica = TMP.Fecha_Replica
 					FROM	dbo.GAR_GARANTIA_REAL GGR
 						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
-									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, COALESCE(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIA_REAL GG1
 											
 											 UNION ALL 
 											 
-											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GRO.cod_garantia_real, COALESCE(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 											 
 											 UNION ALL
 											 
-											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GVR.cod_garantia_real, COALESCE(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
 									GROUP BY TM1.cod_garantia_real) TMP
 						ON TMP.cod_garantia_real = GGR.cod_garantia_real
-					WHERE	TMP.Fecha_Replica > ISNULL(GGR.Fecha_Replica, '19000101')
+					WHERE	TMP.Fecha_Replica > COALESCE(GGR.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
@@ -1114,21 +3636,21 @@ BEGIN
 					SET		GRO.Fecha_Replica = TMP.Fecha_Replica
 					FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
-									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, COALESCE(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIA_REAL GG1
 											
 											 UNION ALL 
 											 
-											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GRO.cod_garantia_real, COALESCE(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 											 
 											 UNION ALL
 											 
-											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GVR.cod_garantia_real, COALESCE(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
 									GROUP BY TM1.cod_garantia_real) TMP
 						ON TMP.cod_garantia_real = GRO.cod_garantia_real
-					WHERE	TMP.Fecha_Replica > ISNULL(GRO.Fecha_Replica, '19000101')
+					WHERE	TMP.Fecha_Replica > COALESCE(GRO.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
@@ -1152,21 +3674,21 @@ BEGIN
 					SET		GRV.Fecha_Replica = TMP.Fecha_Replica
 					FROM	dbo.GAR_VALUACIONES_REALES GRV
 						INNER JOIN (SELECT	TM1.cod_garantia_real, MAX(TM1.Fecha_Replica) AS Fecha_Replica
-									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, ISNULL(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
+									FROM	(SELECT	DISTINCT GG1.cod_garantia_real, COALESCE(GG1.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIA_REAL GG1
 											
 											 UNION ALL 
 											 
-											 SELECT	DISTINCT GRO.cod_garantia_real, ISNULL(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GRO.cod_garantia_real, COALESCE(GRO.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 											 
 											 UNION ALL
 											 
-											 SELECT	DISTINCT GVR.cod_garantia_real, ISNULL(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
+											 SELECT	DISTINCT GVR.cod_garantia_real, COALESCE(GVR.Fecha_Replica, '19000101') AS Fecha_Replica
 											 FROM	dbo.GAR_VALUACIONES_REALES GVR) TM1
 									GROUP BY TM1.cod_garantia_real) TMP
 						ON TMP.cod_garantia_real = GRV.cod_garantia_real
-					WHERE	TMP.Fecha_Replica > ISNULL(GRV.Fecha_Replica, '19000101')
+					WHERE	TMP.Fecha_Replica > COALESCE(GRV.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
@@ -1194,7 +3716,7 @@ BEGIN
 										ON GV1.cod_garantia_valor = GVO.cod_garantia_valor
 									GROUP BY GVO.cod_garantia_valor) TMP
 						ON TMP.cod_garantia_valor = GGV.cod_garantia_valor
-					WHERE	TMP.Fecha_Replica > ISNULL(GGV.Fecha_Replica, '19000101')
+					WHERE	TMP.Fecha_Replica > COALESCE(GGV.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
@@ -1222,7 +3744,7 @@ BEGIN
 										ON GV1.cod_garantia_valor = GGV.cod_garantia_valor
 									GROUP BY GGV.cod_garantia_valor) TMP
 							ON TMP.cod_garantia_valor = GVO.cod_garantia_valor
-						WHERE	TMP.Fecha_Replica > ISNULL(GVO.Fecha_Replica, '19000101')
+						WHERE	TMP.Fecha_Replica > COALESCE(GVO.Fecha_Replica, '19000101')
 				
 				END TRY
 				BEGIN CATCH
