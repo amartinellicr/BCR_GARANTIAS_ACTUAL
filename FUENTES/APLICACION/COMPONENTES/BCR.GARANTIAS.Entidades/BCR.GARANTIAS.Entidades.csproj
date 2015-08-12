@@ -54,6 +54,8 @@
     <Compile Include="clsCapacidadesPago.cs" />
     <Compile Include="clsCatalogo.cs" />
     <Compile Include="clsCatalogos.cs" />
+    <Compile Include="clsCobertura.cs" />
+    <Compile Include="clsCoberturas.cs" />
     <Compile Include="clsComparadorGenerico.cs" />
     <Compile Include="clsDeudor.cs" />
     <Compile Include="clsEjecucionProceso.cs" />

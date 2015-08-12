@@ -544,10 +544,10 @@
     <value>Se ha presentado un error al cargar la información de la póliza SAP. Detalle: @1</value>
   </data>
   <data name="ERROR_OBTENIENDO_POLIZAS_SAP" xml:space="preserve">
-    <value>Se ha presentado un error al obtener la lista de pólizas SAP en asociadas a la operación en la que participa la consultada.</value>
+    <value>Se ha presentado un error al obtener la lista de pólizas SAP asociadas a la operación en la que participa la garantía consultada.</value>
   </data>
   <data name="ERROR_OBTENIENDO_POLIZAS_SAP_DETALLE" xml:space="preserve">
-    <value>Se ha presentado un error al obtener la lista de pólizas SAP en asociadas a la operación en la que participa la garantía consultada ('@1'). Detalle técnico: @2</value>
+    <value>Se ha presentado un error al obtener la lista de pólizas SAP asociadas a la operación en la que participa la garantía consultada ('@1'). Detalle técnico: @2</value>
   </data>
   <data name="ERROR_OBTENIENDO_RESULTADOS_EJECUCION" xml:space="preserve">
     <value>Se ha presentado un problema al obtener la información del del resultado de la ejecución de los procesos de réplica.</value>
@@ -584,5 +584,17 @@
   </data>
   <data name="ERROR_MODIFICANDO_PORCENTAJE_ACEPTACION_DETALLE" xml:space="preserve">
     <value>Ha ocurrido un error durante la actualización del porcentaje de aceptación en el catálogo.Detalle: @1</value>
+  </data>
+  <data name="ERROR_CARGA_COBERTURA_POLIZA_SAP" xml:space="preserve">
+    <value>Se ha presentado un error al cargar la información de las coberturas "@1" de la póliza SAP.</value>
+  </data>
+  <data name="ERROR_COBERTURA_CARGA_POLIZA_SAP_DETALLE" xml:space="preserve">
+    <value>Se ha presentado un error al cargar la información de las coberturas "@1" de la póliza SAP. Detalle: @2</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP" xml:space="preserve">
+    <value>Se ha presentado un error al obtener la lista de coberturas asociadas a las pólizas.</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP_DETALLE" xml:space="preserve">
+    <value>Se ha presentado un error al obtener la lista de coberturas asociadas a las pólizas. Detalle técnico: @1</value>
   </data>
 </root>

@@ -41,6 +41,12 @@ BEGIN
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+			<Requerimiento>RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas</Requerimiento>
+			<Fecha>12/08/2015</Fecha>
+			<Descripción>Se realizan varios ajustes.</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -372,6 +378,7 @@ BEGIN
 					AND MOC.prmoc_estado = 'A'
 					AND MGT.prmgt_pcoclagar BETWEEN 20 AND 29
 					AND MGT.prmgt_pcotengar = 1
+					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
@@ -847,6 +854,7 @@ BEGIN
 					AND MCA.prmca_estado = 'A'
 					AND MGT.prmgt_pcoclagar BETWEEN 20 AND 29
 					AND MGT.prmgt_pcotengar = 1
+					AND GGR.cod_partido = MGT.prmgt_pnu_part
 					AND GGR.cod_grado = CONVERT(VARCHAR(2), MGT.prmgt_pco_grado)
 					AND GGR.cod_clase_garantia = MGT.prmgt_pcoclagar
 					AND GGR.Identificacion_Sicc = MGT.prmgt_pnuidegar
@@ -1176,6 +1184,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1239,6 +1248,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1302,6 +1312,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1366,6 +1377,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1431,6 +1443,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1496,6 +1509,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1560,6 +1574,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1624,6 +1639,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -1950,6 +1966,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2011,6 +2028,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2073,6 +2091,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+								        AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2135,6 +2154,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2198,6 +2218,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2261,6 +2282,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2324,6 +2346,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2386,6 +2409,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2704,6 +2728,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2774,6 +2799,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2844,7 +2870,8 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+								        AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2916,6 +2943,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -2988,6 +3016,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3060,6 +3089,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3132,6 +3162,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3203,6 +3234,7 @@ BEGIN
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
 									AND CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar) = RTRIM(LTRIM(MRI.prmri_pnuide_alf))
+									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR
 												WHERE	GGR.cod_garantia_real = GRO.cod_garantia_real
@@ -3768,4 +3800,3 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-

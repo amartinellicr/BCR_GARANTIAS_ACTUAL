@@ -382,7 +382,7 @@
 										            <div id="accPoliza" style="width:100%; height:100%;">
                                                         <h3>Póliza de la Garantía</h3>
                                                         <div style="text-align:left;">
-                                                            <table width="95%" style="text-align:left; height:300px;">
+                                                            <table width="95%" style="text-align:left; height:500px;">
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Código SAP:</td>
 														            <td style="width:2px;"></td>
@@ -461,6 +461,18 @@
 														            <td style="width:450px; height:15px; font-size:15px"; colspan="4">
 														                <asp:TextBox ID="txtDetallePoliza" tabIndex="18" runat="server" CssClass="id-tabla-texto-multilinea" ValidationGroup="MKE"
 								                                                     ToolTip="Detalle de la póliza" BackColor="AliceBlue" Width="450px" Height="50px" TextMode="MultiLine" ReadOnly="true"/>
+															        </td>
+													            </tr>
+                                                                <tr>
+														            <td colspan="10" style="clear:both;" valign="top">
+                                                                        <div style="display:inline; text-align:left; width:350px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
+                                                                            <span style="width:350px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Coberturas Indicadas por el Asegurador:</span>
+                                                                        </div>
+                                                                        <%--<div style="display:inline-block; text-align:left; width:10px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;"></span></div>
+--%>                                                                        <div style="display:inline; text-align:left; width:350px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
+                                                                            <span style="width:350px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Cobertura Respaldada por el Bien:</span>
+                                                                        </div>
+                                                                        
 															        </td>
 													            </tr>
 												            </table>

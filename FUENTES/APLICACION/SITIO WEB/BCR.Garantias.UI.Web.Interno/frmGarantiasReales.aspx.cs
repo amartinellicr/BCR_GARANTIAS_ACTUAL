@@ -2696,7 +2696,9 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
-
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
+                
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
                 txtPorcentajeAceptacionCalculado.Text = string.Empty;
@@ -2788,6 +2790,8 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -4313,6 +4317,20 @@ namespace BCRGARANTIAS.Forms
                             txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
                             txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
                             rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
+                            
+                            //lbCoberturasPorAsignar.DataSource = null;
+                            //lbCoberturasPorAsignar.DataSource = entidadPolizaSap.ListaCoberturasPorAsignarPoliza;
+                            //lbCoberturasPorAsignar.DataValueField = "CodigoCobertura";
+                            //lbCoberturasPorAsignar.DataTextField = "DescripcionCompuesta";
+                            //lbCoberturasPorAsignar.DataBind();
+                            //lbCoberturasPorAsignar.ClearSelection();
+
+                            //lbCoberturasAsignadas.DataSource = null;
+                            //lbCoberturasAsignadas.DataSource = entidadPolizaSap.ListaCoberturasAsignadasPoliza;
+                            //lbCoberturasAsignadas.DataValueField = "CodigoCobertura";
+                            //lbCoberturasAsignadas.DataTextField = "DescripcionCompuesta";
+                            //lbCoberturasAsignadas.DataBind();
+                            //lbCoberturasAsignadas.ClearSelection();
 
                             if (requestSM != null && requestSM.IsInAsyncPostBack)
                             {

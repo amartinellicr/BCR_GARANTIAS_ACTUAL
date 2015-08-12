@@ -3422,6 +3422,8 @@ function MensajeMontoMitigadorMayor()
         $$('rdlEstadoPoliza').find("input[value='1']").removeAttr("checked");
         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+        $$('lbCoberturasPorAsignar').empty();
+        $$('lbCoberturasAsignadas').empty();
     }
 
     //Se carga la información de la póliza seleccionada

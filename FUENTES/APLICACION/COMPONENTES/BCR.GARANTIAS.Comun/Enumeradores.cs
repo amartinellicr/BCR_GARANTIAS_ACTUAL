@@ -180,5 +180,16 @@ namespace BCR.GARANTIAS.Comun
             FechaConstruccion = 9
         }
         #endregion Lista de Controles Web de Garantías Reales
+
+        #region Tipos de Trama de las Coberturas
+
+        public enum Tipos_Trama_Cobertura
+        {
+            Ninguna = 0,
+            PorAsignar = 1,
+            Asignada = 2
+        }
+
+        #endregion Tipos de Trama de las Coberturas
     }
 }

@@ -1182,7 +1182,13 @@ namespace BCR.GARANTIAS.Entidades
         private const string _polizaSeleccionada = "Poliza_Seleccionada";
         private const string _montoPolizaColonizado = "Monto_Poliza_Colonizado";
         private const string _tipoBienPoliza = "Tipo_Bien_Poliza";
+        private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+        private const string _codigoPartido = "Codigo_Partido";
+        private const string _identificacionBien = "Identificacion_Bien";
+        private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
+        private const string _codigoAseguradora = "Codigo_Aseguradora";
         
+
         #endregion Constantes
 
         #region Constructor - Finalizador
@@ -2457,13 +2463,13 @@ namespace BCR.GARANTIAS.Entidades
                     catch (Exception ex)
                     {
                         errorDatos = true;
-                        descripcionError = Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_OPERACIONES_ASOCIADAS, Mensajes.ASSEMBLY);
+                        descripcionError = Mensajes.Obtener(Mensajes._errorObteniendoPolizasSap, Mensajes.ASSEMBLY);
 
                         StringCollection parametros = new StringCollection();
                         parametros.Add(Operacion);
-                        parametros.Add(("El error se da al cargar la trama de la lista de operaciones: " + ex.Message));
+                        parametros.Add(("El error se da al cargar la trama de las pólizas asociadas a la operación en la que participa la garantía consultada: " + ex.Message));
 
-                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_OPERACIONES_ASOCIADAS_DETALLE, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorObteniendoPolizasSapDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
                         return;
                     }

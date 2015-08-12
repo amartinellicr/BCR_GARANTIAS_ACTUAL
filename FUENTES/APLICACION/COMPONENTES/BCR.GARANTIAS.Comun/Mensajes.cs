@@ -212,6 +212,13 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorCargaHistorialPorcentajeAceptacion                = "ERROR_CARGA_HISTORICO_PORCENTAJE_ACEPTACION";
         public const string _errorCargaHistorialPorcentajeAceptacionDetalle         = "ERROR_CARGA_HISTORICO_PORCENTAJE_ACEPTACION_DETALLE";
 
+
+        public const string _errorCargaCoberturaPolizaSap                           = "ERROR_CARGA_COBERTURA_POLIZA_SAP";
+        public const string _errorCargaCoberturaPolizaSapDetalle                    = "ERROR_COBERTURA_CARGA_POLIZA_SAP_DETALLE";
+
+        public const string _errorObteniendoCoberturasPolizasSap                    = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP";
+        public const string _errorObteniendoCoberturasPolizasSapDetalle             = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP_DETALLE";
+        
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>

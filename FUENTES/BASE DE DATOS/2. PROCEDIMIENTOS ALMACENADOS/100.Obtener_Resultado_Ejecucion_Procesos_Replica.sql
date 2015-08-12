@@ -44,6 +44,12 @@ BEGIN
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+			<Requerimiento>Pólizas BCR Garantíaa, Siebel 1-24342731</Requerimiento>
+			<Fecha>23/07/2015</Fecha>
+			<Descripción>Se agrega el código del proceso de réplica de las pólizas.</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -108,6 +114,7 @@ BEGIN
 				WHEN GEP.cocProceso = 'CARGARCONTRATVENCID' THEN 'CARGAR CONTRATOS VENCIDOS'
 				WHEN GEP.cocProceso = 'GENERAARCHIVOSUGEF' THEN 'GENERAR ARCHIVOS SUGEF'
 				WHEN GEP.cocProceso = 'CALCULAR_MTAT_MTANT' THEN 'CALCULO AVALUOS'
+				WHEN GEP.cocProceso = 'MIGRARPOLIZAS' THEN 'MIGRAR POLIZAS'
 				ELSE ''
 			END							AS [RESULTADO!3!cocProceso!element], 
 			EPD.fecIngreso				AS [RESULTADO!3!fecIngreso!element], 

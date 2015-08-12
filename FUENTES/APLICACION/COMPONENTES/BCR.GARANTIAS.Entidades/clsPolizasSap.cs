@@ -39,6 +39,12 @@ namespace BCR.GARANTIAS.Entidades
         private const string _tipoBienPoliza = "Tipo_Bien_Poliza";
         private const string _polizaAsociada = "Poliza_Asociada";
 
+        private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+        private const string _codigoPartido = "Codigo_Partido";
+        private const string _identificacionBien = "Identificacion_Bien";
+        private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
+        private const string _codigoAseguradora = "Codigo_Aseguradora";
+
         #endregion Constantes
 
         #region Variables
@@ -492,6 +498,34 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteString(((polizaSap.PolizaAsociada) ? "1" : "0"));
                     objEscritor.WriteEndElement();
 
+                    //Crea el nodo del indicador dé si la póliza SAP es externa o no, según el SAP
+                    objEscritor.WriteStartElement(_indicadorPolizaExterna);
+                    objEscritor.WriteString(((polizaSap.IndicadorPolizaExterna) ? "1" : "0"));
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del código del partido
+                    objEscritor.WriteStartElement(_codigoPartido);
+                    objEscritor.WriteString(polizaSap.CodigoPartido.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo de la identificación del bien
+                    objEscritor.WriteStartElement(_identificacionBien);
+                    objEscritor.WriteString(polizaSap.IdentificacionBien);
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del tipo de cobertura de la póliza
+                    objEscritor.WriteStartElement(_codigoTipoCobertura);
+                    objEscritor.WriteString(polizaSap.TipoCobertura.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo de la aseguradora de la póliza
+                    objEscritor.WriteStartElement(_codigoAseguradora);
+                    objEscritor.WriteString(polizaSap.CodigoAseguradora.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Inicializa el nodo que poseer los datos de las coberturas de la póliza
+                    objEscritor.WriteString(polizaSap.ListaCoberturasPoliza.ObtenerTrama());
+
                     //Final del tag POLIZA
                     objEscritor.WriteEndElement();
                 }
@@ -547,13 +581,13 @@ namespace BCR.GARANTIAS.Entidades
         {
             StringBuilder listaPolizasJSON = new StringBuilder();
 
-            //Se revisa que la lista posea semestres
+            //Se revisa que la lista posea pólizas
             if (this.InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                 listaPolizasJSON.Append("[");
 
-                //Se recorren los semestres y se genera la cedena JSON de cada uno
+                //Se recorren las pólizas y se genera la cedena JSON de cada uno
                 foreach (clsPolizaSap convertirPoliza in this.InnerList)
                 {
                     listaPolizasJSON.Append(convertirPoliza.ConvertirJSON());
