@@ -387,9 +387,9 @@
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Código SAP:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbCodigoSap" tabIndex="8" runat="server" Width="450px" Height="100%"></asp:dropdownlist></td>
-															        <td style="width:280px;"></td>
+															        <%--<td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
-															        <td style="width:140px;"></td>
+															        <td style="width:140px;"></td>--%>
 													            </tr>
 													            <tr>
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Monto Póliza:</td>
@@ -406,9 +406,9 @@
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Moneda Póliza:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbMonedaPoliza" tabIndex="8" runat="server" Width="100%" Height="100%" Enabled="false"></asp:dropdownlist></td>
-															        <td style="width:280px;"></td>
+															        <%--<td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
-															        <td style="width:140px;"></td>
+															        <td style="width:140px;"></td>--%>
 													            </tr>
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Identificación del Acreedor:</td>
@@ -464,15 +464,25 @@
 															        </td>
 													            </tr>
                                                                 <tr>
-														            <td colspan="10" style="clear:both;" valign="top">
-                                                                        <div style="display:inline; text-align:left; width:350px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
-                                                                            <span style="width:350px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Coberturas Indicadas por el Asegurador:</span>
+														            <td colspan="6" style="clear:both; height:25px;" valign="top">
+                                                                        <div style="display:inline; float:left; width:300px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
+                                                                            <span style="width:300px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Coberturas Indicadas por el Asegurador:</span>
                                                                         </div>
-                                                                        <%--<div style="display:inline-block; text-align:left; width:10px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;"></span></div>
---%>                                                                        <div style="display:inline; text-align:left; width:350px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
-                                                                            <span style="width:350px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Cobertura Respaldada por el Bien:</span>
+                                                                        <div style="display:inline; float:left; width:300px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">
+                                                                            <span style="width:300px; min-width:200px; height: 25px; text-align:center; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Cobertura Respaldada por el Bien:</span>
                                                                         </div>
-                                                                        
+															        </td>
+													            </tr>
+                                                                <tr>
+														            <td colspan="6" style="clear:both;" valign="top">
+                                                                        <div id="divCoberturasPorAsignar" style="display:inline; float:left; width:300px; height:150px; text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border-left-width:thin; border-right-width:thin; border-top:thin; border-bottom:thin; border-color:#79B7E7; border-style:solid; margin-right:0.5px; overflow:auto;">
+                                                                            <select id="lbCoberturasPorAsignar" tabindex="46" runat="server" disabled="disabled" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border:0px; overflow:auto; display:none;"></select>
+                                                                            <%--<asp:ListBox ID="lbCoberturasPorAsignar" runat="server" Font-Names="Verdana, Tahoma, Arial" Font-Size="12px" CssClass="id-list-box" ToolTip="Coberturas Indicadas por el Asegurador" Enabled="true" TabIndex="46"></asp:ListBox>--%>
+                                                                        </div>
+                                                                        <div id="divCoberturasAsignadas" style="display:inline; float:left; width:300px; height:150px; text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border-left-width:thin; border-right-width:thin; border-top:thin; border-bottom:thin; border-color:#79B7E7; border-style:solid; margin-left:0.5px; overflow:auto;">
+                                                                            <select id="lbCoberturasAsignadas" tabindex="47" runat="server" disabled="disabled" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border:0px; overflow:auto; display:none;"></select>
+                                                                            <%--<asp:ListBox ID="lbCoberturasAsignadas" runat="server" Font-Names="Verdana, Tahoma, Arial" Font-Size="12px" CssClass="id-list-box" ToolTip="Cobertura Respaldada por el Bien" Enabled="true" TabIndex="47"></asp:ListBox>--%>
+                                                                        </div>
 															        </td>
 													            </tr>
 												            </table>

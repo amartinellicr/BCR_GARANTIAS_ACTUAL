@@ -574,6 +574,52 @@ namespace BCR.GARANTIAS.Entidades
         }
 
         /// <summary>
+        /// Obtiene la póliza que esté asociada al bien consultado
+        /// </summary>
+        /// <param name="codigoPartido">Código del partido</param>
+        /// <param name="identificacionBien">Identificación del bien</param>
+        /// <returns>Una entidad de tipo póliza, de no existir una o si existen varias se retornará nulo</returns>
+        public clsPolizaSap ObtenerPolizaRelacionadaBien(short codigoPartido, string identificacionBien, Enumeradores.Tipos_Garantia_Real tipoGarantia)
+        {
+            clsPolizaSap entidadRetornada = null;
+            int cantidadPolizas = 0;
+
+
+            if (this.InnerList.Count > 0)
+            {
+                if ((tipoGarantia != Enumeradores.Tipos_Garantia_Real.Prenda) && ((codigoPartido >= 1) && (codigoPartido <= 7)) && (identificacionBien.Length > 0))
+                {
+                    foreach (clsPolizaSap entidadPoliza in InnerList)
+                    {
+                        if ((entidadPoliza.CodigoPartido == codigoPartido) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
+                        {
+                            entidadRetornada = entidadPoliza;
+                            cantidadPolizas++;
+                        }
+                    }
+                }
+                else if ((tipoGarantia == Enumeradores.Tipos_Garantia_Real.Prenda) && (identificacionBien.Length > 0))
+                {
+                    foreach (clsPolizaSap entidadPoliza in InnerList)
+                    {
+                        if (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0)
+                        {
+                            entidadRetornada = entidadPoliza;
+                            cantidadPolizas++;
+                        }
+                    }
+                }
+
+                if (cantidadPolizas != 1)
+                {
+                    entidadRetornada = null;
+                }
+            }
+
+            return entidadRetornada;
+        }
+
+        /// <summary>
         /// Método que permite convertir la lista de elementos en formato JSON
         /// </summary>
         /// <returns>Cadena con las pólizas de la lista, en formato JSON</returns>
@@ -605,6 +651,5 @@ namespace BCR.GARANTIAS.Entidades
             return listaPolizasJSON.ToString();
         }
         #endregion Métodos Públicos
-
     }
 }

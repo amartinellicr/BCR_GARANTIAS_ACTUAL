@@ -934,6 +934,17 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             formatoJSON.Append(codigoAseguradora.ToString());
             formatoJSON.Append('"');
+            
+            //Se revisa que la lista posea coberturas
+            if (this.listaCoberturasPoliza.Count > 0)
+            {
+                formatoJSON.Append(",");
+                formatoJSON.Append('"');
+                formatoJSON.Append("Cobertura");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append(this.listaCoberturasPoliza.ObtenerJSON());
+            }
 
             formatoJSON.Append('}');
 

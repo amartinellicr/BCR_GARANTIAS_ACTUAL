@@ -3424,14 +3424,21 @@ function MensajeMontoMitigadorMayor()
         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
         $$('lbCoberturasPorAsignar').empty();
         $$('lbCoberturasAsignadas').empty();
+        $$('lbCoberturasPorAsignar').attr("size", "0");
+        $$('lbCoberturasAsignadas').attr("size", "0");
+        $$('lbCoberturasPorAsignar').hide();
+        $$('lbCoberturasAsignadas').hide();
     }
 
     //Se carga la información de la póliza seleccionada
     function cargarDatosPoliza()
     {
          var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
-              
-        
+         var formarOpcion = '';
+         var catidadFilasCPA = 0;
+         var cantidadFilasCA = 0;
+         var numFilas = 0;
+
          if(datoCodigoSap === -1)
          {
              LimpiarCamposPolizas();             
@@ -3455,6 +3462,48 @@ function MensajeMontoMitigadorMayor()
                     $$('rdlEstadoPoliza').find("input[value='" + polizasSap[i].Poliza_Vigente + "']").attr("checked", "checked");
 
                     $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
+
+                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) 
+                    {
+                        if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1')
+                        {
+                            formarOpcion = '<option value="';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
+                            formarOpcion += '">';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura; 
+                            formarOpcion += '</option>';
+                            $$('lbCoberturasPorAsignar').append(formarOpcion);
+                            catidadFilasCPA += 1;
+                        }
+                        else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2')
+                        {
+                            formarOpcion = '<option value="';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
+                            formarOpcion += '">';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura; 
+                            formarOpcion += '</option>';
+                            $$('lbCoberturasAsignadas').append(formarOpcion);
+                            cantidadFilasCA += 1;
+                        }
+                    }
+
+                    if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) 
+                    {
+                        $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
+                        $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
+
+                        $$('lbCoberturasPorAsignar').show();
+                        $$('lbCoberturasAsignadas').show();
+                    }
+                    else 
+                    {
+                        $$('lbCoberturasPorAsignar').attr("size", "0");
+                        $$('lbCoberturasAsignadas').attr("size", "0");
+
+                        $$('lbCoberturasPorAsignar').hide();
+                        $$('lbCoberturasAsignadas').hide();
+                    }
+
 
                     if(polizasSap[i].Codigo_Sap_Valido === '0')
                     {
@@ -3493,6 +3542,108 @@ function MensajeMontoMitigadorMayor()
                     
                     break;
                }
+            }
+        }
+
+        ValidarPorcentajeAceptacionCalculado();
+    }
+
+
+    //Se carga la información de la póliza seleccionada
+    function cargarPoliza(arregloPolizas) {
+        var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+        var formarOpcion = '';
+        var catidadFilasCPA = 0;
+        var cantidadFilasCA = 0;
+        var numFilas = 0;
+
+        if (datoCodigoSap === -1) {
+            LimpiarCamposPolizas();
+        }
+        else if ((datoCodigoSap > 0) && (arregloPolizas.length > 0)) {
+            var polizasSap = eval('(' + arregloPolizas + ')')
+            for (var i = 0; i < polizasSap.length; i++) {
+                var codigoSap = parseInt(polizasSap[i].Codigo_SAP);
+
+                if (codigoSap === datoCodigoSap) {
+                    $$('txtMontoPoliza').val(polizasSap[i].Monto_Poliza_Colonizado);
+                    $$('cbMonedaPoliza').val(polizasSap[i].Moneda_Monto_Poliza);
+                    $$('txtFechaVencimientoPoliza').val(polizasSap[i].Fecha_Vencimiento);
+                    $$('txtCedulaAcreedorPoliza').val(polizasSap[i].Cedula_Acreedor);
+                    $$('txtNombreAcreedorPoliza').val(polizasSap[i].Nombre_Acreedor);
+                    $$('txtMontoAcreenciaPoliza').val(polizasSap[i].Monto_Acreencia);
+                    $$('txtDetallePoliza').val(polizasSap[i].Detalle_Poliza);
+                    $$('rdlEstadoPoliza').find("input[value='" + polizasSap[i].Poliza_Vigente + "']").attr("checked", "checked");
+
+                    $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
+
+                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
+                        if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
+                            formarOpcion = '<option value="';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
+                            formarOpcion += '">';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                            formarOpcion += '</option>';
+                            $$('lbCoberturasPorAsignar').append(formarOpcion);
+                            catidadFilasCPA += 1;
+                        }
+                        else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                            formarOpcion = '<option value="';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
+                            formarOpcion += '">';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                            formarOpcion += '</option>';
+                            $$('lbCoberturasAsignadas').append(formarOpcion);
+                            cantidadFilasCA += 1;
+                        }
+                    }
+
+                    if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) {
+                        $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
+                        $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
+
+                        $$('lbCoberturasPorAsignar').show();
+                        $$('lbCoberturasAsignadas').show();
+                    }
+                    else {
+                        $$('lbCoberturasPorAsignar').attr("size", "0");
+                        $$('lbCoberturasAsignadas').attr("size", "0");
+
+                        $$('lbCoberturasPorAsignar').hide();
+                        $$('lbCoberturasAsignadas').hide();
+                    }
+
+
+                    if (polizasSap[i].Codigo_Sap_Valido === '0') {
+                        if (typeof ($MensajePolizaInvalida) !== 'undefined') {
+                            $MensajePolizaInvalida.dialog('open');
+                        }
+                    }
+                    else if (polizasSap[i].Monto_Poliza_Menor === '1') {
+                        if (typeof ($MensajeCambioMontoPoliza) !== 'undefined') {
+                            $MensajeCambioMontoPoliza.dialog('open');
+                        }
+                    }
+                    else if (polizasSap[i].Fecha_Vencimiento_Menor === '1') {
+                        if (typeof ($MensajeCambioFechaVencimientoPoliza) !== 'undefined') {
+
+                            $MensajeCambioFechaVencimientoPoliza.dialog('open');
+                        }
+                    }
+
+                    if (polizasSap[i].Poliza_Vigente === 0) {
+                        $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
+                        $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+
+                        $MensajePolizaVencida.dialog('open');
+                    }
+                    else {
+                        $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
+                        $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
+                    }
+
+                    break;
+                }
             }
         }
 

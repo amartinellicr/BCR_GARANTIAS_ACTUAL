@@ -73,7 +73,7 @@ namespace BCR.GARANTIAS.Entidades
 
         //Tags de control
         private const string _tipoLista = "Tipo_Lista_Cobertura";
-
+        private const string _descripcionCompuesta = "Descripcion_Compuesta_Cobertura";
 
         #endregion Constantes
 
@@ -236,11 +236,14 @@ namespace BCR.GARANTIAS.Entidades
             set { tipoListaCobertura = value; }
         }
 
+        /// <summary>
+        /// Expone la descripción compuesta de la cobertura, aplicando el formato: Descripción corta + "-" + Descripción.
+        /// </summary>
         public string DescripcionCompuesta
         {
             get
             {
-                return string.Format("{0} - {2}", this.descripcionCortaCobertura, this.descripcionCobertura);
+                return string.Format("{0} - {1}", this.descripcionCortaCobertura, this.descripcionCobertura);
             }
         }
 
@@ -309,7 +312,14 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             formatoJSON.Append(tipoLista);
             formatoJSON.Append('"');
+            formatoJSON.Append(",");
 
+            formatoJSON.Append('"');
+            formatoJSON.Append(_descripcionCompuesta);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append(UtilitariosComun.EnquoteJSON(this.DescripcionCompuesta));
+                                   
             formatoJSON.Append('}');
 
             return formatoJSON.ToString();

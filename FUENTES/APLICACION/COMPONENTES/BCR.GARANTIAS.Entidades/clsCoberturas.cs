@@ -125,7 +125,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 try
                 {
-                    xmlCoberturasPorAsignar = xmlCoberturas.SelectNodes("//" + _tagCoberturasPorAsignar);
+                    xmlCoberturasPorAsignar = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasPorAsignar).ChildNodes;
                 }
                 catch (Exception ex)
                 {
@@ -141,7 +141,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 try
                 {
-                    xmlCoberturasAsignadas = xmlCoberturas.SelectNodes("//" + _tagCoberturasAsignadas);
+                    xmlCoberturasAsignadas = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasAsignadas).ChildNodes;
                 }
                 catch (Exception ex)
                 {
@@ -257,12 +257,11 @@ namespace BCR.GARANTIAS.Entidades
                 }
             }
 
-            listaItems.Sort(new clsComparadorGenerico<clsCobertura>(_codCobertura, clsComparadorGenerico<clsCobertura>.SortOrder.Ascending));
+            listaItems.Sort(new clsComparadorGenerico<clsCobertura>("CodigoCobertura", clsComparadorGenerico<clsCobertura>.SortOrder.Ascending));
 
             return listaItems;
         }
-
-        
+     
         /// <summary>
         /// Se genera la trama con los datos contenidos en la lista
         /// </summary>
@@ -384,7 +383,6 @@ namespace BCR.GARANTIAS.Entidades
 
             return tramaGenerada;
         }
-
         
         /// <summary>
         /// Método que permite convertir la lista de elementos en formato JSON

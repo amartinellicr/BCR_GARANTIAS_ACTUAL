@@ -1413,7 +1413,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
             cbTipoGarantiaReal.SelectedIndexChanged += new EventHandler(cbTipoGarantiaReal_SelectedIndexChanged);
-
+            
             if (!IsPostBack)
             {
                 ExpandirValuaciones = -1;
@@ -2696,8 +2696,8 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
-                //lbCoberturasPorAsignar.Items.Clear();
-                //lbCoberturasAsignadas.Items.Clear();
+                lbCoberturasPorAsignar.Items.Clear();
+                lbCoberturasAsignadas.Items.Clear();
                 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -2790,8 +2790,8 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
-                //lbCoberturasPorAsignar.Items.Clear();
-                //lbCoberturasAsignadas.Items.Clear();
+                lbCoberturasPorAsignar.Items.Clear();
+                lbCoberturasAsignadas.Items.Clear();
 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -3963,6 +3963,8 @@ namespace BCRGARANTIAS.Forms
 
             bloquearControles = false;
 
+            bool asignarPoliza = false;
+
             int annosCalculoPrescripcion = 0;
 
             string datosOperacion = txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + ((txtProducto.Text.Length > 0) ?
@@ -4309,43 +4311,86 @@ namespace BCRGARANTIAS.Forms
                         if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
                         {
                             cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
-                            txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
-                            cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
-                            txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
-                            txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
-                            txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
-                            txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
-                            txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
-                            rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
-                            
-                            //lbCoberturasPorAsignar.DataSource = null;
-                            //lbCoberturasPorAsignar.DataSource = entidadPolizaSap.ListaCoberturasPorAsignarPoliza;
-                            //lbCoberturasPorAsignar.DataValueField = "CodigoCobertura";
-                            //lbCoberturasPorAsignar.DataTextField = "DescripcionCompuesta";
-                            //lbCoberturasPorAsignar.DataBind();
-                            //lbCoberturasPorAsignar.ClearSelection();
+                            asignarPoliza = true;
+                            //txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
+                            //cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
+                            //txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
+                            //txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
+                            //txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
+                            //txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
+                            //txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
+                            //rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
 
-                            //lbCoberturasAsignadas.DataSource = null;
-                            //lbCoberturasAsignadas.DataSource = entidadPolizaSap.ListaCoberturasAsignadasPoliza;
-                            //lbCoberturasAsignadas.DataValueField = "CodigoCobertura";
-                            //lbCoberturasAsignadas.DataTextField = "DescripcionCompuesta";
-                            //lbCoberturasAsignadas.DataBind();
-                            //lbCoberturasAsignadas.ClearSelection();
+                            //if (requestSM != null && requestSM.IsInAsyncPostBack)
+                            //{
+                            //    ScriptManager.RegisterClientScriptBlock(this,
+                            //                                            typeof(Page),
+                            //                                            Guid.NewGuid().ToString(),
+                            //                                            "<script type=\"text/javascript\" language=\"javascript\">cargarDatosPoliza();</script>",
+                            //                                            false);
+                            //}
+                            //else
+                            //{
+                            //    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                            //                                           Guid.NewGuid().ToString(),
+                            //                                           "<script type=\"text/javascript\" language=\"javascript\">cargarDatosPoliza();</script>",
+                            //                                           false);
+                            //}
+                        }
+                    }
+                    else
+                    {
+                        string identificacionBien = string.Empty;
+                        Enumeradores.Tipos_Garantia_Real tipoGarReal = Enumeradores.Tipos_Garantia_Real.Ninguna;
 
-                            if (requestSM != null && requestSM.IsInAsyncPostBack)
+                        switch (entidadGarantia.CodTipoGarantiaReal)
+                        {
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Hipoteca): identificacionBien = entidadGarantia.NumeroFinca;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Hipoteca;
+                                break;
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria): identificacionBien = entidadGarantia.NumeroFinca;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria;
+                                break;
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Prenda): identificacionBien = entidadGarantia.NumPlacaBien;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Prenda;
+                                break;
+                            default: identificacionBien = string.Empty;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Ninguna;
+                                break;
+                        }
+
+                        clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaRelacionadaBien(entidadGarantia.CodPartido, identificacionBien, tipoGarReal);
+
+                        if (entidadPolizaSap != null)
+                        {
+                            if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
                             {
-                                ScriptManager.RegisterClientScriptBlock(this,
-                                                                        typeof(Page),
-                                                                        Guid.NewGuid().ToString(),
-                                                                        "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                        false);
-                            }
-                            else
-                            {
-                                this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
-                                                                       Guid.NewGuid().ToString(),
-                                                                       "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                       false);
+                                cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
+                                asignarPoliza = true;
+                                //txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
+                                //cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
+                                //txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
+                                //txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
+                                //txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
+                                //txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
+                                //txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
+                                //rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
+                                
+                                //if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                //{
+                                //    ScriptManager.RegisterClientScriptBlock(this,
+                                //                                            typeof(Page),
+                                //                                            Guid.NewGuid().ToString(),
+                                //                                            "<script type=\"text/javascript\" language=\"javascript\">cargarDatosPoliza();</script>",
+                                //                                            false);
+                                //}
+                                //else
+                                //{
+                                //    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                //                                           Guid.NewGuid().ToString(),
+                                //                                           "<script type=\"text/javascript\" language=\"javascript\">cargarDatosPoliza();</script>",
+                                //                                           false);
+                                //}
                             }
                         }
                     }
@@ -4542,6 +4587,25 @@ namespace BCRGARANTIAS.Forms
                                                        Guid.NewGuid().ToString(),
                                                        "<script type=\"text/javascript\" language=\"javascript\">document.body.style.cursor = 'default';  $(document).ready(function(){ AsignarListaSemestres('" + entidadGarantia.ListaSemestresCalcular.ObtenerJSON() + "'); AsignarListaPolizasSap('" + entidadGarantia.PolizasSap.ObtenerJSON() + "'); });</script>",
                                                        false);
+            }
+
+            if (asignarPoliza)
+            {
+                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                {
+                    ScriptManager.RegisterClientScriptBlock(this,
+                                                            typeof(Page),
+                                                            Guid.NewGuid().ToString(),
+                                                            "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                            false);
+                }
+                else
+                {
+                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                           Guid.NewGuid().ToString(),
+                                                           "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                           false);
+                }
             }
 
             contenedorDatosModificacion.Visible = true;
