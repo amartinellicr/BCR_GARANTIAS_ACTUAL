@@ -71,9 +71,13 @@ namespace BCRGARANTIAS.Forms
         private const string LLAVE_ERROR_INCONSISTENCIA_SIN_POLIZA = "EISP";
         private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_INVALIDA = "EIPI";
         private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_NO_CUBRE_BIEN = "EIPNCB";
+        private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA = "EIPV";
+        private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR = "EIPMM";
+        private const string LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1 = "EIPATB1";
 
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO = "EIFUSM";
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR = "EIFVM";
+
 
         #endregion Constantes
 
@@ -1230,7 +1234,6 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
-
         /// <summary>
         /// Se establece si se debe mostrar el error de que no existe póliza asociada (1) o no (0)
         /// </summary>
@@ -1326,6 +1329,105 @@ namespace BCRGARANTIAS.Forms
                 else
                 {
                     btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_NO_CUBRE_BIEN, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la póliza asociada posee un monto menor al registrado en el avalúo (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorPolizaMontoMenor
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_MONTO_MENOR, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la póliza asociada está vencida (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorPolizaVencida
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_VENCIDA, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la póliza está asociada a un tipo de bien 1 (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorPolizaAsociadaTB1
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_POLIZA_ASOCIADA_TB1, "0");
                 }
             }
         }
@@ -1605,6 +1707,10 @@ namespace BCRGARANTIAS.Forms
             MostrarErrorMontoPolizaCubreBien = false;
             MostrarErrorFechaUltimoSeguimientoMayor = false;
             MostrarErrorFechaValuacionMayor = false;
+            //MostrarErrorPolizaMontoMenor = false;
+            MostrarErrorPolizaVencida = false;
+            MostrarErrorPolizaAsociadaTB1 = false;
+                    
 
             btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INDICADOR_INCONSISTENCIA, "0");
 
@@ -1637,6 +1743,10 @@ namespace BCRGARANTIAS.Forms
                             MostrarErrorMontoPolizaCubreBien = true;
                             MostrarErrorFechaUltimoSeguimientoMayor = true;
                             MostrarErrorFechaValuacionMayor = true;
+                            //MostrarErrorPolizaMontoMenor = true;
+                            MostrarErrorPolizaVencida = true;
+                            MostrarErrorPolizaAsociadaTB1 = true;
+
                         }
 
                         AplicarCalculoMontoMitigador();                                            
@@ -1738,6 +1848,9 @@ namespace BCRGARANTIAS.Forms
                                 MostrarErrorMontoPolizaCubreBien = true;
                                 MostrarErrorFechaUltimoSeguimientoMayor = true;
                                 MostrarErrorFechaValuacionMayor = true;
+                                //MostrarErrorPolizaMontoMenor = true;
+                                MostrarErrorPolizaVencida = true;
+                                MostrarErrorPolizaAsociadaTB1 = true;
 
                                 CargarDatosSession(true);
 
@@ -1837,6 +1950,9 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorMontoPolizaCubreBien = true;
                     MostrarErrorFechaUltimoSeguimientoMayor = true;
                     MostrarErrorFechaValuacionMayor = true;
+                    //MostrarErrorPolizaMontoMenor = true;
+                    MostrarErrorPolizaVencida = true;
+                    MostrarErrorPolizaAsociadaTB1 = true;
                     btnModificar_Click(sender, e);
                 }
             }
@@ -2094,7 +2210,7 @@ namespace BCRGARANTIAS.Forms
                 entidadValida = entidadGarantia.EntidadValida(true);
 
                 if ((!entidadValida) && (entidadGarantia.ListaErroresValidaciones.Count == 0) &&
-                   ((entidadGarantia.InconsistenciaMontoMitigador == 3) || (entidadGarantia.InconsistenciaMontoMitigador == 4)))
+                   ((entidadGarantia.InconsistenciaMontoMitigador == 0) || (entidadGarantia.InconsistenciaMontoMitigador == 3) || (entidadGarantia.InconsistenciaMontoMitigador == 4)))
                 {
                     entidadValida = true;
                 }
@@ -2105,7 +2221,8 @@ namespace BCRGARANTIAS.Forms
                 {
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
                         || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien)
-                        || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor))
+                        || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor) /*|| (!MostrarErrorPolizaMontoMenor)*/
+                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
@@ -2113,7 +2230,10 @@ namespace BCRGARANTIAS.Forms
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaInvalida))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor))) ||
+                            //(entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
                             )
                         {
                             MostrarMensajesInformativos();
@@ -2696,12 +2816,17 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
+                ckbPolizaExterna.Checked = false;
 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
                 txtPorcentajeAceptacionCalculado.Text = string.Empty;
 
                 #endregion Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
+
+                lblUsrModifico.Text = string.Empty;
+                lblFechaModificacion.Text = string.Empty;
+                lblFechaReplica.Text = string.Empty; 
 
             }
             catch (Exception ex)
@@ -2788,6 +2913,11 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
+                ckbPolizaExterna.Checked = false;
+
+                lblUsrModifico.Text = string.Empty;
+                lblFechaModificacion.Text = string.Empty;
+                lblFechaReplica.Text = string.Empty;
 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -3959,7 +4089,11 @@ namespace BCRGARANTIAS.Forms
 
             bloquearControles = false;
 
+            bool asignarPoliza = false;
+
             int annosCalculoPrescripcion = 0;
+
+            bool polizaEstaVigente = false;
 
             string datosOperacion = txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + ((txtProducto.Text.Length > 0) ?
                 (txtProducto.Text + "-" + txtOperacion.Text) : txtOperacion.Text);
@@ -4303,34 +4437,12 @@ namespace BCRGARANTIAS.Forms
                         clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaSapSeleccionada();
 
                         if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
-                        {
+                        {                        
                             cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
-                            txtMontoPoliza.Text = entidadPolizaSap.MontoPolizaSapColonizado.ToString("N");
-                            cbMonedaPoliza.Items.FindByValue(entidadPolizaSap.TipoMonedaPolizaSap.ToString()).Selected = true;
-                            txtCedulaAcreedorPoliza.Text = entidadPolizaSap.CedulaAcreedorPolizaSap;
-                            txtNombreAcreedorPoliza.Text = entidadPolizaSap.NombreAcreedorPolizaSap;
-                            txtFechaVencimientoPoliza.Text = entidadPolizaSap.FechaVencimientoPolizaSap.ToString("dd/MM/yyyy");
-                            txtMontoAcreenciaPoliza.Text = entidadPolizaSap.MontoAcreenciaPolizaSap.ToString("N");
-                            txtDetallePoliza.Text = entidadPolizaSap.DetallePolizaSap;
-                            rdlEstadoPoliza.Items.FindByValue(((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0")).Selected = true;
-
-                            if (requestSM != null && requestSM.IsInAsyncPostBack)
-                            {
-                                ScriptManager.RegisterClientScriptBlock(this,
-                                                                        typeof(Page),
-                                                                        Guid.NewGuid().ToString(),
-                                                                        "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                        false);
-                            }
-                            else
-                            {
-                                this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
-                                                                       Guid.NewGuid().ToString(),
-                                                                       "<script type=\"text/javascript\" language=\"javascript\">IndicarPolizaViegente('" + ((entidadPolizaSap.IndicadorPolizaSapVigente) ? "1" : "0") + "');</script>",
-                                                                       false);
-                            }
+                            asignarPoliza = true;
+                            polizaEstaVigente = entidadPolizaSap.IndicadorPolizaSapVigente;
                         }
-                    }
+                    }      
                 }
                 else
                 {
@@ -4368,12 +4480,12 @@ namespace BCRGARANTIAS.Forms
                     }
                 }
 
-                //Se valida que en casode que el porcentaje de aceptación sea igual a 0 (cero) se bloquee el campo del monto mitigador
-                if (entidadGarantia.PorcentajeResponsabilidad == 0)
-                {
-                    txtMontoMitigador.Enabled = false;
-                    BloquearMontoMitigador = false;
-                }
+                ////Se valida que en casode que el porcentaje de aceptación sea igual a 0 (cero) se bloquee el campo del monto mitigador
+                //if (entidadGarantia.PorcentajeResponsabilidad == 0)
+                //{
+                //    txtMontoMitigador.Enabled = false;
+                //    BloquearMontoMitigador = false;
+                //}
 
                 //Se verifica si se debe ejecutar el cálculo de los montos de tasación actualizada del terreno y no terreno, luego del cual se habilitará 
                 //el campo de la fecha de último seguimiento
@@ -4526,6 +4638,25 @@ namespace BCRGARANTIAS.Forms
                                                        false);
             }
 
+            if (asignarPoliza)
+            {
+                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                {
+                    ScriptManager.RegisterClientScriptBlock(this,
+                                                            typeof(Page),
+                                                            Guid.NewGuid().ToString(),
+                                                            "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                            false);
+                }
+                else
+                {
+                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                           Guid.NewGuid().ToString(),
+                                                           "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                           false);
+                }
+            }
+
             contenedorDatosModificacion.Visible = true;
 
             ViewState.Add(LLAVE_FECHA_REPLICA, entidadGarantia.FechaReplica);
@@ -4672,6 +4803,8 @@ namespace BCRGARANTIAS.Forms
                             txtPorcentajeAceptacionCalculado.Text = "0.00";
                             porceAceptaCalculadoMenor = 0;
 
+                            MostrarErrorPolizaAsociadaTB1 = false;
+
                             if (mostrarErrorEmergente)
                             {
                                 //Se obtiene el error de la lista de errores
@@ -4680,14 +4813,14 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
                                                                            false);
                                 }
                             }
@@ -4926,7 +5059,7 @@ namespace BCRGARANTIAS.Forms
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepNoPolizaAsociada ) && (porceAceptaCalculadoMenor == -1))
                         {
                             estadoVerificacion = false;
-                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
                             
                            MostrarErrorSinPolizaAsociada = false;
 
@@ -4970,7 +5103,9 @@ namespace BCRGARANTIAS.Forms
                         if ((entidadGarantiaReal.InconsistenciaPorceAcepPolizaFechaVencimientoMenor) && (porceAceptaCalculadoMenor == -1) )
                         {
                             estadoVerificacion = false;
-                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                            
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");                            
+
+                            MostrarErrorPolizaVencida = false;
 
                             if (mostrarErrorEmergente)
                             {
@@ -4980,14 +5115,14 @@ namespace BCRGARANTIAS.Forms
                                     ScriptManager.RegisterClientScriptBlock(this,
                                                                             typeof(Page),
                                                                             Guid.NewGuid().ToString(),
-                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
                                                                             false);
                                 }
                                 else
                                 {
                                     this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                            Guid.NewGuid().ToString(),
-                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
                                                                            false);
                                 }
                             }
@@ -5000,8 +5135,8 @@ namespace BCRGARANTIAS.Forms
                         //Se valida si el error es debido a la 
                         if ( (entidadGarantiaReal.InconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno )  && (porceAceptaCalculadoMenor == -1))
                         {
-                            estadoVerificacion = false;
-                            //txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
+                            //estadoVerificacion = false;
+                            txtPorcentajeAceptacionCalculado.Text = porceAceptaCalculadoMitad.ToString("N2");
 
                         }
 
@@ -5862,10 +5997,10 @@ namespace BCRGARANTIAS.Forms
                             }
                         }
 
-                        if (entidadGarantiaReal.PorcentajeResponsabilidad == 0)
-                        {
-                            errorMontoMitiga = true;
-                        }
+                        //if (entidadGarantiaReal.PorcentajeResponsabilidad == 0)
+                        //{
+                        //    errorMontoMitiga = true;
+                        //}
 
                         #endregion Inconsistencia en el porcentaje de aceptación
 
@@ -7089,8 +7224,95 @@ namespace BCRGARANTIAS.Forms
                 {
                     MostrarErrorFechaValuacionMayor = true;
                 }
+          
+
+                //
+                //if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
+                //{
+                //    existeMensaje = true;
+                //    MostrarErrorPolizaMontoMenor = false;
+
+                //    //Se obtiene el error de la lista de errores
+                //    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                //    {
+                //        ScriptManager.RegisterClientScriptBlock(this,
+                //                                                typeof(Page),
+                //                                                Guid.NewGuid().ToString(),
+                //                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)],
+                //                                                false);
+                //    }
+                //    else
+                //    {
+                //        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                //                                               Guid.NewGuid().ToString(),
+                //                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)],
+                //                                               false);
+                //    }
+                //}
+                //else
+                //{
+                //    MostrarErrorPolizaMontoMenor = true;
+                //}
+
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorPolizaVencida = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorPolizaVencida = true;
+                }
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorPolizaAsociadaTB1 = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociada)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorPolizaAsociadaTB1 = true;
+                }
                 //
 
+                
 
                 if (existeMensaje)
                 {
