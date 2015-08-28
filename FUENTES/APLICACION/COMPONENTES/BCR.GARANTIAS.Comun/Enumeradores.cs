@@ -75,6 +75,7 @@ namespace BCR.GARANTIAS.Comun
 
         public enum Tipos_Garantia_Real
         {
+            Ninguna             = 0,
             Hipoteca            = 1,
             Cedula_Hipotecaria  = 2,
             Prenda              = 3

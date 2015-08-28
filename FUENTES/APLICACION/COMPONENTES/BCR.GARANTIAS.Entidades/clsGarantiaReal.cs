@@ -1106,6 +1106,10 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajePorceAcepTipoMitigadorNoRelacionado = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorceAcepTipoMitigadorNoRelacionado) !== 'undefined'){$MensajePorceAcepTipoMitigadorNoRelacionado.dialog('open');} </script>";
 
         private const string _mensajePorceAcepMayorPorceAcepCalculado = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorceAcepMayorPorceAcepCalculado) !== 'undefined'){$MensajePorceAcepMayorPorceAcepCalculado.dialog('open');} </script>";
+
+        private const string _mensajeClaseGarantiaInvalida56 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia56) !== 'undefined'){$MensajeClaseGarantia56.dialog('open');} </script>";
+        private const string _mensajeClaseGarantiaInvalida57 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia57) !== 'undefined'){$MensajeClaseGarantia57.dialog('open');} </script>";
+        private const string _mensajeClaseGarantiaInvalida58 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia58) !== 'undefined'){$MensajeClaseGarantia58.dialog('open');} </script>";
         
 
         //Tags referentes a la parte del avalúo más reciente
@@ -1182,6 +1186,8 @@ namespace BCR.GARANTIAS.Entidades
         private const string _polizaSeleccionada = "Poliza_Seleccionada";
         private const string _montoPolizaColonizado = "Monto_Poliza_Colonizado";
         private const string _tipoBienPoliza = "Tipo_Bien_Poliza";
+        private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+        
         
         #endregion Constantes
 
@@ -2457,13 +2463,13 @@ namespace BCR.GARANTIAS.Entidades
                     catch (Exception ex)
                     {
                         errorDatos = true;
-                        descripcionError = Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_OPERACIONES_ASOCIADAS, Mensajes.ASSEMBLY);
+                        descripcionError = Mensajes.Obtener(Mensajes._errorObteniendoPolizasSap, Mensajes.ASSEMBLY);
 
                         StringCollection parametros = new StringCollection();
                         parametros.Add(Operacion);
-                        parametros.Add(("El error se da al cargar la trama de la lista de operaciones: " + ex.Message));
+                        parametros.Add(("El error se da al cargar la trama de las pólizas asociadas a la operación en la que participa la garantía consultada: " + ex.Message));
 
-                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_OPERACIONES_ASOCIADAS_DETALLE, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorObteniendoPolizasSapDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
                         return;
                     }
@@ -4259,6 +4265,8 @@ namespace BCR.GARANTIAS.Entidades
 
                 List<int> listaTiposDocumentoLegalP = new List<int>(new int[] { 9, 10, 11, 12 });
 
+                List<int> listaClasesGarantiasPrendaInvalidas = new List<int>(new int[] { 56, 57, 58 });
+
                 #endregion Cargar listas de datos
 
                 #region Se aplica la validación correspondiente a la fecha de presentación
@@ -4370,7 +4378,7 @@ namespace BCR.GARANTIAS.Entidades
                     listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoMitigador), _mensajeMontoMitigadorSinAvaluo);
                 }
 
-                if ((!tieneErrorMontoMitigador) && (this.codInscripcion == 3) && (this.montoMitigador == 0))
+                if ((!tieneErrorMontoMitigador) && (this.codInscripcion == 3) && (this.montoMitigador < 0))
                 {
                     inconsistenciaMontoMitigador = 5;
                     tieneErrorMontoMitigador = true;
@@ -4482,7 +4490,7 @@ namespace BCR.GARANTIAS.Entidades
                     /*REQ: Siebel 1 - 23969281. Se elimina la validación en la que se evaluaba que para las garantías inscritas se cumpliera el plazo
                     normado por SUGEF.*/
 
-                    if (this.porcentajeResponsabilidad == 0)
+                    /*if (this.porcentajeResponsabilidad == 0)
                     {
                         esValida = false;
                         errorValidaciones = true;
@@ -4490,7 +4498,7 @@ namespace BCR.GARANTIAS.Entidades
                         inconsistenciaPorcentajeAceptacion = true;
                         listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalidoIndIns);
                     }
-                    else if ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80))
+                    else*/ if ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80))
                     {
                         esValida = false;
                         errorValidaciones = true;
@@ -4548,6 +4556,26 @@ namespace BCR.GARANTIAS.Entidades
                             break;
                         default: listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.ClaseGarantia), _mensajeClaseGarantiaInvalida);
                             break;
+                    }
+                }
+
+                //Se valida que el código de la clase de garantía sea válido, esto para las prendas
+                if ((this.codTipoGarantiaReal == 3) && (listaClasesGarantiasPrendaInvalidas.Contains(this.codClaseGarantia)))
+                {
+                    esValida = false;
+                    errorValidaciones = true;
+                    desplegarErrorVentanaEmergente = true;
+                    inconsistenciaClaseGarantia = true;
+
+                    switch (this.codClaseGarantia)
+                    {
+                        case 56: listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.ClaseGarantia), _mensajeClaseGarantiaInvalida56);
+                            break;
+                        case 57: listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.ClaseGarantia), _mensajeClaseGarantiaInvalida57);
+                            break;
+                        case 58: listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.ClaseGarantia), _mensajeClaseGarantiaInvalida58);
+                            break;
+                        default: break;
                     }
                 }
 
@@ -5207,17 +5235,17 @@ namespace BCR.GARANTIAS.Entidades
                     listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.PorcentajeAceptacion)] = false;
                 }
 
-                //Se bloquean los controles cuando existe un problema con el porcentaje de aceptación
-                if ((this.inconsistenciaPorcentajeAceptacion) || (this.porcentajeResponsabilidad == 0))
-                {
-                    listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.MontoMitigador)] = false;
-                }
+                ////Se bloquean los controles cuando existe un problema con el porcentaje de aceptación
+                //if ((this.inconsistenciaPorcentajeAceptacion) || (this.porcentajeResponsabilidad == 0))
+                //{
+                //    listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.MontoMitigador)] = false;
+                //}
 
-                //Se bloquean los controles cuando la garantía no posee avalúo asociado
-                if (montoTotalAvaluo == 0)
-                {
-                    listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.MontoMitigador)] = false;
-                }
+                ////Se bloquean los controles cuando la garantía no posee avalúo asociado
+                //if (montoTotalAvaluo == 0)
+                //{
+                //    listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.MontoMitigador)] = false;
+                //}
 
                 //Se bloquean los controles cuando existe un problema con el tipo de bien
                 if (this.inconsistenciaTipoBien)
@@ -5284,8 +5312,11 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorceAcepTipoBienUnoPolizaAsociada = true;
                             inconsistenciaPorcentajeAceptacionCalculado = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociada), _mensajePorceAcepTipoBienUnoPolizaAsociada);
 
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociada), _mensajePorceAcepTipoBienUnoPolizaAsociada);
+                            }
                         }
 
                     }          
@@ -5396,8 +5427,11 @@ namespace BCR.GARANTIAS.Entidades
                                     desplegarErrorVentanaEmergente = true;
                                     inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
                                     inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
 
+                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                    {
+                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                    }
                                 }
 
                                 //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
@@ -5477,8 +5511,11 @@ namespace BCR.GARANTIAS.Entidades
                                     desplegarErrorVentanaEmergente = true;
                                     inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
                                     inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
 
+                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                    {
+                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                    }
                                 }
 
 
@@ -5490,8 +5527,11 @@ namespace BCR.GARANTIAS.Entidades
                                     desplegarErrorVentanaEmergente = true;
                                     inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
                                     inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
 
+                                    //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
+                                    //{
+                                    //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
+                                    //}
                                 }
                             }               
                     
@@ -5568,8 +5608,11 @@ namespace BCR.GARANTIAS.Entidades
                                     desplegarErrorVentanaEmergente = true;
                                     inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
                                     inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
 
+                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                    {
+                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                    }
                                 }
 
                                 //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
@@ -5580,8 +5623,11 @@ namespace BCR.GARANTIAS.Entidades
                                     desplegarErrorVentanaEmergente = true;
                                     inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
                                     inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
 
+                                    //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
+                                    //{
+                                    //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
+                                    //}
                                 }
                             }
 

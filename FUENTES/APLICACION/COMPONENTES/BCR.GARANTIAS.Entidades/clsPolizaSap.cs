@@ -42,6 +42,8 @@ namespace BCR.GARANTIAS.Entidades
         private const string _cedulaBCR = "4000000019";
         private const string _descripcionBCR = "BANCODECOSTARICA";
 
+        private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+
         #endregion Constantes
 
         #region Variables
@@ -150,6 +152,11 @@ namespace BCR.GARANTIAS.Entidades
         /// Indicador de si la póliza SAP existe dentro de la estructura de las pólizas relacionadas
         /// </summary>
         private bool indicadorPolizaAsocida;
+
+        /// <summary>
+        /// Indicador de si la póliza es externa o no
+        /// </summary>
+        private bool indicadorPolizaExterna;
 
         #endregion Variables
 
@@ -262,7 +269,6 @@ namespace BCR.GARANTIAS.Entidades
             get { return tipoBienPoliza; }
         }
 	
-
         /// <summary>
         /// Obtiene la descripción del tipo de la póliza SAP.
         /// </summary>
@@ -339,7 +345,6 @@ namespace BCR.GARANTIAS.Entidades
        
         }
 	
-
         /// <summary>
         /// Propiedad que obtiene y establece la indicación de que se presentó un error por problema de datos
         /// </summary>
@@ -423,6 +428,15 @@ namespace BCR.GARANTIAS.Entidades
             set { indicadorPolizaAsocida = value; }
         }
 
+        /// <summary>
+        /// Expone el indicador de si la póliza es externa o no
+        /// </summary>
+        public bool IndicadorPolizaExterna
+        {
+            get { return indicadorPolizaExterna; }
+            set { indicadorPolizaExterna = value; }
+        }
+
         #endregion Propiedades Públicas
 
         #region Constructores
@@ -451,13 +465,14 @@ namespace BCR.GARANTIAS.Entidades
             fechaVencimientoAnterior = DateTime.MinValue;
             tipoBienPoliza = -1;
             indicadorPolizaAsocida = false;
+            indicadorPolizaExterna = false;
         }
 
         /// <summary>
         /// Constructor de la clase que carga los datos que posee la trama recibida
         /// </summary>
-        /// <param name="tramaTipoPolizaSap">Trama que posee los datos sobre los tipos de pólizas SUGEF</param>
-        public clsPolizaSap(string tramaTipoPolizaSap)
+        /// <param name="tramaPolizaSap">Trama que posee los datos sobre las pólizas</param>
+        public clsPolizaSap(string tramaPolizaSap)
         {
             codigoPolizaSap = -1;
             tipoPolizaSap = -1;
@@ -478,15 +493,16 @@ namespace BCR.GARANTIAS.Entidades
             fechaVencimientoAnterior = DateTime.MinValue;
             tipoBienPoliza = -1;
             indicadorPolizaAsocida = false;
+            indicadorPolizaExterna = false;
 
-            if (tramaTipoPolizaSap.Length > 0)
+            if (tramaPolizaSap.Length > 0)
             {
                 XmlDocument xmlTrama = new XmlDocument();
                 string[] formatosFecha = { "yyyyMMdd", "dd/MM/yyyy" };
                 
                 try
                 {
-                    xmlTrama.LoadXml(tramaTipoPolizaSap);
+                    xmlTrama.LoadXml(tramaPolizaSap);
                 }
                 catch (Exception ex)
                 {
@@ -537,6 +553,7 @@ namespace BCR.GARANTIAS.Entidades
                         indicadorPolizaSapSeleccionada = ((xmlTrama.SelectSingleNode("//" + _polizaSeleccionada) != null) ? ((xmlTrama.SelectSingleNode("//" + _polizaSeleccionada).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         codigoSapValido = ((xmlTrama.SelectSingleNode("//" + _codigoSapValido) != null) ? ((xmlTrama.SelectSingleNode("//" + _codigoSapValido).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         indicadorPolizaAsocida = ((xmlTrama.SelectSingleNode("//" + _polizaAsociada) != null) ? ((xmlTrama.SelectSingleNode("//" + _polizaAsociada).InnerText.CompareTo("0") == 0) ? false : true) : false);
+                        indicadorPolizaExterna = ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna).InnerText.CompareTo("0") == 0) ? false : true) : false);
                     }
                     catch (Exception ex)
                     {
@@ -717,6 +734,15 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append(':');
             formatoJSON.Append('"');
             formatoJSON.Append(((indicadorPolizaAsocida) ? "1" : "0"));
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(_indicadorPolizaExterna);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(((indicadorPolizaExterna) ? "1" : "0"));
             formatoJSON.Append('"');
 
             formatoJSON.Append('}');
