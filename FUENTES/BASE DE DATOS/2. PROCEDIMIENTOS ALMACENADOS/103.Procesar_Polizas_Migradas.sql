@@ -450,6 +450,50 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_Cobro
 			
+		--Se actualiza la fecha de pagado hasta de los giros con señal de cobro 5.
+		BEGIN TRANSACTION TRA_Act_Giros_ConCobro5
+			BEGIN TRY
+
+				UPDATE	TGC
+				SET		Fecha_Pagado_Hasta = VGP.fecvence
+				FROM	dbo.TMP_GIROS_CONTRATOS	TGC
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
+					ON PCD.Consecutivo_Contrato = TGC.Consecutivo_Contrato
+					AND PCD.conpoliza = TGC.Codigo_SAP
+					INNER JOIN (SELECT	PC1.Consecutivo_Contrato, PC1.conpoliza, MAX(PC1.fecpagadohasta) AS fecpagadohasta
+								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
+								WHERE	PC1.Registro_Activo = 1
+									AND PC1.estpolizacreditobancario <> 'ELI'
+									AND PC1.codsenalcredito = 5
+									AND PC1.Es_Giro = 1
+									AND PC1.Consecutivo_Contrato > 0
+								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
+					ON PC2.Consecutivo_Contrato = PCD.Consecutivo_Contrato
+					AND PC2.conpoliza = PCD.conpoliza
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VGP
+					ON VGP.conpoliza = PC2.conpoliza
+				WHERE	TGC.Registro_Activo = 1
+					AND TGC.Usuario = @psCodigoProceso
+					AND TGC.Codigo_SAP IS NOT NULL
+					AND TGC.Fecha_Pagado_Hasta IS NULL
+					AND PCD.Registro_Activo = 1
+					AND PCD.estpolizacreditobancario <> 'ELI'
+					AND PCD.codsenalcredito = 5
+					AND VGP.Registro_Activo = 1					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_ConCobro5
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar la fecha de pagado hasta de los giros de contrato con señal de cobro 5, en la tabla temporal de giros de contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_ConCobro5
+		
 		--Se actualiza la fecha de pagado hasta de los giros sin señal de cobro.
 		BEGIN TRANSACTION TRA_Act_Giros_SinCobro
 			BEGIN TRY
@@ -464,7 +508,7 @@ BEGIN
 								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
 								WHERE	PC1.Registro_Activo = 1
 									AND PC1.estpolizacreditobancario <> 'ELI'
-									AND PC1.codsenalcredito <> 2
+									AND PC1.codsenalcredito NOT IN (2, 5)
 									AND PC1.Es_Giro = 1
 									AND PC1.Consecutivo_Contrato > 0
 								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
@@ -476,7 +520,7 @@ BEGIN
 					AND TGC.Fecha_Pagado_Hasta IS NULL
 					AND PCD.Registro_Activo = 1
 					AND PCD.estpolizacreditobancario <> 'ELI'
-					AND PCD.codsenalcredito <> 2					
+					AND PCD.codsenalcredito NOT IN (2, 5)					
 		
 			END TRY
 			BEGIN CATCH
@@ -513,7 +557,10 @@ BEGIN
 					VGP.conmoneda,
 					VGP.estpoliza,
 					VGP.monsigno,
-					COALESCE(VCB.fecpagadohasta, VGP.fecvence) AS Fecha_Vencimiento,
+					CASE 
+						WHEN VCB.codsenalcredito = 5 THEN VGP.fecvence
+						ELSE COALESCE(VCB.fecpagadohasta, VGP.fecvence) 
+					END AS Fecha_Vencimiento,
 					VGP.nommoneda,
 					VGP.memobservacion,
 					GETDATE() AS Fecha_Replica,
@@ -585,7 +632,10 @@ BEGIN
 					VGP.conmoneda,
 					VGP.estpoliza,
 					VGP.monsigno,
-					VCC.fecpagadohasta,
+					CASE 
+						WHEN VCC.codsenal = 5 THEN VGP.fecvence
+						ELSE COALESCE(VCC.fecpagadohasta, VGP.fecvence) 
+					END AS Fecha_Vencimiento,
 					VGP.nommoneda,
 					VGP.memobservacion,
 					GETDATE() AS Fecha_Replica,

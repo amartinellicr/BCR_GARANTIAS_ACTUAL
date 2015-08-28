@@ -4560,7 +4560,7 @@ namespace BCR.GARANTIAS.Entidades
                 }
 
                 //Se valida que el código de la clase de garantía sea válido, esto para las prendas
-                if ((this.codTipoGarantiaReal == 3) && (listaClasesGarantias.Contains(this.codClaseGarantia)))
+                if ((this.codTipoGarantiaReal == 3) && (listaClasesGarantiasPrendaInvalidas.Contains(this.codClaseGarantia)))
                 {
                     esValida = false;
                     errorValidaciones = true;

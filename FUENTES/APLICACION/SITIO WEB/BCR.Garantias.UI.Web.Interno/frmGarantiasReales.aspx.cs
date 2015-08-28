@@ -3626,7 +3626,8 @@ namespace BCRGARANTIAS.Forms
                         listaClasesGarantia = listaClasesGarantia.FindAll((delegate(clsCatalogo catalogo) { return (catalogo.IDElemento >= 10 && catalogo.IDElemento <= 17) || catalogo.IDElemento == -1; }));
                         break;
                     case 2: break;
-                    case 3: break;
+                    case 3: listaClasesGarantia = listaClasesGarantia.FindAll((delegate(clsCatalogo catalogo) { return (catalogo.IDElemento >= 30 && catalogo.IDElemento <= 55) || (catalogo.IDElemento >= 59 && catalogo.IDElemento <= 69) || catalogo.IDElemento == -1; }));
+                        break;
                     default:
                         break;
                 }

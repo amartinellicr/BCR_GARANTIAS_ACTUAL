@@ -91,7 +91,7 @@
 		                                                        <asp:ListItem Value="ACTUALIZARGARANTIAS">Actualizar Garantías</asp:ListItem>
 		                                                        <asp:ListItem Value="CARGARCONTRATVENCID">Cargar Contratos Vencidos</asp:ListItem>
 		                                                        <asp:ListItem Value="GENERAARCHIVOSUGEF">Generar Archivos SUGEF</asp:ListItem>
-		                                                        <asp:ListItem Value="CALCULAR_MTAT_MTANT">Cálculo Avalos</asp:ListItem>
+		                                                        <asp:ListItem Value="CALCULAR_MTAT_MTANT">Cálculo Avalúos</asp:ListItem>
                                                                 <asp:ListItem Value="MIGRARPOLIZAS">Migrar Pólizas</asp:ListItem>
 	                                                        </asp:DropDownList>
 	                                                    </td>
