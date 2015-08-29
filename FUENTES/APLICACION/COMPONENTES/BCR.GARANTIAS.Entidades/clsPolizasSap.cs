@@ -40,6 +40,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _polizaAsociada = "Poliza_Asociada";
 
         private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+
         private const string _codigoPartido = "Codigo_Partido";
         private const string _identificacionBien = "Identificacion_Bien";
         private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
@@ -498,7 +499,8 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteString(((polizaSap.PolizaAsociada) ? "1" : "0"));
                     objEscritor.WriteEndElement();
 
-                    //Crea el nodo del indicador dé si la póliza SAP es externa o no, según el SAP
+                    //Crea el nodo del indicador de si la poliza SAP es externa o no, según el SAP
+
                     objEscritor.WriteStartElement(_indicadorPolizaExterna);
                     objEscritor.WriteString(((polizaSap.IndicadorPolizaExterna) ? "1" : "0"));
                     objEscritor.WriteEndElement();

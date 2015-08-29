@@ -86,6 +86,9 @@
             var $MensajeMontoAcreenciaTotalizadoInvalido;
             var $MensajeMontoPolizaMenorMontoUltimaTasacionNoTerreno;
             var $MensajePolizaInvalidaRelacionTipoBienPoliza;
+            var $MensajeClaseGarantia56;
+            var $MensajeClaseGarantia57;
+            var $MensajeClaseGarantia58;
 
 
             var $errorFechaPresentacion;
@@ -96,7 +99,7 @@
 
             var $MensajeDuplicadoTipoPolizaBienRelacionado;
 
-           
+
 
             PageInit();
 

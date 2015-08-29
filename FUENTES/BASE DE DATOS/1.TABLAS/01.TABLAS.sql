@@ -250,6 +250,7 @@ CREATE TABLE dbo.GAR_GARANTIA_REAL
 	Fecha_Inserto DATETIME NULL,
 	Fecha_Replica DATETIME NULL,
 	Indicador_Vivienda_Habitada_Deudor BIT NOT NULL CONSTRAINT [DF_GAR_GARANTIA_REAL_Indicador_Vivienda_Habitada_Deudor]  DEFAULT (0)	 
+	 
 )
  ON "PRIMARY"
 GO
@@ -2307,7 +2308,8 @@ CREATE TABLE dbo.GAR_POLIZAS
 	Nombre_Acreedor_Anterior  varchar(60)  NULL,
 	Monto_Poliza_Colonizado  numeric(16,2)  NOT NULL 
 	CONSTRAINT DF_GAR_POLIZAS_MontoPolizaColonizado
-		 DEFAULT  0 
+		 DEFAULT  0,
+	Indicador_Poliza_Externa  BIT  NULL	 
 )
  ON "PRIMARY"
 GO
@@ -2399,6 +2401,9 @@ GO
 EXEC sp_addextendedproperty 'MS_Description' , 'Guardará el monto de la póliza colonizado, para lo cual debe usar el tipo de cambio de compra del dólar, almacenado en la tabla CAT_INDICES_ACTUALIZACION_AVALUO.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Monto_Poliza_Colonizado'
 GO
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la póliza es externa (1) o no (0).' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Indicador_Poliza_Externa'
+GO
+
 
 
 CREATE TABLE dbo.GAR_POLIZAS_RELACIONADAS
@@ -2481,7 +2486,8 @@ CREATE TABLE dbo.TMP_POLIZAS
 	Descripcion_Moneda_Monto_Poliza  varchar(30)  COLLATE SQL_Latin1_General_CP850_CS_AS NOT NULL ,
 	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL,
 	Fecha_Replica	DATETIME NULL,
-	Registro_Activo BIT NULL	
+	Registro_Activo BIT NULL,
+	Indicador_Poliza_Externa  BIT  NULL	
 )
  ON "PRIMARY"
 GO
@@ -2555,6 +2561,9 @@ EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue rep
 GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el registro está activo (1) para ser procesado o no (0)' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Registro_Activo'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la póliza es externa (1) o no (0).' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Indicador_Poliza_Externa'
 GO
 
 CREATE TABLE [dbo].[CAT_PORCENTAJE_ACEPTACION](
@@ -2668,4 +2677,298 @@ EXEC sp_addextendedproperty 'MS_Description' , 'Último contenido asignado al cam
 GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Fecha y hora en que fue ejecutada la operación.' , 'user' , 'dbo' , 'table' , 'PORCENTAJE_ACEPTACION_HST', 'column' , 'Fecha_Hora'
+GO
+
+
+CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZA(
+	conpoliza NUMERIC(8, 0) NULL,
+	cocpolizains VARCHAR(30) NULL,
+	cocnumeropoliza VARCHAR(30) NULL,
+	concliente NUMERIC(7, 0)  NULL,
+	indcolectiva NUMERIC(1, 0)  NULL,
+	cocgrupopoliza VARCHAR(1) NULL,
+	cocpolizasola VARCHAR(30) NULL,
+	conclasepoliza NUMERIC(3,0) NOT NULL,
+	contipopoliza NUMERIC(3, 0) NULL,
+	cocsimbologia VARCHAR(4) NULL,
+	indnumanterior NUMERIC(1, 0) NULL,
+	nummodulo NUMERIC(3, 0) NULL,
+	numsucursal NUMERIC(3, 0) NULL,
+	conregion NUMERIC(2, 0) NULL,
+	conagencia NUMERIC(4, 0) NULL,
+	conagente NUMERIC(4, 0) NULL,
+	conformapago NUMERIC(3, 0) NULL,
+	conperiodicidadpoliza NUMERIC(2, 0) NULL,
+	concanalizacioncobro NUMERIC(3, 0)  NULL,
+	conmotivocancela NUMERIC(3, 0) NULL,
+	fecemision DATETIME NULL,
+	fecvigencia DATETIME NULL,
+	fecvence DATETIME NULL,
+	feccancelacion DATETIME NULL,
+	fecproximopago DATETIME NULL,
+	mtoasegurado NUMERIC(16, 2) NULL,
+	mtoprimatotal NUMERIC(16, 2) NULL,
+	mtoultimopago NUMERIC(16, 2) NULL,
+	mtodeducible NUMERIC(10, 2) NULL,
+	mtopagoperiodico NUMERIC(16,4) NULL,
+	usrcancelo VARCHAR(35) NULL,
+	memobservacion VARCHAR(250) NULL,
+	desubicacionbien VARCHAR(250) NULL,
+	desdetallebien VARCHAR(250) NULL,
+	indexterna NUMERIC(1, 0) NULL,
+	estpoliza VARCHAR(3)  NULL,
+	codsenal NUMERIC(2, 0) NULL,
+	conpolizamadre NUMERIC(8, 0) NULL,
+	mtoprima NUMERIC(16, 2) NULL,
+	concreditobancarioprincipal NUMERIC(10, 0) NULL,
+	nummespoliza NUMERIC(2, 0) NULL,
+	indrevisada NUMERIC(1, 0)  NULL,
+	descoberturasasociadas VARCHAR(60) NULL,
+	cocformacobropoliza VARCHAR(5) NULL,
+	cocintencionalidad VARCHAR(20) NULL,
+	desclasepoliza VARCHAR(60) NULL,
+	destipopoliza VARCHAR(60) NULL,
+	conmoneda NUMERIC(3, 0) NULL,
+	indcobraimpuestorenta NUMERIC(1, 0) NULL, 
+	nommoneda VARCHAR(30) NULL,
+	monsigno VARCHAR(5) NULL,
+	desformapago VARCHAR(60) NULL,
+	nummeses NUMERIC(3, 0) NULL,
+	dessiglas VARCHAR(30) NULL,
+	contipocobertura NUMERIC(3, 0) NULL,
+	codtiposiic VARCHAR(2) NULL,
+	indesdesempleo NUMERIC(1, 0) NULL, 
+	desunidadejecutora VARCHAR(60) NULL,
+	cocpolizasicc VARCHAR(15) NULL,
+	concanalventa SMALLINT NULL,
+	cocestadopoliza VARCHAR(3) NULL,
+	feccambioestadopoliza DATETIME NULL,
+	conaseguradora TINYINT NULL,
+	nomaseguradora VARCHAR(60) NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL
+) ON [PRIMARY]
+
+GO
+
+CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	concreditobancario NUMERIC(10, 0) NOT NULL,
+	codsenalcredito NUMERIC(2, 0) NOT NULL,
+	cocfrecuenciacobrosicc VARCHAR(1)  NULL,
+	indcodeudor NUMERIC(1, 0) NOT NULL,
+	estpolizacreditobancario VARCHAR(3) NOT NULL,
+	feccancelacioncredito DATETIME NULL,
+	fecatraso DATETIME NULL,
+	fecpagadohasta DATETIME NULL,
+	fecvencecredito DATETIME NULL,
+	indprimadevuelta NUMERIC(1, 0) NOT NULL,
+	fecdevolucionprima DATETIME NULL,
+	usrdevolvioprima VARCHAR(35) NULL,
+	codcontabilidad NUMERIC(2, 0) NOT NULL,
+	codue NUMERIC(4, 0) NOT NULL,
+	conmoneda NUMERIC(3, 0) NOT NULL,
+	codproducto NUMERIC(2, 0) NOT NULL,
+	numoperacion NUMERIC(7, 0) NOT NULL,
+	concontratocredito NUMERIC(10, 0) NULL,
+	estcreditobancario VARCHAR(3) NOT NULL,
+	coccreditobancario VARCHAR(55) NULL,
+	Es_Giro BIT NOT NULL,
+	Consecutivo_Contrato BIGINT NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL
+) ON [PRIMARY]
+
+GO
+
+CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	concontratocredito NUMERIC(10, 0)  NOT NULL,
+	estpolizacontratocredito VARCHAR(3)  NOT NULL,
+	feccancelacioncontrato DATETIME NULL,
+	fecpagadohasta DATETIME NULL,
+	codsenal NUMERIC(2, 0)  NULL,
+	cocfrecuenciacobrosicc VARCHAR(1)  NULL,
+	fecvencecredito DATETIME NULL,
+	codue NUMERIC(4, 0)  NOT NULL,
+	codcontabilidad NUMERIC(2, 0)  NOT NULL,
+	conmoneda NUMERIC(3, 0)  NOT NULL,
+	coccontratocredito VARCHAR(10) NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL
+) ON [PRIMARY]
+
+GO
+
+CREATE TABLE dbo.TMP_SAP_POLIZASEXTERNAS(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL 
+) ON [PRIMARY]
+
+GO
+
+CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZAAUTO(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	cocplaca VARCHAR(15) NOT NULL,
+	conestiloauto NUMERIC(3,0) NULL,
+	conmarcaauto NUMERIC(3,0) NULL,
+	contipocombustion NUMERIC(2,0) NOT NULL,
+	desmodelo VARCHAR(35) NULL,
+	descolor VARCHAR(20) NULL,
+	numpeso NUMERIC(9,2) NULL,
+	numcubicaje NUMERIC(4,0) NULL,
+	numcapacidad NUMERIC(3,0) NULL,
+	numcilindros NUMERIC(2,0) NULL,
+	desnumeromotor VARCHAR(20) NULL,
+	desnumerochasis VARCHAR(20) NOT NULL,
+	mtovalorauto NUMERIC(16,2) NULL,
+	porrecargobonificacion NUMERIC(7,4) NULL,
+	contipovehiculo NUMERIC(6,0) NULL,
+	desestadobien VARCHAR(3000) NULL,
+	numanoauto NUMERIC(4,0) NULL,
+	tipmodalidadaseguramiento NUMERIC(10,0) NULL,
+	codestilocarroceria NUMERIC(2,0) NULL,
+	indplacatemporal TINYINT NOT NULL,
+	concliente NUMERIC(7,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	mtoasegurado NUMERIC(16,2) NULL,
+	contipopoliza NUMERIC(3,0) NULL,
+	desestiloauto VARCHAR(60) NULL,
+	desmarcaauto VARCHAR(60) NULL,
+	mtoprimatotal NUMERIC(16,2) NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	desestilocarroceria VARCHAR(60) NOT NULL,
+	destipovehiculo VARCHAR(80) NOT NULL,
+	destipocombustion VARCHAR(60) NOT NULL,
+	desmodalidadaseguramiento VARCHAR(11) NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL 
+) ON [PRIMARY]
+
+GO
+
+
+CREATE TABLE dbo.TMP_SAP_SGRPOLIZAOTRO(
+	conpoliza NUMERIC(8,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	concliente NUMERIC(7,0) NOT NULL,
+	contipopoliza NUMERIC(3, 0) NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	mtoasegurado NUMERIC(16, 2) NULL,
+	mtoprimatotal NUMERIC(16, 2) NULL,
+	desobservacion VARCHAR(1500) NULL,
+	cocplaca VARCHAR(15) NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL  
+) ON [PRIMARY]
+
+GO 
+
+
+CREATE TABLE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL(
+	concliente NUMERIC(7,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	mtoaseguradototal NUMERIC(16,2) NULL,
+	mtoprimatotal NUMERIC(16,2) NULL,
+	contipopoliza NUMERIC(3,0) NULL,
+	conpoliza NUMERIC(8,0) NOT NULL,
+	conzonariesgo SMALLINT NOT NULL,
+	conprovincia NUMERIC(1,0) NULL,
+	concanton NUMERIC(2,0) NULL,
+	condistrito NUMERIC(2,0) NULL,
+	desnumerofinca VARCHAR(20) NULL,
+	mtoasegurado NUMERIC(16,2) NULL,
+	porparticipacion NUMERIC(7,4) NULL,
+	pordeducible NUMERIC(7,4) NULL,
+	mtodeduccibleminimo NUMERIC(16,2) NULL,
+	memobservacion VARCHAR(200) NULL,
+	desocupacion VARCHAR(20) NULL,
+	cococupacionrobo VARCHAR(3) NULL,
+	codclasetarifaria NUMERIC(2,0) NULL,
+	codrecargoprr NUMERIC(3,0) NULL,
+	conclaseconstruccion NUMERIC(8,0) NULL,
+	conporcentajepci NUMERIC(2,0) NULL,
+	contipocomercio NUMERIC(8,0) NULL,
+	desdireccioninmuble VARCHAR(250) NULL,
+	desfolioreal VARCHAR(20) NULL,
+	mtoconstruccion NUMERIC(16,4) NULL,
+	mtogarantia NUMERIC(16,4) NULL,
+	numgradohipoteca NUMERIC(2,0) NULL,
+	numpisos NUMERIC(3,0) NULL,
+	portarifa NUMERIC(7,4) NULL,
+	portarifab NUMERIC(7,4) NULL,
+	mtovalorterreno NUMERIC(16,4) NULL,
+	mtoaseguradomenaje NUMERIC(16,4) NULL,
+	codparticipacionasegurado TINYINT NULL,
+	concreditobancario NUMERIC(10,0) NULL,
+	mtoprimaparcial NUMERIC(16,2) NOT NULL,
+	tiptramiteregistro TINYINT NOT NULL,
+	mtoprimaparcialsicc NUMERIC(10,2) NOT NULL,
+	cochorizontal CHAR(1) NULL,
+	desprovincia VARCHAR(35) NOT NULL,
+	descanton VARCHAR(45) NOT NULL,
+	desdistrito VARCHAR(45) NOT NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL 
+) ON [PRIMARY]
+
+GO 
+
+CREATE TABLE dbo.TMP_SAP_VWSGRCONTRATOCREDITO(
+	concontratocredito NUMERIC(10,0) NOT NULL,
+	codcontabilidad NUMERIC(2,0) NOT NULL,
+	codue NUMERIC(4,0) NOT NULL,
+	conmoneda NUMERIC(3,0) NOT NULL,
+	coccontratocredito VARCHAR(10) NOT NULL,
+	coccontratocreditolargo VARCHAR(55) NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL 
+) ON [PRIMARY]
+
+GO 
+
+CREATE TABLE dbo.TMP_SAP_VWSGRCREDITOBANCARIO(
+	concreditobancario NUMERIC(10,0) NOT NULL,
+	codcontabilidad NUMERIC(2,0) NOT NULL,
+	codue NUMERIC(4,0) NOT NULL,
+	conmoneda NUMERIC(3,0) NOT NULL,
+	codproducto NUMERIC(2,0) NOT NULL,
+	numoperacion NUMERIC(7,0) NOT NULL,
+	indrequierepoliza NUMERIC(1,0) NULL,
+	concreditobancarioprincipal NUMERIC(10,0) NOT NULL,
+	estcreditobancario VARCHAR(3) NOT NULL,
+	coccreditobancario VARCHAR(55) NULL,
+	fecconstitucion DATETIME NULL,
+	mtoprincipal NUMERIC(16,2) NULL,
+	Es_Giro BIT NOT NULL,
+	Consecutivo_Contrato BIGINT NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	Registro_Activo BIT NULL 
+) ON [PRIMARY]
+
+GO 
+
+CREATE TABLE dbo.TMP_GIROS_CONTRATOS(
+	Consecutivo_Giro BIGINT NOT NULL,
+	Contabilidad_Giro TINYINT NOT NULL,
+	Oficina_Giro SMALLINT NOT NULL,
+	Moneda_Giro TINYINT NOT NULL,
+	Producto_Giro TINYINT NOT NULL,
+	Numero_Giro DECIMAL(7, 0) NOT NULL,
+	Consecutivo_Contrato BIGINT NOT NULL,
+	Contabilidad_Contrato TINYINT NOT NULL,
+	Oficina_Contrato SMALLINT NOT NULL,
+	Moneda_Contrato TINYINT NOT NULL,
+	Producto_Contrato TINYINT NOT NULL,
+	Numero_Contrato DECIMAL(7, 0) NOT NULL,
+	Fecha_Pagado_Hasta DATETIME NULL,
+	Codigo_SAP NUMERIC(8,0) NULL,
+	Fecha_Vencimiento_Poliza DATETIME NULL,
+	Usuario VARCHAR(30) NOT NULL,
+	Fecha_Replica DATETIME NOT NULL,
+	Registro_Activo BIT NOT NULL 
+) ON [PRIMARY]
+
 GO

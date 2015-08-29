@@ -378,6 +378,8 @@
  /********************************************************************/        
 	     /* VALIDACIONES DEL CAMPO REFERENTE A LA CLASE DE GARANTIA */
 
+         //APLICA PARA HIPOTECAS COMUNES
+
 	    //Función que el mensaje de alerta cuando el código de la clase de garantía es inválida
         $MensajeClaseGarantiaInvalida = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El valor incluido, en la clase de garantía, no es correcto para el tipo de garantía real seleccionado, favor modificar el mismo desde el evento correspondiente en el SICC.</p></div></div>')
             .dialog({
@@ -443,7 +445,77 @@
 		                }
 	                }
                 });
-                
+
+
+
+
+        //APLICA PARA PRENDAS
+
+        //Función que el mensaje de alerta cuando el código de la clase de garantía es inválida y posee el código 56
+        $MensajeClaseGarantia56 = $('<div class="ui-widget" style="padding-top:1.0em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p style="text-align:justify;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 2.5em;"></span>Esta garantía se encuentra como Bien adjudicado al BCR o Tercero.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Clase Garantía Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+        //Función que el mensaje de alerta cuando el código de la clase de garantía es inválida y posee el código 57
+        $MensajeClaseGarantia57 = $('<div class="ui-widget" style="padding-top:1.0em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p style="text-align:justify;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 2.5em;"></span>Esta garantía se encuentra como una garantía liberada por el Banco.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Clase Garantía Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+        });
+
+        //Función que el mensaje de alerta cuando el código de la clase de garantía es inválida y posee el código 58
+        $MensajeClaseGarantia58 = $('<div class="ui-widget" style="padding-top:1.0em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p style="text-align:justify;"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 2.5em;"></span>Esta garantía se encuentra como un Bien Vendido por el BCR.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Clase Garantía Inválida',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+        });    
 
  /*************************************************************/        
 	     /* VALIDACIONES DEL CAMPO REFERENTE AL TIPO DE BIEN */
@@ -1770,7 +1842,10 @@
                 buttons: {
                     "Aceptar": function () {
                         $(this).dialog("close");
-                        document.body.style.cursor = 'default';                     
+                        document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIPATB1', '1');
+                        ModificarGarantia();                  
                     }
                 }
             });
@@ -1816,6 +1891,9 @@
                     "Aceptar": function () {
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIPV', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -1838,6 +1916,8 @@
                         $(this).dialog("close");
                         document.body.style.cursor = 'default';
 
+                        $$('btnValidarOperacion').attr('EIPMM', '1');
+                        ModificarGarantia();
                     }
                 }
             });    
@@ -1969,7 +2049,7 @@
                             $$('txtMontoMitigador').removeAttr('disabled');
                             $$('txtPorcentajeAceptacion').removeAttr('disabled');
                             
-                            if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
+                            if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                             {
                                 $$('btnValidarOperacion').attr('BCMM', '0');
                                 $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2028,7 +2108,7 @@
                             $$('txtMontoMitigador').removeAttr('disabled');
                             $$('txtPorcentajeAceptacion').removeAttr('disabled');
                             
-                            if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
+                            if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                             {
                                 $$('btnValidarOperacion').attr('BCMM', '0');
                                 $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2055,7 +2135,7 @@
                             var porcentajeAceptacion    = parseFloat($$('txtPorcentajeAceptacion').val());                           
 
 	                        if((montoMitigador == 0) && (porcentajeAceptacion == 0))
-	                        {
+                            {
 	                            $MensajeIndicadorInscripcionFCInvalida.dialog('open');
 	                        }
 	                        else
@@ -2075,7 +2155,7 @@
                     $$('txtMontoMitigador').removeAttr('disabled');
                     $$('txtPorcentajeAceptacion').removeAttr('disabled');
 
-                    if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
+                    if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                     {
                         $$('btnValidarOperacion').attr('BCMM', '0');
                         $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2195,7 +2275,7 @@
                                         $$('txtMontoMitigador').removeAttr('disabled');
                                         $$('txtPorcentajeAceptacion').removeAttr('disabled');
                                         
-                                        if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
+                                        if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                                         {
                                             $$('btnValidarOperacion').attr('BCMM', '0');
                                             $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2252,7 +2332,7 @@
                                         $$('txtMontoMitigador').removeAttr('disabled');
                                         $$('txtPorcentajeAceptacion').removeAttr('disabled');
                                         
-                                        if((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80))
+                                        if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                                         {
                                             $$('btnValidarOperacion').attr('BCMM', '0');
                                             $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2295,7 +2375,7 @@
                             var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
                             var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
 
-                            if ((porcentajeAceptacion <= 0) || (porcentajeAceptacion > 80)) {
+                            if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
                                 $$('btnValidarOperacion').attr('BCMM', '0');
                                 $$('txtMontoMitigador').attr('disabled', 'disabled');
 
@@ -2303,9 +2383,9 @@
                                     $MensajePorcentajeAceptacionInvalido.dialog('open');
                                 }
 
-                                if (porcentajeAceptacion === 0) {
-                                    $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
-                                }
+//                                if (porcentajeAceptacion === 0) {
+//                                    $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
+//                                }
                             }
 
                             ValidarExistenciaAvaluo();
@@ -3036,10 +3116,9 @@ function MensajeMontoMitigadorMayor()
 
 
 
-
-  
-    function ModificarGarantia()
+    function ModificarGarantia() 
     {
+
         if((($$('btnValidarOperacion').attr("CARGAINICIAL")) == '0') 
               && (($$('btnValidarOperacion').attr("MEMM")) == '1') 
               && (($$('btnValidarOperacion').attr("LISTAOPER")) == '1')
@@ -3049,7 +3128,10 @@ function MensajeMontoMitigadorMayor()
               && (($$('btnValidarOperacion').attr("EIPI")) == '1')
               && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')
               && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
-              && (($$('btnValidarOperacion').attr('EIFVM')) == '1')) 
+              && (($$('btnValidarOperacion').attr('EIFVM')) == '1')
+              && (($$('btnValidarOperacion').attr('EIPV')) == '1')
+              //&& (($$('btnValidarOperacion').attr('EIPMM')) == '1')
+              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')) 
         {
             __doPostBack('btnModificar','Metodo');
         }
@@ -3163,7 +3245,9 @@ function MensajeMontoMitigadorMayor()
             }
         });
 
-        IndicarPolizaViegente('-1');
+        if ((habilitarControl) || (panelActivado === 0)) {
+            IndicarPolizaViegente('-1');
+        }
     }   
     
     //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
@@ -3428,6 +3512,7 @@ function MensajeMontoMitigadorMayor()
         $$('lbCoberturasAsignadas').attr("size", "0");
         $$('lbCoberturasPorAsignar').hide();
         $$('lbCoberturasAsignadas').hide();
+        $$('ckbPolizaExterna').attr('checked', false);
     }
 
     //Se carga la información de la póliza seleccionada
@@ -3438,7 +3523,8 @@ function MensajeMontoMitigadorMayor()
          var catidadFilasCPA = 0;
          var cantidadFilasCA = 0;
          var numFilas = 0;
-
+         var esPolizaExterna = false;    
+        
          if(datoCodigoSap === -1)
          {
              LimpiarCamposPolizas();             
@@ -3504,7 +3590,11 @@ function MensajeMontoMitigadorMayor()
                         $$('lbCoberturasAsignadas').hide();
                     }
 
+                    esPolizaExterna = ((polizasSap[i].Indicador_Poliza_Externa === '1') ? true : false);
 
+                    $$('ckbPolizaExterna').attr("checked", esPolizaExterna);
+
+                  
                     if(polizasSap[i].Codigo_Sap_Valido === '0')
                     {
                         if(typeof($MensajePolizaInvalida) !== 'undefined')
@@ -3556,6 +3646,7 @@ function MensajeMontoMitigadorMayor()
         var catidadFilasCPA = 0;
         var cantidadFilasCA = 0;
         var numFilas = 0;
+        var esPolizaExterna = false;
 
         if (datoCodigoSap === -1) {
             LimpiarCamposPolizas();
@@ -3613,6 +3704,9 @@ function MensajeMontoMitigadorMayor()
                         $$('lbCoberturasAsignadas').hide();
                     }
 
+                    esPolizaExterna = ((polizasSap[i].Indicador_Poliza_Externa === '1') ? true : false);
+
+                    $$('ckbPolizaExterna').attr('checked', esPolizaExterna);
 
                     if (polizasSap[i].Codigo_Sap_Valido === '0') {
                         if (typeof ($MensajePolizaInvalida) !== 'undefined') {
@@ -3631,7 +3725,8 @@ function MensajeMontoMitigadorMayor()
                         }
                     }
 
-                    if (polizasSap[i].Poliza_Vigente === 0) {
+
+                    if (polizasSap[i].Poliza_Vigente === '0') {
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
 
@@ -3664,12 +3759,12 @@ function MensajeMontoMitigadorMayor()
             $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
             $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
         }
-        else if (codigoIndicadorUsar === -1) 
+        else if (codigoIndicadorUsar === '-1') 
         {
             $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
             $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
         }
-        else if (codigoIndicador === 0) {
+        else if (codigoIndicadorUsar === '0') {
             $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
             $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
 
@@ -3678,7 +3773,7 @@ function MensajeMontoMitigadorMayor()
         else {
             $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
             $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
-            
+
             $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
         }
     }
@@ -3929,24 +4024,24 @@ function MensajeMontoMitigadorMayor()
 
                 //Poliza Seleccionada
                
-//                if (datoCodigoSap !== -1) {
-//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-//                   
-//                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
-//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
-//                    }
+                if (datoCodigoSap !== -1) {
+                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                   
+                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
+                    }
 
-//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-//                   
-//                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
-//                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
-//                  
-//                    }
-//                }
-//                else 
-//                {
-//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
-//                }
+                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                   
+                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
+                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+                  
+                    }
+                }
+                else 
+                {
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
+                }
             } 
             //fin if tipo bien 2
 
@@ -3956,25 +4051,25 @@ function MensajeMontoMitigadorMayor()
 
                 //Poliza Seleccionada
                 
-//                if (datoCodigoSap !== -1) {
+                if (datoCodigoSap !== -1) {
 
-//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-//                    
-//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
-//                                         
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
-//                    }
+                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                    
+                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
+                                         
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
+                    }
 
-//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-//                    
-//                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
+                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                    
+                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
 
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
-//                    }
-//                }
-//                else {              
-//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-//                }
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
+                    }
+                }
+                else {              
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                }
 
 
             } 
@@ -4013,26 +4108,26 @@ function MensajeMontoMitigadorMayor()
 
                 //Poliza Seleccionada
                
-//                if (datoCodigoSap !== -1) {
+                if (datoCodigoSap !== -1) {
 
-//                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-//                   
-//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
-//                                     
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
-//                    }
+                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                   
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
+                                     
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+                    }
 
-//                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-//                    
-//                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
-//                                         
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
-//               }
-//                }
-//                else {             
+                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                    
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
+                                         
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+               }
+                }
+                else {             
 
-//                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-//                }
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                }
             }  
     }
 

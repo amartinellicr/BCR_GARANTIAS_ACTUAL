@@ -43,6 +43,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _descripcionBCR = "BANCODECOSTARICA";
 
         private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
+
         private const string _codigoPartido = "Codigo_Partido";
         private const string _identificacionBien = "Identificacion_Bien";
         private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
@@ -54,6 +55,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _tagCoberturasPorAsignar = "POR_ASIGNAR";
         private const string _tagCoberturasAsignadas = "ASIGNADAS";
         private const string _tagCobertura = "COBERTURA";
+
 
         #endregion Constantes
 
@@ -169,6 +171,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private bool indicadorPolizaExterna;
 
+
         /// <summary>
         /// Código del partido
         /// </summary>
@@ -193,6 +196,7 @@ namespace BCR.GARANTIAS.Entidades
         /// Lista de las coberturas de la póliza
         /// </summary>
         private clsCoberturas<clsCobertura> listaCoberturasPoliza;
+
 
         #endregion Variables
 
@@ -473,6 +477,7 @@ namespace BCR.GARANTIAS.Entidades
             set { indicadorPolizaExterna = value; }
         }
 
+
         /// <summary>
         /// Expone el código del partido
         /// </summary>
@@ -533,6 +538,7 @@ namespace BCR.GARANTIAS.Entidades
             get { return listaCoberturasPoliza.Items(Enumeradores.Tipos_Trama_Cobertura.Asignada); }
         }
 
+
         #endregion Propiedades Públicas
 
         #region Constructores
@@ -562,10 +568,12 @@ namespace BCR.GARANTIAS.Entidades
             tipoBienPoliza = -1;
             indicadorPolizaAsocida = false;
             indicadorPolizaExterna = false;
+
             codigoPartido = -1;
             identificacionBien = string.Empty;
             tipoCobertura = -1;
             codigoAseguradora = -1;
+
         }
 
         /// <summary>
@@ -594,10 +602,12 @@ namespace BCR.GARANTIAS.Entidades
             tipoBienPoliza = -1;
             indicadorPolizaAsocida = false;
             indicadorPolizaExterna = false;
+
             codigoPartido = -1;
             identificacionBien = string.Empty;
             tipoCobertura = -1;
             codigoAseguradora = -1;
+
 
             if (tramaPolizaSap.Length > 0)
             {
@@ -666,7 +676,6 @@ namespace BCR.GARANTIAS.Entidades
                         codigoSapValido = ((xmlTrama.SelectSingleNode("//" + _codigoSapValido) != null) ? ((xmlTrama.SelectSingleNode("//" + _codigoSapValido).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         indicadorPolizaAsocida = ((xmlTrama.SelectSingleNode("//" + _polizaAsociada) != null) ? ((xmlTrama.SelectSingleNode("//" + _polizaAsociada).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         indicadorPolizaExterna = ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna).InnerText.CompareTo("0") == 0) ? false : true) : false);
-
 
                         #region Coberturas
 
@@ -898,6 +907,7 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             formatoJSON.Append(((indicadorPolizaExterna) ? "1" : "0"));
             formatoJSON.Append('"');
+
             formatoJSON.Append(",");
 
             formatoJSON.Append('"');

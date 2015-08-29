@@ -2870,7 +2870,7 @@ BEGIN
 									AND MGT.prmgt_pco_moned = MRI.prmri_pco_moned
 									AND MGT.prmgt_pco_produ = MRI.prmri_pco_produ
 									AND MGT.prmgt_pnu_oper = MRI.prmri_pnu_opera
-								        AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
+									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(MRI.prmri_pnuide_alf, '')
 									AND MGT.prmgt_pnu_part = MRI.prmri_pnu_part
 									AND EXISTS (SELECT	1
 												FROM	dbo.GAR_GARANTIA_REAL GGR

@@ -2,11 +2,11 @@ GRANT EXECUTE ON dbo.pa_ActualizarRegistros TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_Alertas_Indicador_Inscripcion_Garantias_Reales TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_AsignarGarantiaGiro TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_CargarContratosVencidos TO RAP_Garantias
---GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasFiduciarias TO RAP_Garantias
---GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasReales TO RAP_Garantias
---GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasXOperacion TO RAP_Garantias
---GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasXValor TO RAP_Garantias
---GRANT EXECUTE ON dbo.pa_CDG_ConsultarOperaciones TO RAP_Garantias
+GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasFiduciarias TO RAP_Garantias
+GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasReales TO RAP_Garantias
+GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasXOperacion TO RAP_Garantias
+GRANT EXECUTE ON dbo.pa_CDG_ConsultarGarantiasXValor TO RAP_Garantias
+GRANT EXECUTE ON dbo.pa_CDG_ConsultarOperaciones TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_Consulta_Info_Garantia_Eliminar TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_Consultar_Garantias_x_Perfil TO RAP_Garantias
 GRANT EXECUTE ON dbo.pa_ConsultarAvanceOperacionXOficina TO RAP_Garantias

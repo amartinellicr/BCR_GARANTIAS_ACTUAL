@@ -10,7 +10,7 @@ IF OBJECT_ID ('Procesar_Polizas_Migradas', 'P') IS NOT NULL
 GO
 
 CREATE PROCEDURE [dbo].[Procesar_Polizas_Migradas]
-	@psCodigoProceso		VARCHAR(20),
+	@psCodigoProceso	VARCHAR(20),
 	@piEjecutarParte	TINYINT	
 AS
 /*****************************************************************************************************************************************************
@@ -33,6 +33,17 @@ AS
 	</Requerimiento>
 	<Versión>1.0</Versión>
 	<Historial>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+			<Requerimiento>Incidente: 2015073110439893 Relación pólizas de contratos</Requerimiento>
+			<Fecha>19/08/2015</Fecha>
+			<Descripción>
+				Se modifica la forma en como se procesan las pólizas, se incluyen tablas nuevas y 
+				se hace uso de estructuras nuevas dentro del proceso de réplica (paquete SSIS).
+				Además, se cambia el mapeo de la fecha de vencimiento, para que refleje la 
+				fecha pagado hasta. Adicionalmente se incluye el indicador de si la póliza es externa.
+			</Descripción>
+		</Cambio>
 		<Cambio>
 			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
 			<Requerimiento>RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas</Requerimiento>
@@ -61,7 +72,8 @@ BEGIN
 			@vdtFecha_Sin_Hora DATETIME, --Fecha actual sin hora
 			@vdtFecha_Tipo_Cambio DATETIME, --Fecha más reciente del tipo de cambio del día actual
 			@ciCatalogo_Tipo_Poliza INT, --Código del catálogo de los tipos de póliza SAP
-			@vsDescripcion_Bitacora_Errores VARCHAR(5000) --Descripción del error que será guardado en la bitácora de errores.
+			@vsDescripcion_Bitacora_Errores VARCHAR(5000), --Descripción del error que será guardado en la bitácora de errores.
+			@viFechaActualEntera INT --Corresponde al a fecha actual en formato numérico.
 
 	
 	--Se inicializan las variables
@@ -73,12 +85,55 @@ BEGIN
 							FROM	dbo.CAT_INDICES_ACTUALIZACION_AVALUO
 							WHERE	CONVERT(DATETIME,CAST(Fecha_Hora AS VARCHAR(11)),101) = @vdtFecha_Sin_Hora
 							ORDER	BY Fecha_Hora DESC)
+		
+	
+	SET @viFechaActualEntera = CONVERT(INT, CONVERT(VARCHAR(8), (CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)), 112))
 	
 	
 	IF(@piEjecutarParte = 0)
 	BEGIN
 	
 		DELETE	FROM dbo.TMP_POLIZAS 
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZA
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+		
+		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10		
+			
+		DELETE	FROM  dbo.TMP_SAP_POLIZASEXTERNAS
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM dbo.TMP_SAP_SGRPOLIZAOTRO 
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM  dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+				
+		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZAAUTO
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM  dbo.TMP_SAP_VWSGRCREDITOBANCARIO
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+				
+		DELETE	FROM  dbo.TMP_SAP_VWSGRCONTRATOCREDITO
+		WHERE	Registro_Activo = 0
+			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			
+		DELETE	FROM dbo.TMP_GIROS_CONTRATOS
 		WHERE	Registro_Activo = 0
 			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
 	
@@ -161,10 +216,92 @@ BEGIN
 		WHERE Registro_Activo = 1
 		
 		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZA
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZA
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+				
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_POLIZASEXTERNAS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_POLIZASEXTERNAS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_SGRPOLIZAOTRO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_SGRPOLIZAOTRO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZAAUTO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRPOLIZAAUTO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_VWSGRCREDITOBANCARIO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRCREDITOBANCARIO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_SAP_VWSGRCONTRATOCREDITO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+		
+		UPDATE dbo.TMP_SAP_VWSGRCONTRATOCREDITO
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+		
+		UPDATE dbo.TMP_GIROS_CONTRATOS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo IS NULL
+			AND Usuario = @psCodigoProceso
+		
+		UPDATE dbo.TMP_GIROS_CONTRATOS
+		SET Registro_Activo = 0
+		WHERE Registro_Activo = 1
+			AND Usuario = @psCodigoProceso
+		
 	END
 	ELSE IF(@piEjecutarParte = 1)
 	BEGIN
-	
+
 		--Se carga la información referentes a las coberturas.
 		BEGIN TRANSACTION TRA_Ins_Cober
 			BEGIN TRY
@@ -208,6 +345,63 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Cober
+			
+		--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
+		BEGIN TRANSACTION TRA_Act_Giros_Cont
+			BEGIN TRY
+
+				UPDATE	TMP
+				SET		TMP.Es_Giro = 1,
+						TMP.Consecutivo_Contrato = MCA.cod_operacion
+				FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO TMP
+					INNER JOIN (SELECT	GO1.cod_oficina AS Ofic_Giro,
+										GO1.cod_moneda AS Moned_Giro,
+										GO1.cod_producto AS Produc_Giro,
+										GO1.num_operacion AS Num_Giro,
+										GO2.cod_oficina, 
+										GO2.cod_moneda, 
+										GO2.cod_producto, 
+										GO2.num_contrato,
+										GO2.cod_operacion
+								FROM	dbo.GAR_OPERACION GO1
+									INNER JOIN (SELECT	prmoc_pco_ofici, prmoc_pco_moned, prmoc_pco_produ, prmoc_pnu_contr, prmoc_pnu_oper, prmoc_pco_oficon, prmoc_pcomonint
+												FROM	dbo.GAR_SICC_PRMOC
+												WHERE	prmoc_estado = 'A'
+													AND prmoc_pse_proces = 1
+													AND ((prmoc_pcoctamay > 815) OR (prmoc_pcoctamay < 815))
+													AND prmoc_pnu_contr > 0
+													AND prmoc_pnu_oper >= 0) MOC
+									ON GO1.cod_oficina = MOC.prmoc_pco_ofici
+									AND GO1.cod_moneda = MOC.prmoc_pco_moned
+									AND GO1.cod_producto = MOC.prmoc_pco_produ
+									AND GO1.num_contrato = MOC.prmoc_pnu_contr
+									AND GO1.num_operacion = MOC.prmoc_pnu_oper
+									INNER JOIN dbo.GAR_OPERACION GO2
+									ON GO2.cod_oficina = MOC.prmoc_pco_oficon
+									AND GO2.cod_moneda = MOC.prmoc_pcomonint
+									AND GO2.num_contrato = MOC.prmoc_pnu_contr
+								WHERE	GO1.num_contrato > 0
+									AND GO1.num_operacion IS NOT NULL
+									AND GO2.num_operacion IS NULL) MCA
+					ON	MCA.Ofic_Giro = TMP.codue
+					AND MCA.Moned_Giro = TMP.conmoneda
+					AND MCA.Produc_Giro = TMP.codproducto
+					AND MCA.Num_Giro = TMP.numoperacion
+				WHERE	TMP.Registro_Activo = 1
+					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_Cont
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar el indicador de si es un giro y el consecutivo del contrato, en la tabla temporal pólizas asociadas a operaciones crediticias del SAP. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+				
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_Cont
 	
 				
 		--Se carga la información de la tabla de coberturas asociadas a las pólizas.
@@ -369,18 +563,507 @@ BEGIN
 
 					SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las pólizas en la tabla temporal. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
 					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+=======
+			COMMIT TRANSACTION TRA_Act_Giros_Cont
+	
+		
+		--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
+		BEGIN TRANSACTION TRA_Act_Giros_Cont1
+			BEGIN TRY
+
+				UPDATE	TMP
+				SET		TMP.Es_Giro = 1,
+						TMP.Consecutivo_Contrato = MCA.cod_operacion
+				FROM	dbo.TMP_SAP_VWSGRCREDITOBANCARIO TMP
+					INNER JOIN (SELECT	GO1.cod_oficina AS Ofic_Giro,
+										GO1.cod_moneda AS Moned_Giro,
+										GO1.cod_producto AS Produc_Giro,
+										GO1.num_operacion AS Num_Giro,
+										GO2.cod_oficina, 
+										GO2.cod_moneda, 
+										GO2.cod_producto, 
+										GO2.num_contrato,
+										GO2.cod_operacion
+								FROM	dbo.GAR_OPERACION GO1
+									INNER JOIN (SELECT	prmoc_pco_ofici, prmoc_pco_moned, prmoc_pco_produ, prmoc_pnu_contr, prmoc_pnu_oper, prmoc_pco_oficon, prmoc_pcomonint
+												FROM	dbo.GAR_SICC_PRMOC
+												WHERE	prmoc_estado = 'A'
+													AND prmoc_pse_proces = 1
+													AND ((prmoc_pcoctamay > 815) OR (prmoc_pcoctamay < 815))
+													AND prmoc_pnu_contr > 0
+													AND prmoc_pnu_oper >= 0) MOC
+									ON GO1.cod_oficina = MOC.prmoc_pco_ofici
+									AND GO1.cod_moneda = MOC.prmoc_pco_moned
+									AND GO1.cod_producto = MOC.prmoc_pco_produ
+									AND GO1.num_contrato = MOC.prmoc_pnu_contr
+									AND GO1.num_operacion = MOC.prmoc_pnu_oper
+									INNER JOIN dbo.GAR_OPERACION GO2
+									ON GO2.cod_oficina = MOC.prmoc_pco_oficon
+									AND GO2.cod_moneda = MOC.prmoc_pcomonint
+									AND GO2.num_contrato = MOC.prmoc_pnu_contr
+								WHERE	GO1.num_contrato > 0
+									AND GO1.num_operacion IS NOT NULL
+									AND GO2.num_operacion IS NULL) MCA
+					ON	MCA.Ofic_Giro = TMP.codue
+					AND MCA.Moned_Giro = TMP.conmoneda
+					AND MCA.Produc_Giro = TMP.codproducto
+					AND MCA.Num_Giro = TMP.numoperacion
+				WHERE	TMP.Registro_Activo = 1
+					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_Cont1
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar el indicador de si es un giro y el consecutivo del contrato, en la tabla temporal de operaciones crediticias del SAP. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_Cont1
+	
+	
+		--Se carga la estructura con los giros de contrato activos en el sistema.
+		BEGIN TRANSACTION TRA_Act_Giros_Activ
+			BEGIN TRY
+
+				INSERT INTO dbo.TMP_GIROS_CONTRATOS (Consecutivo_Giro, Contabilidad_Giro, Oficina_Giro, 
+					Moneda_Giro, Producto_Giro, Numero_Giro, Consecutivo_Contrato, Contabilidad_Contrato, Oficina_Contrato, 
+					Moneda_Contrato, Producto_Contrato, Numero_Contrato, Fecha_Pagado_Hasta, Codigo_SAP, Fecha_Vencimiento_Poliza, Usuario, Fecha_Replica, Registro_Activo)
+
+				SELECT	DISTINCT
+						GO1.cod_operacion AS Consecutivo_Giro,
+						GO1.cod_contabilidad AS Contabilidad_Giro, 
+						GO1.cod_oficina AS Oficina_Giro, 
+						GO1.cod_moneda AS Moneda_Giro, 
+						GO1.cod_producto AS Producto_Giro, 
+						GO1.num_operacion AS Numero_Giro,
+						GO2.cod_operacion AS Consecutivo_Contrato, 
+						GO2.cod_contabilidad AS Contabilidad_Contrato,
+						GO2.cod_oficina AS Oficina_Contrato, 
+						GO2.cod_moneda AS Moneda_Contrato, 
+						GO2.cod_producto AS Producto_Contrato, 
+						GO2.num_contrato AS Numero_Contrato,
+						NULL AS Fecha_Pagado_Hasta,
+						PCD.conpoliza AS Codigo_SAP,
+						VSP.fecvence AS Fecha_Vencimiento_Poliza,
+						@psCodigoProceso AS Usuario,
+						GETDATE() AS Fecha_Replica,
+						1 AS Registro_Activo
+				FROM	dbo.GAR_OPERACION GO1
+						INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
+						ON PCD.codcontabilidad = GO1.cod_contabilidad
+						AND PCD.codue = GO1.cod_oficina
+						AND PCD.conmoneda = GO1.cod_moneda
+						AND PCD.codproducto = GO1.cod_producto
+						AND PCD.numoperacion = GO1.num_operacion
+						INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VSP
+						ON VSP.conpoliza = PCD.conpoliza,
+						dbo.GAR_OPERACION GO2
+				WHERE 	GO1.num_contrato > 0
+					AND GO1.num_operacion IS NOT NULL
+					AND PCD.Registro_Activo = 1
+					AND PCD.estpolizacreditobancario <> 'ELI'
+					AND GO2.num_operacion IS NULL
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	MOC.prmoc_estado = 'A'
+									AND MOC.prmoc_pse_proces = 1
+									AND ((MOC.prmoc_pcoctamay > 815) OR (MOC.prmoc_pcoctamay < 815))
+									AND MOC.prmoc_pnu_contr > 0
+									AND MOC.prmoc_pnu_oper >= 0
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pco_conta = GO1.cod_contabilidad
+									AND MOC.prmoc_pnu_contr = GO2.num_contrato
+									AND MOC.prmoc_pco_oficon = GO2.cod_oficina
+									AND MOC.prmoc_pcomonint = GO2.cod_moneda)			
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_Activ
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al cargar los giros de contrato activos, en la tabla temporal de giros de contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_Activ
+	
+	
+		--Se actualiza la fecha de pagado hasta de los giros con señal de cobro.
+		BEGIN TRANSACTION TRA_Act_Giros_Cobro
+			BEGIN TRY
+
+				UPDATE	TGC
+				SET		Fecha_Pagado_Hasta = PC2.fecpagadohasta
+				FROM	dbo.TMP_GIROS_CONTRATOS	TGC
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
+					ON PCD.Consecutivo_Contrato = TGC.Consecutivo_Contrato
+					AND PCD.conpoliza = TGC.Codigo_SAP
+					INNER JOIN (SELECT	PC1.Consecutivo_Contrato, PC1.conpoliza, MAX(PC1.fecpagadohasta) AS fecpagadohasta
+								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
+								WHERE	PC1.Registro_Activo = 1
+									AND PC1.estpolizacreditobancario <> 'ELI'
+									AND PC1.codsenalcredito = 2
+									AND PC1.Es_Giro = 1
+									AND PC1.Consecutivo_Contrato > 0
+								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
+					ON PC2.Consecutivo_Contrato = PCD.Consecutivo_Contrato
+					AND PC2.conpoliza = PCD.conpoliza					
+				WHERE	TGC.Registro_Activo = 1
+					AND TGC.Usuario = @psCodigoProceso
+					AND TGC.Codigo_SAP IS NOT NULL
+					AND PCD.Registro_Activo = 1
+					AND PCD.estpolizacreditobancario <> 'ELI'
+					AND PCD.codsenalcredito = 2					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_Cobro
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar la fecha de pagado hasta de los giros de contrato con señal de cobro, en la tabla temporal de giros de contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+				
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_Cobro
+			
+		--Se actualiza la fecha de pagado hasta de los giros con señal de cobro 5.
+		BEGIN TRANSACTION TRA_Act_Giros_ConCobro5
+			BEGIN TRY
+
+				UPDATE	TGC
+				SET		Fecha_Pagado_Hasta = VGP.fecvence
+				FROM	dbo.TMP_GIROS_CONTRATOS	TGC
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
+					ON PCD.Consecutivo_Contrato = TGC.Consecutivo_Contrato
+					AND PCD.conpoliza = TGC.Codigo_SAP
+					INNER JOIN (SELECT	PC1.Consecutivo_Contrato, PC1.conpoliza, MAX(PC1.fecpagadohasta) AS fecpagadohasta
+								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
+								WHERE	PC1.Registro_Activo = 1
+									AND PC1.estpolizacreditobancario <> 'ELI'
+									AND PC1.codsenalcredito = 5
+									AND PC1.Es_Giro = 1
+									AND PC1.Consecutivo_Contrato > 0
+								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
+					ON PC2.Consecutivo_Contrato = PCD.Consecutivo_Contrato
+					AND PC2.conpoliza = PCD.conpoliza
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VGP
+					ON VGP.conpoliza = PC2.conpoliza
+				WHERE	TGC.Registro_Activo = 1
+					AND TGC.Usuario = @psCodigoProceso
+					AND TGC.Codigo_SAP IS NOT NULL
+					AND TGC.Fecha_Pagado_Hasta IS NULL
+					AND PCD.Registro_Activo = 1
+					AND PCD.estpolizacreditobancario <> 'ELI'
+					AND PCD.codsenalcredito = 5
+					AND VGP.Registro_Activo = 1					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_ConCobro5
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar la fecha de pagado hasta de los giros de contrato con señal de cobro 5, en la tabla temporal de giros de contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_ConCobro5
+		
+		--Se actualiza la fecha de pagado hasta de los giros sin señal de cobro.
+		BEGIN TRANSACTION TRA_Act_Giros_SinCobro
+			BEGIN TRY
+
+				UPDATE	TGC
+				SET		Fecha_Pagado_Hasta = PC2.fecpagadohasta
+				FROM	dbo.TMP_GIROS_CONTRATOS	TGC
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
+					ON PCD.Consecutivo_Contrato = TGC.Consecutivo_Contrato
+					AND PCD.conpoliza = TGC.Codigo_SAP
+					INNER JOIN (SELECT	PC1.Consecutivo_Contrato, PC1.conpoliza, MAX(PC1.fecpagadohasta) AS fecpagadohasta
+								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
+								WHERE	PC1.Registro_Activo = 1
+									AND PC1.estpolizacreditobancario <> 'ELI'
+									AND PC1.codsenalcredito NOT IN (2, 5)
+									AND PC1.Es_Giro = 1
+									AND PC1.Consecutivo_Contrato > 0
+								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
+					ON PC2.Consecutivo_Contrato = PCD.Consecutivo_Contrato
+					AND PC2.conpoliza = PCD.conpoliza						
+				WHERE	TGC.Registro_Activo = 1
+					AND TGC.Usuario = @psCodigoProceso
+					AND TGC.Codigo_SAP IS NOT NULL
+					AND TGC.Fecha_Pagado_Hasta IS NULL
+					AND PCD.Registro_Activo = 1
+					AND PCD.estpolizacreditobancario <> 'ELI'
+					AND PCD.codsenalcredito NOT IN (2, 5)					
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Giros_SinCobro
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar la fecha de pagado hasta de los giros de contrato sin señal de cobro, en la tabla temporal de giros de contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Giros_SinCobro
+	
+		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a las operaciones.
+		BEGIN TRANSACTION TRA_Ins_Op_Tmp_Pol
+			BEGIN TRY
+				INSERT INTO dbo.TMP_POLIZAS
+				  (Codigo_SAP, Tipo_Poliza, Codigo_Oficina_Operacion, Codigo_Moneda_Operacion, Codigo_Producto_Operacion, Numero_Operacion,
+				   Numero_Contrato, Consecutivo_Operacion_Garantias, Monto_Poliza, Moneda_Monto_Poliza, Estado_Poliza, Simbolo_Moneda, 
+				   Fecha_Vencimiento, Descripcion_Moneda_Monto_Poliza, Detalle_Poliza, Fecha_Replica, Registro_Activo,
+				   Indicador_Poliza_Externa)
+				
+				SELECT	DISTINCT
+					VGP.conpoliza,
+					VGP.contipopoliza,
+					VCB.codue,
+					VCB.conmoneda AS Moneda_Operacion,
+					VCB.codproducto,
+					VCB.numoperacion,
+					'-1' AS Numero_Contrato,
+					GO1.cod_operacion AS Consecutivo_Operacion_Garantias,
+					COALESCE(VGP.mtoasegurado, 0) AS Monto_Poliza,
+					VGP.conmoneda,
+					VGP.estpoliza,
+					VGP.monsigno,
+					CASE 
+						WHEN VCB.codsenalcredito = 5 THEN VGP.fecvence
+						ELSE COALESCE(VCB.fecpagadohasta, VGP.fecvence) 
+					END AS Fecha_Vencimiento,
+					VGP.nommoneda,
+					VGP.memobservacion,
+					GETDATE() AS Fecha_Replica,
+					1 AS Registro_Activo,
+					0 AS Indicador_Poliza_Externa
+				FROM	dbo.TMP_SAP_VWSGRPOLIZA VGP
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO VCB
+					ON VCB.conpoliza = VGP.conpoliza
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_oficina = VCB.codue
+					AND GO1.cod_moneda = VCB.conmoneda
+					AND GO1.cod_producto = VCB.codproducto
+					AND GO1.num_operacion = VCB.numoperacion
+				WHERE	VGP.Registro_Activo = 1
+					AND VCB.Registro_Activo = 1
+					AND VCB.concontratocredito IS NULL
+					AND VCB.estpolizacreditobancario <> 'ELI'
+					AND GO1.num_contrato = 0
+					AND GO1.num_operacion IS NOT NULL
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMOC MOC
+								WHERE	prmoc_estado = 'A'
+									AND prmoc_pse_proces = 1
+									AND ((prmoc_pcoctamay > 815) OR (prmoc_pcoctamay < 815))
+									AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+									AND MOC.prmoc_pco_moned = GO1.cod_moneda
+									AND MOC.prmoc_pco_produ = GO1.cod_producto
+									AND MOC.prmoc_pnu_oper = GO1.num_operacion
+									AND MOC.prmoc_pnu_contr = 0)
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.TMP_POLIZAS TMP
+									WHERE	TMP.Codigo_SAP = VGP.conpoliza
+										AND TMP.Consecutivo_Operacion_Garantias = GO1.cod_operacion
+										AND TMP.Registro_Activo = 1)
+											
+			END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Ins_Op_Tmp_Pol
+
+					SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las pólizas, relacionadas a operaciones, en la tabla temporal. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
 
 				END CATCH
 				
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Ins_Tmp_Pol
-	
+			COMMIT TRANSACTION TRA_Ins_Op_Tmp_Pol
+			
+			
+		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vigentes.
+		BEGIN TRANSACTION TRA_Ins_CVig_Tmp_Pol
+			BEGIN TRY
+				INSERT INTO dbo.TMP_POLIZAS
+				  (Codigo_SAP, Tipo_Poliza, Codigo_Oficina_Operacion, Codigo_Moneda_Operacion, Codigo_Producto_Operacion, Numero_Operacion,
+				   Numero_Contrato, Consecutivo_Operacion_Garantias, Monto_Poliza, Moneda_Monto_Poliza, Estado_Poliza, Simbolo_Moneda, 
+				   Fecha_Vencimiento, Descripcion_Moneda_Monto_Poliza, Detalle_Poliza, Fecha_Replica, Registro_Activo,
+				   Indicador_Poliza_Externa)
+						
+				SELECT	DISTINCT
+					VGP.conpoliza,
+					VGP.contipopoliza,
+					VCC.codue,
+					VCC.conmoneda AS Moneda_Operacion,
+					GO1.cod_producto,
+					-1 AS Numero_Operacion,
+					VCC.coccontratocredito AS Numero_Contrato,
+					GO1.cod_operacion AS Consecutivo_Operacion_Garantias,
+					COALESCE(VGP.mtoasegurado, 0) AS Monto_Poliza,
+					VGP.conmoneda,
+					VGP.estpoliza,
+					VGP.monsigno,
+					CASE 
+						WHEN VCC.codsenal = 5 THEN VGP.fecvence
+						ELSE COALESCE(VCC.fecpagadohasta, VGP.fecvence) 
+					END AS Fecha_Vencimiento,
+					VGP.nommoneda,
+					VGP.memobservacion,
+					GETDATE() AS Fecha_Replica,
+					1 AS Registro_Activo,
+					0 AS Indicador_Poliza_Externa
+				FROM	dbo.TMP_SAP_VWSGRPOLIZA VGP
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO VCC
+					ON VCC.conpoliza = VGP.conpoliza
+					INNER JOIN dbo.GAR_OPERACION GO1
+					ON GO1.cod_oficina = VCC.codue
+					AND GO1.cod_moneda = VCC.conmoneda
+					AND GO1.num_contrato = VCC.coccontratocredito
+				WHERE	VGP.Registro_Activo = 1
+					AND VCC.Registro_Activo = 1
+					AND VCC.estpolizacontratocredito <> 'ELI'
+					AND GO1.num_operacion IS NULL
+					AND EXISTS (SELECT	1
+								FROM	dbo.GAR_SICC_PRMCA MCA
+								WHERE	MCA.prmca_estado = 'A'
+									AND MCA.prmca_pnu_contr = GO1.num_contrato
+									AND MCA.prmca_pco_ofici = GO1.cod_oficina
+									AND MCA.prmca_pco_moned = GO1.cod_moneda
+									AND MCA.prmca_pco_produc = GO1.cod_producto
+									AND MCA.prmca_pco_conta = GO1.cod_contabilidad
+									AND MCA.prmca_pfe_defin >= @viFechaActualEntera)
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.TMP_GIROS_CONTRATOS TGC
+									WHERE	TGC.Registro_Activo = 1
+										AND TGC.Usuario = @psCodigoProceso
+										AND TGC.Codigo_SAP = VGP.conpoliza
+										AND TGC.Consecutivo_Contrato = GO1.cod_operacion)
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.TMP_POLIZAS TMP
+									WHERE	TMP.Codigo_SAP = VGP.conpoliza
+										AND TMP.Consecutivo_Operacion_Garantias = GO1.cod_operacion
+										AND TMP.Registro_Activo = 1)
+									
+			END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Ins_CVig_Tmp_Pol
+
+					SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las pólizas, relacionadas a contratos vigentes, en la tabla temporal. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+				END CATCH
+				
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Ins_CVig_Tmp_Pol
+			
+			
+		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vencidos con giros activos.
+		BEGIN TRANSACTION TRA_Ins_CVen_Tmp_Pol
+			BEGIN TRY
+				INSERT INTO dbo.TMP_POLIZAS
+				  (Codigo_SAP, Tipo_Poliza, Codigo_Oficina_Operacion, Codigo_Moneda_Operacion, Codigo_Producto_Operacion, Numero_Operacion,
+				   Numero_Contrato, Consecutivo_Operacion_Garantias, Monto_Poliza, Moneda_Monto_Poliza, Estado_Poliza, Simbolo_Moneda, 
+				   Fecha_Vencimiento, Descripcion_Moneda_Monto_Poliza, Detalle_Poliza, Fecha_Replica, Registro_Activo,
+				   Indicador_Poliza_Externa)
+							
+				SELECT	DISTINCT
+					VGP.conpoliza,
+					VGP.contipopoliza,
+					TGC.Oficina_Contrato,
+					TGC.Moneda_Contrato AS Moneda_Operacion,
+					TGC.Producto_Contrato,
+					-1 AS Numero_Operacion,
+					TGC.Numero_Contrato AS Numero_Contrato,
+					TGC.Consecutivo_Contrato AS Consecutivo_Operacion_Garantias,
+					COALESCE(VGP.mtoasegurado, 0) AS Monto_Poliza,
+					VGP.conmoneda,
+					VGP.estpoliza,
+					VGP.monsigno, 
+					COALESCE(TGC.Fecha_Pagado_Hasta, TGC.Fecha_Vencimiento_Poliza),
+					VGP.nommoneda,
+					VGP.memobservacion,
+					GETDATE() AS Fecha_Replica,
+					1 AS Registro_Activo,
+					0 AS Indicador_Poliza_Externa
+				FROM	dbo.TMP_GIROS_CONTRATOS TGC 
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VGP
+					ON VGP.conpoliza = TGC.Codigo_SAP
+				WHERE	TGC.Registro_Activo = 1
+					AND TGC.Usuario = @psCodigoProceso
+					AND VGP.Registro_Activo = 1
+					AND NOT EXISTS (SELECT	1
+									FROM	dbo.TMP_POLIZAS TMP
+									WHERE	TMP.Codigo_SAP = TGC.Codigo_SAP
+										AND TMP.Consecutivo_Operacion_Garantias = TGC.Consecutivo_Contrato
+										AND TMP.Registro_Activo = 1)
+								
+			END TRY
+				BEGIN CATCH
+					IF (@@TRANCOUNT > 0)
+						ROLLBACK TRANSACTION TRA_Ins_CVen_Tmp_Pol
+
+					SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las pólizas, relacionadas a contratos vencidos con giros activos, en la tabla temporal. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+				END CATCH
+				
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Ins_CVen_Tmp_Pol
+			
+					
+>>>>>>> origin/master
 		/************************************************************************************************
 		 *                                                                                              * 
-		 *                       INICIO DE LA REPLICA DE POLIZAS EXISTENTES                                 *
+		 *                       INICIO DE LA REPLICA DE POLIZAS EXISTENTES                             *
 		 *                                                                                              *
 		 *                                                                                              *
 		 ************************************************************************************************/
+		--Se actualiza el indicador de si es una póliza externa y la fecha de vencimiento para las mismas.
+		BEGIN TRANSACTION TRA_Act_Pol_Ext
+			BEGIN TRY
+
+				UPDATE	TMP
+				SET		TMP.Indicador_Poliza_Externa = 1,
+						TMP.Fecha_Vencimiento = VGP.fecvence
+				FROM	dbo.TMP_POLIZAS TMP
+					INNER JOIN dbo.TMP_SAP_POLIZASEXTERNAS SPE
+					ON SPE.conpoliza = TMP.Codigo_SAP
+					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VGP
+					ON VGP.conpoliza = SPE.conpoliza
+				WHERE	TMP.Registro_Activo = 1
+					AND SPE.Registro_Activo = 1
+					AND VGP.Registro_Activo = 1
+		
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Pol_Ext
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar el indicador de si es una póliza externa, en la tabla temporal de pólizas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Pol_Ext
+		
 		--Se actualizan los campos del monto de la póliza y fecha de vencimiento anterior, de las pólizas existentes.
 		BEGIN TRANSACTION TRA_Act_Datos
 			BEGIN TRY
@@ -432,6 +1115,7 @@ BEGIN
 														END,
 						GPO.Estado_Registro =	CASE 
 													WHEN TMP.Estado_Poliza = 'CAN' THEN 0
+													WHEN TMP.Estado_Poliza = 'ELI' THEN 0
 													ELSE 1
 												END,
 						GPO.Indicador_Poliza_Externa = TMP.Indicador_Poliza_Externa,
@@ -439,6 +1123,7 @@ BEGIN
 						GPO.Identificacion_Bien = TMP.Identificacion_Bien,
 						GPO.Codigo_Tipo_Cobertura = TMP.Codigo_Tipo_Cobertura,
 						GPO.Codigo_Aseguradora = TMP.Codigo_Aseguradora
+
 				FROM	dbo.GAR_POLIZAS GPO
 					INNER JOIN dbo.TMP_POLIZAS TMP
 					ON TMP.Codigo_SAP = GPO.Codigo_SAP
@@ -479,13 +1164,14 @@ BEGIN
 											  Monto_Poliza_Anterior, Fecha_Vencimiento_Anterior, Monto_Poliza_Colonizado,
 											  Indicador_Poliza_Externa, Codigo_Partido, Identificacion_Bien, Codigo_Tipo_Cobertura,
 											  Codigo_Aseguradora)
+
 				SELECT	DISTINCT 
 					TMP.Codigo_SAP, 
 					TMP.Consecutivo_Operacion_Garantias AS cod_operacion, 
 					TMP.Tipo_Poliza, 
 					TMP.Monto_Poliza, 
 					TMP.Moneda_Monto_Poliza, 
-					TMP.Fecha_Vencimiento, 
+					TMP.Fecha_Vencimiento,
 					'4000000019' AS Cedula_Acreedor, 
 					'Banco de Costa Rica' AS Nombre_Acreedor, 
 					TMP.Descripcion_Moneda_Monto_Poliza, 
@@ -494,12 +1180,13 @@ BEGIN
 					TMP.Estado_Poliza, 
 					CASE 
 						WHEN TMP.Estado_Poliza = 'CAN' THEN 0
+						WHEN TMP.Estado_Poliza = 'ELI' THEN 0
 						ELSE 1
 					END AS Estado_Registro, 
 					GETDATE() AS Fecha_Inserto, 
 					GETDATE() AS Fecha_Replica,
 					TMP.Monto_Poliza AS Monto_Poliza_Anterior, 
-					TMP.Fecha_Vencimiento AS Fecha_Vencimiento_Anterior, 
+					TMP.Fecha_Vencimiento, 
 					CASE
 						WHEN TMP.Moneda_Monto_Poliza = 2 THEN ISNULL((TMP.Monto_Poliza * @vdTipo_Cambio), 0)
 						ELSE ISNULL(TMP.Monto_Poliza, 0)
@@ -509,6 +1196,7 @@ BEGIN
 					TMP.Identificacion_Bien,
 					TMP.Codigo_Tipo_Cobertura,
 					TMP.Codigo_Aseguradora
+
 				FROM	dbo.TMP_POLIZAS TMP
 				WHERE	COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
 					AND TMP.Registro_Activo = 1
