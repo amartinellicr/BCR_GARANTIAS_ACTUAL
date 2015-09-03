@@ -1577,6 +1577,30 @@
             });
 
 
+        //Función que muestra el mensaje de alerta cuando se selecciona una póliza inválida
+        $MensajeCoberturasObligatoriasInvalidas = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>Esta garantía no es cubierta de acuerdo a lo solicitado por el ente asegurado, considerando lo anterior la misma representara un castigo en la mitad de porcentaje de aceptación aceptado para mitigar. Para corregir la información comunicarse con  Sociedad de Seguros del BCR.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Coberturas Inválidas', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';
+
+		                    $$('btnValidarOperacion').attr('EICOI', '1');
+		                    ModificarGarantia();
+	                    }
+                    }
+            });
+
 
         /***********************************************************************/
         /* VALIDACIONES DEL CATALOGO DE PORCENTAJE DE ACEPTACION */
@@ -3130,8 +3154,8 @@ function MensajeMontoMitigadorMayor()
               && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
               && (($$('btnValidarOperacion').attr('EIFVM')) == '1')
               && (($$('btnValidarOperacion').attr('EIPV')) == '1')
-              //&& (($$('btnValidarOperacion').attr('EIPMM')) == '1')
-              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')) 
+              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')
+              && (($$('btnValidarOperacion').attr('EICOI')) == '1')) 
         {
             __doPostBack('btnModificar','Metodo');
         }
@@ -3524,7 +3548,9 @@ function MensajeMontoMitigadorMayor()
          var cantidadFilasCA = 0;
          var numFilas = 0;
          var esPolizaExterna = false;    
-        
+         var cantidadCPAObligatorias = 0;
+         var cantidadCPObligatorias = 0;
+
          if(datoCodigoSap === -1)
          {
              LimpiarCamposPolizas();             
@@ -3549,45 +3575,42 @@ function MensajeMontoMitigadorMayor()
 
                     $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
 
-                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) 
+                    
+                    if (polizasSap[i].Cobertura !== "undefined") 
                     {
-                        if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1')
-                        {
-                            formarOpcion = '<option value="';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
-                            formarOpcion += '">';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura; 
-                            formarOpcion += '</option>';
-                            $$('lbCoberturasPorAsignar').append(formarOpcion);
-                            catidadFilasCPA += 1;
+                        for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
+                            if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasPorAsignar').append(formarOpcion);
+                                catidadFilasCPA += 1;
+                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                            }
+                            else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasAsignadas').append(formarOpcion);
+                                cantidadFilasCA += 1;
+                                cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                            }
                         }
-                        else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2')
-                        {
-                            formarOpcion = '<option value="';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
-                            formarOpcion += '">';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura; 
-                            formarOpcion += '</option>';
-                            $$('lbCoberturasAsignadas').append(formarOpcion);
-                            cantidadFilasCA += 1;
+
+                        if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) {
+                            $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
+                            $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
+
+                            $$('lbCoberturasPorAsignar').show();
+                            $$('lbCoberturasAsignadas').show();
                         }
-                    }
+                        else {
+                            $$('lbCoberturasPorAsignar').attr("size", "0");
+                            $$('lbCoberturasAsignadas').attr("size", "0");
 
-                    if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) 
-                    {
-                        $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
-                        $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
-
-                        $$('lbCoberturasPorAsignar').show();
-                        $$('lbCoberturasAsignadas').show();
-                    }
-                    else 
-                    {
-                        $$('lbCoberturasPorAsignar').attr("size", "0");
-                        $$('lbCoberturasAsignadas').attr("size", "0");
-
-                        $$('lbCoberturasPorAsignar').hide();
-                        $$('lbCoberturasAsignadas').hide();
+                            $$('lbCoberturasPorAsignar').hide();
+                            $$('lbCoberturasAsignadas').hide();
+                        }
                     }
 
                     esPolizaExterna = ((polizasSap[i].Indicador_Poliza_Externa === '1') ? true : false);
@@ -3617,6 +3640,7 @@ function MensajeMontoMitigadorMayor()
                         }
                     }
 
+
                     if(polizasSap[i].Poliza_Vigente === 0)
                     {
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
@@ -3629,7 +3653,14 @@ function MensajeMontoMitigadorMayor()
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
                     }
-                    
+
+                    if (cantidadCPAObligatorias != cantidadCPObligatorias) {
+                        if (typeof ($MensajeCoberturasObligatoriasInvalidas) !== 'undefined') {
+
+                            $MensajeCoberturasObligatoriasInvalidas.dialog('open');
+                        }
+                    }
+
                     break;
                }
             }
@@ -3647,6 +3678,8 @@ function MensajeMontoMitigadorMayor()
         var cantidadFilasCA = 0;
         var numFilas = 0;
         var esPolizaExterna = false;
+        var cantidadCPAObligatorias = 0;
+        var cantidadCPObligatorias = 0;
 
         if (datoCodigoSap === -1) {
             LimpiarCamposPolizas();
@@ -3668,24 +3701,24 @@ function MensajeMontoMitigadorMayor()
 
                     $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
 
-                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
-                        if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
-                            formarOpcion = '<option value="';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
-                            formarOpcion += '">';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
-                            formarOpcion += '</option>';
-                            $$('lbCoberturasPorAsignar').append(formarOpcion);
-                            catidadFilasCPA += 1;
+                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) 
+                    {
+                       if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') 
+                       {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasPorAsignar').append(formarOpcion);
+                                catidadFilasCPA += 1;
+                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
                         }
                         else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
-                            formarOpcion = '<option value="';
-                            formarOpcion += polizasSap[i].Cobertura[indice].Codigo_Cobertura;
-                            formarOpcion += '">';
+                            formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
                             formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
-                            formarOpcion += '</option>';
+                            formarOpcion += '</span><br />';
                             $$('lbCoberturasAsignadas').append(formarOpcion);
                             cantidadFilasCA += 1;
+                            cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
                         }
                     }
 
@@ -3725,7 +3758,6 @@ function MensajeMontoMitigadorMayor()
                         }
                     }
 
-
                     if (polizasSap[i].Poliza_Vigente === '0') {
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
@@ -3736,6 +3768,15 @@ function MensajeMontoMitigadorMayor()
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
                     }
+
+//                    if ((polizasSap[i].Coberturas_Obligatorias_Asignadas === '1')
+//                        && ((($$('btnValidarOperacion').attr("IBG")) == '0')))
+//                    {
+//                        if (typeof ($MensajeCoberturasObligatoriasInvalidas) !== 'undefined') {
+
+//                            $MensajeCoberturasObligatoriasInvalidas.dialog('open');
+//                        }
+//                    }
 
                     break;
                 }

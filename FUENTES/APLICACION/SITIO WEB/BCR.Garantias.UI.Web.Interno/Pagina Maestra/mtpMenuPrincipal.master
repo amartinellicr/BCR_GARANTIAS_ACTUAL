@@ -1,5 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mtpMenuPrincipal.master.cs"
-    Inherits="BCRGARANTIAS.Presentacion.mtpMenuPrincipal" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mtpMenuPrincipal.master.cs" Inherits="BCRGARANTIAS.Presentacion.mtpMenuPrincipal" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -25,7 +24,7 @@
     <script src="<%#ResolveUrl("~/JSLib/jquery.ui.button.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/jquery.ui.dialog.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/jquery.ui.accordion.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/Utiles.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/Utiles.min.js")%>" type="text/javascript"></script>
        
     <script language="javascript" type="text/javascript">
         //<![CDATA[
@@ -89,7 +88,7 @@
             var $MensajeClaseGarantia56;
             var $MensajeClaseGarantia57;
             var $MensajeClaseGarantia58;
-
+            var $MensajeCoberturasObligatoriasInvalidas;
 
             var $errorFechaPresentacion;
             var $camposMensajeFechaPrescripcionMenor;

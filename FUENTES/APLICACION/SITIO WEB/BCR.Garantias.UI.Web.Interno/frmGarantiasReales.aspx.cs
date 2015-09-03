@@ -78,7 +78,8 @@ namespace BCRGARANTIAS.Forms
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO = "EIFUSM";
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR = "EIFVM";
 
-
+        private const string LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS = "EICOI";
+        
         #endregion Constantes
 
         #region Variables Globales
@@ -1498,7 +1499,38 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que las coberturas obligatorias no fueron asignadas en su totalidad (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorCoberturasObligatoriasInvalidas
+        {
+            get
+            {
 
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "0");
+                }
+            }
+        }
 
         #endregion Propiedades
 
@@ -1710,6 +1742,7 @@ namespace BCRGARANTIAS.Forms
             //MostrarErrorPolizaMontoMenor = false;
             MostrarErrorPolizaVencida = false;
             MostrarErrorPolizaAsociadaTB1 = false;
+            MostrarErrorCoberturasObligatoriasInvalidas = false;
                     
 
             btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INDICADOR_INCONSISTENCIA, "0");
@@ -1746,6 +1779,7 @@ namespace BCRGARANTIAS.Forms
                             //MostrarErrorPolizaMontoMenor = true;
                             MostrarErrorPolizaVencida = true;
                             MostrarErrorPolizaAsociadaTB1 = true;
+                            MostrarErrorCoberturasObligatoriasInvalidas = true;
 
                         }
 
@@ -1851,6 +1885,7 @@ namespace BCRGARANTIAS.Forms
                                 //MostrarErrorPolizaMontoMenor = true;
                                 MostrarErrorPolizaVencida = true;
                                 MostrarErrorPolizaAsociadaTB1 = true;
+                                MostrarErrorCoberturasObligatoriasInvalidas = true;
 
                                 CargarDatosSession(true);
 
@@ -1953,6 +1988,8 @@ namespace BCRGARANTIAS.Forms
                     //MostrarErrorPolizaMontoMenor = true;
                     MostrarErrorPolizaVencida = true;
                     MostrarErrorPolizaAsociadaTB1 = true;
+                    MostrarErrorCoberturasObligatoriasInvalidas = true;
+
                     btnModificar_Click(sender, e);
                 }
             }
@@ -2222,7 +2259,7 @@ namespace BCRGARANTIAS.Forms
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
                         || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien)
                         || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor) /*|| (!MostrarErrorPolizaMontoMenor)*/
-                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1))
+                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1) || (!MostrarErrorCoberturasObligatoriasInvalidas))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
@@ -2233,7 +2270,8 @@ namespace BCRGARANTIAS.Forms
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor))) ||
                             //(entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
                             )
                         {
                             MostrarMensajesInformativos();
@@ -2817,8 +2855,8 @@ namespace BCRGARANTIAS.Forms
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
 
-                lbCoberturasPorAsignar.Items.Clear();
-                lbCoberturasAsignadas.Items.Clear();
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
                 
 
                 ckbPolizaExterna.Checked = false;
@@ -2920,8 +2958,8 @@ namespace BCRGARANTIAS.Forms
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
 
-                lbCoberturasPorAsignar.Items.Clear();
-                lbCoberturasAsignadas.Items.Clear();
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
 
                 ckbPolizaExterna.Checked = false;
 
@@ -5190,6 +5228,39 @@ namespace BCRGARANTIAS.Forms
 
                         //VALIDACIONES REDUCEN A LA MITAD
 
+                        
+
+                        #region Inconsistencia de que las coberturas obligatorias no fueron asignadas en su totalidad en el SAP
+
+                        //Se valida si el error es debido a la validación de las coberturas obligatorias
+                        if (entidadGarantiaReal.InconsistenciaCoberturasObligatoriasInvalidas)
+                        {
+                            estadoVerificacion = false;
+
+                            MostrarErrorCoberturasObligatoriasInvalidas = false;
+
+                            if (mostrarErrorEmergente)
+                            {
+                                //Se obtiene el error de la lista de errores
+                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                {
+                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                            typeof(Page),
+                                                                            Guid.NewGuid().ToString(),
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                            false);
+                                }
+                                else
+                                {
+                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                           Guid.NewGuid().ToString(),
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                           false);
+                                }
+                            }
+                        }
+
+                        #endregion Inconsistencia de que las coberturas obligatorias no fueron asignadas en su totalidad en el SAP
 
                         #region Inconsistencia de que los datos del acreedor de la póliza fueron modificados en el SAP
 
@@ -7356,10 +7427,36 @@ namespace BCRGARANTIAS.Forms
                 {
                     MostrarErrorPolizaAsociadaTB1 = true;
                 }
+
                 //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorCoberturasObligatoriasInvalidas = false;
 
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorCoberturasObligatoriasInvalidas = true;
+                }
+                //
                 
-
                 if (existeMensaje)
                 {
                     //Se obtiene el error de la lista de errores

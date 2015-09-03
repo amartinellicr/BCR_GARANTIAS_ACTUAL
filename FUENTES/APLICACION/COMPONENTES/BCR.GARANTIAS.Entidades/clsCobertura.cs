@@ -243,7 +243,7 @@ namespace BCR.GARANTIAS.Entidades
         {
             get
             {
-                return string.Format("{0} - {1}", this.descripcionCortaCobertura, this.descripcionCobertura);
+                return string.Format("{0} - {1}{2}", this.descripcionCortaCobertura, this.descripcionCobertura, ((this.indicadorObligatoria) ? " *" : string.Empty));
             }
         }
 

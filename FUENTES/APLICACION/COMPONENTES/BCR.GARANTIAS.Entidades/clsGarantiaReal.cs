@@ -639,6 +639,11 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private bool inconsistenciaMontoAcreenciaInvalido;
 
+        /// <summary>
+        /// Indicador de que se presentó un error con que las coberturas obligatorias no han fueron asignadas en su totalidad a la póliza
+        /// </summary>
+        private bool inconsistenciaCoberturasObligatoriasInvalidas;
+
 
 
         ///////////////////
@@ -1110,7 +1115,9 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajeClaseGarantiaInvalida56 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia56) !== 'undefined'){$MensajeClaseGarantia56.dialog('open');} </script>";
         private const string _mensajeClaseGarantiaInvalida57 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia57) !== 'undefined'){$MensajeClaseGarantia57.dialog('open');} </script>";
         private const string _mensajeClaseGarantiaInvalida58 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia58) !== 'undefined'){$MensajeClaseGarantia58.dialog('open');} </script>";
-        
+
+        private const string _mensajeCoberturasObligatoriasInvalidas = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeCoberturasObligatoriasInvalidas) !== 'undefined'){$MensajeCoberturasObligatoriasInvalidas.dialog('open');} </script>";
+       
 
         //Tags referentes a la parte del avalúo más reciente
         private const string _fechaValuacion = "fecha_valuacion";
@@ -1358,6 +1365,8 @@ namespace BCR.GARANTIAS.Entidades
 
             inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro = false;
             inconsistenciaPorcentajeAceptacionCalculado = false;
+
+            inconsistenciaCoberturasObligatoriasInvalidas = false;
 
             #endregion Inconsistencias
 
@@ -1716,6 +1725,8 @@ namespace BCR.GARANTIAS.Entidades
 
             inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro = false;
             inconsistenciaPorcentajeAceptacionCalculado = false;
+
+            inconsistenciaCoberturasObligatoriasInvalidas = false;
            
             #endregion Inconsistencias
 
@@ -3716,11 +3727,9 @@ namespace BCR.GARANTIAS.Entidades
             set { inconsistenciaPorceAcepPolizaFechaVencimientoMenor = value; }
         }
 
-
         /// <summary>
         /// Obtiene o establece el indicador de que se presentó la inconsistenca que la fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
         /// </summary>
-
         public bool InconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres
         {
             get { return inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres; }
@@ -3730,17 +3739,15 @@ namespace BCR.GARANTIAS.Entidades
         /// <summary>
         /// Obtiene o establece el indicador de que se presentó la inconsistenca que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
         /// </summary>
-
         public bool InconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres
         {
             get { return inconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres; }
             set { inconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres = value; }
         }     
 
-         /// <summary>
+        /// <summary>
         /// Obtiene o establece el indicador de que se presentó la inconsistenca que la MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
         /// </summary>
-
         public bool InconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses
         {
             get { return inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses; }
@@ -3772,6 +3779,15 @@ namespace BCR.GARANTIAS.Entidades
         {
             get { return inconsistenciaPorceAcepMayorPorceAcepCalculado; }
             set { inconsistenciaPorceAcepMayorPorceAcepCalculado = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en que las coberturas obligatorias no fueron asignadas en su totalidad
+        /// </summary>
+        public bool InconsistenciaCoberturasObligatoriasInvalidas
+        {
+            get { return inconsistenciaCoberturasObligatoriasInvalidas; }
+            set { inconsistenciaCoberturasObligatoriasInvalidas = value; }
         }
 
         #endregion Inconsistencias
@@ -4249,8 +4265,8 @@ namespace BCR.GARANTIAS.Entidades
 
                 inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro = false;
                 inconsistenciaPorcentajeAceptacionCalculado = false;
-              
 
+                inconsistenciaCoberturasObligatoriasInvalidas = false;
 
                 #region Cargar listas de datos
 
@@ -5195,6 +5211,20 @@ namespace BCR.GARANTIAS.Entidades
                         desplegarErrorVentanaEmergente = true;
                         inconsistenciaCambioAcreedor = true;
                         listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.NombreAcreedorDiferente), _mensajeCambioAcreedorPoliza);
+                    }
+
+                    //Se verifica las coberturas obligatorias fueron asignadas
+                    if (this.polizaSapAsociada.DiferenciaCoberturasObligatorias != 0)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        InconsistenciaCoberturasObligatoriasInvalidas = true;
+                        
+                        if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas), _mensajeCoberturasObligatoriasInvalidas);
+                        }
                     }
                 }
 
@@ -7100,11 +7130,11 @@ namespace BCR.GARANTIAS.Entidades
                         clsPolizaSap polizaSAP;
                         try
                         {
-                            foreach (XmlNode nodoOperacion in xmlPolizasSap.SelectNodes("//" + _tagPoliza))
+                            foreach (XmlNode nodoPoliza in xmlPolizasSap.SelectNodes("//" + _tagPoliza))
                             {
-                                if (nodoOperacion.SelectSingleNode("//" + _tagPoliza) != null)
+                                if (nodoPoliza.SelectSingleNode("//" + _tagPoliza) != null)
                                 {
-                                    polizaSAP = new clsPolizaSap((nodoOperacion.OuterXml));
+                                    polizaSAP = new clsPolizaSap((nodoPoliza.OuterXml));
 
                                     if (polizaSAP != null)
                                     {

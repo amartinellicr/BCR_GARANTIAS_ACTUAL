@@ -328,7 +328,6 @@ namespace BCR.GARANTIAS.Entidades
             }
 	    }
 
-
         /// <summary>
         /// Obtiene el indicador de si la póliza SAP es válida, estos que la póliza no posea el estado "CAN" en el SAP.
         /// </summary>
@@ -423,7 +422,6 @@ namespace BCR.GARANTIAS.Entidades
             }
         }
 
-
         /// <summary>
         /// Indica si se debe presnetar el mensaje de error correspondiente cuando se ha variado la fecha de vencimiento de la póliza y el valor actual es menor al anteriror
         /// </summary>
@@ -476,7 +474,6 @@ namespace BCR.GARANTIAS.Entidades
             get { return indicadorPolizaExterna; }
             set { indicadorPolizaExterna = value; }
         }
-
 
         /// <summary>
         /// Expone el código del partido
@@ -538,6 +535,13 @@ namespace BCR.GARANTIAS.Entidades
             get { return listaCoberturasPoliza.Items(Enumeradores.Tipos_Trama_Cobertura.Asignada); }
         }
 
+        /// <summary>
+        /// Expone la diferencia existente entre las coberturas obligatorias por asignar y las coberturas obligatorias que fueron asignadas 
+        /// </summary>
+        public int DiferenciaCoberturasObligatorias
+        {
+            get { return listaCoberturasPoliza.ObtenerDiferenciaCoberturasObligatorias(); }
+        }
 
         #endregion Propiedades Públicas
 
@@ -946,14 +950,43 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             
             //Se revisa que la lista posea coberturas
-            if (this.listaCoberturasPoliza.Count > 0)
+            if ((this.listaCoberturasPoliza != null) && (this.listaCoberturasPoliza.Count > 0))
             {
                 formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Coberturas_Obligatorias_Asignadas");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append('"');
+                formatoJSON.Append(((DiferenciaCoberturasObligatorias != 0) ? "1" : "0"));
+                formatoJSON.Append('"');
+                formatoJSON.Append(",");
+
                 formatoJSON.Append('"');
                 formatoJSON.Append("Cobertura");
                 formatoJSON.Append('"');
                 formatoJSON.Append(':');
                 formatoJSON.Append(this.listaCoberturasPoliza.ObtenerJSON());
+            }
+            else
+            {
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Coberturas_Obligatorias_Asignadas");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append('"');
+                formatoJSON.Append("0");
+                formatoJSON.Append('"');
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Cobertura");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append("[]");
             }
 
             formatoJSON.Append('}');

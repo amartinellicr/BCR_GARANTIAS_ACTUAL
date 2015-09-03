@@ -53,7 +53,8 @@ namespace BCR.GARANTIAS.Comun
             FechaSeguimientoMayor       = 37,
             PolizaAsociada              = 38,
             PolizaInvalidaTipoBienPoliza = 39,
-            MontoPolizaNoCubreBien      = 40
+            MontoPolizaNoCubreBien      = 40,
+            CoberturasObligatoriasInvalidas = 41
             //agregar mas indicadores para que no se se caiga. 
           
         }

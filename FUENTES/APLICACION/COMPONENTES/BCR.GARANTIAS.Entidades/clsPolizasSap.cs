@@ -18,6 +18,9 @@ namespace BCR.GARANTIAS.Entidades
 
         private const string _tagPolizas = "POLIZAS";
         private const string _tagPoliza   = "POLIZA";
+        private const string _tagCoberturas = "COBERTURAS";
+        private const string _tagCoberturasPorAsignar = "POR_ASIGNAR";
+        private const string _tagCoberturasAsignadas = "ASIGNADAS";
 
         private const string _codigoSap = "Codigo_SAP";
         private const string _tipoPoliza = "Tipo_Poliza";
@@ -526,7 +529,15 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteEndElement();
 
                     //Inicializa el nodo que poseer los datos de las coberturas de la póliza
-                    objEscritor.WriteString(polizaSap.ListaCoberturasPoliza.ObtenerTrama());
+                    if ((polizaSap.ListaCoberturasPoliza != null) && (polizaSap.ListaCoberturasPoliza.Count > 0))
+                    {
+                        objEscritor.WriteString(polizaSap.ListaCoberturasPoliza.ObtenerTrama());
+                    }
+                    else
+                    {
+                        objEscritor.WriteStartElement(_tagCoberturas);
+                        objEscritor.WriteEndElement();
+                    }
 
                     //Final del tag POLIZA
                     objEscritor.WriteEndElement();
@@ -542,7 +553,7 @@ namespace BCR.GARANTIAS.Entidades
             //Flush
             objEscritor.Flush();
 
-            tramaGenerada = UtilitariosComun.GetStringFromStream(stream).Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", string.Empty);
+            tramaGenerada = UtilitariosComun.GetStringFromStream(stream).Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", string.Empty).Replace("&lt;", "<").Replace("&gt;", ">");
 
             //Cierre del xml document
             objEscritor.Close();

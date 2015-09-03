@@ -104,8 +104,8 @@ namespace BCR.GARANTIAS.Entidades
             if (tramaCoberturasBD.Length > 0)
             {
                 XmlDocument xmlCoberturas = new XmlDocument();
-                XmlNodeList xmlCoberturasPorAsignar;
-                XmlNodeList xmlCoberturasAsignadas;
+                XmlNodeList xmlCoberturasPorAsignar = null;
+                XmlNodeList xmlCoberturasAsignadas = null;
 
                 try
                 {
@@ -125,7 +125,10 @@ namespace BCR.GARANTIAS.Entidades
 
                 try
                 {
-                    xmlCoberturasPorAsignar = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasPorAsignar).ChildNodes;
+                    if (xmlCoberturas.SelectSingleNode("//" + _tagCoberturasPorAsignar) != null)
+                    {
+                        xmlCoberturasPorAsignar = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasPorAsignar).ChildNodes;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -141,7 +144,10 @@ namespace BCR.GARANTIAS.Entidades
 
                 try
                 {
-                    xmlCoberturasAsignadas = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasAsignadas).ChildNodes;
+                    if (xmlCoberturas.SelectSingleNode("//" + _tagCoberturasAsignadas) != null)
+                    {
+                        xmlCoberturasAsignadas = xmlCoberturas.SelectSingleNode("//" + _tagCoberturasAsignadas).ChildNodes;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -163,35 +169,41 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         clsCobertura entidadCobertura;
 
-                        foreach (XmlNode nodoCobertura in xmlCoberturasPorAsignar)
+                        if (xmlCoberturasPorAsignar != null)
                         {
-                            entidadCobertura = new clsCobertura(nodoCobertura.OuterXml, Enumeradores.Tipos_Trama_Cobertura.PorAsignar);
+                            foreach (XmlNode nodoCobertura in xmlCoberturasPorAsignar)
+                            {
+                                entidadCobertura = new clsCobertura(nodoCobertura.OuterXml, Enumeradores.Tipos_Trama_Cobertura.PorAsignar);
 
-                            if (entidadCobertura.ErrorDatos)
-                            {
-                                this.errorDatos = entidadCobertura.ErrorDatos;
-                                this.descripcionError = entidadCobertura.DescripcionError;
-                                break;
-                            }
-                            else
-                            {
-                                this.Agregar(entidadCobertura);
+                                if (entidadCobertura.ErrorDatos)
+                                {
+                                    this.errorDatos = entidadCobertura.ErrorDatos;
+                                    this.descripcionError = entidadCobertura.DescripcionError;
+                                    break;
+                                }
+                                else
+                                {
+                                    this.Agregar(entidadCobertura);
+                                }
                             }
                         }
 
-                        foreach (XmlNode nodoCobertura in xmlCoberturasAsignadas)
+                        if (xmlCoberturasAsignadas != null)
                         {
-                            entidadCobertura = new clsCobertura(nodoCobertura.OuterXml, Enumeradores.Tipos_Trama_Cobertura.Asignada);
+                            foreach (XmlNode nodoCobertura in xmlCoberturasAsignadas)
+                            {
+                                entidadCobertura = new clsCobertura(nodoCobertura.OuterXml, Enumeradores.Tipos_Trama_Cobertura.Asignada);
 
-                            if (entidadCobertura.ErrorDatos)
-                            {
-                                this.errorDatos = entidadCobertura.ErrorDatos;
-                                this.descripcionError = entidadCobertura.DescripcionError;
-                                break;
-                            }
-                            else
-                            {
-                                this.Agregar(entidadCobertura);
+                                if (entidadCobertura.ErrorDatos)
+                                {
+                                    this.errorDatos = entidadCobertura.ErrorDatos;
+                                    this.descripcionError = entidadCobertura.DescripcionError;
+                                    break;
+                                }
+                                else
+                                {
+                                    this.Agregar(entidadCobertura);
+                                }
                             }
                         }
                     }
@@ -414,6 +426,33 @@ namespace BCR.GARANTIAS.Entidades
 
             //Se retorna la cadena generada
             return  listaCoberturasJSON.ToString();
+        }
+
+        /// <summary>
+        /// Obtiene la diferencia entre las coberturas por asignar obligatorias y las coberturas obligatorias asignadas
+        /// </summary>
+        /// <returns>Diferencia encontrada, si es igual a cero es que no existe diferencia</returns>
+        public int ObtenerDiferenciaCoberturasObligatorias()
+        {
+            int diferenciaCoberturasObligatorias = 0;
+            int cantidadCPAObligatorias = 0;
+            int cantidadCAObligatorias = 0;
+
+            foreach (clsCobertura entidadCobertura in InnerList)
+            {
+                if ((entidadCobertura.TipoListaCobertura == Enumeradores.Tipos_Trama_Cobertura.PorAsignar) && (entidadCobertura.IndicadorObligatoria))
+                {
+                    cantidadCPAObligatorias += 1;
+                }
+                else if ((entidadCobertura.TipoListaCobertura == Enumeradores.Tipos_Trama_Cobertura.Asignada) && (entidadCobertura.IndicadorObligatoria))
+                {
+                    cantidadCAObligatorias += 1;
+                }
+            }
+
+            diferenciaCoberturasObligatorias = cantidadCPAObligatorias - cantidadCAObligatorias;
+
+            return diferenciaCoberturasObligatorias;
         }
         #endregion Métodos Públicos
     }
