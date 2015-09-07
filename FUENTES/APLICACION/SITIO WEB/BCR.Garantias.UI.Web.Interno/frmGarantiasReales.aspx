@@ -14,9 +14,9 @@
                                 <table>                               
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="472px"></asp:Label></td>
+                                            <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label></td>
                                         <td align="right">
-                                            <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="286px"></asp:Label></td>
+                                            <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label></td>
                                       
                                     </tr>
                                     <tr>

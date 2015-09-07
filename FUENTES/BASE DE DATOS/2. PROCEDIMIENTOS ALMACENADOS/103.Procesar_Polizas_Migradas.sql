@@ -895,7 +895,21 @@ BEGIN
 				SET		TMP.Codigo_Partido = TM1.cod_partido,
 						TMP.Identificacion_Bien = TM1.numero_finca
 				FROM	dbo.TMP_POLIZAS TMP
-					INNER JOIN dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL SPP
+					INNER JOIN (SELECT	DISTINCT 
+										TS1.conpoliza, 
+										TS1.desfolioreal AS Codigo_Finca
+								FROM	dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL TS1
+								WHERE	TS1.Registro_Activo = 1
+									AND CHARINDEX('-', TS1.desfolioreal) > 0
+								
+								UNION ALL
+								
+								SELECT DISTINCT 
+										TS2.conpoliza, 
+										(CAST(TS2.conprovincia AS VARCHAR(2)) + '-' +  TS2.desfolioreal) AS Codigo_Finca
+								FROM	dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL TS2
+								WHERE	TS2.Registro_Activo = 1
+									AND CHARINDEX('-', TS2.desfolioreal) <= 0) SPP
 					ON SPP.conpoliza = TMP.Codigo_SAP
 					INNER JOIN (SELECT	DISTINCT
 										COALESCE((CONVERT(VARCHAR(2),GGR.cod_partido)), '') + '-' + COALESCE(GGR.numero_finca, '') AS Codigo_Garantia,  
@@ -907,9 +921,8 @@ BEGIN
 									AND (GGR.cod_partido <= 7)
 									AND LEN(LTRIM(RTRIM(GGR.numero_finca))) > 0
 								GROUP BY GGR.cod_partido, GGR.numero_finca) TM1
-					ON TM1.Codigo_Garantia = SPP.desfolioreal	
+					ON TM1.Codigo_Garantia = SPP.Codigo_Finca
 				WHERE	TMP.Registro_Activo = 1
-					AND SPP.Registro_Activo = 1
 
 			END TRY
 			BEGIN CATCH
@@ -936,12 +949,13 @@ BEGIN
 					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZAAUTO SPA
 					ON SPA.conpoliza = TMP.Codigo_SAP
 					INNER JOIN (SELECT	DISTINCT
-										GGR.num_placa_bien
+										GGR.num_placa_bien,
+										LTRIM(RTRIM(GGR.num_placa_bien)) AS Placa_Bien
 								FROM	dbo.GAR_GARANTIA_REAL GGR
 								WHERE	GGR.cod_tipo_garantia_real = 3
 									AND LEN(LTRIM(RTRIM(GGR.num_placa_bien))) > 0
 								GROUP BY GGR.num_placa_bien) TM1
-					ON TM1.num_placa_bien = SPA.cocplaca	
+					ON TM1.Placa_Bien = SPA.cocplaca	
 				WHERE	TMP.Registro_Activo = 1
 					AND SPA.Registro_Activo = 1
 
@@ -957,7 +971,9 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Prenda_Pol
-			
+						
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Prenda_Pol1
 		
 		--Se actualizan los datos de otras prendas de la póliza.
 		BEGIN TRANSACTION TRA_Act_OPrenda_Pol

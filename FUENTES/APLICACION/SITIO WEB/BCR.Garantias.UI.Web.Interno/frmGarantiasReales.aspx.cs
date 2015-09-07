@@ -4513,7 +4513,7 @@ namespace BCRGARANTIAS.Forms
                                 break;
                         }
 
-                        clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaRelacionadaBien(entidadGarantia.CodPartido, identificacionBien, tipoGarReal);
+                        clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaRelacionadaBien(entidadGarantia.CodTipoBien, entidadGarantia.CodPartido, identificacionBien, tipoGarReal);
 
                         if (entidadPolizaSap != null)
                         {

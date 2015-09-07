@@ -589,10 +589,12 @@ namespace BCR.GARANTIAS.Entidades
         /// <summary>
         /// Obtiene la póliza que esté asociada al bien consultado
         /// </summary>
+        /// <param name="codigoBien">Código del tipo de bien</param>
         /// <param name="codigoPartido">Código del partido</param>
         /// <param name="identificacionBien">Identificación del bien</param>
+        /// <param name="tipoGarantia">Código del tipo de garantía real</param>
         /// <returns>Una entidad de tipo póliza, de no existir una o si existen varias se retornará nulo</returns>
-        public clsPolizaSap ObtenerPolizaRelacionadaBien(short codigoPartido, string identificacionBien, Enumeradores.Tipos_Garantia_Real tipoGarantia)
+        public clsPolizaSap ObtenerPolizaRelacionadaBien(short codigoBien, short codigoPartido, string identificacionBien, Enumeradores.Tipos_Garantia_Real tipoGarantia)
         {
             clsPolizaSap entidadRetornada = null;
             int cantidadPolizas = 0;
@@ -600,11 +602,11 @@ namespace BCR.GARANTIAS.Entidades
 
             if (this.InnerList.Count > 0)
             {
-                if ((tipoGarantia != Enumeradores.Tipos_Garantia_Real.Prenda) && ((codigoPartido >= 1) && (codigoPartido <= 7)) && (identificacionBien.Length > 0))
+                if ((tipoGarantia != Enumeradores.Tipos_Garantia_Real.Prenda) && ((codigoPartido >= 1) && (codigoPartido <= 7)) && (identificacionBien.Length > 0) && (codigoBien != -1))
                 {
                     foreach (clsPolizaSap entidadPoliza in InnerList)
                     {
-                        if ((entidadPoliza.CodigoPartido == codigoPartido) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
+                        if ((entidadPoliza.TipoBienPoliza == codigoBien) && (entidadPoliza.CodigoPartido == codigoPartido) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
                         {
                             entidadRetornada = entidadPoliza;
                             cantidadPolizas++;
@@ -615,7 +617,7 @@ namespace BCR.GARANTIAS.Entidades
                 {
                     foreach (clsPolizaSap entidadPoliza in InnerList)
                     {
-                        if (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0)
+                        if ((entidadPoliza.TipoBienPoliza == codigoBien) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
                         {
                             entidadRetornada = entidadPoliza;
                             cantidadPolizas++;
