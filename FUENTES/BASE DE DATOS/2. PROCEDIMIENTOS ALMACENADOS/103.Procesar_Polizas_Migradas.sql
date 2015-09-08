@@ -971,10 +971,7 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Prenda_Pol
-						
-		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Prenda_Pol1
-		
+							
 		--Se actualizan los datos de otras prendas de la póliza.
 		BEGIN TRANSACTION TRA_Act_OPrenda_Pol
 			BEGIN TRY
