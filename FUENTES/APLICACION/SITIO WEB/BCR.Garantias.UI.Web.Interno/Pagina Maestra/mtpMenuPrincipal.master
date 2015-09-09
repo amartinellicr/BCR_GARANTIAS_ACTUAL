@@ -1,5 +1,4 @@
-﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mtpMenuPrincipal.master.cs"
-    Inherits="BCRGARANTIAS.Presentacion.mtpMenuPrincipal" %>
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mtpMenuPrincipal.master.cs" Inherits="BCRGARANTIAS.Presentacion.mtpMenuPrincipal" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -89,7 +88,7 @@
             var $MensajeClaseGarantia56;
             var $MensajeClaseGarantia57;
             var $MensajeClaseGarantia58;
-
+            var $MensajeCoberturasObligatoriasInvalidas;
 
             var $errorFechaPresentacion;
             var $camposMensajeFechaPrescripcionMenor;
@@ -322,15 +321,15 @@
             <table id="tblPrincipal" cellspacing="0" cellpadding="0" width="300" align="center"
                 bgcolor="window" border="0">
                 <tr>
-                    <td style="width: 869px" align="center">
-                        <asp:Image ID="Image2" runat="server" ImageUrl="..\Images\Encabezado.jpg"></asp:Image>
+                    <td style="width: 880px" align="center">
+                        <asp:Image ID="Image2" runat="server" ImageUrl="..\Images\Encabezado.jpg" Width="100%"></asp:Image>
                     </td>
                 </tr>
                 <tr>
-                    <td align="center" bgcolor="#fffaef">
+                    <td align="center" bgcolor="#F7F6F3" style="width:880px; text-align:center;">
                         <asp:Menu ID="menuPrincipal" runat="server" BackColor="#F7F6F3" Font-Bold="False" ForeColor="#7C6F57"
                             Orientation="Horizontal" OnMenuItemClick="NavigationMenu_MenuItemClick" CssClass="MenuPrincipal"
-                            StaticSubMenuIndent="1px" DynamicHorizontalOffset="0" DynamicVerticalOffset="0">
+                            StaticSubMenuIndent="1px" DynamicHorizontalOffset="0" DynamicVerticalOffset="0" Width="740px">
                             <StaticMenuStyle CssClass="MenuPrincipal" />
                             <StaticMenuItemStyle CssClass="MenuPrincipal" HorizontalPadding="5px" VerticalPadding="2px" />
                             <DynamicHoverStyle CssClass="MenuPrincipal" BackColor="#96A1B6" ForeColor="White" />
@@ -343,12 +342,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="width: 869px; height: 19px" bgcolor="#e0e0df">
+                    <td style="width: 880px; height: 19px" bgcolor="#e0e0df">
                         <table>
                             <tr>
-                                <td align="left">
+                                <td align="left" style="width:880px; float:left; padding-left:5px;">
                                     <asp:Label ID="lblUsrConectado" runat="server" CssClass="Txt_Fecha" Width="472px"></asp:Label></td>
-                                <td align="right">
+                                <td align="right" style="width:870px; float:right; padding-right:5px;">
                                     <asp:Label ID="lblFecha" runat="server" CssClass="Txt_Fecha" Width="286px"></asp:Label></td>
                             </tr>
                         </table>

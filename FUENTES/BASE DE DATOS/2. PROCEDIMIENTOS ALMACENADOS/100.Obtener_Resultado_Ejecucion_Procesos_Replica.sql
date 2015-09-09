@@ -44,10 +44,10 @@ BEGIN
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
-			<Autor>Arnoldo Martinelli Marin, GrupoMas S.A.</Autor>
-			<Requerimiento>Polizas BCR Garantias, Siebel 1-24342731</Requerimiento>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+			<Requerimiento>Pólizas BCR Garantíaa, Siebel 1-24342731</Requerimiento>
 			<Fecha>23/07/2015</Fecha>
-			<Descripción>Se agrega el codigo del proceso de replica de las polizas.</Descripción>
+			<Descripción>Se agrega el código del proceso de réplica de las pólizas.</Descripción>
 		</Cambio>
 		<Cambio>
 			<Autor></Autor>

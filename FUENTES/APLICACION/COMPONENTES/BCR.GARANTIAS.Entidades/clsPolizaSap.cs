@@ -44,6 +44,19 @@ namespace BCR.GARANTIAS.Entidades
 
         private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
 
+        private const string _codigoPartido = "Codigo_Partido";
+        private const string _identificacionBien = "Identificacion_Bien";
+        private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
+        private const string _codigoAseguradora = "Codigo_Aseguradora";
+
+
+        //Tags importantes de la trama
+        private const string _tagCoberturas = "COBERTURAS";
+        private const string _tagCoberturasPorAsignar = "POR_ASIGNAR";
+        private const string _tagCoberturasAsignadas = "ASIGNADAS";
+        private const string _tagCobertura = "COBERTURA";
+
+
         #endregion Constantes
 
         #region Variables
@@ -157,6 +170,33 @@ namespace BCR.GARANTIAS.Entidades
         /// Indicador de si la póliza es externa o no
         /// </summary>
         private bool indicadorPolizaExterna;
+
+
+        /// <summary>
+        /// Código del partido
+        /// </summary>
+        private short codigoPartido;
+
+        /// <summary>
+        /// Identificación del bien
+        /// </summary>
+        private string identificacionBien;
+
+        /// <summary>
+        /// Código del tipo de cobertura
+        /// </summary>
+        private int tipoCobertura;
+
+        /// <summary>
+        /// Código de la aseguradora
+        /// </summary>
+        private int codigoAseguradora;
+
+        /// <summary>
+        /// Lista de las coberturas de la póliza
+        /// </summary>
+        private clsCoberturas<clsCobertura> listaCoberturasPoliza;
+
 
         #endregion Variables
 
@@ -288,7 +328,6 @@ namespace BCR.GARANTIAS.Entidades
             }
 	    }
 
-
         /// <summary>
         /// Obtiene el indicador de si la póliza SAP es válida, estos que la póliza no posea el estado "CAN" en el SAP.
         /// </summary>
@@ -383,7 +422,6 @@ namespace BCR.GARANTIAS.Entidades
             }
         }
 
-
         /// <summary>
         /// Indica si se debe presnetar el mensaje de error correspondiente cuando se ha variado la fecha de vencimiento de la póliza y el valor actual es menor al anteriror
         /// </summary>
@@ -437,6 +475,74 @@ namespace BCR.GARANTIAS.Entidades
             set { indicadorPolizaExterna = value; }
         }
 
+        /// <summary>
+        /// Expone el código del partido
+        /// </summary>
+        public short CodigoPartido
+        {
+            get { return codigoPartido; }
+            set { codigoPartido = value; }
+        }
+
+        /// <summary>
+        /// Expone la identificación del bien
+        /// </summary>
+        public string IdentificacionBien
+        {
+            get { return identificacionBien; }
+            set { identificacionBien = value; }
+        }
+
+        /// <summary>
+        /// Expone el tipo de cobertura
+        /// </summary>
+        public int TipoCobertura
+        {
+            get { return tipoCobertura; }
+            set { tipoCobertura = value; }
+        }
+
+        /// <summary>
+        /// Expone el código de la aseguradora
+        /// </summary>
+        public int CodigoAseguradora
+        {
+            get { return codigoAseguradora; }
+            set { codigoAseguradora = value; }
+        }
+
+        /// <summary>
+        /// Expone la lista de coberturas asociadas a la póliza, tanto las asignadas como las disponible para asignar 
+        /// </summary>
+        public clsCoberturas<clsCobertura> ListaCoberturasPoliza
+        {
+             get { return listaCoberturasPoliza; }
+        }
+
+        /// <summary>
+        /// Expone la lista de coberturas que se le pueden asignar a la póliza 
+        /// </summary>
+        public List<clsCobertura> ListaCoberturasPorAsignarPoliza
+        {
+            get { return listaCoberturasPoliza.Items(Enumeradores.Tipos_Trama_Cobertura.PorAsignar); }
+        }
+
+        /// <summary>
+        /// Expone la lista de coberturas asignadas a la póliza 
+        /// </summary>
+        public List<clsCobertura> ListaCoberturasAsignadasPoliza
+        {
+            get { return listaCoberturasPoliza.Items(Enumeradores.Tipos_Trama_Cobertura.Asignada); }
+        }
+
+        /// <summary>
+        /// Expone la diferencia existente entre las coberturas obligatorias por asignar y las coberturas obligatorias que fueron asignadas 
+        /// </summary>
+        public int DiferenciaCoberturasObligatorias
+        {
+            get { return listaCoberturasPoliza.ObtenerDiferenciaCoberturasObligatorias(); }
+        }
+
         #endregion Propiedades Públicas
 
         #region Constructores
@@ -466,6 +572,12 @@ namespace BCR.GARANTIAS.Entidades
             tipoBienPoliza = -1;
             indicadorPolizaAsocida = false;
             indicadorPolizaExterna = false;
+
+            codigoPartido = -1;
+            identificacionBien = string.Empty;
+            tipoCobertura = -1;
+            codigoAseguradora = -1;
+
         }
 
         /// <summary>
@@ -495,6 +607,12 @@ namespace BCR.GARANTIAS.Entidades
             indicadorPolizaAsocida = false;
             indicadorPolizaExterna = false;
 
+            codigoPartido = -1;
+            identificacionBien = string.Empty;
+            tipoCobertura = -1;
+            codigoAseguradora = -1;
+
+
             if (tramaPolizaSap.Length > 0)
             {
                 XmlDocument xmlTrama = new XmlDocument();
@@ -521,6 +639,9 @@ namespace BCR.GARANTIAS.Entidades
                     int tipoPolSap;
                     int tipoMndPoliza;
                     int tipoBienPol;
+                    int tipoCobert;
+                    int codAsegura;
+                    short partido;
                     decimal mntPolSap;
                     decimal mntPolSapAnt;
                     decimal mntAcreencia;
@@ -534,7 +655,11 @@ namespace BCR.GARANTIAS.Entidades
                         tipoPolizaSap = ((xmlTrama.SelectSingleNode("//" + _tipoPoliza) != null) ? ((int.TryParse((xmlTrama.SelectSingleNode("//" + _tipoPoliza).InnerText), out tipoPolSap)) ? tipoPolSap : -1) : -1);
                         tipoMonedaPolizaSap = ((xmlTrama.SelectSingleNode("//" + _monedaMontoPoliza) != null) ? ((int.TryParse((xmlTrama.SelectSingleNode("//" + _monedaMontoPoliza).InnerText), out tipoMndPoliza)) ? tipoMndPoliza : -1) : -1);
                         tipoBienPoliza = ((xmlTrama.SelectSingleNode("//" + _tipoBienPoliza) != null) ? ((int.TryParse((xmlTrama.SelectSingleNode("//" + _tipoBienPoliza).InnerText), out tipoBienPol)) ? tipoBienPol : -1) : -1);
-
+                        tipoCobertura = ((xmlTrama.SelectSingleNode("//" + _codigoTipoCobertura) != null) ? ((int.TryParse((xmlTrama.SelectSingleNode("//" + _codigoTipoCobertura).InnerText), out tipoCobert)) ? tipoCobert : -1) : -1);
+                        codigoAseguradora = ((xmlTrama.SelectSingleNode("//" + _codigoAseguradora) != null) ? ((int.TryParse((xmlTrama.SelectSingleNode("//" + _codigoAseguradora).InnerText), out codAsegura)) ? codAsegura : -1) : -1);
+                        
+                        codigoPartido = ((xmlTrama.SelectSingleNode("//" + _codigoPartido) != null) ? ((short.TryParse((xmlTrama.SelectSingleNode("//" + _codigoPartido).InnerText), out partido)) ? partido : (short)-1) : (short)-1);
+                       
                         fechaVencimientoPolizaSap = ((xmlTrama.SelectSingleNode("//" + _fechaVencimientoPoliza) != null) ? ((DateTime.TryParseExact((xmlTrama.SelectSingleNode("//" + _fechaVencimientoPoliza).InnerText), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecVencimiento)) ? ((fecVencimiento != (new DateTime(1900, 01, 01))) ? fecVencimiento : DateTime.MinValue) : DateTime.MinValue) : DateTime.MinValue);
                         fechaVencimientoAnterior = ((xmlTrama.SelectSingleNode("//" + _fechaVencimientoPolizaAnterior) != null) ? ((DateTime.TryParseExact((xmlTrama.SelectSingleNode("//" + _fechaVencimientoPolizaAnterior).InnerText), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecVencimientoAnt)) ? ((fecVencimientoAnt != (new DateTime(1900, 01, 01))) ? fecVencimientoAnt : DateTime.MinValue) : DateTime.MinValue) : DateTime.MinValue);
 
@@ -549,11 +674,53 @@ namespace BCR.GARANTIAS.Entidades
                         descripcionTipoPolizaSap = ((xmlTrama.SelectSingleNode("//" + _descripcionTipoPolizaSap) != null) ? xmlTrama.SelectSingleNode("//" + _descripcionTipoPolizaSap).InnerText : string.Empty);
                         cedulaAcreedorAnterior = ((xmlTrama.SelectSingleNode("//" + _cedulaAcreedorAnterior) != null) ? xmlTrama.SelectSingleNode("//" + _cedulaAcreedorAnterior).InnerText : string.Empty);
                         nombreAcreedorAnterior = ((xmlTrama.SelectSingleNode("//" + _nombreAcreedorAnterior) != null) ? xmlTrama.SelectSingleNode("//" + _nombreAcreedorAnterior).InnerText : string.Empty);
+                        identificacionBien = ((xmlTrama.SelectSingleNode("//" + _identificacionBien) != null) ? xmlTrama.SelectSingleNode("//" + _identificacionBien).InnerText : string.Empty);
 
                         indicadorPolizaSapSeleccionada = ((xmlTrama.SelectSingleNode("//" + _polizaSeleccionada) != null) ? ((xmlTrama.SelectSingleNode("//" + _polizaSeleccionada).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         codigoSapValido = ((xmlTrama.SelectSingleNode("//" + _codigoSapValido) != null) ? ((xmlTrama.SelectSingleNode("//" + _codigoSapValido).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         indicadorPolizaAsocida = ((xmlTrama.SelectSingleNode("//" + _polizaAsociada) != null) ? ((xmlTrama.SelectSingleNode("//" + _polizaAsociada).InnerText.CompareTo("0") == 0) ? false : true) : false);
                         indicadorPolizaExterna = ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPolizaExterna).InnerText.CompareTo("0") == 0) ? false : true) : false);
+
+                        #region Coberturas
+
+                        if (xmlTrama.SelectSingleNode("//" + _tagCoberturas) != null)
+                        {
+                            XmlDocument xmlCoberturas = new XmlDocument();
+
+                            try
+                            {
+                                xmlCoberturas.LoadXml(xmlTrama.SelectSingleNode("//" + _tagCoberturas).OuterXml);
+                            }
+                            catch (Exception ex)
+                            {
+                                errorDatos = true;
+                                descripcionError = Mensajes.Obtener(Mensajes._errorObteniendoCoberturasPolizasSap, Mensajes.ASSEMBLY);
+
+                               UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorObteniendoCoberturasPolizasSapDetalle, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                                return;
+                            }
+
+                            if (xmlCoberturas != null)
+                            {
+                                try
+                                {
+                                    listaCoberturasPoliza = new clsCoberturas<clsCobertura>(xmlTrama.SelectSingleNode("//" + _tagCoberturas).OuterXml);
+                                }
+                                catch (Exception ex)
+                                {
+                                    errorDatos = true;
+                                    descripcionError = Mensajes.Obtener(Mensajes._errorObteniendoCoberturasPolizasSap, Mensajes.ASSEMBLY);
+
+                                    UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorObteniendoCoberturasPolizasSapDetalle, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                                    return;
+                                }
+                            }
+                        }
+
+                        #endregion Coberturas
+
                     }
                     catch (Exception ex)
                     {
@@ -744,6 +911,83 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             formatoJSON.Append(((indicadorPolizaExterna) ? "1" : "0"));
             formatoJSON.Append('"');
+
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(_codigoPartido);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(codigoPartido.ToString());
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(_identificacionBien);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(identificacionBien);
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(_codigoTipoCobertura);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(tipoCobertura.ToString());
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(_codigoAseguradora);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(codigoAseguradora.ToString());
+            formatoJSON.Append('"');
+            
+            //Se revisa que la lista posea coberturas
+            if ((this.listaCoberturasPoliza != null) && (this.listaCoberturasPoliza.Count > 0))
+            {
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Coberturas_Obligatorias_Asignadas");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append('"');
+                formatoJSON.Append(((DiferenciaCoberturasObligatorias != 0) ? "1" : "0"));
+                formatoJSON.Append('"');
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Cobertura");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append(this.listaCoberturasPoliza.ObtenerJSON());
+            }
+            else
+            {
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Coberturas_Obligatorias_Asignadas");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append('"');
+                formatoJSON.Append("0");
+                formatoJSON.Append('"');
+                formatoJSON.Append(",");
+
+                formatoJSON.Append('"');
+                formatoJSON.Append("Cobertura");
+                formatoJSON.Append('"');
+                formatoJSON.Append(':');
+                formatoJSON.Append("[]");
+            }
 
             formatoJSON.Append('}');
 
