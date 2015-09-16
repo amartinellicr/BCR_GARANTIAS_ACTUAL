@@ -136,7 +136,8 @@ BEGIN
 		DELETE	FROM dbo.TMP_GIROS_CONTRATOS
 		WHERE	Registro_Activo = 0
 			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-				
+		
+		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
 		DELETE	FROM  dbo.TMP_SAP_SGRCOBERTURAS
 		WHERE	Registro_Activo = 0
 			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
@@ -153,6 +154,7 @@ BEGIN
 		
 		DELETE	FROM  dbo.GAR_COBERTURAS
 		
+		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 			
 		
 		UPDATE dbo.TMP_POLIZAS
@@ -162,7 +164,9 @@ BEGIN
 		UPDATE dbo.TMP_POLIZAS
 		SET Registro_Activo = 0
 		WHERE Registro_Activo = 1
-						
+		
+		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 		UPDATE dbo.TMP_SAP_SGRCOBERTURAS
 		SET Registro_Activo = 0
 		WHERE Registro_Activo IS NULL
@@ -186,6 +190,8 @@ BEGIN
 		UPDATE dbo.TMP_SAP_COBERTURAS_POLIZAS
 		SET Registro_Activo = 0
 		WHERE Registro_Activo = 1
+		
+		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 		
 		UPDATE dbo.TMP_SAP_VWSGRPOLIZA
 		SET Registro_Activo = 0
@@ -273,6 +279,7 @@ BEGIN
 	ELSE IF(@piEjecutarParte = 1)
 	BEGIN
 
+		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 		--Se carga la información referentes a las coberturas.
 		BEGIN TRANSACTION TRA_Ins_Cober
 			BEGIN TRY
@@ -316,7 +323,9 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Cober
-			
+		
+		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+		
 		--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
 		BEGIN TRANSACTION TRA_Act_Giros_Cont
 			BEGIN TRY
@@ -603,7 +612,8 @@ BEGIN
 								FROM	dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PC1
 								WHERE	PC1.Registro_Activo = 1
 									AND PC1.estpolizacreditobancario <> 'ELI'
-									AND PC1.codsenalcredito NOT IN (2, 5)
+									AND PC1.codsenalcredito <> 2
+									AND PC1.codsenalcredito <> 5
 									AND PC1.Es_Giro = 1
 									AND PC1.Consecutivo_Contrato > 0
 								GROUP BY PC1.Consecutivo_Contrato, PC1.conpoliza) PC2
@@ -615,7 +625,8 @@ BEGIN
 					AND TGC.Fecha_Pagado_Hasta IS NULL
 					AND PCD.Registro_Activo = 1
 					AND PCD.estpolizacreditobancario <> 'ELI'
-					AND PCD.codsenalcredito NOT IN (2, 5)					
+					AND PCD.codsenalcredito <> 2
+					AND PCD.codsenalcredito <> 5					
 		
 			END TRY
 			BEGIN CATCH
@@ -662,10 +673,16 @@ BEGIN
 					GETDATE() AS Fecha_Replica,
 					1 AS Registro_Activo,
 					0 AS Indicador_Poliza_Externa,
+					
+					--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 					NULL AS Codigo_Partido,
 					NULL AS Identificacion_Bien,
 					VGP.contipocobertura AS Codigo_Tipo_Cobertura,
 					VGP.conaseguradora AS Codigo_Aseguradora
+					
+					--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 				FROM	dbo.TMP_SAP_VWSGRPOLIZA VGP
 					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO VCB
 					ON VCB.conpoliza = VGP.conpoliza
@@ -742,10 +759,16 @@ BEGIN
 					GETDATE() AS Fecha_Replica,
 					1 AS Registro_Activo,
 					0 AS Indicador_Poliza_Externa,
+					
+					--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 					NULL AS Codigo_Partido,
 					NULL AS Identificacion_Bien,
 					VGP.contipocobertura AS Codigo_Tipo_Cobertura,
 					VGP.conaseguradora
+					
+					--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 				FROM	dbo.TMP_SAP_VWSGRPOLIZA VGP
 					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO VCC
 					ON VCC.conpoliza = VGP.conpoliza
@@ -821,10 +844,16 @@ BEGIN
 					GETDATE() AS Fecha_Replica,
 					1 AS Registro_Activo,
 					0 AS Indicador_Poliza_Externa,
+					
+					--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 					NULL AS Codigo_Partido,
 					NULL AS Identificacion_Bien,
 					VGP.contipocobertura AS Codigo_Tipo_Cobertura,
 					VGP.conaseguradora
+					
+					--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 				FROM	dbo.TMP_GIROS_CONTRATOS TGC 
 					INNER JOIN dbo.TMP_SAP_VWSGRPOLIZA VGP
 					ON VGP.conpoliza = TGC.Codigo_SAP
@@ -886,7 +915,8 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Pol_Ext
-			
+		
+		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
 		--Se actualizan los datos de la hipoteca de la póliza.
 		BEGIN TRANSACTION TRA_Act_Hipo_Pol
 			BEGIN TRY
@@ -1006,6 +1036,8 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_OPrenda_Pol
 		
+		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+		
 		--Se actualizan los campos del monto de la póliza y fecha de vencimiento anterior, de las pólizas existentes.
 		BEGIN TRANSACTION TRA_Act_Datos
 			BEGIN TRY
@@ -1061,10 +1093,15 @@ BEGIN
 													ELSE 1
 												END,
 						GPO.Indicador_Poliza_Externa = TMP.Indicador_Poliza_Externa,
+						
+						--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+						
 						GPO.Codigo_Partido = TMP.Codigo_Partido,
 						GPO.Identificacion_Bien = TMP.Identificacion_Bien,
 						GPO.Codigo_Tipo_Cobertura = TMP.Codigo_Tipo_Cobertura,
 						GPO.Codigo_Aseguradora = TMP.Codigo_Aseguradora
+						
+						--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 
 				FROM	dbo.GAR_POLIZAS GPO
 					INNER JOIN dbo.TMP_POLIZAS TMP
@@ -1134,10 +1171,15 @@ BEGIN
 						ELSE ISNULL(TMP.Monto_Poliza, 0)
 					END AS Monto_Poliza_Colonizado,
 					TMP.Indicador_Poliza_Externa,
+					
+					--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+					
 					TMP.Codigo_Partido,
 					TMP.Identificacion_Bien,
 					TMP.Codigo_Tipo_Cobertura,
 					TMP.Codigo_Aseguradora
+					
+					--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 
 				FROM	dbo.TMP_POLIZAS TMP
 				WHERE	COALESCE(TMP.Consecutivo_Operacion_Garantias, -1) > -1
@@ -1164,7 +1206,7 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Polizas	
 			
-			
+		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
 		--Se carga la información de la tabla de coberturas asociadas a las pólizas.
 		BEGIN TRANSACTION TRA_Ins_Cober_Pol
 			BEGIN TRY
@@ -1198,6 +1240,7 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Cober_Pol
 	
+		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 
 
 		/************************************************************************************************
