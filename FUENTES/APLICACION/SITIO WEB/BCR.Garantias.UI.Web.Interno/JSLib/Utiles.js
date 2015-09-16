@@ -1,7 +1,8 @@
 ﻿    //El archivo debe ser minimizado, se usó la herramienta http://jscompress.com/, el resultado se copia en el archivo Utiles_min.js
 
     //Función donde inicializamos el dialog 
-    function PageInit() { 
+    function PageInit() 
+    { 
     
         $camposMensajeFechaPrescripcionMenor = '';
         
@@ -1955,22 +1956,25 @@
  /************************  FUNCIONES ADICIONALES ********************************/        
  /*******************************************************************************/        
 
-    //Función que muestra el div flotante con el mensaje 
-    function MostrarMensajeModal(mensajeTexto) { 
+   //Función que muestra el div flotante con el mensaje 
+   function MostrarMensajeModal(mensajeTexto) 
+   { 
       $Alerta.text(mensajeTexto); 
       $Alerta.dialog('open'); 
     }
 
-    //Función que obtiene un control específico
-    function $$(id, context) {
+   //Función que obtiene un control específico
+   function $$(id, context) 
+   {
         var el = $("#" + id, context);
         if (el.length < 1)
             el = $("[id$=_" + id + "]", context);
         return el;
     }
 
-    //Función que valida la fecha de presnetación que fue ingresada por el usuario
-    function validarFechaPresentacion(){
+   //Función que valida la fecha de presnetación que fue ingresada por el usuario
+   function validarFechaPresentacion()
+   {
         
         var fecPresentacion = $.trim($$('txtFechaRegistro').val().replace("__/__/____", ""));
 
@@ -2012,9 +2016,9 @@
 
     }
 
-    //Función que valida el indicador de inscripción que fue ingresado por el usuario
-    function validarIndicadorInscripcion()
-    {
+   //Función que valida el indicador de inscripción que fue ingresado por el usuario
+   function validarIndicadorInscripcion()
+   {
         var fecPresentacion = $.trim($$('txtFechaRegistro').val().replace("__/__/____", ""));
         
         if(fecPresentacion.length > 0)
@@ -2215,9 +2219,9 @@
         }
     }
 
-    //Función que valida el porcentaje de aceptación que fue ingresado por el usuario
-    function ValidarPorcentajeAceptacion() 
-    {      
+   //Función que valida el porcentaje de aceptación que fue ingresado por el usuario
+   function ValidarPorcentajeAceptacion() 
+   {      
         
         var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();      
 
@@ -2460,9 +2464,10 @@
     }
 
     
-//Función que permite hacer el llamado asíncrono al método que permite calcular el monto mitigador
-//Siebel 1-23914481. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
-function CalcularMontoMitigador() {
+   //Función que permite hacer el llamado asíncrono al método que permite calcular el monto mitigador
+   //Siebel 1-23914481. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
+   function CalcularMontoMitigador() 
+   {
     
     var pageUrl = 'frmGarantiasReales.aspx'; 
     var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
@@ -2481,13 +2486,14 @@ function CalcularMontoMitigador() {
     });
 }
 
-function OnSuccess(response) { 
+   function OnSuccess(response) 
+   { 
    $$('txtMontoMitigadorCalculado').val(response);
 }
 
-//Función que permite mostrar el mensaje de error cuando la fecha de prescripción es menor a la de constitución, presentación, valuación y/o vencimiento
-function MensajeFechaPrescripcionMenor()
-{
+   //Función que permite mostrar el mensaje de error cuando la fecha de prescripción es menor a la de constitución, presentación, valuación y/o vencimiento
+   function MensajeFechaPrescripcionMenor()
+   {
     if(typeof($MensajeFechaPrescripcionMenor) !== 'undefined')
     { 
         //Función que muestra el mensaje de alerta cuando la fecha de prescripción es inválida, por ser menor a la fecha de constitución, presentación, valuación y vencimiento
@@ -2516,10 +2522,9 @@ function MensajeFechaPrescripcionMenor()
     }
 }
 
-
-//Muestra el mensaje de la inconsistencia correspondiente al monto mitigador cuando este tiene un faltante
-function MensajeMontoMitigadorMenor()
-{
+   //Muestra el mensaje de la inconsistencia correspondiente al monto mitigador cuando este tiene un faltante
+   function MensajeMontoMitigadorMenor()
+   {
     if(typeof($MensajeCalculoMontoMitigadorMenor) !== 'undefined')
     { 
         if(($$('btnValidarOperacion').attr("MMC")).length > 0) 
@@ -2559,11 +2564,9 @@ function MensajeMontoMitigadorMenor()
     }
 }
 
-	
-
-//Muestra el mensaje de la inconsistencia correspondiente al monto mitigador cuando este tiene un sobrante
-function MensajeMontoMitigadorMayor()
-{
+   //Muestra el mensaje de la inconsistencia correspondiente al monto mitigador cuando este tiene un sobrante
+   function MensajeMontoMitigadorMayor()
+   {
     if(typeof($MensajeCalculoMontoMitigadorMayor) !== 'undefined')
     { 
         if(($$('btnValidarOperacion').attr("MMC")).length > 0) 
@@ -2602,11 +2605,11 @@ function MensajeMontoMitigadorMayor()
     }
 }
 
-//Fin del Siebel 1-23914481. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
+   //Fin del Siebel 1-23914481. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
 
-    //Función que presenta el mensaje en caso de que no exista la fecha de valuación del SICC
-    function MensajeFechaValuacionNoExiste()
-    {
+   //Función que presenta el mensaje en caso de que no exista la fecha de valuación del SICC
+   function MensajeFechaValuacionNoExiste()
+   {
         if(typeof($MensajeFechaAvaluoNoExisteSICC) !== 'undefined')
         { 
             if(($$('btnValidarOperacion').attr("LDG")).length > 0) 
@@ -2637,21 +2640,22 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-    //Permite ejecutar el evento del botón Modificar, esto del lado del servidor
-    function DoHiddenFieldPostBack() 
-    { 
+   //Permite ejecutar el evento del botón Modificar, esto del lado del servidor
+   function DoHiddenFieldPostBack() 
+   { 
         eval($$('hdnBtnPostback').val());
     } 
 
-    //Función que permite modificar el cursor
-    function CargarPagina()
-    {
+   //Función que permite modificar el cursor
+   function CargarPagina()
+   {
         document.body.style.cursor = 'wait';
         return true;
     }
 
-    //Función que permite obtener la diferencia en entre dos fechas
-    function getDateDiff(date1, date2, interval) {
+   //Función que permite obtener la diferencia en entre dos fechas
+   function getDateDiff(date1, date2, interval) 
+   {
         var second = 1000,
         minute = second * 60,
         hour = minute * 60,
@@ -2682,12 +2686,12 @@ function MensajeMontoMitigadorMayor()
         }
    }
     
-    /* VALIDACIONES DE LOS DATOS DEL AVALUO */ 
+   /* VALIDACIONES DE LOS DATOS DEL AVALUO */ 
            
-    //Función que muestra el mensaje de alerta cuando los datos del avalúo más reciente son diferentes a los registrados en el SICC
-    //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
-    function MostrarErrorDatosAvaluoInvalidos(listaOperacionesRelacionadas, listaContratosRelacionados)
-    {
+   //Función que muestra el mensaje de alerta cuando los datos del avalúo más reciente son diferentes a los registrados en el SICC
+   //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
+   function MostrarErrorDatosAvaluoInvalidos(listaOperacionesRelacionadas, listaContratosRelacionados)
+   {
         var $mensaje = '';
         var mostrarMensaje = false;
         
@@ -2811,14 +2815,12 @@ function MensajeMontoMitigadorMayor()
         }
     }
     
-  
-  
-      /* VALIDACIONES DE LOS DATOS DE LA POLIZA */ 
+   /* VALIDACIONES DE LOS DATOS DE LA POLIZA */ 
            
-    //Función que muestra el mensaje de alerta cuando el monto de la póliza no cubre el bien en garantía, usando la última satación del no terreno.
-    //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
-    function MostrarErrorInfraSeguros(listaOperacionesRelacionadas, listaContratosRelacionados)
-    {
+   //Función que muestra el mensaje de alerta cuando el monto de la póliza no cubre el bien en garantía, usando la última satación del no terreno.
+   //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
+   function MostrarErrorInfraSeguros(listaOperacionesRelacionadas, listaContratosRelacionados)
+   {
         var $mensaje = '';
         var mostrarMensaje = false;
         
@@ -2977,11 +2979,10 @@ function MensajeMontoMitigadorMayor()
         }
     }
   
-
-    //Función que muestra el mensaje de alerta cuando el monto de la acreencia de una miema garantía y póliza es diferente en las relaciones con diferentes operaciones.
-    //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
-    function MostrarErrorMontoAcreenciaDiferente(listaOperacionesRelacionadas, listaContratosRelacionados)
-    {
+   //Función que muestra el mensaje de alerta cuando el monto de la acreencia de una miema garantía y póliza es diferente en las relaciones con diferentes operaciones.
+   //El formato de los que posee la variable de entrada debe ser: Contabilidad - Oficina - Moneda - Producto - Operación y finalizar con el tag html '<br />'
+   function MostrarErrorMontoAcreenciaDiferente(listaOperacionesRelacionadas, listaContratosRelacionados)
+   {
         var $mensaje = '';
         var mostrarMensaje = false;
         
@@ -3138,10 +3139,8 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-
-
-    function ModificarGarantia() 
-    {
+   function ModificarGarantia() 
+   {
 
         if((($$('btnValidarOperacion').attr("CARGAINICIAL")) == '0') 
               && (($$('btnValidarOperacion').attr("MEMM")) == '1') 
@@ -3160,10 +3159,10 @@ function MensajeMontoMitigadorMayor()
             __doPostBack('btnModificar','Metodo');
         }
     }
-
-    
-    //CONTROL DEL TIPO ACORDEON DEL DETALLE DEL AVALUO
-    function MostrarAvaluoReal(habilitarControl){
+ 
+   //CONTROL DEL TIPO ACORDEON DEL DETALLE DEL AVALUO
+   function MostrarAvaluoReal(habilitarControl)
+   {
     
         var panelActivado = parseInt((($$('hdnIndiceAccordionActivo').val() != null) ? $$('hdnIndiceAccordionActivo').val() : "-1"));   
         var activarPanel = parseInt((($$('hdnHabilitarValuacion').val() != null) ? $$('hdnHabilitarValuacion').val() : "0"));
@@ -3218,10 +3217,11 @@ function MensajeMontoMitigadorMayor()
                              }
                           }
         });
-    };
+    }
     
-    //CONTROL DEL TIPO ACORDEON DEL DETALLE DE LA POLIZA
-    function MostrarPoliza(habilitarControl) {
+   //CONTROL DEL TIPO ACORDEON DEL DETALLE DE LA POLIZA
+   function MostrarPoliza(habilitarControl) 
+   {
 
         var panelActivado = parseInt((($$('hdnIndiceAccordionPolizaActivo').val() != null) ? $$('hdnIndiceAccordionPolizaActivo').val() : "-1"));
         var activarPanel = parseInt((($$('hdnHabilitarPoliza').val() != null) ? $$('hdnHabilitarPoliza').val() : "0"));
@@ -3274,9 +3274,9 @@ function MensajeMontoMitigadorMayor()
         }
     }   
     
-    //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
-    function HabilitarAvaluoReal(habiltarControl)
-    {
+   //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
+   function HabilitarAvaluoReal(habiltarControl)
+   {
         if(habiltarControl)
         {
             $( "#accordion" ).accordion( "enable" );
@@ -3289,9 +3289,9 @@ function MensajeMontoMitigadorMayor()
         }
     }
     
-    //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DE LA POLIZA
-    function HabilitarPoliza(habiltarControl)
-    {
+   //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DE LA POLIZA
+   function HabilitarPoliza(habiltarControl)
+   {
         if(habiltarControl)
         {
             $( "#accPoliza" ).accordion( "enable" );
@@ -3304,21 +3304,21 @@ function MensajeMontoMitigadorMayor()
         }
     }
     
-    //DESHABILITA Y RETRAE EL CONTROL ACORDEON DEL AVALUO DE GARANTIAS REALES
-    function ContraerAvaluo()
-    {  
+   //DESHABILITA Y RETRAE EL CONTROL ACORDEON DEL AVALUO DE GARANTIAS REALES
+   function ContraerAvaluo()
+   {  
         $$('hdnIndiceAccordionActivo').val("-1");
     }
  
-     //DESHABILITA Y RETRAE EL CONTROL ACORDEON DE LA POLIZA DE GARANTIAS REALES
-    function ContraerPoliza()
-    {  
+   //DESHABILITA Y RETRAE EL CONTROL ACORDEON DE LA POLIZA DE GARANTIAS REALES
+   function ContraerPoliza()
+   {  
         $$('hdnIndiceAccordionPolizaActivo').val("-1");
     }
    
-    //Función que permite calcular la fecha de prescripción y actualizar este valor en el campo respectivo
-    function ActualizarFechaPrescripcion()
-    {
+   //Función que permite calcular la fecha de prescripción y actualizar este valor en el campo respectivo
+   function ActualizarFechaPrescripcion()
+   {
         if(($$('btnValidarOperacion').attr("ANNOS_CFP")) != null)
         {
             var annosCFP = parseInt(($$('btnValidarOperacion').attr("ANNOS_CFP")));
@@ -3352,15 +3352,15 @@ function MensajeMontoMitigadorMayor()
         }
     }
     
-    //Función que asigna la lista de semestres que deberán ser evaluados en el cáclulo
-    function AsignarListaSemestres(listaSemestEval)
-    {
+   //Función que asigna la lista de semestres que deberán ser evaluados en el cáclulo
+   function AsignarListaSemestres(listaSemestEval)
+   {
         $listaSemestreEvaluar = listaSemestEval;
     }
 
-    //Función que se encargará de habilitar el monto mitigador cuando se ha ingresado un avalúo, esto en caso de que el mismo no exista.
-    function HabilitarCampoMontoMitigador(numeroCampoIngresado)
-    {
+   //Función que se encargará de habilitar el monto mitigador cuando se ha ingresado un avalúo, esto en caso de que el mismo no exista.
+   function HabilitarCampoMontoMitigador(numeroCampoIngresado)
+   {
         $$('txtMontoMitigador').attr('disabled', 'disabled');
 
         var habilitarCampo = true;
@@ -3392,9 +3392,9 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-    //Función que se encargará de verificar si se ha ingresado la información básica del avalúo.
-    function ValidarExistenciaAvaluo() 
-    {       
+   //Función que se encargará de verificar si se ha ingresado la información básica del avalúo.
+   function ValidarExistenciaAvaluo() 
+   {       
         var habilitarCampo = true;
         var valuadorEmpresa = parseInt((($$('cbEmpresa').val().length > 0) ? $$('cbEmpresa').val() : '-1'));
         var valuadorPerito = parseInt((($$('cbPerito').val().length > 0) ? $$('cbPerito').val() : '-1'));
@@ -3421,9 +3421,10 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-    //Función que permite hacer el llamado asíncrono al método que permite calcular el monto de la tasación actualizada dle terreno y no terreno calculado
-    //Siebel 1-24077731. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 29/11/2013.
-    function CalcularMontoTAT_TANT() {
+   //Función que permite hacer el llamado asíncrono al método que permite calcular el monto de la tasación actualizada dle terreno y no terreno calculado
+   //Siebel 1-24077731. Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 29/11/2013.
+   function CalcularMontoTAT_TANT() 
+   {
         
         var pageUrl = 'frmGarantiasReales.aspx'; 
         var datoMontoUltTasTerr = (($$('txtMontoUltTasacionTerreno').val().length > 0) ? $$('txtMontoUltTasacionTerreno').val() : '');
@@ -3449,7 +3450,8 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-    function calculoExitoso(response) { 
+   function calculoExitoso(response) 
+   { 
     
        if(response.length > 1)
        {
@@ -3510,15 +3512,15 @@ function MensajeMontoMitigadorMayor()
        ValidarPorcentajeAceptacionCalculado();
     }
     
-    //Función que asigna la lista de semestres que deberán ser evaluados en el cáclulo
-    function AsignarListaPolizasSap(listaPolizasSap)
-    {
+   //Función que asigna la lista de semestres que deberán ser evaluados en el cáclulo
+   function AsignarListaPolizasSap(listaPolizasSap)
+   {
         $listaPolizas = listaPolizasSap;
     }
     
-    //Limpia los campos de las pólizas
-    function LimpiarCamposPolizas()
-    {
+   //Limpia los campos de las pólizas
+   function LimpiarCamposPolizas()
+   {
         $$('txtMontoPoliza').val('');
         $$('cbMonedaPoliza').val('-1');
         $$('txtFechaVencimientoPoliza').val('');
@@ -3539,9 +3541,9 @@ function MensajeMontoMitigadorMayor()
         $$('ckbPolizaExterna').attr('checked', false);
     }
 
-    //Se carga la información de la póliza seleccionada
-    function cargarDatosPoliza()
-    {
+   //Se carga la información de la póliza seleccionada
+   function cargarDatosPoliza()
+   {
          var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
          var formarOpcion = '';
          var catidadFilasCPA = 0;
@@ -3669,9 +3671,9 @@ function MensajeMontoMitigadorMayor()
         ValidarPorcentajeAceptacionCalculado();
     }
 
-
-    //Se carga la información de la póliza seleccionada
-    function cargarPoliza(arregloPolizas) {
+   //Se carga la información de la póliza seleccionada
+   function cargarPoliza(arregloPolizas) 
+   {
         var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
         var formarOpcion = '';
         var catidadFilasCPA = 0;
@@ -3786,8 +3788,9 @@ function MensajeMontoMitigadorMayor()
         ValidarPorcentajeAceptacionCalculado();
     }
 
-    //Función que se encarga de pintar el recuadro de si la póliza es vigente o no
-    function IndicarPolizaViegente(codigoIndicador) {
+   //Función que se encarga de pintar el recuadro de si la póliza es vigente o no
+   function IndicarPolizaViegente(codigoIndicador) 
+   {
 
         var codigoIndicadorUsar = ((codigoIndicador === undefined) ? '-1' : codigoIndicador);
 
@@ -3819,8 +3822,9 @@ function MensajeMontoMitigadorMayor()
         }
     }
 
-    //Función que muestra el mensaje de alerta cuando se inserta un registro ya existente en el tipo de Poliza y Bien Relacionado
-    function MensajeTipoBienRelacionadoDuplicado() {
+   //Función que muestra el mensaje de alerta cuando se inserta un registro ya existente en el tipo de Poliza y Bien Relacionado
+   function MensajeTipoBienRelacionadoDuplicado() 
+   {
         var $mensaje = '';
 
         var tipoPolizaSap = $$('cbTipoPolizaSap').find(":selected").text();
@@ -3872,10 +3876,9 @@ function MensajeMontoMitigadorMayor()
         $mensaje.dialog('open');
     }
 
-     
-    //Se aplica las validaciones del requerimiento
-    function ValidarPorcentajeAceptacionCalculado() 
-    {
+   //Se aplica las validaciones del requerimiento
+   function ValidarPorcentajeAceptacionCalculado() 
+   {
 
         var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : '-1'));    
         var tipoBien = parseInt((($$('cbTipoBien').val() != null) ? $$('cbTipoBien').val() : "-1"));
