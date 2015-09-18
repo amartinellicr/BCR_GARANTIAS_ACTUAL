@@ -8,8 +8,8 @@
         <contenttemplate>
             <div>
 		        <table style="width: 880px; background-color:Window;" cellspacing="1" cellpadding="1" width="875" align="center" border="0">
-                    <tr>
-                        <td style="border-color:#E0E0DF; border-width:0px;">
+                    <tr style="border-color:#E0E0DF; border-width:0px;">
+                        <td>
 			                <div id="contenedorDatosModificacion" runat="server" enableviewstate="true" style="clear:both; width:880px; border-color:#E0E0DF; background-color:#E0E0DF; padding-left:7px; padding-right:7px;">
                                 <div style="text-align:left; width:540px; float:left; display:inline; background-color:transparent; border-color:transparent;">
                                     <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label>
@@ -17,7 +17,7 @@
                                 <div style="text-align:right; width:320px; float:right; display:inline; background-color:transparent; border-color:transparent;">
                                     <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
                                 </div>
-                                <div style="text-align:right; width:860px; float:right; display:block; background-color:transparent; border-color:transparent;">
+                                <div style="text-align:right; float:right; display:block; background-color:transparent; border-color:transparent;">
                                     <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>
                                 </div>
 			                </div> 
