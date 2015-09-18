@@ -21,3 +21,9 @@ GRANT SELECT ON sap.vwsgrcontratocredito TO AccesoGarantias
 GO
 GRANT SELECT ON sap.sgrpolizaotro TO AccesoGarantias
 GO
+GRANT SELECT ON sap.sgrcobertura TO AccesoGarantias
+GO
+GRANT SELECT ON sap.vwsgrtipopoliza TO AccesoGarantias
+GO
+GRANT SELECT ON sap.vwrsgsgrcoberturapoliza TO AccesoGarantias
+GO

@@ -7,7 +7,7 @@ CREATE TABLE dbo.BCR_OFICINAS
 	COD_INDICADOR         tinyint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -17,7 +17,7 @@ CREATE TABLE dbo.CAT_CATALOGO
 	cat_descripcion       varchar(100)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -29,7 +29,7 @@ CREATE TABLE dbo.CAT_ELEMENTO
 	cat_descripcion       varchar(150)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -46,25 +46,25 @@ CREATE TABLE dbo.CAT_INDICES_ACTUALIZACION_AVALUO
 		CHECK  ( [Indice_Precios_Consumidor] > 0 ) 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará los índices que serán utilizados para el cáculo de los montos de las tasaciones actualizadas del terreno y no terreno.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará los índices que serán utilizados para el cáculo de los montos de las tasaciones actualizadas del terreno y no terreno.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO'
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo permitirá almacenar la fecha y hora en que se produjo el registro de la información.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Fecha_Hora'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo permitirá almacenar la fecha y hora en que se produjo el registro de la información.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Fecha_Hora'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el tipo de cambio del día.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Tipo_Cambio'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el tipo de cambio del día.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Tipo_Cambio'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el índice de precios al consumidor.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Indice_Precios_Consumidor'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el índice de precios al consumidor.' , 'user' , 'dbo' , 'table' , 'CAT_INDICES_ACTUALIZACION_AVALUO', 'column' , 'Indice_Precios_Consumidor'
+GO
 
 
 
@@ -74,7 +74,7 @@ CREATE TABLE dbo.CAT_INSTRUMENTOS
 	des_instrumento       varchar(150)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -83,7 +83,7 @@ CREATE TABLE dbo.CAT_ISIN
 	cod_isin              varchar(25)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -105,7 +105,7 @@ CREATE TABLE dbo.GAR_BITACORA
 	est_actual_campo_afectado  varchar(100)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -117,7 +117,7 @@ CREATE TABLE dbo.GAR_CAPACIDAD_PAGO
 	sensibilidad_tipo_cambio  decimal(5,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -141,7 +141,7 @@ CREATE TABLE dbo.GAR_DEUDOR
 	Identificacion_Sicc DECIMAL(12, 0) NULL
 )
  ON "PRIMARY"
-go
+GO
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación del deudor registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_DEUDOR', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
 GO
@@ -154,7 +154,7 @@ CREATE TABLE dbo.GAR_EJECUCION_PROCESO
 	fecEjecucion          datetime  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -169,7 +169,7 @@ CREATE TABLE dbo.GAR_EJECUCION_PROCESO_DETALLE
 	indError              bit  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -187,7 +187,7 @@ CREATE TABLE dbo.GAR_EMPRESA
 	tipo_id_sugef         numeric(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -212,7 +212,7 @@ CREATE TABLE dbo.GAR_GARANTIA_FIDUCIARIA
 	Fecha_Replica DATETIME NULL	
 )
  ON "PRIMARY"
-go
+GO
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación del fiador registrado en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_FIDUCIARIA', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
 GO
@@ -305,7 +305,7 @@ CREATE TABLE dbo.GAR_GARANTIA_VALOR
 	Fecha_Replica DATETIME NULL	 
 )
  ON "PRIMARY"
-go
+GO
 
 EXEC dbo.sp_addextendedproperty @name=N'MS_Description', @value=N'Este campo alamacenará la identificación de la seguridad registrada en el SICC.' , @level0type=N'USER',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'GAR_GARANTIA_VALOR', @level2type=N'COLUMN',@level2name=N'Identificacion_Sicc'
 GO
@@ -343,7 +343,7 @@ CREATE TABLE dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION
 	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
-go
+GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Usuario_Modifico'
 GO
@@ -388,10 +388,10 @@ CREATE TABLE dbo.GAR_GARANTIAS_REALES_X_OPERACION
 	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
-go
+GO
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del avalúo registrada en el SICC.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Valuacion_SICC'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del avalúo registrada en el SICC.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Valuacion_SICC'
+GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Usuario_Modifico'
 GO
@@ -431,7 +431,7 @@ CREATE TABLE dbo.GAR_GARANTIAS_VALOR_X_OPERACION
 	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
-go
+GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Usuario_Modifico'
 GO
@@ -453,7 +453,7 @@ CREATE TABLE dbo.GAR_GARANTIAS_X_GIRO
 	cod_tipo_garantia     smallint  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -463,7 +463,7 @@ CREATE TABLE dbo.GAR_GARANTIAS_x_PERFIL_X_TARJETA
 	observaciones         varchar(250)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -492,7 +492,7 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_FIDUCIARIAS
 	cod_estado_tarjeta    varchar(1)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -545,7 +545,7 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_REALES
 		 DEFAULT  newid() 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -589,7 +589,7 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_VALOR
 	oficina_deudor        smallint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -599,7 +599,7 @@ CREATE TABLE dbo.GAR_MIG_DEUDORES
 	DeudorCodeudor_cod_iddeudor  varchar(30)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -623,7 +623,7 @@ CREATE TABLE dbo.GAR_OPERACION
 	cod_oficon            smallint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -642,7 +642,7 @@ CREATE TABLE dbo.GAR_PERITO
 	tipo_id_sugef         numeric(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -652,7 +652,7 @@ CREATE TABLE dbo.GAR_PROCESO
 	desProceso            varchar(60)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -674,7 +674,7 @@ CREATE TABLE dbo.GAR_SICC_BSMCL
 	bsmcl_sseclict        tinyint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -714,7 +714,7 @@ CREATE TABLE dbo.GAR_SICC_BSMPC
 	bsmpc_tmo4ind09       decimal(13,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -729,7 +729,7 @@ CREATE TABLE dbo.GAR_SICC_PRHCS
 	prhcs_pfe_regis       int  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -773,7 +773,7 @@ CREATE TABLE dbo.GAR_SICC_PRMCA
 	prmca_ptataspis       decimal(6,3)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -806,7 +806,7 @@ CREATE TABLE dbo.GAR_SICC_PRMGT
 	prmgt_pse_adic1       tinyint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -896,7 +896,7 @@ CREATE TABLE dbo.GAR_SICC_PRMOC
 	prmoc_scoejecue       decimal(12)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -930,7 +930,7 @@ CREATE TABLE dbo.GAR_SICC_PRMRI
 	prmri_scoidedue       numeric(12)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -958,7 +958,7 @@ CREATE TABLE dbo.GAR_SICC_PRMSC
 	prmsc_psesercon       tinyint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -975,7 +975,7 @@ CREATE TABLE dbo.GAR_VALUACIONES_FIADOR
 	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
-go
+GO
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_FIADOR', 'column' , 'Usuario_Modifico'
 GO
 
@@ -1019,25 +1019,25 @@ CREATE TABLE dbo.GAR_VALUACIONES_REALES
 	Fecha_Replica DATETIME NULL	  
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Indica el tipo de fecha según la siguiente clasificación:
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica el tipo de fecha según la siguiente clasificación:
 0: El registro es parte del histórico. Este es el valor por defecto del registro.
 1: El registro corresponde al avalúo más reciente.
 2: El registro corresponde al penúltimo avalúo.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Indicador_Tipo_Registro'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Indica si el monto de la tasación actualizada del no terreno fue actualizado por el proceso del cálculo. 
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el monto de la tasación actualizada del no terreno fue actualizado por el proceso del cálculo. 
 Tiene sentido si el valor del campo "Indicador_Tipo_Registro" tiene el valor 1 (uno). Los posibles valores son:
 0: No fue actualizado. Este es el v' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Indicador_Actualizado_Calculo'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del semestre calculado.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Semestre_Calculado'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo alamacenará la fecha del semestre calculado.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Semestre_Calculado'
+GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que realizó la última modificación.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Usuario_Modifico'
 GO
@@ -1065,7 +1065,7 @@ CREATE TABLE dbo.RPT_AVANCE_CONTRATOS_X_OFICINA_CLIENTE
 	porcentaje_total_contratos_pendientes  decimal(5,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1081,7 +1081,7 @@ CREATE TABLE dbo.RPT_AVANCE_OPERACION_X_OFICINA_CLIENTE
 	porcentaje_total_operaciones_pendientes  decimal(5,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1112,7 +1112,7 @@ CREATE TABLE dbo.RPT_AVANCE_X_OFICINA_CLIENTE
 	porcentaje_total_garantias_valor_pendientes  decimal(5,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1143,7 +1143,7 @@ CREATE TABLE dbo.RPT_CONTRATOS_AVANCE_X_OFICINA_CLIENTE
 	porcentaje_total_garantias_valor_pendientes  decimal(5,2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1158,7 +1158,7 @@ CREATE TABLE dbo.RPT_CONTRATOS_DETALLE_X_GARANTIA
 	pendiente             varchar(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1177,7 +1177,7 @@ CREATE TABLE dbo.RPT_DETALLE_X_CONTRATO
 	pendiente             varchar(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1192,7 +1192,7 @@ CREATE TABLE dbo.RPT_DETALLE_X_GARANTIA
 	pendiente             varchar(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1213,7 +1213,7 @@ CREATE TABLE dbo.RPT_DETALLE_X_OPERACION
 	pendiente             varchar(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1223,7 +1223,7 @@ CREATE TABLE dbo.SEG_PERFIL
 	DES_PERFIL            varchar(100)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1234,7 +1234,7 @@ CREATE TABLE dbo.SEG_ROL
 	NOMBRE                varchar(100)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1244,7 +1244,7 @@ CREATE TABLE dbo.SEG_ROLES_X_PERFIL
 	COD_ROL               int  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1255,7 +1255,7 @@ CREATE TABLE dbo.SEG_USUARIO
 	COD_PERFIL            int  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1267,7 +1267,7 @@ CREATE TABLE dbo.TAR_BIN_SISTAR
 		 DEFAULT  CURRENT_TIMESTAMP 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1282,7 +1282,7 @@ CREATE TABLE dbo.TAR_GARANTIA_FIDUCIARIA
 	ruc_cedula_fiador     varchar(30)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1302,7 +1302,7 @@ CREATE TABLE dbo.TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA
 	des_observacion       varchar(150)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1312,7 +1312,7 @@ CREATE TABLE dbo.TAR_GARANTIAS_X_PERFIL_X_TARJETA
 	observaciones         varchar(250)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1333,12 +1333,12 @@ CREATE TABLE dbo.TAR_TARJETA
 		 DEFAULT  'H' 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Codigo del tipo de garantía que le ha sido asignada' , 'user' , 'dbo' , 'table' , 'TAR_TARJETA', 'column' , 'cod_tipo_garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Codigo del tipo de garantía que le ha sido asignada' , 'user' , 'dbo' , 'table' , 'TAR_TARJETA', 'column' , 'cod_tipo_garantia'
+GO
 
 
 
@@ -1354,7 +1354,7 @@ CREATE TABLE dbo.TAR_TARJETA_SICC
 	cod_oficina_registra  smallint  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1366,7 +1366,7 @@ CREATE TABLE dbo.TAR_TARJETA_SISTAR
 	codigo_interno        int  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1386,7 +1386,7 @@ CREATE TABLE dbo.TMP_ARCHIVO_CONTRATOS
 	cod_usuario           varchar(30)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1419,113 +1419,113 @@ CREATE TABLE dbo.TMP_CALCULO_MTAT_MTANT
 	Usuario               varchar(30)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Esta tabla alamcenará, de forma temporal, los registros generados por el cálculo del monto de la tasación actualizada del terreno y no terreno. Cada registro corresponde a un semestre.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla alamcenará, de forma temporal, los registros generados por el cálculo del monto de la tasación actualizada del terreno y no terreno. Cada registro corresponde a un semestre.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT'
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la fecha y hora en que se incluye el registro.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Fecha_Hora'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la fecha y hora en que se incluye el registro.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Fecha_Hora'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la identificación de la garantía, según el tipo de garantía real:
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la identificación de la garantía, según el tipo de garantía real:
 
 i. Hipoteca Común: Partido-Finca.
 ii. Cédula Hipotecaria: Partido-Finca.
 iii. Prenda: Clase de bien-Placa.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Id_Garantia'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el tipo de garantía real de la que se trata, a saber:
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el tipo de garantía real de la que se trata, a saber:
 
 i. Hipoteca Común: 1.
 ii. Cédula Hipotecaria: 2.
 iii. Prenda: 3.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Garantia_Real'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Clase_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Clase_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará la fecha correspondiente al semestre calculado.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Semestre_Calculado'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará la fecha correspondiente al semestre calculado.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Semestre_Calculado'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo alamcenará la fecha del avalúo calculado.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Fecha_Valuacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo alamcenará la fecha del avalúo calculado.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Fecha_Valuacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el monto de la última tasación del terreno.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Ultima_Tasacion_Terreno'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el monto de la última tasación del terreno.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Ultima_Tasacion_Terreno'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el monto de la última tasación del no terreno.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Ultima_Tasacion_No_Terreno'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el monto de la última tasación del no terreno.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Ultima_Tasacion_No_Terreno'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de cambio usado para el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Cambio'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de cambio usado para el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Cambio'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el índice de precios al consumidor usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Indice_Precios_Consumidor'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el índice de precios al consumidor usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Indice_Precios_Consumidor'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de cambio usado para el cálculo del semestre anterior. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Cambio_Anterior'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de cambio usado para el cálculo del semestre anterior. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Cambio_Anterior'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el índice de precios al consumidor usado por el cálculo del semestre anterior. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Indice_Precios_Consumidor_Anterior'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el índice de precios al consumidor usado por el cálculo del semestre anterior. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Indice_Precios_Consumidor_Anterior'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el factor del tipo de cambio usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Factor_Tipo_Cambio'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el factor del tipo de cambio usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Factor_Tipo_Cambio'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el factor del índice de precios al consumidor usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Factor_IPC'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el factor del índice de precios al consumidor usado por el cálculo. Se define el valor -1 como valor por defecto, este es el equivalente al valor nulo.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Factor_IPC'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo guardará el porcentaje de depreciación semestral usado por el cáclulo del monto.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Porcentaje_Depreciacion_Semestral'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo guardará el porcentaje de depreciación semestral usado por el cáclulo del monto.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Porcentaje_Depreciacion_Semestral'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el monto de la tasación actualizada del terrneo calculado, producto de la aplicación de la fórmula correspondiente.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Tasacion_Actualizada_Terreno'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el monto de la tasación actualizada del terrneo calculado, producto de la aplicación de la fórmula correspondiente.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Tasacion_Actualizada_Terreno'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el monto de la tasación actualizada del no terrneo calculado, producto de la aplicación de la fórmula correspondiente.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Tasacion_Actualizada_No_Terreno'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el monto de la tasación actualizada del no terrneo calculado, producto de la aplicación de la fórmula correspondiente.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Monto_Tasacion_Actualizada_No_Terreno'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el número de registro, para una misma garantía y una misma operación.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Numero_Registro'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el número de registro, para una misma garantía y una misma operación.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Numero_Registro'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo asignado a la operación al cual esta asociada la garantía real cuya valuación será trabajada.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Codigo_Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo asignado a la operación al cual esta asociada la garantía real cuya valuación será trabajada.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Codigo_Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo asignado a la garantía real cuya valuación será trabajada.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Codigo_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo asignado a la garantía real cuya valuación será trabajada.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Codigo_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de bien asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará el tipo de bien asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Tipo_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Cantidad total de semestres que serán calculados.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Total_Semestres_Calcular'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Cantidad total de semestres que serán calculados.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Total_Semestres_Calcular'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la identificación del usuario que ejecuta el cálculo del monto. En el caso del proceso diario se asigna el valor "UsuarioBD".' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Usuario'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la identificación del usuario que ejecuta el cálculo del monto. En el caso del proceso diario se asigna el valor "UsuarioBD".' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Usuario'
+GO
 
 
 
@@ -1547,7 +1547,7 @@ CREATE TABLE dbo.TMP_GAR_CONTRATOS
 		 DEFAULT  1 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1585,7 +1585,7 @@ CREATE TABLE dbo.TMP_GARANTIAS_FIDUCIARIAS
 	cod_llave             bigint  IDENTITY (1,1) 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1649,7 +1649,7 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES
 	cod_llave             bigint  IDENTITY (1,1) 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -1728,145 +1728,145 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES_OPERACIONES
 	Codigo_Usuario        varchar(30)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Almacenará las garantías a ser filtradas durante el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Almacenará las garantías a ser filtradas durante el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES'
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo llave del registro.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Llave'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo llave del registro.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Llave'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo de la garantía real.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Garantia_Real'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la garantía real.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Garantia_Real'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Contabilidad de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Contabilidad'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Contabilidad de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Contabilidad'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Oficina de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Oficina'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Oficina de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Oficina'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Moneda de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Moneda'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Moneda de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Moneda'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Producto de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Producto'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Producto de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Producto'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de operación o contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de operación o contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Mitigador'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Mitigador'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de documento legal.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Documento_Legal'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de documento legal.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Documento_Legal'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Indicador de inscripción.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Inscripcion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Indicador de inscripción.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Inscripcion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Tipo de garantía real, siendo los valores: 
+EXEC sp_addextendedproperty 'MS_Description' , 'Tipo de garantía real, siendo los valores: 
 1 = Hipoteca Común.
 2 = Cédula Hipotecaria.
 3 = Prenda.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Garantia_Real'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Estado del registro, siendo los valores: 1 = Activo y 2 = Inactivo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Estado'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Estado del registro, siendo los valores: 1 = Activo y 2 = Inactivo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Estado'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del grado de gravamen.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Grado_Gravamen'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del grado de gravamen.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Grado_Gravamen'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Clase_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Clase_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del partido donde se encuentra la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Partido'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del partido donde se encuentra la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Partido'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Tipo de garantía, por defecto el valor es 2.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Tipo de garantía, por defecto el valor es 2.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de operación, siendo los valores: 1 = Operación Directa, 2 = Contrato y 3 = Giro de Contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de operación, siendo los valores: 1 = Operación Directa, 2 = Contrato y 3 = Giro de Contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Tipo_Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código que indica si el registro se encuentra duplicado. Los valores son: 1 = Unico y 2 = Duplicado.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Indicador_Duplicidad'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código que indica si el registro se encuentra duplicado. Los valores son: 1 = Unico y 2 = Duplicado.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Indicador_Duplicidad'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Porcentaje de aceptación asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Porcentaje_Responsabilidad'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Porcentaje de aceptación asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Porcentaje_Responsabilidad'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Monto del mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Monto_Mitigador'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto del mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Monto_Mitigador'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Grado de la cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Grado'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Grado de la cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Grado'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código de la clase del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Clase_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Clase_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Cedula_Hipotecaria'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Cedula_Hipotecaria'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Identificación del bien.
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del bien.
 Este campo se compondrá de la siguiente forma, según el tipo de garantía real:
 
 a) Hipotecas comunes: Partido – Finca.
 b) Cédulas Hipotecarias: Partido – Finca.
 c) Prendas: clase de bien – placa del bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Bien'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Fecha de presentación de la garantía ante el Registro de la Propiedad.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Fecha_Presentacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de presentación de la garantía ante el Registro de la Propiedad.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Fecha_Presentacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Fecha de constitución de la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Fecha_Constitucion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de constitución de la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Fecha_Constitucion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Numero_Finca'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Numero_Finca'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de identificación del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Numero_Placa_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de identificación del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Numero_Placa_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Usuario'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Usuario'
+GO
 
 
 
@@ -1938,133 +1938,133 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES_X_OPERACION
 	Codigo_Usuario        varchar(30)  NOT NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Almacenará las garantías que serán validadas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Almacenará las garantías que serán validadas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION'
+GO
 
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Consecutivo de la garantía real.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Garantia_Real'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la garantía real.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Garantia_Real'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Contabilidad de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Contabilidad'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Contabilidad de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Contabilidad'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Oficina de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Oficina'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Oficina de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Oficina'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Moneda de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Moneda'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Moneda de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Moneda'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Producto de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Producto'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Producto de la operación, contrato o giro de contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Producto'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de operación o contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de operación o contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Mitigador'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Mitigador'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de documento legal.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Documento_Legal'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de documento legal.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Documento_Legal'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Indicador de inscripción.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Inscripcion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Indicador de inscripción.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Inscripcion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Tipo de garantía real, siendo los valores: 
+EXEC sp_addextendedproperty 'MS_Description' , 'Tipo de garantía real, siendo los valores: 
 1 = Hipoteca Común.
 2 = Cédula Hipotecaria.
 3 = Prenda.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Garantia_Real'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del grado de gravamen.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Grado_Gravamen'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del grado de gravamen.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Grado_Gravamen'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Clase_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase de garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Clase_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del partido donde se encuentra la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Partido'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del partido donde se encuentra la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Partido'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Tipo de garantía, por defecto el valor es 2.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Garantia'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Tipo de garantía, por defecto el valor es 2.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Garantia'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código del tipo de operación, siendo los valores: 1 = Operación Directa, 2 = Contrato y 3 = Giro de Contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Operacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de operación, siendo los valores: 1 = Operación Directa, 2 = Contrato y 3 = Giro de Contrato.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Tipo_Operacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Porcentaje de aceptación asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Porcentaje_Responsabilidad'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Porcentaje de aceptación asignado a la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Porcentaje_Responsabilidad'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Monto del mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Monto_Mitigador'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto del mitigador de riesgo.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Monto_Mitigador'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Grado de la cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Grado'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Grado de la cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Grado'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Código de la clase del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Clase_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Clase_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Cedula_Hipotecaria'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de cédula hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Cedula_Hipotecaria'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Identificación del bien.
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del bien.
 Este campo se compondrá de la siguiente forma, según el tipo de garantía real:
 
 a) Hipotecas comunes: Partido – Finca.
 b) Cédulas Hipotecarias: Partido – Finca.
 c) Prendas: clase de bien – placa del bien.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Bien'
-go
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Fecha de constitución de la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Constitucion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de constitución de la garantía.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Constitucion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Fecha de presentación de la garantía ante el Registro de la Propiedad.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Presentacion'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de presentación de la garantía ante el Registro de la Propiedad.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Presentacion'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Numero_Finca'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de la finca. Aplica para Hipoteca Común y Cédula Hipotecaria.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Numero_Finca'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Número de identificación del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Numero_Placa_Bien'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de identificación del bien. Aplica sólo para Prendas.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Numero_Placa_Bien'
+GO
 
 
-exec sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Usuario'
-go
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Usuario'
+GO
 
 
 
@@ -2122,7 +2122,7 @@ CREATE TABLE dbo.TMP_GARANTIAS_VALOR
 	cod_llave             bigint  IDENTITY (1,1) 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -2148,7 +2148,7 @@ CREATE TABLE dbo.TMP_OPERACIONES
 	cod_usuario           varchar(30)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -2166,7 +2166,7 @@ CREATE TABLE dbo.TMP_OPERACIONES_DUPLICADAS
 	cod_grado             varchar(2)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 
 
@@ -2192,7 +2192,7 @@ CREATE TABLE dbo.TMP_VALUACIONES_REALES
 	cod_usuario           varchar(30)  NULL 
 )
  ON "PRIMARY"
-go
+GO
 
 CREATE TABLE dbo.GAR_SICC_DAMHT
 (
@@ -2217,7 +2217,7 @@ CREATE TABLE dbo.GAR_SICC_DAMHT
 	damht_dva_camb decimal(10, 4) NULL
 ) ON "PRIMARY"
 
-go
+GO
 
 CREATE TABLE dbo.CAT_TIPOS_POLIZAS_SUGEF
 (
@@ -2309,7 +2309,11 @@ CREATE TABLE dbo.GAR_POLIZAS
 	Monto_Poliza_Colonizado  numeric(16,2)  NOT NULL 
 	CONSTRAINT DF_GAR_POLIZAS_MontoPolizaColonizado
 		 DEFAULT  0,
-	Indicador_Poliza_Externa  BIT  NULL	 
+	Indicador_Poliza_Externa  BIT  NULL,
+	Codigo_Partido  numeric(1,0)  NULL,
+	Identificacion_Bien  varchar(25)  NULL,
+	Codigo_Tipo_Cobertura  numeric(3,0)  NULL,
+	Codigo_Aseguradora  tinyint  NULL	 
 )
  ON "PRIMARY"
 GO
@@ -2404,6 +2408,18 @@ GO
 EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la póliza es externa (1) o no (0).' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Indicador_Poliza_Externa'
 GO
 
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del partido.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Codigo_Partido'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del bien.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Identificacion_Bien'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la aseguradora.' , 'user' , 'dbo' , 'table' , 'GAR_POLIZAS', 'column' , 'Codigo_Aseguradora'
+GO
+
 
 
 CREATE TABLE dbo.GAR_POLIZAS_RELACIONADAS
@@ -2487,7 +2503,11 @@ CREATE TABLE dbo.TMP_POLIZAS
 	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL,
 	Fecha_Replica	DATETIME NULL,
 	Registro_Activo BIT NULL,
-	Indicador_Poliza_Externa  BIT  NULL	
+	Indicador_Poliza_Externa  BIT  NULL,
+	Codigo_Partido  numeric(1,0)  NULL,
+	Identificacion_Bien  varchar(25)  NULL,
+	Codigo_Tipo_Cobertura  numeric(3,0)  NULL,
+	Codigo_Aseguradora  tinyint  NULL
 )
  ON "PRIMARY"
 GO
@@ -2565,6 +2585,19 @@ GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la póliza es externa (1) o no (0).' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Indicador_Poliza_Externa'
 GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del partido.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Partido'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del bien.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Identificacion_Bien'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la aseguradora.' , 'user' , 'dbo' , 'table' , 'TMP_POLIZAS', 'column' , 'Codigo_Aseguradora'
+GO
+
 
 CREATE TABLE [dbo].[CAT_PORCENTAJE_ACEPTACION](
 	[Codigo_Porcentaje_Aceptacion] [int] IDENTITY(1,1) NOT NULL,
@@ -2746,7 +2779,11 @@ CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZA(
 	conaseguradora TINYINT NULL,
 	nomaseguradora VARCHAR(60) NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
 ) ON [PRIMARY]
 
 GO
@@ -2776,7 +2813,11 @@ CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO(
 	Es_Giro BIT NOT NULL,
 	Consecutivo_Contrato BIGINT NOT NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
 ) ON [PRIMARY]
 
 GO
@@ -2795,7 +2836,11 @@ CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO(
 	conmoneda NUMERIC(3, 0)  NOT NULL,
 	coccontratocredito VARCHAR(10) NOT NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
 ) ON [PRIMARY]
 
 GO
@@ -2843,7 +2888,11 @@ CREATE TABLE dbo.TMP_SAP_VWSGRPOLIZAAUTO(
 	destipocombustion VARCHAR(60) NOT NULL,
 	desmodalidadaseguramiento VARCHAR(11) NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL 
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL 
 ) ON [PRIMARY]
 
 GO
@@ -2860,7 +2909,11 @@ CREATE TABLE dbo.TMP_SAP_SGRPOLIZAOTRO(
 	desobservacion VARCHAR(1500) NULL,
 	cocplaca VARCHAR(15) NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL  
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
 ) ON [PRIMARY]
 
 GO 
@@ -2911,7 +2964,11 @@ CREATE TABLE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL(
 	desdistrito VARCHAR(45) NOT NULL,
 	destipopoliza VARCHAR(60) NOT NULL,
 	Fecha_Replica DATETIME NULL,
-	Registro_Activo BIT NULL 
+	Registro_Activo BIT NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL 
 ) ON [PRIMARY]
 
 GO 
@@ -2972,3 +3029,276 @@ CREATE TABLE dbo.TMP_GIROS_CONTRATOS(
 ) ON [PRIMARY]
 
 GO
+
+CREATE TABLE dbo.GAR_COBERTURAS
+(
+	Codigo_Tipo_Cobertura  numeric(3,0)  NOT NULL ,
+	Codigo_Cobertura      numeric(2,0)  NOT NULL ,
+	Codigo_Tipo_Poliza    numeric(3,0)  NOT NULL ,
+	Codigo_Clase_Poliza   numeric(3,0)  NOT NULL ,
+	Codigo_Grupo_Poliza   varchar(1)  NOT NULL ,
+	Codigo_Moneda_Tipo_Poliza  numeric(3,0)  NULL ,
+	Codigo_Aseguradora    tinyint  NOT NULL ,
+	Descripcion_Cobertura  varchar(250)  NOT NULL ,
+	Descripcion_Corta_Cobertura  varchar(12)  NOT NULL ,
+	Indicador_Obligatoria  numeric(1,0)  NOT NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará  la información de las coberturas y los tipos de pólizas, extraída del SAP.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción de la cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Descripcion_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción corta de la cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Descripcion_Corta_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la cobertura es obligatoria o no.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Indicador_Obligatoria'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del Tipo de póliza.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase de póliza.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Clase_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del grupo de la póliza.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Grupo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la aseguradora.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Aseguradora'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda asignada al tipo de póliza.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS', 'column' , 'Codigo_Moneda_Tipo_Poliza'
+GO
+
+
+CREATE TABLE dbo.GAR_COBERTURAS_POLIZAS
+(
+	Codigo_SAP            numeric(8)  NOT NULL ,
+	cod_operacion         bigint  NOT NULL ,
+	Codigo_Tipo_Cobertura  numeric(3,0)  NOT NULL ,
+	Codigo_Cobertura      numeric(2,0)  NOT NULL ,
+	Codigo_Tipo_Poliza    numeric(3,0)  NOT NULL 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará  la información de las coberturas asociadas a las pólizas, extraída del SAP.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la cobertura.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS', 'column' , 'Codigo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza a nivel del SAP.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación a la cual está asociada la póliza y que se encuentra registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS', 'column' , 'cod_operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del Tipo de póliza.' , 'user' , 'dbo' , 'table' , 'GAR_COBERTURAS_POLIZAS', 'column' , 'Codigo_Tipo_Poliza'
+GO
+
+CREATE TABLE dbo.TMP_SAP_COBERTURAS_POLIZAS
+(
+	Codigo_SAP            numeric(8,0)  NOT NULL ,
+	Codigo_Cobertura      numeric(2,0)  NULL ,
+	Codigo_Tipo_Cobertura  numeric(3,0)  NOT NULL ,
+	Descripcion_Corta_Cobertura  varchar(12)  NULL ,
+	Fecha_Ingreso datetime NULL,
+	Fecha_Modificacion datetime NULL,
+    Fecha_Replica         datetime  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_COBERTURAS_POLIZAS_FEcha_Replica
+		 DEFAULT  GETDATE() ,
+	Registro_Activo       bit  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_COBERTURAS_POLIZAS_Registro_Activo
+		 DEFAULT  1 
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará de forma temporal e histórica la información de las coberturas asociadas a las pólizas, extraídas del SAP.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue replicado.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Fecha_Replica'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el registro está activo (1) para ser procesado o no (0).' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Registro_Activo'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Codigo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción corta de la cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_COBERTURAS_POLIZAS', 'column' , 'Descripcion_Corta_Cobertura'
+GO
+
+
+
+CREATE TABLE dbo.TMP_SAP_SGRCOBERTURAS
+(
+	Codigo_Tipo_Cobertura  numeric(3,0)  NOT NULL ,
+	Codigo_Cobertura      numeric(2,0)  NOT NULL ,
+	Descripcion_Cobertura  varchar(250)  NOT NULL ,
+	Descripcion_Corta_Cobertura  varchar(12)  NOT NULL ,
+	Indicador_Obligatoria  numeric(1,0)  NOT NULL ,
+	Usuario_Ingreso  VARCHAR(35)  NULL,
+	Fecha_Ingreso	DATETIME NULL,
+    Usuario_Modifico VARCHAR(35) NULL,
+    Fecha_Modificacion DATETIME NULL,
+	Fecha_Replica         datetime  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_SGRCOBERTURAS_Fecha_Replica
+		 DEFAULT  GETDATE() ,
+	Registro_Activo       bit  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_SGRCOBERTURAS_Registro_Activo
+		 DEFAULT  1
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará de forma temporal e histórica la información de las coberturas extraída del SAP.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Codigo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción de la cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Descripcion_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción corta de la cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Descripcion_Corta_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si la cobertura es obligatoria o no.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Indicador_Obligatoria'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue replicado.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Fecha_Replica'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el registro está activo (1) para ser procesado o no (0).' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRCOBERTURAS', 'column' , 'Registro_Activo'
+GO
+
+
+
+CREATE TABLE dbo.TMP_SAP_SGRTIPOS_POLIZA
+(
+	Codigo_Tipo_Cobertura  numeric(3,0)  NOT NULL ,
+	Codigo_Tipo_Poliza    numeric(3,0)  NOT NULL ,
+	Codigo_Clase_Poliza   numeric(3,0)  NOT NULL ,
+	Codigo_Grupo_Poliza   varchar(1)  NOT NULL ,
+	Codigo_Aseguradora    tinyint  NOT NULL ,
+	Codigo_Moneda         numeric(3,0)  NULL ,
+	Descripcion_Tipo_Poliza  varchar(60)  NOT NULL ,
+	Usuario_Ingreso  VARCHAR(35)  NULL,
+	Fecha_Ingreso	DATETIME NULL,
+    Usuario_Modifico VARCHAR(35) NULL,
+    Fecha_Modificacion DATETIME NULL,
+	Fecha_Replica         datetime  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_SGRTIPOS_POLIZA_Fecha_Replica
+		 DEFAULT  GETDATE() ,
+	Registro_Activo       bit  NOT NULL 
+	CONSTRAINT DF_TMP_SAP_SGRTIPOS_POLIZA_Registro_Activo
+		 DEFAULT  1
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará de forma temporal e histórica la información de los tipos de póliza extraída del SAP.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de cobertura.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Tipo_Cobertura'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción del tipo de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Descripcion_Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue replicado.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Fecha_Replica'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Indica si el registro está activo (1) para ser procesado o no (0).' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Registro_Activo'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del Tipo de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la clase de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Clase_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del grupo de la póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Grupo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la aseguradora.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Aseguradora'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda asignado al tipo de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Moneda'
+GO
+
