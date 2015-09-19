@@ -6395,7 +6395,7 @@ namespace BCR.GARANTIAS.Entidades
                             entidadBitacoraAvaluo.TipoGarantia = 2;
                             entidadBitacoraAvaluo.NumeroGarantia = this.GarantiaRealBitacora;
                             entidadBitacoraAvaluo.NumeroOperacion = this.Operacion;
-                            entidadBitacoraAvaluo.Consulta = sentenciaActualizacionGarOper.ToString().TrimEnd(",".ToCharArray());
+                            entidadBitacoraAvaluo.Consulta = sentenciaActualizacionAvaluos.ToString().TrimEnd(",".ToCharArray());
 
                             foreach (KeyValuePair<string, string> datosAvaluo in listaDatosModificadosGarValuacionesReales)
                             {
