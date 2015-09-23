@@ -3577,8 +3577,27 @@ namespace BCRGARANTIAS.Forms
                                 break;
                         }
                         break;
-                    case 2: break;
-                    case 3: break;
+                    case 2: 
+                        switch (tipoBienGR)
+                        {
+                            case 1: listaTiposMitigador = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_MITIGADOR)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 4 || catalogo.IDElemento == -1; }));
+                                break;
+                            case 2: listaTiposMitigador = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_MITIGADOR)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 5 || catalogo.IDElemento == 6 || catalogo.IDElemento == -1; }));
+                                break;
+                            default: listaTiposMitigador = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_MITIGADOR)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento >= 4 && catalogo.IDElemento <= 6 || catalogo.IDElemento == -1; }));
+                                break;
+                        }
+                        break;
+                    case 3: 
+                         switch (tipoBienGR)
+                        {
+                            case 3: listaTiposMitigador = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_MITIGADOR)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 7 || catalogo.IDElemento == -1; }));
+                                break;
+                            case 4: listaTiposMitigador = ListaCatalogosGR.Items(((int)Enumeradores.Catalogos_Garantias_Reales.CAT_TIPO_MITIGADOR)).FindAll((delegate(clsCatalogo catalogo) { return catalogo.IDElemento == 7 || catalogo.IDElemento == -1; }));
+                                break;
+                            default: break;
+                        }
+                        break;
                     default: break;
                 }
 

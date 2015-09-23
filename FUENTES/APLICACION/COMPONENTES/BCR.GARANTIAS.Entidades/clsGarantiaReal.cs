@@ -455,6 +455,26 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private decimal? montoTasacionActualizadaNoTerrenoCalculado;
 
+        /// <summary>
+        /// Porcentaje de Aceptación del Terreno
+        /// </summary>
+        private decimal porcentajeAceptacionTerreno;
+
+        /// <summary>
+        /// Porcentaje de Aceptación del No Terreno
+        /// </summary>
+        private decimal porcentajeAceptacionNoTerreno;
+
+        /// <summary>
+        /// Porcentaje de Aceptación del Terreno Calculado
+        /// </summary>
+        private decimal porcentajeAceptacionTerrenoCalculado;
+
+        /// <summary>
+        /// Porcentaje de Aceptación del No Terreno Calculado
+        /// </summary>
+        private decimal porcentajeAceptacionNoTerrenoCalculado;
+
         #endregion Avalúos
 
         #region Inconsistencias
@@ -1136,6 +1156,13 @@ namespace BCR.GARANTIAS.Entidades
         private const string _fechaSemestreActualizado = "fecha_semestre_actualizado";
         private const string _fechaValuacionSICC = "fecha_valuacion_sicc";
 
+        private const string _porcentajeAceptacionBase = "Porcentaje_Aceptacion_Base";
+        private const string _porcentajeAceptacionTerreno = "Porcentaje_Aceptacion_Terreno";
+        private const string _porcentajeAceptacionNoTerreno = "Porcentaje_Aceptacion_No_Terreno";
+        private const string _porcentajeAceptacionTerrenoCalculado = "Porcentaje_Aceptacion_Terreno_Calculado";
+        private const string _porcentajeAceptacionNoTerrenoCalculado = "Porcentaje_Aceptacion_No_Terreno_Calculado";
+
+       
         //Tags referentes a la parte del avalúo del SICC
         private const string _prmgtFechaValuacion = "prmgt_pfeavaing";
         private const string _prmgtMontoTotalAvaluo = "prmgt_pmoavaing";
@@ -8114,6 +8141,34 @@ namespace BCR.GARANTIAS.Entidades
                             objEscritor.WriteStartElement(_totalSemestresCalculo);
                             objEscritor.WriteString(semestre.TotalRegistros.ToString());
                             objEscritor.WriteEndElement();
+
+                            if (tipoGeneracion == 2)
+                            {
+                                //Crea el nodo del porcentaje de aceptación parametrizado
+                                objEscritor.WriteStartElement(_porcentajeAceptacionBase);
+                                objEscritor.WriteString(this.porcentajeAceptacionCalculadoOriginal.ToString("N2"));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del terreno
+                                objEscritor.WriteStartElement(_porcentajeAceptacionTerreno);
+                                objEscritor.WriteString(this.porcentajeAceptacionTerreno.ToString("N2"));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del no terreno
+                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerreno);
+                                objEscritor.WriteString(this.porcentajeAceptacionNoTerreno.ToString("N2"));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del terreno calculado
+                                objEscritor.WriteStartElement(_porcentajeAceptacionTerrenoCalculado);
+                                objEscritor.WriteString(this.porcentajeAceptacionTerrenoCalculado.ToString("N2"));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del no terreno calculado
+                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerrenoCalculado);
+                                objEscritor.WriteString(this.porcentajeAceptacionNoTerrenoCalculado.ToString("N2"));
+                                objEscritor.WriteEndElement();
+                            }
 
                             //Final del tag SEMESTRE
                             objEscritor.WriteEndElement();

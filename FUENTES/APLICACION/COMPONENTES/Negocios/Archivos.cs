@@ -1075,7 +1075,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = new StreamWriter(File.Create(fileName), Encoding.Unicode))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("FECHA_HORA\tID_GARANTIA\tTIPO_GARANTIA_REAL\tCLASE_GARANTIA\tSEMESTRE_CALCULADO\tFECHA_VALUACION\tMTO_ULTIMA_TASACION_TERRENO\tMTO_ULTIMA_TASACION_NO_TERRENO\tTIPO_CAMBIO\tIPC\tTIPO_CAMBIO_ANTERIOR\tIPC_ANTERIOR\tFACTOR_TIPO_CAMBIO\tFACTOR_IPC\tPORCENTAJE_DEPRECIACION_SEMESTRAL\tMTO_TASACION_ACTUALIZADA_TERRENO\tMTO_TASACION_ACTUALIZADA_NO_TERRENO\tNUMERO_REGISTRO\tCODIGO_OPERACION\tCODIGO_GARANTIA\tTIPO_BIEN\tTOTAL_SEMESTRES_CALCULAR\tUSUARIO");
+                        writer.WriteLine("FECHA_HORA\tID_GARANTIA\tTIPO_GARANTIA_REAL\tCLASE_GARANTIA\tSEMESTRE_CALCULADO\tFECHA_VALUACION\tMTO_ULTIMA_TASACION_TERRENO\tMTO_ULTIMA_TASACION_NO_TERRENO\tTIPO_CAMBIO\tIPC\tTIPO_CAMBIO_ANTERIOR\tIPC_ANTERIOR\tFACTOR_TIPO_CAMBIO\tFACTOR_IPC\tPORCENTAJE_DEPRECIACION_SEMESTRAL\tMTO_TASACION_ACTUALIZADA_TERRENO\tMTO_TASACION_ACTUALIZADA_NO_TERRENO\tNUMERO_REGISTRO\tCODIGO_OPERACION\tCODIGO_GARANTIA\tTIPO_BIEN\tTOTAL_SEMESTRES_CALCULAR\tUSUARIO\tPORCENTAJE_ACEPTACION_BASE\tPORCENTAJE_ACEPTACION_TERRENO\tPORCENTAJE_ACEPTACION_NO_TERRENO\tPORCENTAJE_ACEPTACION_TERRENO_CALCULADO\tPORCENTAJE_ACEPTACION_NO_TERRENO_CALCULADO");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["FECHA_HORA"].ToString() + "\t" +
@@ -1100,7 +1100,12 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["CODIGO_GARANTIA"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_BIEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TOTAL_SEMESTRES_CALCULAR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["USUARIO"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["USUARIO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION_BASE"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION_TERRENO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION_NO_TERRENO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION_TERRENO_CALCULADO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION_NO_TERRENO_CALCULADO"].ToString() + "\t"
                                             );
                         }
                     }
