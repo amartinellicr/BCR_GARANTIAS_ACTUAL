@@ -27,6 +27,8 @@ namespace BCRGARANTIAS.Negocios
 
         DataSet dsDatos = new DataSet();
 
+        private const int tiempo_Espera_Ejecucion = 300;
+
         #endregion
 
         #region Deudores
@@ -40,7 +42,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoDeudores", null);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoDeudores", null, tiempo_Espera_Ejecucion);
 
             }
             catch (SqlException sqlEx)
@@ -139,7 +141,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.Text, strConsulta, null);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.Text, strConsulta, null, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -254,7 +256,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciarias", null);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciarias", null, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -361,7 +363,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasFiduciariasInfoCompleta", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasFiduciariasInfoCompleta", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -468,7 +470,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciariasContratos", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciariasContratos", parameters, tiempo_Espera_Ejecucion);
 
             }
             catch (SqlException sqlEx)
@@ -601,7 +603,7 @@ namespace BCRGARANTIAS.Negocios
                 parameters[0].Value = strIDUsuario;
                 parameters[1].Value = 4;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasReales", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasReales", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -739,7 +741,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[1].Value = true;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasRealesInfoCompleta", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasRealesInfoCompleta", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -888,7 +890,7 @@ namespace BCRGARANTIAS.Negocios
                 parameters[0].Value = strIDUsuario;
                 parameters[1].Value = 3;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasRealesContratos", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasRealesContratos", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1029,7 +1031,7 @@ namespace BCRGARANTIAS.Negocios
             {
                 SqlParameter[] parameters = new SqlParameter[] { };
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Registros_Calculo_MTAT_MTANT", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Registros_Calculo_MTAT_MTANT", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1134,7 +1136,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValor", null);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValor", null, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1260,7 +1262,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasValorInfoCompleta", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasValorInfoCompleta", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1386,7 +1388,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValorContratos", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValorContratos", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1516,7 +1518,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoContratos", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoContratos", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1621,7 +1623,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGiros", parameters);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGiros", parameters, tiempo_Espera_Ejecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -2636,7 +2638,7 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         //Ejecuta el comando
-                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Generar_Informacion_Cambios_Garantias", parameters,0);
+                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Generar_Informacion_Cambios_Garantias", parameters, tiempo_Espera_Ejecucion);
 
                         if ((dsDatos != null) || ((dsDatos != null) && (dsDatos.Tables["Datos"].Rows.Count - 1 ) >= 0))
                         {
@@ -2702,7 +2704,7 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         //Ejecuta el comando
-                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Cambios_Garantias", parameters, 0);
+                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Cambios_Garantias", parameters, tiempo_Espera_Ejecucion);
 
                         if ((dsDatos != null) || ((dsDatos != null) && (dsDatos.Tables["Datos"].Rows.Count - 1) >= 0))
                         {

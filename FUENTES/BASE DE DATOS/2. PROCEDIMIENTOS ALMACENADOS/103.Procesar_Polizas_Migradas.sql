@@ -52,6 +52,14 @@ AS
 				Se modifica la forma en como se procesan las pólizas, adicionalmente, se agrega el procesamiento de las coberturas 
 				asignadas a dichas pólizas.
 			</Descripción>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
+			</Descripción>
+		</Cambio>
 		</Cambio>
 		<Cambio>
 			<Autor></Autor>
@@ -73,8 +81,8 @@ BEGIN
 			@vdtFecha_Tipo_Cambio DATETIME, --Fecha más reciente del tipo de cambio del día actual
 			@ciCatalogo_Tipo_Poliza INT, --Código del catálogo de los tipos de póliza SAP
 			@vsDescripcion_Bitacora_Errores VARCHAR(5000), --Descripción del error que será guardado en la bitácora de errores.
-			@viFechaActualEntera INT --Corresponde al a fecha actual en formato numérico.
-
+			@viFechaActualEntera INT, --Corresponde a la fecha actual en formato numérico.
+			@vdtFecha_Eliminar DATETIME  --Corresponde a la fecha a partir de la cual se eliminarán los registros.
 	
 	--Se inicializan las variables
 	SET @ciCatalogo_Tipo_Poliza = 29
@@ -89,66 +97,67 @@ BEGIN
 	
 	SET @viFechaActualEntera = CONVERT(INT, CONVERT(VARCHAR(8), (CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)), 112))
 	
+	SET @vdtFecha_Eliminar = DATEADD(DAY, -3, GETDATE())
 	
 	IF(@piEjecutarParte = 0)
 	BEGIN
 	
 		DELETE	FROM dbo.TMP_POLIZAS 
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZA
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 		
 		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10		
+			AND Fecha_Replica < @vdtFecha_Eliminar		
 			
 		DELETE	FROM  dbo.TMP_SAP_POLIZASEXTERNAS
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM dbo.TMP_SAP_SGRPOLIZAOTRO 
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 				
 		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZAAUTO
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.TMP_SAP_VWSGRCREDITOBANCARIO
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 				
 		DELETE	FROM  dbo.TMP_SAP_VWSGRCONTRATOCREDITO
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM dbo.TMP_GIROS_CONTRATOS
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 		
 		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
 		DELETE	FROM  dbo.TMP_SAP_SGRCOBERTURAS
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.TMP_SAP_SGRTIPOS_POLIZA
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.TMP_SAP_COBERTURAS_POLIZAS
 		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
+			AND Fecha_Replica < @vdtFecha_Eliminar
 			
 		DELETE	FROM  dbo.GAR_COBERTURAS_POLIZAS
 		
@@ -471,8 +480,7 @@ BEGIN
 						1 AS Registro_Activo
 				FROM	dbo.GAR_OPERACION GO1
 						INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
-						ON PCD.codcontabilidad = GO1.cod_contabilidad
-						AND PCD.codue = GO1.cod_oficina
+						ON PCD.codue = GO1.cod_oficina
 						AND PCD.conmoneda = GO1.cod_moneda
 						AND PCD.codproducto = GO1.cod_producto
 						AND PCD.numoperacion = GO1.num_operacion
@@ -693,8 +701,8 @@ BEGIN
 					AND GO1.num_operacion = VCB.numoperacion
 				WHERE	VGP.Registro_Activo = 1
 					AND VCB.Registro_Activo = 1
-					AND VCB.concontratocredito IS NULL
 					AND VCB.estpolizacreditobancario <> 'ELI'
+					AND VCB.concontratocredito IS NULL
 					AND GO1.num_contrato = 0
 					AND GO1.num_operacion IS NOT NULL
 					AND EXISTS (SELECT	1

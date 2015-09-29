@@ -12,8 +12,7 @@ BEGIN
 END
 GO
 
-CREATE
- PROCEDURE [dbo].[pa_GenerarInfoGarantiasReales]
+CREATE PROCEDURE [dbo].[pa_GenerarInfoGarantiasReales]
 	@psCedula_Usuario	VARCHAR(30),
 	@piEjecutarParte	TINYINT
 	
@@ -122,6 +121,14 @@ AS
 				Se sustituyen los castigos de la fecha de último seguimiento, para los tipos de bien igual a 2, por uno nuevo, donde se 
 				castiga si el deudor no habita la vivienda.
 				También se inhabilitan todos los castigos referentes a las pólizas. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -408,7 +415,7 @@ DECLARE
 		DEALLOCATE Garantias_Cursor
 	
 	END
-	ELSE IF(@piEjecutarParte = 1)
+	IF(@piEjecutarParte = 1)
 	BEGIN
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
 		WHERE	cod_usuario	= @psCedula_Usuario 
@@ -651,7 +658,7 @@ DECLARE
 				AND cod_tipo_operacion = 2
 				AND cod_usuario = @psCedula_Usuario 
 		END
-	ELSE IF(@piEjecutarParte = 2)
+	IF(@piEjecutarParte = 2)
 	BEGIN
 		/*Se cargan los valores de los avalúos en la tabla temporal respectiva*/
 		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
@@ -2540,24 +2547,11 @@ DECLARE
 		DECLARE @vdFechaActualSinHora	DATETIME  
 		SET @vdFechaActualSinHora		= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 	
-	
-		DECLARE @TMP_PORCENTAJE_ACEPTACION_CALCULADO TABLE (
-		          
-					 Cod_Operacion						BIGINT,
-					 Cod_Garantia_Real					BIGINT,
-					 Porcentaje_Aceptacion				DECIMAL (5,2),
-					 Porcentaje_Calculado_Original      DECIMAL (5,2),
-					 Fecha_Valuacion					DATETIME,
-					 Fecha_Ultimo_Seguimiento			DATETIME,
-					 Cod_Tipo_Garantia_Real				SMALLINT,
-					 Cod_Tipo_Bien						SMALLINT,
-					 Monto_Ultima_Tasacion_No_Terreno	DECIMAL(18,2),					 
-					 Cod_Usuario						VARCHAR(30),
-					 Deudor_Habita_Vivienda				BIT
-		       
-					 )
+			
+		DELETE	FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO 
+		WHERE	Cod_Usuario = @psCedula_Usuario
 
-		INSERT INTO @TMP_PORCENTAJE_ACEPTACION_CALCULADO (           
+		INSERT INTO dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO (           
 					 Cod_Operacion,
 					 Cod_Garantia_Real,              
 					 Porcentaje_Aceptacion,
@@ -2579,11 +2573,11 @@ DECLARE
 			 TGR.cod_garantia_real,
 			 CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  
 			 CPA.Porcentaje_Aceptacion AS Porcentaje_Calculado_Original,
-			 TGR.fecha_valuacion,
-			 TGR.fecha_ultimo_seguimiento,
+			 COALESCE(TGR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
+			 COALESCE(TGR.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento,
 			 TGR.cod_tipo_garantia_real,
 			 TGR.cod_tipo_bien,
-			 TGR.monto_ultima_tasacion_no_terreno,
+			 COALESCE(TGR.monto_ultima_tasacion_no_terreno, 0) AS Monto_Ultima_Tasacion_No_Terreno,
 			 @psCedula_Usuario,
 			 GGR.Indicador_Vivienda_Habitada_Deudor
 		     
@@ -2609,7 +2603,7 @@ DECLARE
 			--que no poseen asignado el indicador de inscripción. 
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2625,7 +2619,7 @@ DECLARE
 						
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2643,7 +2637,7 @@ DECLARE
 		    			
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2661,7 +2655,7 @@ DECLARE
 				
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2689,7 +2683,7 @@ DECLARE
 					--POLIZA ASOCIADA
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = 0
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC						
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC						
 						INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 						ON GPR.cod_operacion = TPAC.Cod_Operacion
 						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2712,7 +2706,7 @@ DECLARE
 				
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  0
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3 
 					--AND TPAC.Cod_Tipo_Bien = 3							
@@ -2727,7 +2721,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = 0
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 3							
 						AND DATEDIFF(YEAR, TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -2748,7 +2742,7 @@ DECLARE
 
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 1									
 						AND DATEDIFF(YEAR, TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1   	            
@@ -2763,7 +2757,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)	
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 1						
 						AND DATEDIFF(YEAR, TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -2781,7 +2775,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2	
@@ -2797,7 +2791,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2	
@@ -2812,7 +2806,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 2	
 						AND  DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5
@@ -2826,7 +2820,7 @@ DECLARE
 					--FECHA SEGUIMIENTO MAYOR A UN AÑO CONTRA SISTEMA
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)		
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 2
 						AND DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1 
@@ -2841,7 +2835,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2			
@@ -2857,7 +2851,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2877,7 +2871,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2905,7 +2899,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC				
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC				
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3
 					--AND TPAC.Cod_Tipo_Bien = 3			
@@ -2921,7 +2915,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					--INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					--	ON TPAC.Cod_Garantia_Real = TPAC.Cod_Garantia_Real	
 					--	AND TPAC.Cod_Operacion = TPAC.Cod_Operacion				
@@ -2944,7 +2938,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -2971,7 +2965,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 4								
 						AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 6 
@@ -2986,7 +2980,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 4				
 						AND DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -3000,7 +2994,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3
 					--AND TPAC.Cod_Tipo_Bien = 4		
@@ -3016,7 +3010,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -3036,7 +3030,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -3070,7 +3064,7 @@ DECLARE
 							END			
 						)	
 			FROM	TMP_GARANTIAS_REALES TGR
-			INNER JOIN @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+			INNER JOIN dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 				ON TGR.cod_operacion = TPAC.Cod_Operacion
 				AND TGR.cod_garantia_real = TPAC.Cod_Garantia_Real	
 			WHERE	TGR.cod_usuario = @psCedula_Usuario

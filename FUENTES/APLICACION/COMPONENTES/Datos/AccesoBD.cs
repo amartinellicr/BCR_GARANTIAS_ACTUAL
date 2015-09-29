@@ -19,6 +19,9 @@ namespace BCRGARANTIAS.Datos
     /// </summary>
     public class AccesoBD
     {
+
+        private const int tiempo_Espera_Ejecucion = 300;
+
         /// <summary>
         /// Metodo para obtener el string de conexión de la base de datos
         /// </summary>
@@ -69,7 +72,7 @@ namespace BCRGARANTIAS.Datos
             try
             {
                 comando.Connection = ObtenerStringConexion();
-                comando.CommandTimeout = 5;
+                comando.CommandTimeout = tiempo_Espera_Ejecucion;
                 comando.CommandText = sqlQuery;
 
                 if (sqlQuery.StartsWith("select"))
@@ -128,7 +131,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = 220;
+            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -203,7 +206,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = 220;
+            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -266,7 +269,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = 220;
+            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -333,7 +336,7 @@ namespace BCRGARANTIAS.Datos
 
             //declara las propiedades del comando
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = 220;
+            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
             AttachParameters(oComando, parameters);
 
             oDataAdapter.SelectCommand = oComando;
@@ -904,7 +907,7 @@ namespace BCRGARANTIAS.Datos
 
             // Associate the connection with the command
             command.Connection = connection;
-            command.CommandTimeout = 220;
+            command.CommandTimeout = tiempo_Espera_Ejecucion;
 
             // Set the command text (stored procedure name or SQL statement)
             command.CommandText = commandText;

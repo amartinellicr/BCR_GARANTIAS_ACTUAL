@@ -7459,6 +7459,26 @@ namespace BCRGARANTIAS.Forms
                 
                 if (existeMensaje)
                 {
+                    if ((this.Entidad_Real != null) && (this.Entidad_Real.PolizaSapAsociada != null))
+                    {
+                        if (requestSM != null && requestSM.IsInAsyncPostBack)
+                        {
+                            ScriptManager.RegisterClientScriptBlock(this,
+                                                                    typeof(Page),
+                                                                    Guid.NewGuid().ToString(),
+                                                                    "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                    false);
+                        }
+                        else
+                        {
+                            this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                   Guid.NewGuid().ToString(),
+                                                                   "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                   false);
+                        }
+                    }
+
+
                     //Se obtiene el error de la lista de errores
                     if (requestSM != null && requestSM.IsInAsyncPostBack)
                     {

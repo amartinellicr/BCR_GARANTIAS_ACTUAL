@@ -72,6 +72,14 @@ AS
 				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
 				11, 38 o 43. 
 			</Descripción>
+		</Cambio>	
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
+			</Descripción>
 		</Cambio>		
 		<Cambio>
 			<Autor></Autor>
@@ -284,9 +292,9 @@ BEGIN
 							AND ((SPM.prmoc_pcoctamay < 815)
 								OR (SPM.prmoc_pcoctamay	> 815))	--Operaciones no insolutas
 							AND SPM.prmoc_estado = 'A'	
-							AND SPM.prmoc_pco_oficon = GO1.cod_oficina
-							AND SPM.prmoc_pcomonint = GO1.cod_moneda
-							AND SPM.prmoc_pnu_contr = GO1.num_contrato)
+							AND SPM.prmoc_pco_oficon = GSP.prmca_pco_ofici
+							AND SPM.prmoc_pcomonint = GSP.prmca_pco_moned
+							AND SPM.prmoc_pnu_contr = GSP.prmca_pnu_contr)
 
 	RETURN
 END
