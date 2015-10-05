@@ -286,12 +286,10 @@ BEGIN
 						AND MGT.prmgt_pcoclagar = GR3.cod_clase_garantia)
 		AND EXISTS (	SELECT	1
 						FROM	dbo.GAR_SICC_PRMOC SPM 
-						WHERE	SPM.prmoc_pnu_contr > 0
-							AND SPM.prmoc_pnu_oper IS NOT NULL
-							AND SPM.prmoc_pse_proces = 1		--Operaciones activas
+						WHERE	SPM.prmoc_pse_proces = 1 --Operaciones activas
 							AND ((SPM.prmoc_pcoctamay < 815)
 								OR (SPM.prmoc_pcoctamay	> 815))	--Operaciones no insolutas
-							AND SPM.prmoc_estado = 'A'	
+							AND SPM.prmoc_estado = 'A'
 							AND SPM.prmoc_pco_oficon = GSP.prmca_pco_ofici
 							AND SPM.prmoc_pcomonint = GSP.prmca_pco_moned
 							AND SPM.prmoc_pnu_contr = GSP.prmca_pnu_contr)

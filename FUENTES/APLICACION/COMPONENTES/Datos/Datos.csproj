@@ -43,9 +43,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="amqmdnet, Version=1.0.0.3, Culture=neutral, PublicKeyToken=dd3cb1c9aae9ec97">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ProcesamientoMQ2003\ProcesamientoMQ2003\bin\amqmdnet.dll</HintPath>
+    <Reference Include="amqmdnet">
+      <HintPath>..\..\..\COMPONENTES\amqmdnet.dll</HintPath>
     </Reference>
     <Reference Include="BCR.ActiveDirectory, Version=1.0.2419.21956, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
