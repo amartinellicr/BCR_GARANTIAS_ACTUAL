@@ -19,7 +19,9 @@ namespace BCRGARANTIAS.Datos
     /// </summary>
     public class AccesoBD
     {
-
+        /// <summary>
+        /// Tiempo de espera que transcurre al ejecutar una sentencia a nivel de base de datos. Es dado en segundos.
+        /// </summary>
         private const int tiempo_Espera_Ejecucion = 300;
 
         /// <summary>
