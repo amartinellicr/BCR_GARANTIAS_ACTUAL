@@ -2666,9 +2666,12 @@
         var timediff = date_2 - date_1;
         if (isNaN(timediff)) return NaN;
 
+        var fecha_1 = moment(date_1);
+        var fecha_2 = moment(date_2);
+
         switch (interval) {
-        case "years":
-            return date2.getFullYear() - date1.getFullYear();
+            case "years":
+                return fecha_2.diff(fecha_1, 'years', true); // (date2.getFullYear() - date1.getFullYear());
         case "months":
             return ((date2.getFullYear() * 12 + date2.getMonth()) - (date1.getFullYear() * 12 + date1.getMonth()));
         case "weeks":
@@ -4062,8 +4065,7 @@
                 //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
 
                 if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) && (!indicadorDeudorHabitaVivienda)) {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                    
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);         
                 }
 
                 //Poliza Seleccionada

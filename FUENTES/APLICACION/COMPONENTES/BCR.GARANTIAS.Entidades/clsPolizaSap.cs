@@ -577,6 +577,7 @@ namespace BCR.GARANTIAS.Entidades
             identificacionBien = string.Empty;
             tipoCobertura = -1;
             codigoAseguradora = -1;
+            listaCoberturasPoliza = new clsCoberturas<clsCobertura>();
 
         }
 
@@ -612,6 +613,7 @@ namespace BCR.GARANTIAS.Entidades
             tipoCobertura = -1;
             codigoAseguradora = -1;
 
+            listaCoberturasPoliza = new clsCoberturas<clsCobertura>();
 
             if (tramaPolizaSap.Length > 0)
             {

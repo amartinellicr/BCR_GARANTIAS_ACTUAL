@@ -12,8 +12,7 @@ BEGIN
 END
 GO
 
-CREATE
- PROCEDURE [dbo].[pa_GenerarInfoGarantiasReales]
+CREATE PROCEDURE [dbo].[pa_GenerarInfoGarantiasReales]
 	@psCedula_Usuario	VARCHAR(30),
 	@piEjecutarParte	TINYINT
 	
@@ -125,6 +124,22 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>06/09/2015</Fecha>
+			<Descripción>
+				Se modifica la forma en como se obtienen los registros referentes a las valuaciones de la garantía, corresponde a la parte de ejecución igual a 2. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -151,6 +166,10 @@ DECLARE
 	@lid					UNIQUEIDENTIFIER,
 	@lfecHoySinHora			DATETIME,
 	@lintFechaEntero		INT
+
+	/*Se inicializan las variables globales*/
+	SET @lfecHoySinHora	= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+	SET @lintFechaEntero = CONVERT(INT, CONVERT(VARCHAR(8), @lfecHoySinHora, 112))
 
 
 	IF(@piEjecutarParte = 0)
@@ -408,7 +427,7 @@ DECLARE
 		DEALLOCATE Garantias_Cursor
 	
 	END
-	ELSE IF(@piEjecutarParte = 1)
+	IF(@piEjecutarParte = 1)
 	BEGIN
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
 		WHERE	cod_usuario	= @psCedula_Usuario 
@@ -459,10 +478,6 @@ DECLARE
 							  )
 		
 		
-		SET @lfecHoySinHora	= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
-		SET @lintFechaEntero = CONVERT(INT, CONVERT(VARCHAR(8), @lfecHoySinHora, 112))
-
-
 	/***************************************************************************************************************************************************/
 
 		--Se eliminan los registros que fueron seteados a 2
@@ -651,10 +666,212 @@ DECLARE
 				AND cod_tipo_operacion = 2
 				AND cod_usuario = @psCedula_Usuario 
 		END
-	ELSE IF(@piEjecutarParte = 2)
+	IF(@piEjecutarParte = 2)
 	BEGIN
-		/*Se cargan los valores de los avalúos en la tabla temporal respectiva*/
+	
+		/*Se crean las tablas temporales locales*/
+		
+		/*Esta tabla almacenará las operaciones activas según el SICC*/
+		CREATE TABLE #TEMP_MOC_OPERACIONES (prmoc_pco_ofici	SMALLINT,
+											prmoc_pco_moned	TINYINT,
+											prmoc_pco_produ TINYINT,
+											prmoc_pnu_oper	INT)
+		 
+		CREATE INDEX TEMP_MOC_OPERACIONES_IX_01 ON #TEMP_MOC_OPERACIONES (prmoc_pco_ofici, prmoc_pco_moned, prmoc_pco_produ, prmoc_pnu_oper)
+		
+		
+		/*Esta tabla almacenará los contratos vigentes según el SICC*/
+		CREATE TABLE #TEMP_MCA_CONTRATOS (	prmca_pco_ofici		SMALLINT,
+											prmca_pco_moned		TINYINT,
+											prmca_pco_produc	TINYINT,
+											prmca_pnu_contr		INT)
+		 
+		CREATE INDEX TEMP_MCA_CONTRATOS_IX_01 ON #TEMP_MCA_CONTRATOS (prmca_pco_ofici, prmca_pco_moned, prmca_pco_produc, prmca_pnu_contr)
+	
+		/*Esta tabla almacenará los contratos vencidos con giros activos según el SICC*/
+		CREATE TABLE #TEMP_MCA_GIROS (	prmca_pco_ofici		SMALLINT,
+										prmca_pco_moned		TINYINT,
+										prmca_pco_produc	TINYINT,
+										prmca_pnu_contr		INT)
+		 
+		CREATE INDEX TEMP_MCA_GIROS_IX_01 ON #TEMP_MCA_GIROS (prmca_pco_ofici, prmca_pco_moned, prmca_pco_produc, prmca_pnu_contr)
+
+	
+		/*Esta tabla almacenará las garantías hipotecarias no alfanuméricas del SICC que estén activas*/
+		CREATE TABLE #TEMP_GAR_HIPOTECAS (	prmgt_pcoclagar TINYINT,
+											prmgt_pnu_part  TINYINT,
+											prmgt_pnuidegar DECIMAL(12,0),
+											prmgt_pfeavaing INT,
+											Indicador_Fecha_Mayor BIT,
+											Fecha_Valuacion DATETIME)
+		 
+		CREATE INDEX TEMP_GAR_HIPOTECAS_IX_01 ON #TEMP_GAR_HIPOTECAS (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, Indicador_Fecha_Mayor)
+
+
+		/*Esta tabla almacenará las garantías hipotecarias alfanuméricas del SICC que estén activas*/
+		CREATE TABLE #TEMP_GAR_HIPOTECAS_ALF (	prmgt_pcoclagar TINYINT,
+												prmgt_pnu_part  TINYINT,
+												prmgt_pnuidegar DECIMAL(12,0),
+												prmgt_pnuide_alf CHAR(12),
+												prmgt_pfeavaing INT,
+												Indicador_Fecha_Mayor BIT,
+												Fecha_Valuacion DATETIME)
+		 
+		CREATE INDEX TEMP_GAR_HIPOTECAS_ALF_IX_01 ON #TEMP_GAR_HIPOTECAS_ALF (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, Indicador_Fecha_Mayor)
+
+
+		/*Esta tabla almacenará las garantías prendarias no alfanuméricas del SICC que estén activas*/
+		CREATE TABLE #TEMP_GAR_PRENDAS (	prmgt_pcoclagar TINYINT,
+											prmgt_pnuidegar DECIMAL(12,0),
+											prmgt_pfeavaing INT,
+											Indicador_Fecha_Mayor BIT,
+											Fecha_Valuacion DATETIME)
+		 
+		CREATE INDEX TEMP_GAR_PRENDAS_IX_01 ON #TEMP_GAR_PRENDAS (prmgt_pcoclagar, prmgt_pnuidegar, Indicador_Fecha_Mayor)
+
+
+		/*Esta tabla almacenará las garantías prendarias alfanuméricas del SICC que estén activas*/
+		CREATE TABLE #TEMP_GAR_PRENDAS_ALF (	prmgt_pcoclagar TINYINT,
+												prmgt_pnuidegar DECIMAL(12,0),
+												prmgt_pnuide_alf CHAR(12),
+												prmgt_pfeavaing INT,
+												Indicador_Fecha_Mayor BIT,
+												Fecha_Valuacion DATETIME)
+		 
+		CREATE INDEX TEMP_GAR_PRENDAS_ALF_IX_01 ON #TEMP_GAR_PRENDAS_ALF (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, Indicador_Fecha_Mayor)
+
+
+
+		/*Esta tabla almacenará las garantías registradas en el sistema, según el tipo de garantía real*/
+		CREATE TABLE #TEMP_GARANTIA_REAL (	cod_garantia_real BIGINT,
+											Fecha_Valuacion DATETIME)
+		 
+		CREATE INDEX TEMP_GARANTIA_REAL_IX_01 ON #TEMP_GARANTIA_REAL (cod_garantia_real, Fecha_Valuacion)
+	
+		/*Se cargan las tabla temporales*/
+		
+		/*Se obtienen todas las operaciones activas*/
+		
+		INSERT	INTO #TEMP_MOC_OPERACIONES (prmoc_pco_ofici, prmoc_pco_moned, prmoc_pco_produ, prmoc_pnu_oper)
+		SELECT	prmoc_pco_ofici, prmoc_pco_moned, prmoc_pco_produ, prmoc_pnu_oper
+		FROM	dbo.GAR_SICC_PRMOC 
+		WHERE	prmoc_pse_proces = 1
+			AND prmoc_estado = 'A'
+			AND ((prmoc_pcoctamay > 815)
+				OR (prmoc_pcoctamay < 815))
+						
+		/*Se obtienen todos los contratos vigentes*/
+	
+		INSERT	INTO #TEMP_MCA_CONTRATOS (prmca_pco_ofici, prmca_pco_moned, prmca_pco_produc, prmca_pnu_contr)
+		SELECT	prmca_pco_ofici, prmca_pco_moned, 10 AS prmca_pco_produc, prmca_pnu_contr
+		FROM	dbo.GAR_SICC_PRMCA 
+		WHERE	prmca_estado = 'A'
+			AND prmca_pfe_defin >= @lintFechaEntero
+	
+		/*Se obtienen todos los contratos vencidos con giros activos*/
+		
+		INSERT	INTO #TEMP_MCA_GIROS (prmca_pco_ofici, prmca_pco_moned, prmca_pco_produc, prmca_pnu_contr)
+		SELECT	MCA.prmca_pco_ofici, MCA.prmca_pco_moned, 10 AS prmca_pco_produc, MCA.prmca_pnu_contr
+		FROM	dbo.GAR_SICC_PRMCA MCA
+			INNER JOIN dbo.GAR_SICC_PRMOC MOC
+			ON MOC.prmoc_pco_oficon = MCA.prmca_pco_ofici
+			AND MOC.prmoc_pcomonint = MCA.prmca_pco_moned
+			AND MOC.prmoc_pnu_contr = MCA.prmca_pnu_contr
+		WHERE	MCA.prmca_estado = 'A'
+			AND MCA.prmca_pfe_defin < @lintFechaEntero
+			AND MOC.prmoc_pse_proces = 1
+			AND MOC.prmoc_estado = 'A'
+			AND MOC.prmoc_pnu_contr > 0
+			AND ((MOC.prmoc_pcoctamay > 815)
+				OR (MOC.prmoc_pcoctamay < 815))
+			
+		
+	
+		/*Se obtienen las hipotecas no alfanuméricas relacionadas a operaciones y contratos*/
+		
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT	MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT	MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
+		
+		/*Se obtiene la fecha que es mayor*/
+		UPDATE	TMP
+		SET		Indicador_Fecha_Mayor = 1
+		FROM	#TEMP_GAR_HIPOTECAS TMP
+			LEFT JOIN  #TEMP_GAR_HIPOTECAS TM1
+			ON TMP.prmgt_pcoclagar = TM1.prmgt_pcoclagar
+			AND TMP.prmgt_pnu_part = TM1.prmgt_pnu_part 
+			AND TMP.prmgt_pnuidegar = TM1.prmgt_pnuidegar
+			AND TMP.prmgt_pfeavaing < TM1.prmgt_pfeavaing
+		WHERE	TM1.prmgt_pfeavaing IS NULL
+		
+		/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS
+		WHERE	Indicador_Fecha_Mayor = 0
+		
+		/*Se eliminan los registros que no poseen una fecha de valuación*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS
+		WHERE	prmgt_pfeavaing = 19000101
+						
+		/*Se carga la información de las garantías reales de tipo hipoteca común y que están relacionadas a una operación o contrato*/
+		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real, Fecha_Valuacion)
+		SELECT	GGR.cod_garantia_real,
+				TMP.Fecha_Valuacion
+		FROM	dbo.GAR_GARANTIA_REAL GGR
+			INNER JOIN 	#TEMP_GAR_HIPOTECAS TMP
+			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
+			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+		WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
+					
 		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
+		/*Se obtienen los avalúos de las garantías de hipoteca común relacionadas a las operaciones*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
 			cod_garantia_real,
 			fecha_valuacion,
@@ -697,112 +914,32 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnu_part = GGR.cod_partido
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
-									GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.cod_partido = GGR.cod_partido
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
 			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
 
-		UNION ALL 
-		
+		/*Se obtienen los valúos de las garantías de hipoteca común relacionadas a los contratos*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
 		SELECT	DISTINCT 
 			GVR.cod_garantia_real, 
 			GVR.fecha_valuacion, 
@@ -828,720 +965,125 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										GGR.Identificacion_Alfanumerica_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnu_part = GGR.cod_partido
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-									WHERE	GGR.cod_clase_garantia = 11
-									GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.cod_partido = GGR.cod_partido
-					AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-					AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 1
-			AND TMP.cod_usuario = @psCedula_Usuario
-			AND GGR.cod_clase_garantia = 11
-
-		UNION ALL 
-		
-		
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario
-		FROM	dbo.GAR_VALUACIONES_REALES GVR
-			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
-			ON GRO.cod_garantia_real = GVR.cod_garantia_real
-			INNER JOIN dbo.TMP_OPERACIONES TMP 
-			ON TMP.cod_garantia = GRO.cod_garantia_real
-			AND TMP.cod_operacion = GRO.cod_operacion
-			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
-			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-															UNION ALL
-															SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pnu_part = GGR.cod_partido
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	((GGR.cod_clase_garantia = 18) 
-										OR (GGR.cod_clase_garantia BETWEEN 20 AND 29))
-									GROUP BY GGR.cod_partido, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_partido = GGR.cod_partido
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
-		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 1
-			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia = 18) 
-				OR (GGR.cod_clase_garantia BETWEEN 20 AND 29))
-
-		UNION ALL 
-		
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario
-		FROM	dbo.GAR_VALUACIONES_REALES GVR
-			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
-			ON GRO.cod_garantia_real = GVR.cod_garantia_real
-			INNER JOIN dbo.TMP_OPERACIONES TMP 
-			ON TMP.cod_garantia = GRO.cod_garantia_real
-			AND TMP.cod_operacion = GRO.cod_operacion
-			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
-			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-												OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-												OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
-									GROUP BY GGR.cod_clase_garantia, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
-		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 1
-			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-					OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-					OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
-
-		UNION ALL
-		
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario
-		FROM	dbo.GAR_VALUACIONES_REALES GVR
-			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
-			ON GRO.cod_garantia_real = GVR.cod_garantia_real
-			INNER JOIN dbo.TMP_OPERACIONES TMP 
-			ON TMP.cod_garantia = GRO.cod_garantia_real
-			AND TMP.cod_operacion = GRO.cod_operacion
-			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
-			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.Identificacion_Sicc,
-										GGR.Identificacion_Alfanumerica_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-									WHERE	((GGR.cod_clase_garantia = 38)
-												OR (GGR.cod_clase_garantia = 43))
-									GROUP BY GGR.cod_clase_garantia, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-					AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
-		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 1
-			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia = 38)
-					OR (GGR.cod_clase_garantia = 43))
-
-		UNION ALL						
-		
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario
-		FROM	dbo.GAR_VALUACIONES_REALES GVR
-			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
-			ON GRO.cod_garantia_real = GVR.cod_garantia_real
-			INNER JOIN dbo.TMP_OPERACIONES TMP 
-			ON TMP.cod_garantia = GRO.cod_garantia_real
-			AND TMP.cod_operacion = GRO.cod_operacion
-			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
-			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnu_part = GGR.cod_partido
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
-									GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.cod_partido = GGR.cod_partido
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
-		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 3
+			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
 
-		UNION ALL 
+
+
+		/*Se obtienen las hipotecas alfanuméricas relacionadas a operaciones y contratos*/
+		INSERT	INTO #TEMP_GAR_HIPOTECAS_ALF(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	MG1.prmgt_pcoclagar = 11
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS_ALF(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_pcoclagar = 11
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS_ALF(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	MG1.prmgt_pcoclagar = 11
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
 		
+		/*Se obtiene la fecha que es mayor*/
+		UPDATE	TMP
+		SET		Indicador_Fecha_Mayor = 1
+		FROM	#TEMP_GAR_HIPOTECAS_ALF TMP
+			LEFT JOIN  #TEMP_GAR_HIPOTECAS_ALF TM1
+			ON TMP.prmgt_pcoclagar = TM1.prmgt_pcoclagar
+			AND TMP.prmgt_pnu_part = TM1.prmgt_pnu_part 
+			AND TMP.prmgt_pnuidegar = TM1.prmgt_pnuidegar
+			AND TMP.prmgt_pnuide_alf = TM1.prmgt_pnuide_alf
+			AND TMP.prmgt_pfeavaing < TM1.prmgt_pfeavaing
+		WHERE	TM1.prmgt_pfeavaing IS NULL
+		
+		/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS_ALF
+		WHERE	Indicador_Fecha_Mayor = 0
+		
+		/*Se eliminan los registros que no poseen una fecha de valuación*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS_ALF
+		WHERE	prmgt_pfeavaing = 19000101
+		
+		/*Se elimina el contenido de esta tabla temporal*/
+		DELETE	FROM #TEMP_GARANTIA_REAL
+		
+		/*Se carga la información de las garantías reales de tipo hipoteca común y que están relacionadas a una operación o contrato*/
+		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real, Fecha_Valuacion)
+		SELECT	GGR.cod_garantia_real,
+				TMP.Fecha_Valuacion
+		FROM	dbo.GAR_GARANTIA_REAL GGR
+			INNER JOIN 	#TEMP_GAR_HIPOTECAS_ALF TMP
+			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
+			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+		WHERE	GGR.cod_clase_garantia = 11
+					
+		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
+		/*Se obtienen los avalúos de las garantías de hipoteca común alfanuméricas relacionadas a las operaciones*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
 		SELECT	DISTINCT 
 			GVR.cod_garantia_real, 
 			GVR.fecha_valuacion, 
@@ -1567,118 +1109,32 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										GGR.Identificacion_Alfanumerica_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 11
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnu_part = GGR.cod_partido
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-									WHERE	GGR.cod_clase_garantia = 11
-									GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.cod_partido = GGR.cod_partido
-					AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-					AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 3
+			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND GGR.cod_clase_garantia = 11
 
-		UNION ALL 		
-		
+		/*Se obtienen los valúos de las garantías de hipoteca común alfanuméricas relacionadas a los contratos*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
 		SELECT	DISTINCT 
 			GVR.cod_garantia_real, 
 			GVR.fecha_valuacion, 
@@ -1704,189 +1160,179 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.cod_partido,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcoclagar = 18
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnu_part,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	MG1.prmgt_pcotengar = 1
-																AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnu_part, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnu_part = GGR.cod_partido
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	((GGR.cod_clase_garantia = 18) 
-										OR (GGR.cod_clase_garantia BETWEEN 20 AND 29))
-									GROUP BY GGR.cod_clase_garantia, GGR.cod_partido, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.cod_partido = GGR.cod_partido
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 3
+			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia = 18) 
-				OR (GGR.cod_clase_garantia BETWEEN 20 AND 29))
+			AND GGR.cod_clase_garantia = 11
 
-		UNION ALL 
+
+
+		/*Se elimina el contenido de la siguiente tabla temporal*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS
+
+		/*Se obtienen las cédulas hipotecarias relacionadas a operaciones y contratos*/
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	MG1.prmgt_pcoclagar = 18
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_pcoclagar = 18
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	MG1.prmgt_pcoclagar = 18
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
 		
+		
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	MG1.prmgt_pcotengar = 1
+				AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_pcotengar = 1
+			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnu_part,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	MG1.prmgt_pcotengar = 1
+			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+		
+		
+		/*Se obtiene la fecha que es mayor*/
+		UPDATE	TMP
+		SET		Indicador_Fecha_Mayor = 1
+		FROM	#TEMP_GAR_HIPOTECAS TMP
+			LEFT JOIN  #TEMP_GAR_HIPOTECAS TM1
+			ON TMP.prmgt_pnu_part = TM1.prmgt_pnu_part 
+			AND TMP.prmgt_pnuidegar = TM1.prmgt_pnuidegar
+			AND TMP.prmgt_pfeavaing < TM1.prmgt_pfeavaing
+		WHERE	TM1.prmgt_pfeavaing IS NULL
+		
+		/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS
+		WHERE	Indicador_Fecha_Mayor = 0
+		
+		/*Se eliminan los registros que no poseen una fecha de valuación*/
+		DELETE	FROM #TEMP_GAR_HIPOTECAS
+		WHERE	prmgt_pfeavaing = 19000101
+				
+		/*Se elimina el contenido de esta tabla temporal*/
+		DELETE	FROM #TEMP_GARANTIA_REAL
+		
+		/*Se carga la información de las garantías reales de tipo cédula hipotecaria y que están relacionadas a una operación o contrato*/
+		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real, Fecha_Valuacion)
+		SELECT	GGR.cod_garantia_real,
+				TMP.Fecha_Valuacion
+		FROM	dbo.GAR_GARANTIA_REAL GGR
+			INNER JOIN 	#TEMP_GAR_HIPOTECAS TMP
+			ON GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
+			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+		WHERE	GGR.cod_clase_garantia = 18
+			OR  GGR.cod_clase_garantia BETWEEN 20 AND 29
+				
+					
+		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
+		/*Se obtienen los avalúos de las garantías de cédula hipotecaria no alfanuméricas relacionadas a las operaciones*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
 		SELECT	DISTINCT 
 			GVR.cod_garantia_real, 
 			GVR.fecha_valuacion, 
@@ -1912,117 +1358,234 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.Identificacion_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-																		OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
-									WHERE	((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-												OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-												OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
-									GROUP BY GGR.cod_clase_garantia, GGR.Identificacion_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND GHC.Identificacion_Sicc = GGR.Identificacion_Sicc
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 3
+			AND TMP.cod_tipo_operacion = 1
+			AND TMP.cod_usuario = @psCedula_Usuario
+			AND ((GGR.cod_clase_garantia = 18)
+				OR  (GGR.cod_clase_garantia BETWEEN 20 AND 29))
+
+		/*Se obtienen los valúos de las garantías de cédula hipotecaria no alfanuméricas relacionadas a los contratos*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
+		SELECT	DISTINCT 
+			GVR.cod_garantia_real, 
+			GVR.fecha_valuacion, 
+			GVR.cedula_empresa, 
+			GVR.cedula_perito, 
+			GVR.monto_ultima_tasacion_terreno, 
+			GVR.monto_ultima_tasacion_no_terreno, 
+			GVR.monto_tasacion_actualizada_terreno, 
+			GVR.monto_tasacion_actualizada_no_terreno, 
+			GVR.fecha_ultimo_seguimiento, 
+			GVR.monto_total_avaluo, 
+			GVR.cod_recomendacion_perito, 
+			GVR.cod_inspeccion_menor_tres_meses, 
+			GVR.fecha_construccion,
+			GGR.cod_tipo_bien, 
+			1 AS grado_completo,
+			TMP.cod_usuario
+		FROM	dbo.GAR_VALUACIONES_REALES GVR
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+			ON GRO.cod_garantia_real = GVR.cod_garantia_real
+			INNER JOIN dbo.TMP_OPERACIONES TMP 
+			ON TMP.cod_garantia = GRO.cod_garantia_real
+			AND TMP.cod_operacion = GRO.cod_operacion
+			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+			ON GGR.cod_garantia_real = TMP.cod_garantia
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
+		WHERE	TMP.cod_tipo_garantia = 2
+			AND TMP.cod_tipo_operacion = 2
+			AND TMP.cod_usuario = @psCedula_Usuario
+			AND ((GGR.cod_clase_garantia = 18)
+				OR  (GGR.cod_clase_garantia BETWEEN 20 AND 29))
+
+
+
+
+
+
+		/*Se obtienen las prendas no alfanuméricas relacionadas a operaciones y contratos*/
+		
+		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+						OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
+						OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT	MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
+					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT	MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
+					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
+		
+		/*Se obtiene la fecha que es mayor*/
+		UPDATE	TMP
+		SET		Indicador_Fecha_Mayor = 1
+		FROM	#TEMP_GAR_PRENDAS TMP
+			LEFT JOIN  #TEMP_GAR_PRENDAS TM1
+			ON TMP.prmgt_pcoclagar = TM1.prmgt_pcoclagar
+			AND TMP.prmgt_pnuidegar = TM1.prmgt_pnuidegar
+			AND TMP.prmgt_pfeavaing < TM1.prmgt_pfeavaing
+		WHERE	TM1.prmgt_pfeavaing IS NULL
+		
+		/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
+		DELETE	FROM #TEMP_GAR_PRENDAS
+		WHERE	Indicador_Fecha_Mayor = 0
+		
+		/*Se eliminan los registros que no poseen una fecha de valuación*/
+		DELETE	FROM #TEMP_GAR_PRENDAS
+		WHERE	prmgt_pfeavaing = 19000101
+		
+		/*Se elimina el contenido de esta tabla temporal*/
+		DELETE	FROM #TEMP_GARANTIA_REAL
+		
+		
+		/*Se carga la información de las garantías reales de tipo prenda y que están relacionadas a una operación o contrato*/
+		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real, Fecha_Valuacion)
+		SELECT	GGR.cod_garantia_real,
+				TMP.Fecha_Valuacion
+		FROM	dbo.GAR_GARANTIA_REAL GGR
+			INNER JOIN 	#TEMP_GAR_PRENDAS TMP
+			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
+		WHERE	GGR.cod_clase_garantia BETWEEN 30 AND 37
+			OR GGR.cod_clase_garantia BETWEEN 39 AND 42
+			OR GGR.cod_clase_garantia BETWEEN 44 AND 69
+					
+		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
+		/*Se obtienen los avalúos de las garantías de prenda relacionadas a las operaciones*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
+		SELECT	DISTINCT 
+			GVR.cod_garantia_real, 
+			GVR.fecha_valuacion, 
+			GVR.cedula_empresa, 
+			GVR.cedula_perito, 
+			GVR.monto_ultima_tasacion_terreno, 
+			GVR.monto_ultima_tasacion_no_terreno, 
+			GVR.monto_tasacion_actualizada_terreno, 
+			GVR.monto_tasacion_actualizada_no_terreno, 
+			GVR.fecha_ultimo_seguimiento, 
+			GVR.monto_total_avaluo, 
+			GVR.cod_recomendacion_perito, 
+			GVR.cod_inspeccion_menor_tres_meses, 
+			GVR.fecha_construccion,
+			GGR.cod_tipo_bien, 
+			1 AS grado_completo,
+			TMP.cod_usuario
+		FROM	dbo.GAR_VALUACIONES_REALES GVR
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+			ON GRO.cod_garantia_real = GVR.cod_garantia_real
+			INNER JOIN dbo.TMP_OPERACIONES TMP 
+			ON TMP.cod_garantia = GRO.cod_garantia_real
+			AND TMP.cod_operacion = GRO.cod_operacion
+			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+			ON GGR.cod_garantia_real = TMP.cod_garantia
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
+		WHERE	TMP.cod_tipo_garantia = 2
+			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-					OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-					OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
+				OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
+				OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
 
-		
-		UNION ALL 
-		
+		/*Se obtienen los valúos de las garantías de prenda relacionadas a los contratos*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
 		SELECT	DISTINCT 
 			GVR.cod_garantia_real, 
 			GVR.fecha_valuacion, 
@@ -2048,115 +1611,213 @@ DECLARE
 			AND TMP.cod_operacion = GRO.cod_operacion
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TMP.cod_garantia
-			INNER JOIN (
-				SELECT	DISTINCT 
-					GGR.cod_garantia_real, 
-					CONVERT(DATETIME, GHC.fecha_valuacion) AS fecha_valuacion 
-				FROM	dbo.GAR_GARANTIA_REAL GGR
-					INNER JOIN (	SELECT	TOP 100 PERCENT 
-										GGR.cod_clase_garantia,
-										GGR.Identificacion_Sicc,
-										GGR.Identificacion_Alfanumerica_Sicc,
-										MAX(MGT.prmgt_pfeavaing) AS fecha_valuacion
-									FROM	dbo.GAR_GARANTIA_REAL GGR 
-										INNER JOIN (SELECT	MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, 
-															MAX(MG2.prmgt_pfeavaing) AS prmgt_pfeavaing
-													FROM	
-													(		SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMOC MOC
-																			WHERE	MOC.prmoc_pse_proces = 1
-																				AND MOC.prmoc_estado = 'A'
-																				AND MOC.prmoc_pnu_contr = 0
-																				AND ((MOC.prmoc_pcoctamay > 815)
-																					OR (MOC.prmoc_pcoctamay < 815))
-																				AND MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-																				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-																				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin >= @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10)
-															UNION ALL
-															SELECT	MG1.prmgt_pcoclagar,
-																MG1.prmgt_pnuidegar,
-																MG1.prmgt_pnuide_alf,
-																CASE 
-																	WHEN MG1.prmgt_pfeavaing = 0 THEN '19000101' 
-																	WHEN ISDATE(CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing)) = 1 THEN CONVERT(VARCHAR(10), MG1.prmgt_pfeavaing,103)
-																	ELSE '19000101'
-																END AS prmgt_pfeavaing
-															FROM	dbo.GAR_SICC_PRMGT MG1
-															WHERE	((MG1.prmgt_pcoclagar = 38)
-																		OR (MG1.prmgt_pcoclagar = 43))
-																AND MG1.prmgt_estado = 'A'
-																AND EXISTS (SELECT	1
-																			FROM	dbo.GAR_SICC_PRMCA MCA
-																			WHERE	MCA.prmca_estado = 'A'
-																				AND MCA.prmca_pfe_defin < @lintFechaEntero
-																				AND MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
-																				AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
-																				AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-																				AND MG1.prmgt_pco_produ = 10
-																				AND EXISTS (SELECT	1
-																					FROM	dbo.GAR_SICC_PRMOC MC1
-																					WHERE	MC1.prmoc_pse_proces = 1		--Operaciones activas
-																						AND MC1.prmoc_estado = 'A'	
-																						AND ((MC1.prmoc_pcoctamay > 815)
-																							OR (MC1.prmoc_pcoctamay < 815))	--Operaciones no insolutas
-																						AND MC1.prmoc_pco_oficon = MCA.prmca_pco_ofici
-																						AND MC1.prmoc_pcomonint = MCA.prmca_pco_moned
-																						AND MC1.prmoc_pnu_contr = MCA.prmca_pnu_contr))
-													) MG2
-													GROUP BY MG2.prmgt_pcoclagar, MG2.prmgt_pnuidegar, MG2.prmgt_pnuide_alf, MG2.prmgt_pfeavaing) MGT
-									ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
-									AND COALESCE(MGT.prmgt_pnuidegar, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-									AND COALESCE(MGT.prmgt_pnuide_alf, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-									WHERE	((GGR.cod_clase_garantia = 38)
-												OR (GGR.cod_clase_garantia = 43))
-									GROUP BY GGR.cod_clase_garantia, GGR.Identificacion_Sicc, GGR.Identificacion_Alfanumerica_Sicc
-								) GHC
-					ON GHC.cod_clase_garantia = GGR.cod_clase_garantia
-					AND COALESCE(GHC.Identificacion_Sicc, 0) = COALESCE(GGR.Identificacion_Sicc, 0)
-					AND COALESCE(GHC.Identificacion_Alfanumerica_Sicc, '') = COALESCE(GGR.Identificacion_Alfanumerica_Sicc, '')
-				WHERE	GHC.fecha_valuacion > '19000101') TM1
-				ON TM1.cod_garantia_real = GVR.cod_garantia_real
-				AND GVR.fecha_valuacion = TM1.fecha_valuacion
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
 		WHERE	TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion = 3
+			AND TMP.cod_tipo_operacion = 2
+			AND TMP.cod_usuario = @psCedula_Usuario
+			AND ((GGR.cod_clase_garantia BETWEEN 30 AND 37)
+				OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
+				OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
+
+
+
+		/*Se obtienen las prendas alfanuméricas relacionadas a operaciones y contratos*/
+		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+			FROM	dbo.GAR_SICC_PRMGT MG1
+				INNER JOIN #TEMP_MOC_OPERACIONES MOC
+				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+			WHERE	((MG1.prmgt_pcoclagar = 38)
+						OR (MG1.prmgt_pcoclagar = 43))
+				AND MG1.prmgt_estado = 'A'
+				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_CONTRATOS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
+		WHERE	((MG1.prmgt_pcoclagar = 38)
+					OR (MG1.prmgt_pcoclagar = 43))
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+
+		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
+		SELECT  MG1.prmgt_pcoclagar,
+				MG1.prmgt_pnuidegar,
+				MG1.prmgt_pnuide_alf,
+				MG1.prmgt_pfeavaing,
+				0 AS Indicador_Fecha_Mayor,
+				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MCA_GIROS MCA
+			ON MCA.prmca_pco_ofici = MG1.prmgt_pco_ofici
+			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
+			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
+			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
+		WHERE	((MG1.prmgt_pcoclagar = 38)
+					OR (MG1.prmgt_pcoclagar = 43))
+			AND MG1.prmgt_estado = 'A'
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
+		
+		/*Se obtiene la fecha que es mayor*/
+		UPDATE	TMP
+		SET		Indicador_Fecha_Mayor = 1
+		FROM	#TEMP_GAR_PRENDAS_ALF TMP
+			LEFT JOIN  #TEMP_GAR_PRENDAS_ALF TM1
+			ON TMP.prmgt_pcoclagar = TM1.prmgt_pcoclagar
+			AND TMP.prmgt_pnuidegar = TM1.prmgt_pnuidegar
+			AND TMP.prmgt_pnuide_alf = TM1.prmgt_pnuide_alf
+			AND TMP.prmgt_pfeavaing < TM1.prmgt_pfeavaing
+		WHERE	TM1.prmgt_pfeavaing IS NULL
+		
+		/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
+		DELETE	FROM #TEMP_GAR_PRENDAS_ALF
+		WHERE	Indicador_Fecha_Mayor = 0
+		
+		/*Se eliminan los registros que no poseen una fecha de valuación*/
+		DELETE	FROM #TEMP_GAR_PRENDAS_ALF
+		WHERE	prmgt_pfeavaing = 19000101
+			
+		/*Se elimina el contenido de esta tabla temporal*/
+		DELETE	FROM #TEMP_GARANTIA_REAL
+		
+		/*Se carga la información de las garantías reales de tipo prenda y que están relacionadas a una operación o contrato*/
+		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real, Fecha_Valuacion)
+		SELECT	GGR.cod_garantia_real,
+				TMP.Fecha_Valuacion
+		FROM	dbo.GAR_GARANTIA_REAL GGR
+			INNER JOIN 	#TEMP_GAR_PRENDAS_ALF TMP
+			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+		WHERE	GGR.cod_clase_garantia = 38
+			OR GGR.cod_clase_garantia = 43
+					
+		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
+		/*Se obtienen los avalúos de las garantías de prenda alfanuméricas relacionadas a las operaciones*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
+		SELECT	DISTINCT 
+			GVR.cod_garantia_real, 
+			GVR.fecha_valuacion, 
+			GVR.cedula_empresa, 
+			GVR.cedula_perito, 
+			GVR.monto_ultima_tasacion_terreno, 
+			GVR.monto_ultima_tasacion_no_terreno, 
+			GVR.monto_tasacion_actualizada_terreno, 
+			GVR.monto_tasacion_actualizada_no_terreno, 
+			GVR.fecha_ultimo_seguimiento, 
+			GVR.monto_total_avaluo, 
+			GVR.cod_recomendacion_perito, 
+			GVR.cod_inspeccion_menor_tres_meses, 
+			GVR.fecha_construccion,
+			GGR.cod_tipo_bien, 
+			1 AS grado_completo,
+			TMP.cod_usuario
+		FROM	dbo.GAR_VALUACIONES_REALES GVR
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+			ON GRO.cod_garantia_real = GVR.cod_garantia_real
+			INNER JOIN dbo.TMP_OPERACIONES TMP 
+			ON TMP.cod_garantia = GRO.cod_garantia_real
+			AND TMP.cod_operacion = GRO.cod_operacion
+			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+			ON GGR.cod_garantia_real = TMP.cod_garantia
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
+		WHERE	TMP.cod_tipo_garantia = 2
+			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia = 38)
 				OR (GGR.cod_clase_garantia = 43))
-		
+
+		/*Se obtienen los valúos de las garantías de prenda alfanuméricas relacionadas a los contratos*/
+		INSERT INTO dbo.TMP_VALUACIONES_REALES(
+			cod_garantia_real,
+			fecha_valuacion,
+			cedula_empresa,
+			cedula_perito,
+			monto_ultima_tasacion_terreno,
+			monto_ultima_tasacion_no_terreno,
+			monto_tasacion_actualizada_terreno,
+			monto_tasacion_actualizada_no_terreno,
+			fecha_ultimo_seguimiento,
+			monto_total_avaluo,
+			cod_recomendacion_perito,
+			cod_inspeccion_menor_tres_meses,
+			fecha_construccion,
+			cod_tipo_bien,
+			ind_avaluo_completo,
+			cod_usuario)
+		SELECT	DISTINCT 
+			GVR.cod_garantia_real, 
+			GVR.fecha_valuacion, 
+			GVR.cedula_empresa, 
+			GVR.cedula_perito, 
+			GVR.monto_ultima_tasacion_terreno, 
+			GVR.monto_ultima_tasacion_no_terreno, 
+			GVR.monto_tasacion_actualizada_terreno, 
+			GVR.monto_tasacion_actualizada_no_terreno, 
+			GVR.fecha_ultimo_seguimiento, 
+			GVR.monto_total_avaluo, 
+			GVR.cod_recomendacion_perito, 
+			GVR.cod_inspeccion_menor_tres_meses, 
+			GVR.fecha_construccion,
+			GGR.cod_tipo_bien, 
+			1 AS grado_completo,
+			TMP.cod_usuario
+		FROM	dbo.GAR_VALUACIONES_REALES GVR
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+			ON GRO.cod_garantia_real = GVR.cod_garantia_real
+			INNER JOIN dbo.TMP_OPERACIONES TMP 
+			ON TMP.cod_garantia = GRO.cod_garantia_real
+			AND TMP.cod_operacion = GRO.cod_operacion
+			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+			ON GGR.cod_garantia_real = TMP.cod_garantia
+			INNER JOIN #TEMP_GARANTIA_REAL TM1
+			ON GGR.cod_garantia_real = TM1.cod_garantia_real
+			AND GVR.fecha_valuacion = TM1.Fecha_Valuacion
+		WHERE	TMP.cod_tipo_garantia = 2
+			AND TMP.cod_tipo_operacion = 2
+			AND TMP.cod_usuario = @psCedula_Usuario
+			AND ((GGR.cod_clase_garantia = 38)
+					OR (GGR.cod_clase_garantia = 43))
+					
+					
 		/*Se selecciona la información de la garantía real asociada a los contratos*/
 		INSERT	INTO dbo.TMP_GARANTIAS_REALES
 		SELECT	DISTINCT 
@@ -2194,6 +1855,7 @@ DECLARE
 			END AS fecha_vencimiento, 
 			GRO.cod_operacion_especial, 
 			CASE 
+				WHEN VGR.fecha_valuacion IS NULL THEN ''
 				WHEN CONVERT(VARCHAR(10),VGR.fecha_valuacion,103) = '01/01/1900' THEN ''
 				ELSE CONVERT(VARCHAR(10),VGR.fecha_valuacion,103)
 			END AS fecha_valuacion, 
@@ -2208,11 +1870,14 @@ DECLARE
 			VGR.monto_ultima_tasacion_no_terreno, 
 			VGR.monto_tasacion_actualizada_terreno, 
 			VGR.monto_tasacion_actualizada_no_terreno, 
-			CASE WHEN CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103) = '01/01/1900' THEN ''
-				 ELSE CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103)
+			CASE 
+				WHEN  VGR.fecha_ultimo_seguimiento IS NULL THEN ''
+				WHEN CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103) = '01/01/1900' THEN ''
+				ELSE CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103)
 			END AS fecha_ultimo_seguimiento, 
 			COALESCE(VGR.monto_tasacion_actualizada_terreno,0) + COALESCE(VGR.monto_tasacion_actualizada_no_terreno,0) AS monto_total_avaluo,
 			CASE 
+				WHEN  VGR.fecha_construccion IS NULL THEN ''
 				WHEN CONVERT(VARCHAR(10),VGR.fecha_construccion,103) = '01/01/1900' THEN ''
 				ELSE CONVERT(VARCHAR(10),VGR.fecha_construccion,103)
 			END AS fecha_construccion,
@@ -2258,280 +1923,285 @@ DECLARE
 
 	END
 	IF(@piEjecutarParte = 3)
-		BEGIN
-			/*Se obtienen las operaciones duplicadas*/
-			INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-			SELECT	cod_oficina, 
-					cod_moneda, 
-					cod_producto, 
-					operacion,
-					cod_tipo_operacion, 
-					cod_bien AS cod_garantia_sicc,
-					2 AS cod_tipo_garantia,
-					@psCedula_Usuario AS cod_usuario,
-					MAX(cod_garantia_real) AS cod_garantia,
-					NULL AS cod_grado
+	BEGIN
+		/*Se obtienen las operaciones duplicadas*/
+		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
+		SELECT	cod_oficina, 
+				cod_moneda, 
+				cod_producto, 
+				operacion,
+				cod_tipo_operacion, 
+				cod_bien AS cod_garantia_sicc,
+				2 AS cod_tipo_garantia,
+				@psCedula_Usuario AS cod_usuario,
+				MAX(cod_garantia_real) AS cod_garantia,
+				NULL AS cod_grado
 
-			FROM	dbo.TMP_GARANTIAS_REALES
-			WHERE	cod_usuario	= @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3)
-			GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, cod_bien, cod_tipo_operacion
-			HAVING	COUNT(1) > 1
+		FROM	dbo.TMP_GARANTIAS_REALES
+		WHERE	cod_usuario	= @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3)
+		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, cod_bien, cod_tipo_operacion
+		HAVING	COUNT(1) > 1
 
-			/*Se cambia el código del campo ind_duplicidad a 2, indicando con esto que la operación se encuentra duplicada.
-			  Se toma en cuenta el valor de varios campos para poder determinar si el registro se encuentra duplicado.*/
-			UPDATE	dbo.TMP_GARANTIAS_REALES 
-			SET		ind_duplicidad = 2
-			FROM	dbo.TMP_GARANTIAS_REALES GR
-			WHERE	GR.cod_usuario = @psCedula_Usuario
-				AND GR.cod_tipo_operacion IN (1, 3)
-				AND EXISTS (SELECT	1 
-							FROM	dbo.TMP_OPERACIONES_DUPLICADAS TGR
-							WHERE	COALESCE(TGR.cod_usuario, '') = COALESCE(GR.cod_usuario, '')
-								AND TGR.cod_tipo_garantia = 2
-								AND TGR.cod_tipo_operacion IN (1, 3)
-								AND TGR.cod_oficina = GR.cod_oficina
-								AND TGR.cod_moneda = GR.cod_moneda
-								AND TGR.cod_producto = GR.cod_producto
-								AND TGR.operacion = GR.operacion
-								AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR.cod_bien, '')
-								AND GR.cod_tipo_documento_legal IS NULL
-								AND GR.fecha_presentacion IS NULL
-								AND GR.cod_tipo_mitigador IS NULL
-								AND GR.cod_inscripcion IS NULL)
-			
+		/*Se cambia el código del campo ind_duplicidad a 2, indicando con esto que la operación se encuentra duplicada.
+		  Se toma en cuenta el valor de varios campos para poder determinar si el registro se encuentra duplicado.*/
+		UPDATE	dbo.TMP_GARANTIAS_REALES 
+		SET		ind_duplicidad = 2
+		FROM	dbo.TMP_GARANTIAS_REALES GR
+		WHERE	GR.cod_usuario = @psCedula_Usuario
+			AND GR.cod_tipo_operacion IN (1, 3)
+			AND EXISTS (SELECT	1 
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TGR
+						WHERE	COALESCE(TGR.cod_usuario, '') = COALESCE(GR.cod_usuario, '')
+							AND TGR.cod_tipo_garantia = 2
+							AND TGR.cod_tipo_operacion IN (1, 3)
+							AND TGR.cod_oficina = GR.cod_oficina
+							AND TGR.cod_moneda = GR.cod_moneda
+							AND TGR.cod_producto = GR.cod_producto
+							AND TGR.operacion = GR.operacion
+							AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR.cod_bien, '')
+							AND GR.cod_tipo_documento_legal IS NULL
+							AND GR.fecha_presentacion IS NULL
+							AND GR.cod_tipo_mitigador IS NULL
+							AND GR.cod_inscripcion IS NULL)
+		
 
-			/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
-			DELETE	FROM dbo.TMP_GARANTIAS_REALES 
-			WHERE	cod_usuario	= @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3) 
-				AND ind_duplicidad = 2 
-				 
-			/*Se eliminan los duplicados obtenidos*/
-			DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-			WHERE	cod_usuario = @psCedula_Usuario  
-				AND cod_tipo_operacion IN (1, 3)
+		/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
+		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
+		WHERE	cod_usuario	= @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3) 
+			AND ind_duplicidad = 2 
+			 
+		/*Se eliminan los duplicados obtenidos*/
+		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
+		WHERE	cod_usuario = @psCedula_Usuario  
+			AND cod_tipo_operacion IN (1, 3)
 
-			/*Se obtienen las garantías reales de hipoteca común duplicadas*/
-			INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-			SELECT	cod_oficina, 
-					cod_moneda, 
-					cod_producto, 
-					operacion,
-					cod_tipo_operacion, 
-					numero_finca AS cod_garantia_sicc,
-					2 AS cod_tipo_garantia,
-					@psCedula_Usuario AS cod_usuario,
-					MAX(cod_garantia_real) AS cod_garantia,
-					NULL AS cod_grado
-			FROM	dbo.TMP_GARANTIAS_REALES
-			WHERE	cod_usuario = @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3)
-				AND cod_tipo_garantia_real = 1 
-			GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_tipo_operacion
-			HAVING	COUNT(1) > 1
+		/*Se obtienen las garantías reales de hipoteca común duplicadas*/
+		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
+		SELECT	cod_oficina, 
+				cod_moneda, 
+				cod_producto, 
+				operacion,
+				cod_tipo_operacion, 
+				numero_finca AS cod_garantia_sicc,
+				2 AS cod_tipo_garantia,
+				@psCedula_Usuario AS cod_usuario,
+				MAX(cod_garantia_real) AS cod_garantia,
+				NULL AS cod_grado
+		FROM	dbo.TMP_GARANTIAS_REALES
+		WHERE	cod_usuario = @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3)
+			AND cod_tipo_garantia_real = 1 
+		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_tipo_operacion
+		HAVING	COUNT(1) > 1
 
-			/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-				cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-			UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-			SET		cod_garantia = TM2.cod_llave
-			FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
-				INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
-				ON	TM2.cod_oficina = TM1.cod_oficina
-				AND TM2.cod_moneda = TM1.cod_moneda
-				AND TM2.cod_producto = TM1.cod_producto
-				AND TM2.operacion = TM1.operacion
-				AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-			WHERE	TM2.cod_usuario = @psCedula_Usuario
-				AND TM2.cod_tipo_garantia = 2
-				AND TM2.cod_tipo_operacion IN (1, 3)
-				AND TM2.cod_tipo_garantia_real = 1
-				AND TM2.cod_llave	= (	SELECT	MIN(TM3.cod_llave)
-										FROM	dbo.TMP_GARANTIAS_REALES TM3
-										WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
-											AND TM3.cod_tipo_operacion IN (1, 3)
-											AND TM3.cod_tipo_garantia_real = 1
-											AND TM3.cod_oficina = TM1.cod_oficina
-											AND TM3.cod_moneda = TM1.cod_moneda
-											AND TM3.cod_producto = TM1.cod_producto
-											AND TM3.operacion = TM1.operacion
-											AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, ''))
-											AND TM1.cod_tipo_garantia = 2
-
-			/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-			UPDATE	dbo.TMP_GARANTIAS_REALES
-			SET		ind_duplicidad = 2
-			FROM	dbo.TMP_GARANTIAS_REALES GR1
-			WHERE GR1.cod_usuario = @psCedula_Usuario
-				AND GR1.cod_tipo_operacion IN (1, 3)
-				AND GR1.cod_tipo_garantia_real = 1
-				AND EXISTS (	SELECT 1 
-								FROM dbo.TMP_OPERACIONES_DUPLICADAS TGR
-								WHERE COALESCE(TGR.cod_usuario, '') = COALESCE(GR1.cod_usuario, '')
-									AND TGR.cod_tipo_garantia = 2
-									AND TGR.cod_tipo_operacion IN (1, 3)
-									AND TGR.cod_oficina	= GR1.cod_oficina
-									AND TGR.cod_moneda = GR1.cod_moneda
-									AND TGR.cod_producto = GR1.cod_producto
-									AND TGR.operacion = GR1.operacion
-									AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR1.numero_finca, '') 
-									AND TGR.cod_garantia <> GR1.cod_llave
-									AND GR1.cod_tipo_garantia_real	= 1)
-
-
-			/*Se eliminan los duplicados obtenidos*/
-			DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-			WHERE	cod_usuario	= @psCedula_Usuario  
-				AND cod_tipo_garantia = 2
-				AND cod_tipo_operacion IN (1, 3)
-
-			/*Se obtienen las garantías reales de cédulas hipotecarias duplicadas*/
-			INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-			SELECT	cod_oficina, 
-					cod_moneda, 
-					cod_producto, 
-					operacion,
-					cod_tipo_operacion, 
-					numero_finca AS cod_garantia_sicc,
-					2 AS cod_tipo_garantia,
-					@psCedula_Usuario AS cod_usuario,
-					MAX(cod_garantia_real) AS cod_garantia,
-					cod_grado
-			FROM	dbo.TMP_GARANTIAS_REALES
-			WHERE	cod_usuario = @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3)
-				AND cod_tipo_garantia_real = 2
-			GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_grado, cod_tipo_operacion
-			HAVING	COUNT(1) > 1
-
-			/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-				cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-			UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-			SET		cod_garantia	= TM2.cod_llave
-			FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
+		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
+			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
+		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
+		SET		cod_garantia = TM2.cod_llave
+		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
 			INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
 			ON	TM2.cod_oficina = TM1.cod_oficina
-				AND TM2.cod_moneda = TM1.cod_moneda
-				AND TM2.cod_producto = TM1.cod_producto
-				AND TM2.operacion = TM1.operacion
-				AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-				AND TM2.cod_grado = TM1.cod_grado
-			WHERE	TM2.cod_usuario = @psCedula_Usuario
-				AND TM2.cod_tipo_operacion IN (1, 3)
-				AND TM2.cod_tipo_garantia_real = 2
-				AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
-										FROM	dbo.TMP_GARANTIAS_REALES TM3
-										WHERE	COALESCE(TM3.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
-											AND TM3.cod_tipo_operacion IN (1, 3)
-											AND TM3.cod_oficina = TM1.cod_oficina
-											AND TM3.cod_moneda = TM1.cod_moneda
-											AND TM3.cod_producto = TM1.cod_producto
-											AND TM3.operacion = TM1.operacion
-											AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-											AND TM3.cod_grado = TM1.cod_grado
-											AND TM3.cod_tipo_garantia_real = 2
-											AND TM1.cod_tipo_garantia = 2)
+			AND TM2.cod_moneda = TM1.cod_moneda
+			AND TM2.cod_producto = TM1.cod_producto
+			AND TM2.operacion = TM1.operacion
+			AND TM2.cod_tipo_garantia_real = 1
+			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
+			AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
+		WHERE	TM1.cod_usuario = @psCedula_Usuario
+			AND TM1.cod_tipo_garantia = 2
+			AND TM1.cod_tipo_operacion IN (1, 3)
+			AND TM2.cod_usuario = @psCedula_Usuario
+			AND TM2.cod_tipo_operacion IN (1, 3)
+			AND TM2.cod_tipo_garantia = 2
+			AND TM2.cod_tipo_garantia_real = 1
+			AND TM2.cod_llave	= (	SELECT	MIN(TM3.cod_llave)
+									FROM	dbo.TMP_GARANTIAS_REALES TM3
+									WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
+										AND TM3.cod_tipo_operacion IN (1, 3)
+										AND TM3.cod_tipo_garantia_real = 1
+										AND TM3.cod_oficina = TM1.cod_oficina
+										AND TM3.cod_moneda = TM1.cod_moneda
+										AND TM3.cod_producto = TM1.cod_producto
+										AND TM3.operacion = TM1.operacion
+										AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, ''))
 
-			/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-			UPDATE	dbo.TMP_GARANTIAS_REALES
-			SET		ind_duplicidad = 2
-			FROM	dbo.TMP_GARANTIAS_REALES TM1
-			WHERE	TM1.cod_usuario = @psCedula_Usuario
-				AND TM1.cod_tipo_operacion IN (1, 3)
-				AND TM1.cod_tipo_garantia_real = 2
-				AND EXISTS (	SELECT 1 
-								FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
-								WHERE	COALESCE(TOD.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
-									AND TOD.cod_tipo_garantia = 2
-									AND TOD.cod_tipo_operacion IN (1, 3)
-									AND TOD.cod_oficina = TM1.cod_oficina
-									AND TOD.cod_moneda = TM1.cod_moneda
-									AND TOD.cod_producto = TM1.cod_producto
-									AND TOD.operacion = TM1.operacion
-									AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.numero_finca, '')
-									AND TOD.cod_grado = TM1.cod_grado
-									AND TOD.cod_garantia <> TM1.cod_llave
-									AND TM1.cod_tipo_garantia_real = 2
-									AND TM1.cod_tipo_operacion IN (1, 3))
-
-			/*Se eliminan los duplicados obtenidos*/
-			DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-			WHERE	cod_usuario = @psCedula_Usuario  
-				AND cod_tipo_garantia = 2
-				AND cod_tipo_operacion IN (1, 3)
-
-			/*Se obtienen las garantías reales de prenda duplicadas*/
-			INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-			SELECT	cod_oficina, 
-					cod_moneda, 
-					cod_producto, 
-					operacion,
-					cod_tipo_operacion, 
-					num_placa_bien AS cod_garantia_sicc,
-					2 AS cod_tipo_garantia,
-					@psCedula_Usuario AS cod_usuario,
-					MAX(cod_garantia_real) AS cod_garantia,
-					NULL AS cod_grado
-			FROM	dbo.TMP_GARANTIAS_REALES
-			WHERE	cod_usuario = @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3)
-				AND cod_tipo_garantia_real = 3
-			GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, num_placa_bien, cod_tipo_operacion
-			HAVING	COUNT(1) > 1
-
-			/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-				cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-			UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-			SET		cod_garantia = TM2.cod_llave
-			FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
-			INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
-				ON	TM2.cod_oficina = TM1.cod_oficina
-				AND TM2.cod_moneda = TM1.cod_moneda
-				AND TM2.cod_producto = TM1.cod_producto
-				AND TM2.operacion = TM1.operacion
-				AND COALESCE(TM2.num_placa_bien, '') = COALESCE(TM1.cod_garantia_sicc, '')
-			WHERE	TM2.cod_usuario = @psCedula_Usuario
-				AND TM2.cod_tipo_operacion IN (1, 3)
-				AND TM2.cod_tipo_garantia_real = 3
-				AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
-										FROM	dbo.TMP_GARANTIAS_REALES TM3
-										WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
-											AND TM3.cod_tipo_operacion IN (1, 3)
-											AND TM3.cod_oficina	= TM1.cod_oficina
-											AND TM3.cod_moneda = TM1.cod_moneda
-											AND TM3.cod_producto = TM1.cod_producto
-											AND TM3.operacion = TM1.operacion
-											AND COALESCE(TM3.num_placa_bien, '')	= COALESCE(TM1.cod_garantia_sicc, '')
-											AND TM3.cod_tipo_garantia_real = 3
-											AND TM1.cod_tipo_garantia = 2)
+		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
+		UPDATE	dbo.TMP_GARANTIAS_REALES
+		SET		ind_duplicidad = 2
+		FROM	dbo.TMP_GARANTIAS_REALES GR1
+		WHERE	GR1.cod_usuario = @psCedula_Usuario
+			AND GR1.cod_tipo_operacion IN (1, 3)
+			AND GR1.cod_tipo_garantia_real = 1
+			AND EXISTS (	SELECT 1 
+							FROM dbo.TMP_OPERACIONES_DUPLICADAS TGR
+							WHERE COALESCE(TGR.cod_usuario, '') = COALESCE(GR1.cod_usuario, '')
+								AND TGR.cod_tipo_garantia = 2
+								AND TGR.cod_tipo_operacion IN (1, 3)
+								AND TGR.cod_oficina	= GR1.cod_oficina
+								AND TGR.cod_moneda = GR1.cod_moneda
+								AND TGR.cod_producto = GR1.cod_producto
+								AND TGR.operacion = GR1.operacion
+								AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR1.numero_finca, '') 
+								AND TGR.cod_garantia <> GR1.cod_llave)
 
 
-			/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-			UPDATE	dbo.TMP_GARANTIAS_REALES
-			SET		ind_duplicidad = 2
-			FROM	dbo.TMP_GARANTIAS_REALES TM1
-			WHERE	TM1.cod_usuario	 = @psCedula_Usuario
-				AND TM1.cod_tipo_operacion IN (1, 3)
-				AND TM1.cod_tipo_garantia_real = 3
-				AND EXISTS (SELECT	1 
-							FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD
-							WHERE	COALESCE(TOD.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
+		/*Se eliminan los duplicados obtenidos*/
+		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
+		WHERE	cod_usuario	= @psCedula_Usuario  
+			AND cod_tipo_garantia = 2
+			AND cod_tipo_operacion IN (1, 3)
+
+		/*Se obtienen las garantías reales de cédulas hipotecarias duplicadas*/
+		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
+		SELECT	cod_oficina, 
+				cod_moneda, 
+				cod_producto, 
+				operacion,
+				cod_tipo_operacion, 
+				numero_finca AS cod_garantia_sicc,
+				2 AS cod_tipo_garantia,
+				@psCedula_Usuario AS cod_usuario,
+				MAX(cod_garantia_real) AS cod_garantia,
+				cod_grado
+		FROM	dbo.TMP_GARANTIAS_REALES
+		WHERE	cod_usuario = @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3)
+			AND cod_tipo_garantia_real = 2
+		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_grado, cod_tipo_operacion
+		HAVING	COUNT(1) > 1
+
+		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
+			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
+		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
+		SET		cod_garantia	= TM2.cod_llave
+		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
+		INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
+		ON	TM2.cod_oficina = TM1.cod_oficina
+			AND TM2.cod_moneda = TM1.cod_moneda
+			AND TM2.cod_producto = TM1.cod_producto
+			AND TM2.operacion = TM1.operacion
+			AND TM2.cod_tipo_garantia_real = 2
+			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
+			AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
+			AND TM2.cod_grado = TM1.cod_grado
+		WHERE	TM1.cod_usuario = @psCedula_Usuario
+			AND TM1.cod_tipo_garantia = 2
+			AND TM1.cod_tipo_operacion IN (1, 3)
+			AND TM2.cod_usuario = @psCedula_Usuario
+			AND TM2.cod_tipo_operacion IN (1, 3)
+			AND TM2.cod_tipo_garantia_real = 2
+			AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
+									FROM	dbo.TMP_GARANTIAS_REALES TM3
+									WHERE	COALESCE(TM3.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
+										AND TM3.cod_tipo_operacion IN (1, 3)
+										AND TM3.cod_oficina = TM1.cod_oficina
+										AND TM3.cod_moneda = TM1.cod_moneda
+										AND TM3.cod_producto = TM1.cod_producto
+										AND TM3.operacion = TM1.operacion
+										AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
+										AND TM3.cod_grado = TM1.cod_grado
+										AND TM3.cod_tipo_garantia_real = 2)
+
+		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
+		UPDATE	dbo.TMP_GARANTIAS_REALES
+		SET		ind_duplicidad = 2
+		FROM	dbo.TMP_GARANTIAS_REALES TM1
+		WHERE	TM1.cod_usuario = @psCedula_Usuario
+			AND TM1.cod_tipo_operacion IN (1, 3)
+			AND TM1.cod_tipo_garantia_real = 2
+			AND EXISTS (	SELECT 1 
+							FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
+							WHERE	COALESCE(TOD.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
 								AND TOD.cod_tipo_garantia = 2
 								AND TOD.cod_tipo_operacion IN (1, 3)
 								AND TOD.cod_oficina = TM1.cod_oficina
 								AND TOD.cod_moneda = TM1.cod_moneda
 								AND TOD.cod_producto = TM1.cod_producto
 								AND TOD.operacion = TM1.operacion
-								AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.num_placa_bien, '')
-								AND TOD.cod_garantia <> TM1.cod_llave
-								AND TM1.cod_tipo_garantia_real	= 3
-								AND TM1.cod_tipo_operacion IN (1, 3))
+								AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.numero_finca, '')
+								AND TOD.cod_grado = TM1.cod_grado
+								AND TOD.cod_garantia <> TM1.cod_llave)
 
-			/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
-			DELETE	FROM dbo.TMP_GARANTIAS_REALES 
-			WHERE	cod_usuario	= @psCedula_Usuario
-				AND cod_tipo_operacion IN (1, 3)
-				AND ind_duplicidad = 2 
+		/*Se eliminan los duplicados obtenidos*/
+		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
+		WHERE	cod_usuario = @psCedula_Usuario  
+			AND cod_tipo_garantia = 2
+			AND cod_tipo_operacion IN (1, 3)
+
+		/*Se obtienen las garantías reales de prenda duplicadas*/
+		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
+		SELECT	cod_oficina, 
+				cod_moneda, 
+				cod_producto, 
+				operacion,
+				cod_tipo_operacion, 
+				num_placa_bien AS cod_garantia_sicc,
+				2 AS cod_tipo_garantia,
+				@psCedula_Usuario AS cod_usuario,
+				MAX(cod_garantia_real) AS cod_garantia,
+				NULL AS cod_grado
+		FROM	dbo.TMP_GARANTIAS_REALES
+		WHERE	cod_usuario = @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3)
+			AND cod_tipo_garantia_real = 3
+		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, num_placa_bien, cod_tipo_operacion
+		HAVING	COUNT(1) > 1
+
+		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
+			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
+		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
+		SET		cod_garantia = TM2.cod_llave
+		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
+		INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
+			ON	TM2.cod_oficina = TM1.cod_oficina
+			AND TM2.cod_moneda = TM1.cod_moneda
+			AND TM2.cod_producto = TM1.cod_producto
+			AND TM2.operacion = TM1.operacion
+			AND TM2.cod_tipo_garantia_real = 3
+			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
+			AND COALESCE(TM2.num_placa_bien, '') = COALESCE(TM1.cod_garantia_sicc, '')
+		WHERE	TM1.cod_tipo_garantia = 2
+			AND TM2.cod_usuario = @psCedula_Usuario
+			AND TM2.cod_tipo_operacion IN (1, 3)
+			AND TM2.cod_tipo_garantia_real = 3
+			AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
+									FROM	dbo.TMP_GARANTIAS_REALES TM3
+									WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
+										AND TM3.cod_tipo_operacion IN (1, 3)
+										AND TM3.cod_oficina	= TM1.cod_oficina
+										AND TM3.cod_moneda = TM1.cod_moneda
+										AND TM3.cod_producto = TM1.cod_producto
+										AND TM3.operacion = TM1.operacion
+										AND COALESCE(TM3.num_placa_bien, '')	= COALESCE(TM1.cod_garantia_sicc, '')
+										AND TM3.cod_tipo_garantia_real = 3)
+
+
+		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
+		UPDATE	dbo.TMP_GARANTIAS_REALES
+		SET		ind_duplicidad = 2
+		FROM	dbo.TMP_GARANTIAS_REALES TM1
+		WHERE	TM1.cod_usuario	 = @psCedula_Usuario
+			AND TM1.cod_tipo_operacion IN (1, 3)
+			AND TM1.cod_tipo_garantia_real = 3
+			AND EXISTS (SELECT	1 
+						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD
+						WHERE	COALESCE(TOD.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
+							AND TOD.cod_tipo_garantia = 2
+							AND TOD.cod_tipo_operacion IN (1, 3)
+							AND TOD.cod_oficina = TM1.cod_oficina
+							AND TOD.cod_moneda = TM1.cod_moneda
+							AND TOD.cod_producto = TM1.cod_producto
+							AND TOD.operacion = TM1.operacion
+							AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.num_placa_bien, '')
+							AND TOD.cod_garantia <> TM1.cod_llave)
+
+		/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
+		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
+		WHERE	cod_usuario	= @psCedula_Usuario
+			AND cod_tipo_operacion IN (1, 3)
+			AND ind_duplicidad = 2 
 
 	END
 	IF(@piEjecutarParte = 4)
@@ -2540,24 +2210,11 @@ DECLARE
 		DECLARE @vdFechaActualSinHora	DATETIME  
 		SET @vdFechaActualSinHora		= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 	
-	
-		DECLARE @TMP_PORCENTAJE_ACEPTACION_CALCULADO TABLE (
-		          
-					 Cod_Operacion						BIGINT,
-					 Cod_Garantia_Real					BIGINT,
-					 Porcentaje_Aceptacion				DECIMAL (5,2),
-					 Porcentaje_Calculado_Original      DECIMAL (5,2),
-					 Fecha_Valuacion					DATETIME,
-					 Fecha_Ultimo_Seguimiento			DATETIME,
-					 Cod_Tipo_Garantia_Real				SMALLINT,
-					 Cod_Tipo_Bien						SMALLINT,
-					 Monto_Ultima_Tasacion_No_Terreno	DECIMAL(18,2),					 
-					 Cod_Usuario						VARCHAR(30),
-					 Deudor_Habita_Vivienda				BIT
-		       
-					 )
+			
+		DELETE	FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO 
+		WHERE	Cod_Usuario = @psCedula_Usuario
 
-		INSERT INTO @TMP_PORCENTAJE_ACEPTACION_CALCULADO (           
+		INSERT INTO dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO (           
 					 Cod_Operacion,
 					 Cod_Garantia_Real,              
 					 Porcentaje_Aceptacion,
@@ -2579,11 +2236,11 @@ DECLARE
 			 TGR.cod_garantia_real,
 			 CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  
 			 CPA.Porcentaje_Aceptacion AS Porcentaje_Calculado_Original,
-			 TGR.fecha_valuacion,
-			 TGR.fecha_ultimo_seguimiento,
+			 COALESCE(TGR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
+			 COALESCE(TGR.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento,
 			 TGR.cod_tipo_garantia_real,
 			 TGR.cod_tipo_bien,
-			 TGR.monto_ultima_tasacion_no_terreno,
+			 COALESCE(TGR.monto_ultima_tasacion_no_terreno, 0) AS Monto_Ultima_Tasacion_No_Terreno,
 			 @psCedula_Usuario,
 			 GGR.Indicador_Vivienda_Habitada_Deudor
 		     
@@ -2609,7 +2266,7 @@ DECLARE
 			--que no poseen asignado el indicador de inscripción. 
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2625,7 +2282,7 @@ DECLARE
 						
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2643,7 +2300,7 @@ DECLARE
 		    			
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2661,7 +2318,7 @@ DECLARE
 				
 				UPDATE  TPAC
 				SET		TPAC.Porcentaje_Aceptacion = 0
-				FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+				FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
@@ -2689,7 +2346,7 @@ DECLARE
 					--POLIZA ASOCIADA
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = 0
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC						
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC						
 						INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 						ON GPR.cod_operacion = TPAC.Cod_Operacion
 						AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2712,7 +2369,7 @@ DECLARE
 				
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  0
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3 
 					--AND TPAC.Cod_Tipo_Bien = 3							
@@ -2727,7 +2384,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = 0
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 3							
 						AND DATEDIFF(YEAR, TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -2748,7 +2405,7 @@ DECLARE
 
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 1									
 						AND DATEDIFF(YEAR, TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1   	            
@@ -2763,7 +2420,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)	
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 1						
 						AND DATEDIFF(YEAR, TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -2781,7 +2438,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2	
@@ -2797,7 +2454,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2	
@@ -2812,7 +2469,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 2	
 						AND  DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5
@@ -2826,7 +2483,7 @@ DECLARE
 					--FECHA SEGUIMIENTO MAYOR A UN AÑO CONTRA SISTEMA
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)		
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 						AND TPAC.Cod_Tipo_Bien = 2
 						AND DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1 
@@ -2841,7 +2498,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
 					--AND TPAC.Cod_Tipo_Bien = 2			
@@ -2857,7 +2514,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2877,7 +2534,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real						
@@ -2905,7 +2562,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC				
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC				
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3
 					--AND TPAC.Cod_Tipo_Bien = 3			
@@ -2921,7 +2578,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 					--INNER JOIN dbo.TMP_GARANTIAS_REALES TMGR
 					--	ON TPAC.Cod_Garantia_Real = TPAC.Cod_Garantia_Real	
 					--	AND TPAC.Cod_Operacion = TPAC.Cod_Operacion				
@@ -2944,7 +2601,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC								
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -2971,7 +2628,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 4								
 						AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 6 
@@ -2986,7 +2643,7 @@ DECLARE
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
-					FROM	@TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					WHERE	TPAC.Cod_Tipo_Garantia_Real = 3 
 						AND TPAC.Cod_Tipo_Bien = 4				
 						AND DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
@@ -3000,7 +2657,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)			
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
 					--WHERE 
 					--TPAC.Cod_Tipo_Garantia_Real = 3
 					--AND TPAC.Cod_Tipo_Bien = 4		
@@ -3016,7 +2673,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -3036,7 +2693,7 @@ DECLARE
 					
 					--UPDATE  TPAC
 					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
+					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC							
 					--INNER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
 					--	ON GPR.cod_operacion = TPAC.Cod_Operacion
 					--	AND GPR.cod_garantia_real = TPAC.Cod_Garantia_Real							
@@ -3070,7 +2727,7 @@ DECLARE
 							END			
 						)	
 			FROM	TMP_GARANTIAS_REALES TGR
-			INNER JOIN @TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
+			INNER JOIN dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC
 				ON TGR.cod_operacion = TPAC.Cod_Operacion
 				AND TGR.cod_garantia_real = TPAC.Cod_Garantia_Real	
 			WHERE	TGR.cod_usuario = @psCedula_Usuario
