@@ -78,7 +78,8 @@ namespace BCRGARANTIAS.Forms
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO = "EIFUSM";
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR = "EIFVM";
 
-
+        private const string LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS = "EICOI";
+        
         #endregion Constantes
 
         #region Variables Globales
@@ -103,6 +104,10 @@ namespace BCRGARANTIAS.Forms
         private decimal porcentajeAceptacionCalculado=0;
 
         private bool mostrarErrorRelacionPolizaGarantia = false;
+
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
 
         #endregion
 
@@ -1498,7 +1503,38 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que las coberturas obligatorias no fueron asignadas en su totalidad (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorCoberturasObligatoriasInvalidas
+        {
+            get
+            {
 
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_COBERTURAS_OBLIGATORIAS_INVALIDAS, "0");
+                }
+            }
+        }
 
         #endregion Propiedades
 
@@ -1515,7 +1551,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
             cbTipoGarantiaReal.SelectedIndexChanged += new EventHandler(cbTipoGarantiaReal_SelectedIndexChanged);
-
+            
             if (!IsPostBack)
             {
                 ExpandirValuaciones = -1;
@@ -1710,6 +1746,7 @@ namespace BCRGARANTIAS.Forms
             //MostrarErrorPolizaMontoMenor = false;
             MostrarErrorPolizaVencida = false;
             MostrarErrorPolizaAsociadaTB1 = false;
+            MostrarErrorCoberturasObligatoriasInvalidas = false;
                     
 
             btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INDICADOR_INCONSISTENCIA, "0");
@@ -1746,10 +1783,11 @@ namespace BCRGARANTIAS.Forms
                             //MostrarErrorPolizaMontoMenor = true;
                             MostrarErrorPolizaVencida = true;
                             MostrarErrorPolizaAsociadaTB1 = true;
+                            MostrarErrorCoberturasObligatoriasInvalidas = true;
 
                         }
 
-                        AplicarCalculoMontoMitigador();                                            
+                        AplicarCalculoMontoMitigador();
 
                         #region Bloquear campos según requerimiento Siebel No. 1-21317176  ---> 009 Req_Validaciones Indicador Inscripción, por AMM-Lidersoft Internacional S.A., el 11/07/2012
 
@@ -1851,6 +1889,7 @@ namespace BCRGARANTIAS.Forms
                                 //MostrarErrorPolizaMontoMenor = true;
                                 MostrarErrorPolizaVencida = true;
                                 MostrarErrorPolizaAsociadaTB1 = true;
+                                MostrarErrorCoberturasObligatoriasInvalidas = true;
 
                                 CargarDatosSession(true);
 
@@ -1902,20 +1941,29 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Acceso Denegado" +
-                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ACCESO_DENEGADO, Mensajes.ASSEMBLY) +
-                            "&bBotonVisible=0");
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Acceso Denegado" +
+                                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ACCESO_DENEGADO, Mensajes.ASSEMBLY) +
+                                            "&bBotonVisible=0");
+                    }
                     else
                     {
                         Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA_DETALLE, "del mantenimiento de garantías reales", ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Problemas Cargando Página" +
-                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA, Mensajes.ASSEMBLY) +
-                            "&bBotonVisible=0");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Cargando Página" +
+                                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA, Mensajes.ASSEMBLY) +
+                                            "&bBotonVisible=0");
                     }
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje);
                 }
             }
             else
@@ -1953,6 +2001,8 @@ namespace BCRGARANTIAS.Forms
                     //MostrarErrorPolizaMontoMenor = true;
                     MostrarErrorPolizaVencida = true;
                     MostrarErrorPolizaAsociadaTB1 = true;
+                    MostrarErrorCoberturasObligatoriasInvalidas = true;
+
                     btnModificar_Click(sender, e);
                 }
             }
@@ -2029,11 +2079,12 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                    Response.Redirect("frmMensaje.aspx?" +
-                        "bError=1" +
-                        "&strTitulo=" + "Problemas Validando Operación" +
-                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
-                        "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Validando Operación" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=0");
                 }
                 finally
                 {
@@ -2041,6 +2092,11 @@ namespace BCRGARANTIAS.Forms
                     {
                         oleDbConnection1.Close();
                     }
+                }
+                
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje);
                 }
 
                 ResetearCampos();
@@ -2122,11 +2178,17 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                    Response.Redirect("frmMensaje.aspx?" +
-                        "bError=1" +
-                        "&strTitulo=" + "Problemas Cargando Garantías" +
-                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
-                        "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Cargando Garantías" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=0");
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje);
                 }
             }
         }
@@ -2222,7 +2284,7 @@ namespace BCRGARANTIAS.Forms
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
                         || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien)
                         || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor) /*|| (!MostrarErrorPolizaMontoMenor)*/
-                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1))
+                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1) || (!MostrarErrorCoberturasObligatoriasInvalidas))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
@@ -2233,7 +2295,8 @@ namespace BCRGARANTIAS.Forms
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor))) ||
                             //(entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
                             )
                         {
                             MostrarMensajesInformativos();
@@ -2264,14 +2327,20 @@ namespace BCRGARANTIAS.Forms
                 }
                 else
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Modificando Registro" +
-                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasReales.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Modificando Registro" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasReales.aspx");
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje);
             }
         }
 
@@ -2330,24 +2399,31 @@ namespace BCRGARANTIAS.Forms
                 contenedorDatosModificacion.Visible = false;
                 contenedorDatosModificacion.Controls.Clear();
 
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=0" +
-                                "&strTitulo=" + "Eliminación Exitosa" +
-                                "&strMensaje=" + Mensajes.Obtener(Mensajes.ELIMINACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                "&bBotonVisible=1" +
-                                "&strTextoBoton=Regresar" +
-                                "&strHref=frmGarantiasReales.aspx", false);
+                seRedirecciona = true;
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=0" +
+                                    "&strTitulo=" + "Eliminación Exitosa" +
+                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ELIMINACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                    "&bBotonVisible=1" +
+                                    "&strTextoBoton=Regresar" +
+                                    "&strHref=frmGarantiasReales.aspx");
             }
             catch (Exception ex)
             {
                 Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA_DETALLE, "real", ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=1" +
-                                "&strTitulo=" + "Problemas Eliminando Registro" +
-                                "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                "&bBotonVisible=1" +
-                                "&strTextoBoton=Regresar" +
-                                "&strHref=frmGarantiasReales.aspx");
+                seRedirecciona = true;
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=1" +
+                                    "&strTitulo=" + "Problemas Eliminando Registro" +
+                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                    "&bBotonVisible=1" +
+                                    "&strTextoBoton=Regresar" +
+                                    "&strHref=frmGarantiasReales.aspx");
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje);
             }
         }
 
@@ -2679,7 +2755,7 @@ namespace BCRGARANTIAS.Forms
                 {
                     case ("SelectedGarantiaReal"):
 
-                        LimpiarCampos();                      
+                         LimpiarCampos();
 
                         rowIndex = (int.Parse(e.CommandArgument.ToString()));
 
@@ -2816,8 +2892,14 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
+
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
+                
+
                 ckbPolizaExterna.Checked = false;
 
+                
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
                 txtPorcentajeAceptacionCalculado.Text = string.Empty;
@@ -2913,11 +2995,16 @@ namespace BCRGARANTIAS.Forms
                 txtMontoAcreenciaPoliza.Text = string.Empty;
                 txtDetallePoliza.Text = string.Empty;
                 rdlEstadoPoliza.SelectedIndex = -1;
+
+                //lbCoberturasPorAsignar.Items.Clear();
+                //lbCoberturasAsignadas.Items.Clear();
+
                 ckbPolizaExterna.Checked = false;
 
                 lblUsrModifico.Text = string.Empty;
                 lblFechaModificacion.Text = string.Empty;
                 lblFechaReplica.Text = string.Empty;
+
 
                 #region Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -4085,7 +4172,7 @@ namespace BCRGARANTIAS.Forms
             ErrorGraveAvaluo = false;
 
             ExisteValuacion = false;
-            
+
             BloquearCampos(true, false);
 
             bloquearControles = false;
@@ -4111,12 +4198,12 @@ namespace BCRGARANTIAS.Forms
 
                 mostrarErrorRelacionPolizaGarantia = true;
 
-                porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2")); 
+                porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));
 
                 ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
 
                 string m = ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString();
-              
+
                 if ((entidadGarantia.FechaValuacion != DateTime.MinValue) && ((entidadGarantia.MontoUltimaTasacionTerreno + entidadGarantia.MontoUltimaTasacionNoTerreno) > 0))
                 {
                     ExisteValuacion = true;
@@ -4164,7 +4251,7 @@ namespace BCRGARANTIAS.Forms
             if ((entidadGarantia != null) && (!entidadGarantia.ErrorDatos))
             {
                 Entidad_Real = entidadGarantia;
-                                
+
                 MontoTotalAvaluo = entidadGarantia.MontoTotalAvaluo.ToString("N");
 
                 FormatearCamposNumericos();
@@ -4173,9 +4260,9 @@ namespace BCRGARANTIAS.Forms
                 #region Datos de la Garantía
 
                 if ((Session["EsCambioTipoGarantia"] != null)
-                   && (Session["Accion"] != null)
-                   && ((!bool.Parse(Session["EsCambioTipoGarantia"].ToString())) ||
-                    (Session["Accion"].ToString() == "INSERTAR")))
+                  && (Session["Accion"] != null)
+                  && ((!bool.Parse(Session["EsCambioTipoGarantia"].ToString())) ||
+                   (Session["Accion"].ToString() == "INSERTAR")))
                 {
                     CargarTiposGarantiaReal();
                     cbTipoGarantiaReal.ClearSelection();
@@ -4438,12 +4525,46 @@ namespace BCRGARANTIAS.Forms
                         clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaSapSeleccionada();
 
                         if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
-                        {                        
+                        {
                             cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
                             asignarPoliza = true;
-                            polizaEstaVigente = entidadPolizaSap.IndicadorPolizaSapVigente;
                         }
-                    }      
+                    }
+                    else
+                    {
+                        string identificacionBien = string.Empty;
+                        Enumeradores.Tipos_Garantia_Real tipoGarReal = Enumeradores.Tipos_Garantia_Real.Ninguna;
+
+                        switch (entidadGarantia.CodTipoGarantiaReal)
+                        {
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Hipoteca): identificacionBien = entidadGarantia.NumeroFinca;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Hipoteca;
+                                break;
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria): identificacionBien = entidadGarantia.NumeroFinca;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria;
+                                break;
+                            case ((short)Enumeradores.Tipos_Garantia_Real.Prenda): identificacionBien = entidadGarantia.NumPlacaBien;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Prenda;
+                                break;
+                            default: identificacionBien = string.Empty;
+                                tipoGarReal = Enumeradores.Tipos_Garantia_Real.Ninguna;
+                                break;
+                        }
+
+                        clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaRelacionadaBien(entidadGarantia.CodTipoBien, entidadGarantia.CodPartido, identificacionBien, tipoGarReal);
+
+                        if (entidadPolizaSap != null)
+                        {
+                            if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
+                            {
+                                cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
+                                asignarPoliza = true;
+                            }
+
+                            polizaEstaVigente = entidadPolizaSap.IndicadorPolizaSapVigente;
+
+                        }
+                    }
                 }
                 else
                 {
@@ -4451,7 +4572,7 @@ namespace BCRGARANTIAS.Forms
                     cbCodigoSap.Items.Clear();
                 }
 
-                #endregion Datos de la póliza
+                 #endregion Datos de la póliza
 
                 ConsecutivoGarantia = entidadGarantia.CodGarantiaReal;
 
@@ -4569,7 +4690,7 @@ namespace BCRGARANTIAS.Forms
                     txtFechaSeguimiento.Enabled = false;
                     txtFechaConstruccion.Enabled = false;
                     igbCalendarioSeguimiento.Enabled = false;
-                    igbCalendarioConstruccion.Enabled = false; 
+                    igbCalendarioConstruccion.Enabled = false;
                 }
 
                 if ((entidadGarantia.CodTipoBien == 0) || (entidadGarantia.CodTipoBien == -1) || (entidadGarantia.CodTipoMitigador == -1))
@@ -4578,10 +4699,10 @@ namespace BCRGARANTIAS.Forms
                     txtPorcentajeAceptacionCalculado.Text = "0.00";
                 }
                 else
-                {           
+                {
 
                     //Se valida tipos de bien diferente 1-2-3-4, lo que no se evalua y no tiene % calculado respetará el % aceptacion,no debe de aplicar validaciones para % ingresado por el usuario
-                   
+
                     //if ((entidadGarantia.CodTipoBien > 4) || (entidadGarantia.PorcentajeAceptacionCalculado == 0))
                     //if ((entidadGarantia.CodTipoBien > 4) || (entidadGarantia.PorcentajeAceptacionCalculadoOriginal == 0))
                     if (entidadGarantia.CodTipoBien > 4)
@@ -4599,22 +4720,22 @@ namespace BCRGARANTIAS.Forms
                         ////se debe validar para que  cuando da error el % calculado no sea borrado por el original                    
                         if (entidadGarantia.InconsistenciaPorcentajeAceptacionCalculado)
                         {
-                            porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));   
+                            porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                             ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                         }
                         else
                         {
                             txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2");
-                            porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");                         
+                            porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                             ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
 
-                        }                
+                        }
 
                     }
-                
-                }                
+
+                }
 
             }
             else
@@ -5145,6 +5266,39 @@ namespace BCRGARANTIAS.Forms
 
                         //VALIDACIONES REDUCEN A LA MITAD
 
+                        
+
+                        #region Inconsistencia de que las coberturas obligatorias no fueron asignadas en su totalidad en el SAP
+
+                        //Se valida si el error es debido a la validación de las coberturas obligatorias
+                        if (entidadGarantiaReal.InconsistenciaCoberturasObligatoriasInvalidas)
+                        {
+                            estadoVerificacion = false;
+
+                            MostrarErrorCoberturasObligatoriasInvalidas = false;
+
+                            if (mostrarErrorEmergente)
+                            {
+                                //Se obtiene el error de la lista de errores
+                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                {
+                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                            typeof(Page),
+                                                                            Guid.NewGuid().ToString(),
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                            false);
+                                }
+                                else
+                                {
+                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                           Guid.NewGuid().ToString(),
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                           false);
+                                }
+                            }
+                        }
+
+                        #endregion Inconsistencia de que las coberturas obligatorias no fueron asignadas en su totalidad en el SAP
 
                         #region Inconsistencia de que los datos del acreedor de la póliza fueron modificados en el SAP
 
@@ -7311,12 +7465,58 @@ namespace BCRGARANTIAS.Forms
                 {
                     MostrarErrorPolizaAsociadaTB1 = true;
                 }
+
                 //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorCoberturasObligatoriasInvalidas = false;
 
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorCoberturasObligatoriasInvalidas = true;
+                }
+                //
                 
-
                 if (existeMensaje)
                 {
+                    if ((this.Entidad_Real != null) && (this.Entidad_Real.PolizaSapAsociada != null))
+                    {
+                        if (requestSM != null && requestSM.IsInAsyncPostBack)
+                        {
+                            ScriptManager.RegisterClientScriptBlock(this,
+                                                                    typeof(Page),
+                                                                    Guid.NewGuid().ToString(),
+                                                                    "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                    false);
+                        }
+                        else
+                        {
+                            this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                   Guid.NewGuid().ToString(),
+                                                                   "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                   false);
+                        }
+                    }
+
+
                     //Se obtiene el error de la lista de errores
                     if (requestSM != null && requestSM.IsInAsyncPostBack)
                     {

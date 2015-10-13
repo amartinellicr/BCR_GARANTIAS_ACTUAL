@@ -1577,6 +1577,30 @@
             });
 
 
+        //Función que muestra el mensaje de alerta cuando se selecciona una póliza inválida
+        $MensajeCoberturasObligatoriasInvalidas = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>Esta garantía no es cubierta de acuerdo a lo solicitado por el ente asegurado, considerando lo anterior la misma representara un castigo en la mitad de porcentaje de aceptación aceptado para mitigar. Para corregir la información comunicarse con  Sociedad de Seguros del BCR.</p></div></div>')
+            .dialog({
+                    autoOpen: false, 
+                    title: 'Coberturas Inválidas', 
+                    resizable: false,
+                    draggable: false,
+                    height:235,
+                    width:650,
+                    closeOnEscape: false,
+                    open: function(event, ui) { $(".ui-dialog-titlebar-close").hide(); $( this ).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" });},
+                    modal: true,
+                    buttons: {
+	                    "Aceptar": function() {
+		                    $( this ).dialog( "close" );
+    			            
+		                    document.body.style.cursor = 'default';
+
+		                    $$('btnValidarOperacion').attr('EICOI', '1');
+		                    ModificarGarantia();
+	                    }
+                    }
+            });
+
 
         /***********************************************************************/
         /* VALIDACIONES DEL CATALOGO DE PORCENTAJE DE ACEPTACION */
@@ -2638,9 +2662,12 @@ function MensajeMontoMitigadorMayor()
         var timediff = date_2 - date_1;
         if (isNaN(timediff)) return NaN;
 
+        var fecha_1 = moment(date_1);
+        var fecha_2 = moment(date_2);
+
         switch (interval) {
-        case "years":
-            return date2.getFullYear() - date1.getFullYear();
+            case "years":
+                return fecha_2.diff(fecha_1, 'years', true); // (date2.getFullYear() - date1.getFullYear());
         case "months":
             return ((date2.getFullYear() * 12 + date2.getMonth()) - (date1.getFullYear() * 12 + date1.getMonth()));
         case "weeks":
@@ -3130,8 +3157,8 @@ function MensajeMontoMitigadorMayor()
               && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
               && (($$('btnValidarOperacion').attr('EIFVM')) == '1')
               && (($$('btnValidarOperacion').attr('EIPV')) == '1')
-              //&& (($$('btnValidarOperacion').attr('EIPMM')) == '1')
-              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')) 
+              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')
+              && (($$('btnValidarOperacion').attr('EICOI')) == '1')) 
         {
             __doPostBack('btnModificar','Metodo');
         }
@@ -3506,6 +3533,12 @@ function MensajeMontoMitigadorMayor()
         $$('rdlEstadoPoliza').find("input[value='1']").removeAttr("checked");
         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'White');
+        $$('lbCoberturasPorAsignar').empty();
+        $$('lbCoberturasAsignadas').empty();
+        $$('lbCoberturasPorAsignar').attr("size", "0");
+        $$('lbCoberturasAsignadas').attr("size", "0");
+        $$('lbCoberturasPorAsignar').hide();
+        $$('lbCoberturasAsignadas').hide();
         $$('ckbPolizaExterna').attr('checked', false);
     }
 
@@ -3513,8 +3546,14 @@ function MensajeMontoMitigadorMayor()
     function cargarDatosPoliza()
     {
          var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+         var formarOpcion = '';
+         var catidadFilasCPA = 0;
+         var cantidadFilasCA = 0;
+         var numFilas = 0;
          var esPolizaExterna = false;    
-        
+         var cantidadCPAObligatorias = 0;
+         var cantidadCPObligatorias = 0;
+
          if(datoCodigoSap === -1)
          {
              LimpiarCamposPolizas();             
@@ -3539,11 +3578,49 @@ function MensajeMontoMitigadorMayor()
 
                     $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
 
+                    
+                    if (polizasSap[i].Cobertura !== "undefined") 
+                    {
+                        for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
+                            if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasPorAsignar').append(formarOpcion);
+                                catidadFilasCPA += 1;
+                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                            }
+                            else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasAsignadas').append(formarOpcion);
+                                cantidadFilasCA += 1;
+                                cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                            }
+                        }
+
+                        if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) {
+                            $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
+                            $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
+
+                            $$('lbCoberturasPorAsignar').show();
+                            $$('lbCoberturasAsignadas').show();
+                        }
+                        else {
+                            $$('lbCoberturasPorAsignar').attr("size", "0");
+                            $$('lbCoberturasAsignadas').attr("size", "0");
+
+                            $$('lbCoberturasPorAsignar').hide();
+                            $$('lbCoberturasAsignadas').hide();
+                        }
+                    }
+
                     esPolizaExterna = ((polizasSap[i].Indicador_Poliza_Externa === '1') ? true : false);
 
                     $$('ckbPolizaExterna').attr("checked", esPolizaExterna);
 
-                    
+                  
                     if(polizasSap[i].Codigo_Sap_Valido === '0')
                     {
                         if(typeof($MensajePolizaInvalida) !== 'undefined')
@@ -3566,6 +3643,7 @@ function MensajeMontoMitigadorMayor()
                         }
                     }
 
+
                     if(polizasSap[i].Poliza_Vigente === 0)
                     {
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
@@ -3578,7 +3656,14 @@ function MensajeMontoMitigadorMayor()
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
                     }
-                    
+
+                    if (cantidadCPAObligatorias != cantidadCPObligatorias) {
+                        if (typeof ($MensajeCoberturasObligatoriasInvalidas) !== 'undefined') {
+
+                            $MensajeCoberturasObligatoriasInvalidas.dialog('open');
+                        }
+                    }
+
                     break;
                }
             }
@@ -3589,10 +3674,15 @@ function MensajeMontoMitigadorMayor()
 
 
     //Se carga la información de la póliza seleccionada
-    function cargarPoliza(arregloPolizas) 
-    {
+    function cargarPoliza(arregloPolizas) {
         var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+        var formarOpcion = '';
+        var catidadFilasCPA = 0;
+        var cantidadFilasCA = 0;
+        var numFilas = 0;
         var esPolizaExterna = false;
+        var cantidadCPAObligatorias = 0;
+        var cantidadCPObligatorias = 0;
 
         if (datoCodigoSap === -1) {
             LimpiarCamposPolizas();
@@ -3613,6 +3703,42 @@ function MensajeMontoMitigadorMayor()
                     $$('rdlEstadoPoliza').find("input[value='" + polizasSap[i].Poliza_Vigente + "']").attr("checked", "checked");
 
                     $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
+
+                    for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) 
+                    {
+                       if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') 
+                       {
+                                formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                                formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                                formarOpcion += '</span><br />';
+                                $$('lbCoberturasPorAsignar').append(formarOpcion);
+                                catidadFilasCPA += 1;
+                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                        }
+                        else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                            formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
+                            formarOpcion += polizasSap[i].Cobertura[indice].Descripcion_Compuesta_Cobertura;
+                            formarOpcion += '</span><br />';
+                            $$('lbCoberturasAsignadas').append(formarOpcion);
+                            cantidadFilasCA += 1;
+                            cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                        }
+                    }
+
+                    if ((catidadFilasCPA > 0) || (cantidadFilasCA > 0)) {
+                        $$('lbCoberturasPorAsignar').attr("size", catidadFilasCPA);
+                        $$('lbCoberturasAsignadas').attr("size", cantidadFilasCA);
+
+                        $$('lbCoberturasPorAsignar').show();
+                        $$('lbCoberturasAsignadas').show();
+                    }
+                    else {
+                        $$('lbCoberturasPorAsignar').attr("size", "0");
+                        $$('lbCoberturasAsignadas').attr("size", "0");
+
+                        $$('lbCoberturasPorAsignar').hide();
+                        $$('lbCoberturasAsignadas').hide();
+                    }
 
                     esPolizaExterna = ((polizasSap[i].Indicador_Poliza_Externa === '1') ? true : false);
 
@@ -3645,6 +3771,15 @@ function MensajeMontoMitigadorMayor()
                         $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'White');
                         $$('rdlEstadoPoliza').find("input[value='1']").css('backgroundColor', 'Green');
                     }
+
+//                    if ((polizasSap[i].Coberturas_Obligatorias_Asignadas === '1')
+//                        && ((($$('btnValidarOperacion').attr("IBG")) == '0')))
+//                    {
+//                        if (typeof ($MensajeCoberturasObligatoriasInvalidas) !== 'undefined') {
+
+//                            $MensajeCoberturasObligatoriasInvalidas.dialog('open');
+//                        }
+//                    }
 
                     break;
                 }
@@ -3927,8 +4062,7 @@ function MensajeMontoMitigadorMayor()
                 //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
 
                 if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) && (!indicadorDeudorHabitaVivienda)) {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                    
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);         
                 }
 
                 //Poliza Seleccionada

@@ -440,4 +440,19 @@
 }
 /*Fin GridView*/
 
-           
+.id-tabla-texto-multilinea
+{
+    text-align:left;
+    font-family:Arial, Helvética, Sans-Serif;
+    font-size:12px;
+    width:72px;
+}  
+
+.id-list-box
+{
+    text-align:left;
+    font-family:Verdana, Tahoma, Arial;
+    font-size:12px;
+    font-style:normal;
+    overflow:auto;
+}

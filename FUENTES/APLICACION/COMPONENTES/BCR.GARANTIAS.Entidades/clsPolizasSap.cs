@@ -18,6 +18,9 @@ namespace BCR.GARANTIAS.Entidades
 
         private const string _tagPolizas = "POLIZAS";
         private const string _tagPoliza   = "POLIZA";
+        private const string _tagCoberturas = "COBERTURAS";
+        private const string _tagCoberturasPorAsignar = "POR_ASIGNAR";
+        private const string _tagCoberturasAsignadas = "ASIGNADAS";
 
         private const string _codigoSap = "Codigo_SAP";
         private const string _tipoPoliza = "Tipo_Poliza";
@@ -40,7 +43,12 @@ namespace BCR.GARANTIAS.Entidades
         private const string _polizaAsociada = "Poliza_Asociada";
 
         private const string _indicadorPolizaExterna = "Indicador_Poliza_Externa";
-        
+
+        private const string _codigoPartido = "Codigo_Partido";
+        private const string _identificacionBien = "Identificacion_Bien";
+        private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
+        private const string _codigoAseguradora = "Codigo_Aseguradora";
+
         #endregion Constantes
 
         #region Variables
@@ -494,10 +502,42 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteString(((polizaSap.PolizaAsociada) ? "1" : "0"));
                     objEscritor.WriteEndElement();
 
-                    //Crea el nodo del indicador de si la poliza SAP es externa o no, segun el SAP
+                    //Crea el nodo del indicador de si la poliza SAP es externa o no, según el SAP
+
                     objEscritor.WriteStartElement(_indicadorPolizaExterna);
                     objEscritor.WriteString(((polizaSap.IndicadorPolizaExterna) ? "1" : "0"));
                     objEscritor.WriteEndElement();
+
+                    //Crea el nodo del código del partido
+                    objEscritor.WriteStartElement(_codigoPartido);
+                    objEscritor.WriteString(polizaSap.CodigoPartido.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo de la identificación del bien
+                    objEscritor.WriteStartElement(_identificacionBien);
+                    objEscritor.WriteString(polizaSap.IdentificacionBien);
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del tipo de cobertura de la póliza
+                    objEscritor.WriteStartElement(_codigoTipoCobertura);
+                    objEscritor.WriteString(polizaSap.TipoCobertura.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo de la aseguradora de la póliza
+                    objEscritor.WriteStartElement(_codigoAseguradora);
+                    objEscritor.WriteString(polizaSap.CodigoAseguradora.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Inicializa el nodo que poseer los datos de las coberturas de la póliza
+                    if ((polizaSap.ListaCoberturasPoliza != null) && (polizaSap.ListaCoberturasPoliza.Count > 0))
+                    {
+                        objEscritor.WriteString(polizaSap.ListaCoberturasPoliza.ObtenerTrama());
+                    }
+                    else
+                    {
+                        objEscritor.WriteStartElement(_tagCoberturas);
+                        objEscritor.WriteEndElement();
+                    }
 
                     //Final del tag POLIZA
                     objEscritor.WriteEndElement();
@@ -513,7 +553,7 @@ namespace BCR.GARANTIAS.Entidades
             //Flush
             objEscritor.Flush();
 
-            tramaGenerada = UtilitariosComun.GetStringFromStream(stream).Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", string.Empty);
+            tramaGenerada = UtilitariosComun.GetStringFromStream(stream).Replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", string.Empty).Replace("&lt;", "<").Replace("&gt;", ">");
 
             //Cierre del xml document
             objEscritor.Close();
@@ -547,6 +587,54 @@ namespace BCR.GARANTIAS.Entidades
         }
 
         /// <summary>
+        /// Obtiene la póliza que esté asociada al bien consultado
+        /// </summary>
+        /// <param name="codigoBien">Código del tipo de bien</param>
+        /// <param name="codigoPartido">Código del partido</param>
+        /// <param name="identificacionBien">Identificación del bien</param>
+        /// <param name="tipoGarantia">Código del tipo de garantía real</param>
+        /// <returns>Una entidad de tipo póliza, de no existir una o si existen varias se retornará nulo</returns>
+        public clsPolizaSap ObtenerPolizaRelacionadaBien(short codigoBien, short codigoPartido, string identificacionBien, Enumeradores.Tipos_Garantia_Real tipoGarantia)
+        {
+            clsPolizaSap entidadRetornada = null;
+            int cantidadPolizas = 0;
+
+
+            if (this.InnerList.Count > 0)
+            {
+                if ((tipoGarantia != Enumeradores.Tipos_Garantia_Real.Prenda) && ((codigoPartido >= 1) && (codigoPartido <= 7)) && (identificacionBien.Length > 0) && (codigoBien != -1))
+                {
+                    foreach (clsPolizaSap entidadPoliza in InnerList)
+                    {
+                        if ((entidadPoliza.TipoBienPoliza == codigoBien) && (entidadPoliza.CodigoPartido == codigoPartido) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
+                        {
+                            entidadRetornada = entidadPoliza;
+                            cantidadPolizas++;
+                        }
+                    }
+                }
+                else if ((tipoGarantia == Enumeradores.Tipos_Garantia_Real.Prenda) && (identificacionBien.Length > 0))
+                {
+                    foreach (clsPolizaSap entidadPoliza in InnerList)
+                    {
+                        if ((entidadPoliza.TipoBienPoliza == codigoBien) && (entidadPoliza.IdentificacionBien.CompareTo(identificacionBien) == 0))
+                        {
+                            entidadRetornada = entidadPoliza;
+                            cantidadPolizas++;
+                        }
+                    }
+                }
+
+                if (cantidadPolizas != 1)
+                {
+                    entidadRetornada = null;
+                }
+            }
+
+            return entidadRetornada;
+        }
+
+        /// <summary>
         /// Método que permite convertir la lista de elementos en formato JSON
         /// </summary>
         /// <returns>Cadena con las pólizas de la lista, en formato JSON</returns>
@@ -554,13 +642,13 @@ namespace BCR.GARANTIAS.Entidades
         {
             StringBuilder listaPolizasJSON = new StringBuilder();
 
-            //Se revisa que la lista posea semestres
+            //Se revisa que la lista posea pólizas
             if (this.InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                 listaPolizasJSON.Append("[");
 
-                //Se recorren los semestres y se genera la cedena JSON de cada uno
+                //Se recorren las pólizas y se genera la cedena JSON de cada uno
                 foreach (clsPolizaSap convertirPoliza in this.InnerList)
                 {
                     listaPolizasJSON.Append(convertirPoliza.ConvertirJSON());
@@ -578,6 +666,5 @@ namespace BCR.GARANTIAS.Entidades
             return listaPolizasJSON.ToString();
         }
         #endregion Métodos Públicos
-
     }
 }

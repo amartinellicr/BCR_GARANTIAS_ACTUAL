@@ -53,7 +53,8 @@ namespace BCR.GARANTIAS.Comun
             FechaSeguimientoMayor       = 37,
             PolizaAsociada              = 38,
             PolizaInvalidaTipoBienPoliza = 39,
-            MontoPolizaNoCubreBien      = 40
+            MontoPolizaNoCubreBien      = 40,
+            CoberturasObligatoriasInvalidas = 41
             //agregar mas indicadores para que no se se caiga. 
           
         }
@@ -181,5 +182,16 @@ namespace BCR.GARANTIAS.Comun
             FechaConstruccion = 9
         }
         #endregion Lista de Controles Web de Garantías Reales
+
+        #region Tipos de Trama de las Coberturas
+
+        public enum Tipos_Trama_Cobertura
+        {
+            Ninguna = 0,
+            PorAsignar = 1,
+            Asignada = 2
+        }
+
+        #endregion Tipos de Trama de las Coberturas
     }
 }
