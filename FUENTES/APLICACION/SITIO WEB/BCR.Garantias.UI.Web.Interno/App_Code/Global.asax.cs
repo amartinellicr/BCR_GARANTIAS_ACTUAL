@@ -12,6 +12,7 @@ using System.IO;
 
 using BCR.GARANTIAS.Comun;
 
+
 /// <summary>
 /// Summary description for Global
 /// </summary>
@@ -256,6 +257,11 @@ public class Global : System.Web.HttpApplication
 
         Application.UnLock();
 
+        //Este código hace que se genere el SessionID y se supone sea persistente en toda la aplicación
+        if (this.Session["SesionCreada"] == null)
+        {
+            this.Session["SesionCreada"] = 1;
+        }
     }
 
     void Session_End(object sender, EventArgs e)
@@ -269,6 +275,8 @@ public class Global : System.Web.HttpApplication
         Application["SessionCounter"] = int.Parse(Application["SessionCounter"].ToString()) - 1;
         Application.UnLock();
 
+        
+        
     }
     protected void Application_BeginRequest(Object sender, EventArgs e)
     {
