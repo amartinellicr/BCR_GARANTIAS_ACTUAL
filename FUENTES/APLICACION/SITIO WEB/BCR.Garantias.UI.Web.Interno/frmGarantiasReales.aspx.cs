@@ -1963,7 +1963,7 @@ namespace BCRGARANTIAS.Forms
 
                 if (seRedirecciona)
                 {
-                    Response.Redirect(urlPaginaMensaje);
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
             else
@@ -2096,7 +2096,7 @@ namespace BCRGARANTIAS.Forms
                 
                 if (seRedirecciona)
                 {
-                    Response.Redirect(urlPaginaMensaje);
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
 
                 ResetearCampos();
@@ -2188,7 +2188,7 @@ namespace BCRGARANTIAS.Forms
 
                 if (seRedirecciona)
                 {
-                    Response.Redirect(urlPaginaMensaje);
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
         }
@@ -2340,7 +2340,7 @@ namespace BCRGARANTIAS.Forms
 
             if (seRedirecciona)
             {
-                Response.Redirect(urlPaginaMensaje);
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -2423,7 +2423,7 @@ namespace BCRGARANTIAS.Forms
 
             if (seRedirecciona)
             {
-                Response.Redirect(urlPaginaMensaje);
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -6903,8 +6903,9 @@ namespace BCRGARANTIAS.Forms
             url.Append("?bError=0&strTitulo=Modificación Exitosa&strMensaje=");
             url.Append(Mensajes.Obtener(Mensajes.MODIFICACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY));
             url.Append("&bBotonVisible=1&strTextoBoton=Regresar&strHref=frmGarantiasReales.aspx");
-
-            Response.Redirect(url.ToString(), false);
+            seRedirecciona = true;
+            urlPaginaMensaje = url.ToString();
+            //Response.Redirect(url.ToString(), false);
         }
 
         /// <summary>
