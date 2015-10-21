@@ -745,7 +745,11 @@ namespace BCR.GARANTIAS.Entidades
             get { return inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro; }
             set { inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro = value; }
         }
+<<<<<<< HEAD
 
+=======
+   
+>>>>>>> origin/BLOQUE-2_SPRINT-2
         //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
         /// <summary>
         /// Indicador de que se presentó un error con el valor del PorAcepTerreno (rango fuera de 0-100 o  mayor al % Aceptación Terreno calculado)
@@ -1160,7 +1164,11 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajeClaseGarantiaInvalida58 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia58) !== 'undefined'){$MensajeClaseGarantia58.dialog('open');} </script>";
 
         private const string _mensajeCoberturasObligatoriasInvalidas = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeCoberturasObligatoriasInvalidas) !== 'undefined'){$MensajeCoberturasObligatoriasInvalidas.dialog('open');} </script>";
+<<<<<<< HEAD
 
+=======
+       
+>>>>>>> origin/BLOQUE-2_SPRINT-2
         //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
         private const string _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptTerrenoCalcAnotada = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcAnotadaInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcAnotadaInvalido.dialog('open');} </script>";
@@ -1824,6 +1832,18 @@ namespace BCR.GARANTIAS.Entidades
 
             inconsistenciaCoberturasObligatoriasInvalidas = false;
 
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+
+            inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+           
             //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
             inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
             inconsistenciaPorcAceptTerrenoCalcAnotada = false;
@@ -3471,6 +3491,38 @@ namespace BCR.GARANTIAS.Entidades
                 get { return porcentajeAceptacionTerreno; }
                 set { porcentajeAceptacionTerreno = value; }
             }
+<<<<<<< HEAD
+=======
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion No Terreno
+            /// </summary>
+            public decimal PorcentajeAceptacionNoTerreno
+            {
+                get { return porcentajeAceptacionNoTerreno; }
+                set { porcentajeAceptacionNoTerreno = value; }
+            }
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion Terreno Calculado
+            /// </summary>
+            public decimal PorcentajeAceptacionTerrenoCalculado
+            {
+                get { return porcentajeAceptacionTerrenoCalculado; }
+                set { porcentajeAceptacionTerrenoCalculado = value; }
+            }
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion No Terreno Calculado
+            /// </summary>
+            public decimal PorcentajeAceptacionNoTerrenoCalculado
+            {
+                get { return porcentajeAceptacionNoTerrenoCalculado; }
+                set { porcentajeAceptacionNoTerrenoCalculado = value; }
+            }
+
+        #endregion
+>>>>>>> origin/BLOQUE-2_SPRINT-2
 
             /// <summary>
             /// Obtiene o establece el Porcentaje de Aceptacion No Terreno
@@ -4512,6 +4564,19 @@ namespace BCR.GARANTIAS.Entidades
 
                 inconsistenciaCoberturasObligatoriasInvalidas = false;
                 
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
+                inconsistenciaPorcAceptTerrenoCalcAnotada = false;
+                inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
+                inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+
+                inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
+                inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+
+
                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
                 inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
                 inconsistenciaPorcAceptTerrenoCalcAnotada = false;
@@ -8585,7 +8650,11 @@ namespace BCR.GARANTIAS.Entidades
                                 objEscritor.WriteString(this.porcentajeAceptacionCalculadoOriginal.ToString("N2"));
                                 objEscritor.WriteEndElement();
 
+<<<<<<< HEAD
                                 
+=======
+
+>>>>>>> origin/BLOQUE-2_SPRINT-2
                             }
 
                             //Final del tag SEMESTRE
