@@ -374,7 +374,210 @@
 	                }
                 });
 
+ /********************************************************************/
+                /*PORCENTAJE ACEPTACION TERRENO CALCULADO*/
 
+            //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción No anotada / No inscrita
+            $MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (No anotada/ No inscrita) para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Indicador Inscripción Inválido',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+
+            //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción Anotada
+            $MensajePorcAceptTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (Anotada) para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Indicador Inscripción Inválido',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para la Fecha Último Seguimiento
+            $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha Último Seguimiento Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para la Fecha de Valuación
+            $MensajePorcAceptTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a 6 meses) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Valuación Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+  /********************************************************************/
+            /* PORCENTAJE ACEPTACION NO TERRENO CALCULADO */
+
+            //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción No anotada / No inscrita
+            $MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (No anotada/ No inscrita) para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Indicador Inscripción Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción Anotada
+            $MensajePorcAceptNoTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (No anotada/ No inscrita) para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Indicador Inscripción Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para la Fecha Último Seguimiento
+            $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha Último Seguimiento Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para la Fecha Último Seguimiento
+            $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a 6 meses) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha Último Seguimiento Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+            //Función que el mensaje de error cuando existe una inconsistencia para la Fecha de Valuación
+            $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de Valuación (Mayor a cinco años) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fecha de Valuación Inválida',
+                resizable: false,
+                height: 235,
+                width: 650,
+                position: { my: "center bottom", at: "center bottom", of: window },
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
 
  /********************************************************************/        
 	     /* VALIDACIONES DEL CAMPO REFERENTE A LA CLASE DE GARANTIA */

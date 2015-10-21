@@ -219,6 +219,19 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorObteniendoCoberturasPolizasSap                    = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP";
         public const string _errorObteniendoCoberturasPolizasSapDetalle             = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP_DETALLE";
         
+
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+        public const string _errorPorcAceptTerrenoCalcNoAnotadaNoInscrita                       = "ERROR_PORC_ACEPT_TERRENO_CALC_NO_ANOTADA_NO_INSCRITA";
+        public const string _errorPorcAceptTerrenoCalcAnotada                                   = "ERROR_PORC_ACEPT_TERRENO_CALC_ANOTADA";
+        public const string _errorPorcAceptTerrenoCalcFechaUltimoSeguimiento                    = "ERROR_PORC_ACEPT_TERRENO_CALC_FECHA_ULTIMO_SEGUIMIENTO";
+        public const string _errorPorcAceptTerrenoCalcFechaValuacion                            = "ERROR_PORC_ACEPT_TERRENO_CALC_FECHA_VALUACION";
+
+        public const string _errorPorcAceptNoTerrenoCalcNoAnotadaNoInscrita                     = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_NO_ANOTADA_NO_INSCRITA";
+        public const string _errorPorcAceptNoTerrenoCalcAnotada                                 = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_ANOTADA";
+        public const string _errorPorcAceptNoTerrenoCalcFechaUltimoSeguimiento                  = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_ULTIMO_SEGUIMIENTO";
+        public const string _errorPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo  = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_ULTIMO_SEGUIMIENTO_MAQUINARIA_EQUIPO";
+        public const string _errorPorcAceptNoTerrenoCalcFechaValuacion                          = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_VALUACION";
+
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>

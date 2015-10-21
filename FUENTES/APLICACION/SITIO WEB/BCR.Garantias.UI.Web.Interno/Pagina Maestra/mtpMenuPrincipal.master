@@ -99,6 +99,17 @@
 
             var $MensajeDuplicadoTipoPolizaBienRelacionado;
 
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            var $MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaValuacionInvalido;
+            var $MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido;
+
 
 
             PageInit();

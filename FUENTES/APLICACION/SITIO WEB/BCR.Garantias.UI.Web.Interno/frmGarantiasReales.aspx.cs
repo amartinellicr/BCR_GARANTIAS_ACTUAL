@@ -1734,6 +1734,18 @@ namespace BCRGARANTIAS.Forms
 
             gdvGarantiasReales.Attributes.Add("OnDataBinding", "document.body.style.cursor = 'wait'; document.documentElement.style.cursor = 'wait';");
 
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            txtPorcentajeAceptacionTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionNoTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionTerrenoCalculado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionTerrenoCalculado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionNoTerrenoCalculado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionNoTerrenoCalculado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+
+
             MostrarListaOperaciones = false;
             MostrarErrorMontoMitigador = false;
             MostrarErrorInfraSeguro = false;
@@ -2910,6 +2922,11 @@ namespace BCRGARANTIAS.Forms
                 lblFechaModificacion.Text = string.Empty;
                 lblFechaReplica.Text = string.Empty; 
 
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionNoTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
+                txtPorcentajeAceptacionTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3011,6 +3028,12 @@ namespace BCRGARANTIAS.Forms
                 txtPorcentajeAceptacionCalculado.Text = string.Empty;
 
                 #endregion Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionNoTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
+                txtPorcentajeAceptacionTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3059,6 +3082,12 @@ namespace BCRGARANTIAS.Forms
                 igbCalendarioConstruccion.Enabled = ((bloqueoInicial) ? false : bBloqueado);
                 txtMontoTasActTerreno.Enabled = ((bloqueoInicial) ? false : ((BloquearCamposMTATMTANT) ? false : true));
                 txtMontoTasActNoTerreno.Enabled = ((bloqueoInicial) ? false : ((BloquearCamposMTATMTANT) ? false : true));
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionNoTerreno.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionTerrenoCalculado.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionNoTerrenoCalculado.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+
 
                 //Pólizas
                 cbCodigoSap.Enabled = ((bloqueoInicial) ? false : bBloqueado);
@@ -3282,6 +3311,11 @@ namespace BCRGARANTIAS.Forms
                 decimal montoTasacionActTerreno;
                 decimal montoTasacionActNoTerreno;
                 decimal montoTotalAvaluo;
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                decimal porcAceptacionTerreno;
+                decimal porcAceptacionNoTerreno;
+                decimal porcAceptacionTerrenoCalculado;
+                decimal porcAceptacionNoTerrenoCalculado;
 
                 decimal montoAcreenciaBien;
 
@@ -3372,6 +3406,13 @@ namespace BCRGARANTIAS.Forms
 
                 BloquearCamposMTATMTANT = (((nTipoBien == 1) || (nTipoBien == 2)) ? true : false);
 
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                porcAceptacionTerreno = Convert.ToDecimal( (txtPorcentajeAceptacionTerreno.Text.Length > 0) ? txtPorcentajeAceptacionTerreno.Text : "0"  );
+                porcAceptacionNoTerreno = Convert.ToDecimal((txtPorcentajeAceptacionNoTerreno.Text.Length > 0) ? txtPorcentajeAceptacionNoTerreno.Text : "0");
+                porcAceptacionTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionTerrenoCalculado.Text : "0"); 
+                porcAceptacionNoTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionNoTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionNoTerrenoCalculado.Text : "0"); 
+
                 #endregion Datos del avalúo
 
                 #region Datos de la Póliza
@@ -3448,6 +3489,12 @@ namespace BCRGARANTIAS.Forms
 
                 entidadGarantia.AvaluoActualizado = AvaluoActualizado;
                 entidadGarantia.FechaSemestreCalculado = FechaSemestreActualizado;
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                entidadGarantia.PorcentajeAceptacionTerreno = porcAceptacionTerreno;
+                entidadGarantia.PorcentajeAceptacionNoTerreno = porcAceptacionNoTerreno;
+                entidadGarantia.PorcentajeAceptacionTerrenoCalculado = porcAceptacionTerrenoCalculado;
+                entidadGarantia.PorcentajeAceptacionNoTerrenoCalculado = porcAceptacionNoTerrenoCalculado;
 
                 //Datos generales
                 listaDescripcionValoresActualesCombos.Add(clsGarantiaReal._codTipoBien, cbTipoBien.SelectedItem.Text);
@@ -4516,6 +4563,13 @@ namespace BCRGARANTIAS.Forms
                 }
 
                 HabilitarValuacion = true;
+
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Text = entidadGarantia.PorcentajeAceptacionTerreno.ToString("N2");
+                txtPorcentajeAceptacionNoTerreno.Text = entidadGarantia.PorcentajeAceptacionNoTerreno.ToString("N2");
+                txtPorcentajeAceptacionTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionTerrenoCalculado.ToString("N2");
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionNoTerrenoCalculado.ToString("N2");
 
                 #endregion Datos del avalúo más reciente
 
@@ -7086,6 +7140,66 @@ namespace BCRGARANTIAS.Forms
                         igbCalendarioConstruccion.Enabled = true;
                         igbCalendarioSeguimiento.Enabled = true;
                     }
+
+                    //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+                    #region HABILITACION DE LOS CAMPOS PORCENTAJE DE ACEPTACION Y PORCENTAJE ACEPTACION CALCULADO
+
+                        bool habilitarCamposPorcentajeAceptacion = false;
+
+                        int tipoGarReal = int.Parse((((cbTipoGarantiaReal != null) && (cbTipoGarantiaReal.Items != null) && (cbTipoGarantiaReal.Items.Count > 0)) ? cbTipoGarantiaReal.SelectedItem.Value : "-1"));
+                        int tipoMitigadorRiesgo = int.Parse((((cbMitigador != null) && (cbMitigador.Items != null) && (cbMitigador.Items.Count > 0)) ? cbMitigador.SelectedItem.Value : "-1"));
+
+                        //SI TIPO BIEN ES DISTINTO DE 1,2,3 Y 4 PARA CUALQUIER TIPO DE GARANTIA
+                        if (!(tipoBien.Equals(1) && tipoBien.Equals(2) && tipoBien.Equals(3) && tipoBien.Equals(4)))
+                            habilitarCamposPorcentajeAceptacion = true;
+                        else
+                        { 
+                            //SI LA CLASE DE GARANTIA REAL ES HIPOTECA COMUN
+                            if (tipoGarReal.Equals(1))
+                            { 
+                                //SI TIPO BIEN ES IGUAL TERRENOS Y TIPO MITIGADOR RIESGO DIFERENTE DE HIPOTECA SOBRE TERRENOS
+                                if (tipoBien.Equals(1) && !tipoMitigadorRiesgo.Equals(1))
+                                    habilitarCamposPorcentajeAceptacion = true;
+
+                                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO DIFERENTE DE 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                                if (tipoBien.Equals(2) && (!tipoMitigadorRiesgo.Equals(2) && !tipoMitigadorRiesgo.Equals(3) 
+                                                            && !tipoMitigadorRiesgo.Equals(5) && !tipoMitigadorRiesgo.Equals(6)) )
+                                {
+                                    habilitarCamposPorcentajeAceptacion = true;
+                                }
+                            }
+
+                            //SI LA CLASE DE GARANTIA REAL ES CEDULA HIPOTECARIA O IGUAL A PRENDA
+                            if (tipoGarReal.Equals(2) || tipoGarReal.Equals(3))
+                            {
+                                //SI TIPO BIEN ES IGUAL TERRENOS Y, TIPO MITIGADOR RIESGO DIFERENTE DE HIPOTECA SOBRE TERRENOS Y CED HIPOT SOBRE TERRENOS
+                                if (tipoBien.Equals(1) && (!tipoMitigadorRiesgo.Equals(1) && !tipoMitigadorRiesgo.Equals(4)) )
+                                    habilitarCamposPorcentajeAceptacion = true;
+
+                                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO DIFERENTE DE 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                                if (tipoBien.Equals(2) && (!tipoMitigadorRiesgo.Equals(2) && !tipoMitigadorRiesgo.Equals(3)
+                                                            && !tipoMitigadorRiesgo.Equals(5) && !tipoMitigadorRiesgo.Equals(6)))
+                                {
+                                    habilitarCamposPorcentajeAceptacion = true;
+                                }
+
+                                //SI TIPO BIEN IGUAL A VEHICULOS O IGUAL A MAQUINARIA Y EQUIPO
+                                //Y TIPO MITIGADOR RIESDO DISTINTO DE 7 (PRENDA S/BIENES MUEBLES E HIPOTECAS S/MAQUINARIA FIJADA PERM. AL TERRENO)
+                                if ( (tipoBien.Equals(3) || tipoBien.Equals(4) ) && (!tipoMitigadorRiesgo.Equals(7)) )
+                                    habilitarCamposPorcentajeAceptacion = true;
+                            }
+                        }
+
+                        txtPorcentajeAceptacion.Enabled = habilitarCamposPorcentajeAceptacion;
+                        txtPorcentajeAceptacionCalculado.Enabled = habilitarCamposPorcentajeAceptacion;
+
+                    #endregion
+
                 }
                 else
                 {
@@ -7109,6 +7223,12 @@ namespace BCRGARANTIAS.Forms
                 txtFechaSeguimiento.Enabled = false;
                 igbCalendarioConstruccion.Enabled = false;
                 igbCalendarioSeguimiento.Enabled = false;
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Enabled = false;
+                txtPorcentajeAceptacionNoTerreno.Enabled = false;
+                txtPorcentajeAceptacionTerrenoCalculado.Enabled = false;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Enabled = false;
             }
         }
 
