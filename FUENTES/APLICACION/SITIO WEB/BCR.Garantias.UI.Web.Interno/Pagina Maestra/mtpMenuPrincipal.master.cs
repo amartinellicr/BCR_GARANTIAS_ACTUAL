@@ -205,7 +205,7 @@ namespace BCRGARANTIAS.Presentacion
                     /*evalua que posee url donde redirigir la pagina*/
                     if (!string.IsNullOrEmpty(nodoHijo.Attributes["url"].Value))
                         /*redirecciona a la url almacenada en el atributo "url" del nodo*/
-                        Response.Redirect("~/" + nodoHijo.Attributes["url"].Value);
+                        Response.Redirect("~/" + nodoHijo.Attributes["url"].Value, true);
                 }
 
             }/*fin del foreach (XmlNode nodoHijo in lista)*/

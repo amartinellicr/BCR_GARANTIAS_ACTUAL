@@ -52,6 +52,14 @@ AS
 				Se modifica la forma en como se procesan las pólizas, adicionalmente, se agrega el procesamiento de las coberturas 
 				asignadas a dichas pólizas.
 			</Descripción>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
+			</Descripción>
+		</Cambio>
 		</Cambio>
 		<Cambio>
 			<Autor></Autor>
@@ -73,8 +81,8 @@ BEGIN
 			@vdtFecha_Tipo_Cambio DATETIME, --Fecha más reciente del tipo de cambio del día actual
 			@ciCatalogo_Tipo_Poliza INT, --Código del catálogo de los tipos de póliza SAP
 			@vsDescripcion_Bitacora_Errores VARCHAR(5000), --Descripción del error que será guardado en la bitácora de errores.
-			@viFechaActualEntera INT --Corresponde al a fecha actual en formato numérico.
-
+			@viFechaActualEntera INT, --Corresponde a la fecha actual en formato numérico.
+			@vdtFecha_Eliminar DATETIME  --Corresponde a la fecha a partir de la cual se eliminarán los registros.
 	
 	--Se inicializan las variables
 	SET @ciCatalogo_Tipo_Poliza = 29
@@ -89,244 +97,11 @@ BEGIN
 	
 	SET @viFechaActualEntera = CONVERT(INT, CONVERT(VARCHAR(8), (CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)), 112))
 	
-	
+	--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
+	--Esto se hace dentro de la tabla temporal de pólizas relacionadas a operaciones y/o giros de contrato del SAP.
 	IF(@piEjecutarParte = 0)
 	BEGIN
-	
-		DELETE	FROM dbo.TMP_POLIZAS 
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZA
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-		
-		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10		
-			
-		DELETE	FROM  dbo.TMP_SAP_POLIZASEXTERNAS
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM dbo.TMP_SAP_SGRPOLIZAOTRO 
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-				
-		DELETE	FROM  dbo.TMP_SAP_VWSGRPOLIZAAUTO
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.TMP_SAP_VWSGRCREDITOBANCARIO
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-				
-		DELETE	FROM  dbo.TMP_SAP_VWSGRCONTRATOCREDITO
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM dbo.TMP_GIROS_CONTRATOS
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-		
-		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
-		DELETE	FROM  dbo.TMP_SAP_SGRCOBERTURAS
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.TMP_SAP_SGRTIPOS_POLIZA
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.TMP_SAP_COBERTURAS_POLIZAS
-		WHERE	Registro_Activo = 0
-			AND DATEDIFF(DAY, GETDATE(), Fecha_Replica) > 10
-			
-		DELETE	FROM  dbo.GAR_COBERTURAS_POLIZAS
-		
-		DELETE	FROM  dbo.GAR_COBERTURAS
-		
-		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-			
-		
-		UPDATE dbo.TMP_POLIZAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_POLIZAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-					
-		UPDATE dbo.TMP_SAP_SGRCOBERTURAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_SGRCOBERTURAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-				
-		UPDATE dbo.TMP_SAP_SGRTIPOS_POLIZA
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_SGRTIPOS_POLIZA
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_COBERTURAS_POLIZAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_COBERTURAS_POLIZAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZA
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZA
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-				
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZACONTRATOCREDITO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_POLIZASEXTERNAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_POLIZASEXTERNAS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_SGRPOLIZAOTRO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_SGRPOLIZAOTRO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_SGRPOLIZAPATRIMONIAL
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZAAUTO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRPOLIZAAUTO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_VWSGRCREDITOBANCARIO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRCREDITOBANCARIO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_SAP_VWSGRCONTRATOCREDITO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-		
-		UPDATE dbo.TMP_SAP_VWSGRCONTRATOCREDITO
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-		
-		UPDATE dbo.TMP_GIROS_CONTRATOS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo IS NULL
-			AND Usuario = @psCodigoProceso
-		
-		UPDATE dbo.TMP_GIROS_CONTRATOS
-		SET Registro_Activo = 0
-		WHERE Registro_Activo = 1
-			AND Usuario = @psCodigoProceso
-		
-	END
-	ELSE IF(@piEjecutarParte = 1)
-	BEGIN
 
-		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-		--Se carga la información referentes a las coberturas.
-		BEGIN TRANSACTION TRA_Ins_Cober
-			BEGIN TRY
-				
-				INSERT	INTO dbo.GAR_COBERTURAS
-						(Codigo_Tipo_Cobertura, Codigo_Cobertura, Codigo_Tipo_Poliza, Codigo_Clase_Poliza, Codigo_Grupo_Poliza, 
-						 Codigo_Moneda_Tipo_Poliza, Codigo_Aseguradora, Descripcion_Cobertura, Descripcion_Corta_Cobertura, 
-						 Indicador_Obligatoria)
-				
-				SELECT	DISTINCT 
-					TSS.Codigo_Tipo_Cobertura, 
-					TSS.Codigo_Cobertura, 
-					TSP.Codigo_Tipo_Poliza,
-					TSP.Codigo_Clase_Poliza,
-					TSP.Codigo_Grupo_Poliza,
-					TSP.Codigo_Moneda,
-					TSP.Codigo_Aseguradora,
-					TSS.Descripcion_Cobertura, 
-					TSS.Descripcion_Corta_Cobertura,
-					TSS.Indicador_Obligatoria
-					
-				FROM	dbo.TMP_SAP_SGRCOBERTURAS TSS
-					INNER JOIN dbo.TMP_SAP_SGRTIPOS_POLIZA TSP
-					ON TSP.Codigo_Tipo_Cobertura = TSS.Codigo_Tipo_Cobertura
-				WHERE	TSS.Registro_Activo = 1
-					AND TSP.Registro_Activo = 1
-					AND EXISTS (SELECT	1
-								FROM	dbo.CAT_ELEMENTO CE1
-								WHERE	CE1.cat_catalogo = @ciCatalogo_Tipo_Poliza
-									AND CE1.cat_campo = CONVERT(VARCHAR(5), TSP.Codigo_Tipo_Poliza))	
-						
-			END TRY
-			BEGIN CATCH
-				IF (@@TRANCOUNT > 0)
-					ROLLBACK TRANSACTION TRA_Ins_Cober
-
-				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las coberturas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
-				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
-
-			END CATCH
-				
-		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Ins_Cober
-		
-		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-		
-		--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
 		BEGIN TRANSACTION TRA_Act_Giros_Cont
 			BEGIN TRY
 
@@ -383,8 +158,13 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_Cont
 	
-							
-		--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
+	END
+	
+	--Se actualiza el indicador de si es un giro y de serlo se asigna el consecutivo del contrato.
+	--Esto se hace dentro de la tabla temporal de operaciones y/o giros de contrato del SAP.
+	IF(@piEjecutarParte = 1)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Giros_Cont1
 			BEGIN TRY
 
@@ -441,8 +221,12 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_Cont1
 	
+	END
+
+	--Se carga la estructura con los giros activos de contrato en el sistema.
+	IF(@piEjecutarParte = 2)
+	BEGIN
 	
-		--Se carga la estructura con los giros de contrato activos en el sistema.
 		BEGIN TRANSACTION TRA_Act_Giros_Activ
 			BEGIN TRY
 
@@ -471,8 +255,7 @@ BEGIN
 						1 AS Registro_Activo
 				FROM	dbo.GAR_OPERACION GO1
 						INNER JOIN dbo.TMP_SAP_VWSGRPOLIZACREDITOBANCARIO PCD
-						ON PCD.codcontabilidad = GO1.cod_contabilidad
-						AND PCD.codue = GO1.cod_oficina
+						ON PCD.codue = GO1.cod_oficina
 						AND PCD.conmoneda = GO1.cod_moneda
 						AND PCD.codproducto = GO1.cod_producto
 						AND PCD.numoperacion = GO1.num_operacion
@@ -513,8 +296,12 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_Activ
 	
+	END
+
+	--Se actualiza la fecha de pagado hasta de los giros con señal de cobro.
+	IF(@piEjecutarParte = 3)
+	BEGIN
 	
-		--Se actualiza la fecha de pagado hasta de los giros con señal de cobro.
 		BEGIN TRANSACTION TRA_Act_Giros_Cobro
 			BEGIN TRY
 
@@ -553,8 +340,13 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_Cobro
-			
-		--Se actualiza la fecha de pagado hasta de los giros con señal de cobro 5.
+	
+	END
+	
+	--Se actualiza la fecha de pagado hasta de los giros con señal de cobro 5.
+	IF(@piEjecutarParte = 4)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Giros_ConCobro5
 			BEGIN TRY
 
@@ -597,8 +389,14 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_ConCobro5
+
+	
+	END
 		
-		--Se actualiza la fecha de pagado hasta de los giros sin señal de cobro.
+	--Se actualiza la fecha de pagado hasta de los giros sin señal de cobro.
+	IF(@piEjecutarParte = 5)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Giros_SinCobro
 			BEGIN TRY
 
@@ -641,7 +439,12 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Giros_SinCobro
 	
-		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a las operaciones.
+	END
+		
+	--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a las operaciones.
+	IF(@piEjecutarParte = 6)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Ins_Op_Tmp_Pol
 			BEGIN TRY
 				INSERT INTO dbo.TMP_POLIZAS
@@ -693,8 +496,8 @@ BEGIN
 					AND GO1.num_operacion = VCB.numoperacion
 				WHERE	VGP.Registro_Activo = 1
 					AND VCB.Registro_Activo = 1
-					AND VCB.concontratocredito IS NULL
 					AND VCB.estpolizacreditobancario <> 'ELI'
+					AND VCB.concontratocredito IS NULL
 					AND GO1.num_contrato = 0
 					AND GO1.num_operacion IS NOT NULL
 					AND EXISTS (SELECT	1
@@ -725,9 +528,13 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Op_Tmp_Pol
-			
-			
-		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vigentes.
+	
+	END
+		
+	--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vigentes.
+	IF(@piEjecutarParte = 7)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Ins_CVig_Tmp_Pol
 			BEGIN TRY
 				INSERT INTO dbo.TMP_POLIZAS
@@ -797,9 +604,9 @@ BEGIN
 										AND TGC.Consecutivo_Contrato = GO1.cod_operacion)
 					AND NOT EXISTS (SELECT	1
 									FROM	dbo.TMP_POLIZAS TMP
-									WHERE	TMP.Codigo_SAP = VGP.conpoliza
-										AND TMP.Consecutivo_Operacion_Garantias = GO1.cod_operacion
-										AND TMP.Registro_Activo = 1)
+									WHERE	TMP.Registro_Activo = 1
+										AND TMP.Codigo_SAP = VGP.conpoliza
+										AND TMP.Consecutivo_Operacion_Garantias = GO1.cod_operacion)
 									
 			END TRY
 				BEGIN CATCH
@@ -813,9 +620,14 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_CVig_Tmp_Pol
-			
-			
-		--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vencidos con giros activos.
+
+	
+	END
+	
+	--Se carga la información de la tabla temporal de pólizas, con los datos relacionados a los contratos vencidos con giros activos.
+	IF(@piEjecutarParte = 8)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Ins_CVen_Tmp_Pol
 			BEGIN TRY
 				INSERT INTO dbo.TMP_POLIZAS
@@ -878,16 +690,13 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_CVen_Tmp_Pol
-			
-					
-
-		/************************************************************************************************
-		 *                                                                                              * 
-		 *                       INICIO DE LA REPLICA DE POLIZAS EXISTENTES                             *
-		 *                                                                                              *
-		 *                                                                                              *
-		 ************************************************************************************************/
-		--Se actualiza el indicador de si es una póliza externa y la fecha de vencimiento para las mismas.
+	
+	END
+	
+	--Se actualiza el indicador de si es una póliza externa y la fecha de vencimiento para las mismas.
+	IF(@piEjecutarParte = 9)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Pol_Ext
 			BEGIN TRY
 
@@ -915,9 +724,15 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Pol_Ext
-		
-		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
-		--Se actualizan los datos de la hipoteca de la póliza.
+	
+	END
+	
+	--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
+	
+	--Se actualizan los datos de la hipoteca de la póliza.
+	IF(@piEjecutarParte = 10)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Hipo_Pol
 			BEGIN TRY
 
@@ -966,9 +781,13 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Hipo_Pol
-			
-		
-		--Se actualizan los datos de la prenda de la póliza.
+	
+	END
+	
+	--Se actualizan los datos de la prenda de la póliza.
+	IF(@piEjecutarParte = 11)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Prenda_Pol
 			BEGIN TRY
 
@@ -1001,8 +820,13 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Prenda_Pol
-							
-		--Se actualizan los datos de otras prendas de la póliza.
+	
+	END
+
+	--Se actualizan los datos de otras prendas de la póliza.
+	IF(@piEjecutarParte = 12)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_OPrenda_Pol
 			BEGIN TRY
 
@@ -1036,9 +860,14 @@ BEGIN
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_OPrenda_Pol
 		
-		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
-		
-		--Se actualizan los campos del monto de la póliza y fecha de vencimiento anterior, de las pólizas existentes.
+	END
+	
+	--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+	
+	--Se actualizan los campos del monto de la póliza y fecha de vencimiento anterior, de las pólizas existentes.
+	IF(@piEjecutarParte = 13)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Datos
 			BEGIN TRY
 
@@ -1063,16 +892,21 @@ BEGIN
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Datos	
-		
-		--Se setea el indicador del registro como si ninguna póliza existiera
+			COMMIT TRANSACTION TRA_Act_Datos
+	
+	END
+
+	--Se setea el indicador del registro como si ninguna póliza existiera
+	--Se actualizan los campos de las pólizas existentes y se habilitan las que existan en los dos sistemas
+	IF(@piEjecutarParte = 14)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Polizas
 			BEGIN TRY
 
 				UPDATE	dbo.GAR_POLIZAS
 				SET		Estado_Registro = 0
 				
-				--Se actualizan los campos de las pólizas existentes y se habilitan las que existan en los dos sistemas
 				UPDATE	GPO
 				SET	    GPO.Tipo_Poliza = TMP.Tipo_Poliza, 
 						GPO.Monto_Poliza = TMP.Monto_Poliza, 
@@ -1125,14 +959,14 @@ BEGIN
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Polizas	
-		
-		/************************************************************************************************
-		 *                                                                                              * 
-		 *                       INICIO DE LA REPLICA DE POLIZAS NUEVAS                                 *
-		 *                                                                                              *
-		 *                                                                                              *
-		 ************************************************************************************************/
+			COMMIT TRANSACTION TRA_Act_Polizas
+	
+	END
+
+	--Se insertan las pólizas nuevas
+	IF(@piEjecutarParte = 15)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Ins_Polizas
 			BEGIN TRY
 
@@ -1204,10 +1038,68 @@ BEGIN
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Ins_Polizas	
-			
-		--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas	
-		--Se carga la información de la tabla de coberturas asociadas a las pólizas.
+			COMMIT TRANSACTION TRA_Ins_Polizas
+	
+	END
+
+	--INICIO RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+	
+	
+	--SE DEBEN ELIMINAR LAS COBERTURAS RELACONADAS Y LAS COBERTURAS
+	
+	--Se carga la información referentes a las coberturas.
+	IF(@piEjecutarParte = 16)
+	BEGIN
+	
+		BEGIN TRANSACTION TRA_Ins_Cober
+			BEGIN TRY
+				
+				INSERT	INTO dbo.GAR_COBERTURAS
+						(Codigo_Tipo_Cobertura, Codigo_Cobertura, Codigo_Tipo_Poliza, Codigo_Clase_Poliza, Codigo_Grupo_Poliza, 
+						 Codigo_Moneda_Tipo_Poliza, Codigo_Aseguradora, Descripcion_Cobertura, Descripcion_Corta_Cobertura, 
+						 Indicador_Obligatoria)
+				
+				SELECT	DISTINCT 
+					TSS.Codigo_Tipo_Cobertura, 
+					TSS.Codigo_Cobertura, 
+					TSP.Codigo_Tipo_Poliza,
+					TSP.Codigo_Clase_Poliza,
+					TSP.Codigo_Grupo_Poliza,
+					TSP.Codigo_Moneda,
+					TSP.Codigo_Aseguradora,
+					TSS.Descripcion_Cobertura, 
+					TSS.Descripcion_Corta_Cobertura,
+					TSS.Indicador_Obligatoria
+					
+				FROM	dbo.TMP_SAP_SGRCOBERTURAS TSS
+					INNER JOIN dbo.TMP_SAP_SGRTIPOS_POLIZA TSP
+					ON TSP.Codigo_Tipo_Cobertura = TSS.Codigo_Tipo_Cobertura
+				WHERE	TSS.Registro_Activo = 1
+					AND TSP.Registro_Activo = 1
+					AND EXISTS (SELECT	1
+								FROM	dbo.CAT_ELEMENTO CE1
+								WHERE	CE1.cat_catalogo = @ciCatalogo_Tipo_Poliza
+									AND CE1.cat_campo = CONVERT(VARCHAR(5), TSP.Codigo_Tipo_Poliza))	
+						
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Ins_Cober
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al extraer e insertar las coberturas. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+				
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Ins_Cober
+	
+	END
+
+	--Se carga la información de la tabla de coberturas asociadas a las pólizas.
+	IF(@piEjecutarParte = 17)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Ins_Cober_Pol
 			BEGIN TRY
 				
@@ -1239,16 +1131,16 @@ BEGIN
 				
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Ins_Cober_Pol
+
 	
-		--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
+	END
 
+	--FIN RQ: RQ_MANT_2015062410418218_00030 Creación Coberturas bienes en pólizas
 
-		/************************************************************************************************
-		 *                                                                                              * 
-		 *                       INICIO DE LA ACTUALIZACION DE LAS RELACIONES ENTRE                     *
-		 *                                        GARANTIAS Y POLIZAS                                   *
-		 *                                                                                              *
-		 ************************************************************************************************/
+	--Se actualiza la relación entre la póliza y la garantía, para inhabilitar aquellas cuya póliza está cancelada o eliminada
+	IF(@piEjecutarParte = 18)
+	BEGIN
+	
 		BEGIN TRANSACTION TRA_Act_Rel_Pol
 			BEGIN TRY
 
@@ -1271,12 +1163,9 @@ BEGIN
 			END CATCH
 			
 		IF (@@TRANCOUNT > 0)
-			COMMIT TRANSACTION TRA_Act_Rel_Pol	
-
-		/************************************************************************************************
-		 *                                                                                              * 
-		 *                        FIN DE LA REPICA DE POLIZAS                                           *
-		 *                                                                                              *
-		 ************************************************************************************************/
+			COMMIT TRANSACTION TRA_Act_Rel_Pol
+	
 	END
+
+	
 END

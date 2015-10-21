@@ -3,7 +3,7 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %> 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPrincipal" Runat="Server">
-    <asp:ScriptManager id="ScriptManager1" runat="server" ScriptMode="Auto" EnableScriptGlobalization="True" EnableScriptLocalization="True" LoadScriptsBeforeUI="True"></asp:ScriptManager>
+    <asp:ScriptManager id="ScriptManager1" runat="server" ScriptMode="Auto" AsyncPostBackTimeout="210"  EnableScriptGlobalization="True" EnableScriptLocalization="True" LoadScriptsBeforeUI="True"></asp:ScriptManager>
     <asp:UpdatePanel id="UpdatePanel1" runat="server">
         <contenttemplate>
             <div>

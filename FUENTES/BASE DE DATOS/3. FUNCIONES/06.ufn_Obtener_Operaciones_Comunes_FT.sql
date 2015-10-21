@@ -72,6 +72,22 @@ AS
 				por lo que se modifica la forma en como se liga con la tabla PRMGT cuando la clase de garantía es 
 				11, 38 o 43. 
 			</Descripción>
+		</Cambio>	
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>28/09/2015</Fecha>
+			<Descripción>
+				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2015092810472305 - Solicitud de pase emergencia optimización de procesos 10472294</Requerimiento>
+			<Fecha>05/09/2015</Fecha>
+			<Descripción>
+				Se modifica la forma en como se insertan en la tabla que se retornará la final. 
+			</Descripción>
 		</Cambio>		
 		<Cambio>
 			<Autor></Autor>
@@ -113,26 +129,26 @@ BEGIN
 					WHEN 2 THEN ISNULL((CONVERT(varchar(2),GR1.cod_partido)), '') + '-' + ISNULL(GR1.numero_finca, '') 
 					WHEN 3 THEN ISNULL(GR1.cod_clase_bien, '') + '-' + ISNULL(GR1.num_placa_bien, '')
 				END AS Codigo_Garantia
-			FROM	dbo.GAR_GARANTIA_REAL GR1 
+			FROM	dbo.GAR_GARANTIA_REAL GR1 WITH(NOLOCK)
 			WHERE	GR1.cod_garantia_real = @piGarantia_Real) GR2
-		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 
+		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 WITH(NOLOCK) 
 		ON GR3.cod_tipo_garantia_real = GR2.cod_tipo_garantia_real
 		AND ISNULL(GR3.cod_partido, -1) = ISNULL(GR2.cod_partido, -1)
 		AND ISNULL(GR3.numero_finca , '') = ISNULL(GR2.numero_finca, '')
 		AND ISNULL(GR3.cod_clase_bien, '') = ISNULL(GR2.cod_clase_bien, '')
 		AND ISNULL(GR3.num_placa_bien, '') = ISNULL(GR2.num_placa_bien, '')
 		AND GR3.cod_clase_garantia = GR2.cod_clase_garantia
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH(NOLOCK)
 		ON GRO.cod_garantia_real = GR3.cod_garantia_real
-		INNER JOIN dbo.GAR_OPERACION GO1
+		INNER JOIN dbo.GAR_OPERACION GO1 WITH(NOLOCK)
 		ON GRO.cod_operacion = GO1.cod_operacion
-		INNER JOIN dbo.GAR_SICC_PRMOC GSP
+		INNER JOIN dbo.GAR_SICC_PRMOC GSP WITH(NOLOCK)
 		ON GSP.prmoc_pnu_oper = GO1.num_operacion
 		AND GSP.prmoc_pco_ofici = GO1.cod_oficina
 		AND GSP.prmoc_pco_moned = GO1.cod_moneda 
 		AND GSP.prmoc_pco_produ = GO1.cod_producto
 		AND GSP.prmoc_pco_conta = GO1.cod_contabilidad
-		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR WITH(NOLOCK)
 		ON GPR.cod_operacion = GO1.cod_operacion
 		AND GPR.cod_garantia_real = GRO.cod_garantia_real
 		AND GPR.Estado_Registro = 1	
@@ -143,7 +159,7 @@ BEGIN
 			OR (GSP.prmoc_pcoctamay > 815))	--Operaciones no insolutas
 		AND GSP.prmoc_estado = 'A'
 		AND EXISTS (SELECT	1
-					FROM	dbo.GAR_SICC_PRMGT MGT 
+					FROM	dbo.GAR_SICC_PRMGT MGT WITH(NOLOCK) 
 					WHERE	MGT.prmgt_pnu_oper = GSP.prmoc_pnu_oper
 						AND MGT.prmgt_pco_ofici = GSP.prmoc_pco_ofici
 						AND MGT.prmgt_pco_moned = GSP.prmoc_pco_moned
@@ -157,8 +173,10 @@ BEGIN
 													END
 						AND MGT.prmgt_pcoclagar = GR3.cod_clase_garantia)
 						
-	UNION ALL
 
+	INSERT	INTO @ptbOperaciones_Comunes (
+		Codigo_Contabilidad, Codigo_Oficina, Codigo_Moneda,
+		Codigo_Producto, Operacion, Tipo_Operacion, Codigo_Operacion, Consecutivo_Garantia, Monto_Acreencia)
 	SELECT	GO1.cod_contabilidad, GO1.cod_oficina, GO1.cod_moneda, GO1.cod_producto, 
 			CASE 
 				WHEN (GO1.num_contrato > 0 AND GO1.num_operacion IS NULL) THEN GO1.num_contrato
@@ -174,26 +192,26 @@ BEGIN
 					WHEN 2 THEN ISNULL((CONVERT(varchar(2),GR1.cod_partido)), '') + '-' + ISNULL(GR1.numero_finca, '') 
 					WHEN 3 THEN ISNULL(GR1.cod_clase_bien, '') + '-' + ISNULL(GR1.num_placa_bien, '')
 				END AS Codigo_Garantia
-			FROM	dbo.GAR_GARANTIA_REAL GR1 
+			FROM	dbo.GAR_GARANTIA_REAL GR1 WITH(NOLOCK) 
 			WHERE	GR1.cod_garantia_real = @piGarantia_Real) GR2
-		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 
+		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 WITH(NOLOCK) 
 		ON GR3.cod_tipo_garantia_real = GR2.cod_tipo_garantia_real
 		AND ISNULL(GR3.cod_partido, -1) = ISNULL(GR2.cod_partido, -1)
 		AND ISNULL(GR3.numero_finca , '') = ISNULL(GR2.numero_finca, '')
 		AND ISNULL(GR3.cod_clase_bien, '') = ISNULL(GR2.cod_clase_bien, '')
 		AND ISNULL(GR3.num_placa_bien, '') 	= ISNULL(GR2.num_placa_bien, '')
 		AND GR3.cod_clase_garantia = GR2.cod_clase_garantia
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH(NOLOCK) 
 		ON GRO.cod_garantia_real	= GR3.cod_garantia_real
-		INNER JOIN dbo.GAR_OPERACION GO1 
+		INNER JOIN dbo.GAR_OPERACION GO1 WITH(NOLOCK) 
 		ON GRO.cod_operacion = GO1.cod_operacion
-		INNER JOIN dbo.GAR_SICC_PRMCA GSP 
+		INNER JOIN dbo.GAR_SICC_PRMCA GSP WITH(NOLOCK) 
 		ON GSP.prmca_pnu_contr = GO1.num_contrato
 		AND GSP.prmca_pco_ofici = GO1.cod_oficina
 		AND GSP.prmca_pco_moned = GO1.cod_moneda 
 		AND GSP.prmca_pco_produc = GO1.cod_producto
 		AND GSP.prmca_pco_conta = GO1.cod_contabilidad
-		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR WITH(NOLOCK)
 		ON GPR.cod_operacion = GO1.cod_operacion
 		AND GPR.cod_garantia_real = GRO.cod_garantia_real
 		AND GPR.Estado_Registro = 1	
@@ -203,7 +221,7 @@ BEGIN
 		AND GSP.prmca_estado = 'A'
 		AND GSP.prmca_pfe_defin >= @viFecha_Entero
 		AND EXISTS (SELECT	1
-					FROM	dbo.GAR_SICC_PRMGT MGT 
+					FROM	dbo.GAR_SICC_PRMGT MGT WITH(NOLOCK) 
 					WHERE	MGT.prmgt_pnu_oper = GSP.prmca_pnu_contr
 						AND MGT.prmgt_pco_ofici = GSP.prmca_pco_ofici
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
@@ -217,8 +235,10 @@ BEGIN
 													END
 						AND MGT.prmgt_pcoclagar = GR3.cod_clase_garantia)
 
-	UNION ALL
 
+	INSERT	INTO @ptbOperaciones_Comunes (
+		Codigo_Contabilidad, Codigo_Oficina, Codigo_Moneda,
+		Codigo_Producto, Operacion, Tipo_Operacion, Codigo_Operacion, Consecutivo_Garantia, Monto_Acreencia)
 	SELECT	GO1.cod_contabilidad, GO1.cod_oficina, GO1.cod_moneda, GO1.cod_producto, 
 			CASE 
 				WHEN (GO1.num_contrato > 0 AND GO1.num_operacion IS NULL) THEN GO1.num_contrato
@@ -234,26 +254,26 @@ BEGIN
 					WHEN 2 THEN ISNULL((CONVERT(varchar(2),GR1.cod_partido)), '') + '-' + ISNULL(GR1.numero_finca, '') 
 					WHEN 3 THEN ISNULL(GR1.cod_clase_bien, '') + '-' + ISNULL(GR1.num_placa_bien, '')
 				END AS Codigo_Garantia
-			FROM	dbo.GAR_GARANTIA_REAL GR1 
-			WHERE	GR1.cod_garantia_real = @piGarantia_Real) GR2
-		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 
+			FROM	dbo.GAR_GARANTIA_REAL GR1 WITH(NOLOCK) 
+			WHERE	GR1.cod_garantia_real = @piGarantia_Real) GR2 
+		INNER JOIN dbo.GAR_GARANTIA_REAL GR3 WITH(NOLOCK) 
 		ON GR3.cod_tipo_garantia_real = GR2.cod_tipo_garantia_real
 		AND ISNULL(GR3.cod_partido, -1) = ISNULL(GR2.cod_partido, -1)
 		AND ISNULL(GR3.numero_finca , '') = ISNULL(GR2.numero_finca, '')
 		AND ISNULL(GR3.cod_clase_bien, '') = ISNULL(GR2.cod_clase_bien, '')
 		AND ISNULL(GR3.num_placa_bien, '') 	= ISNULL(GR2.num_placa_bien, '')
 		AND GR3.cod_clase_garantia = GR2.cod_clase_garantia
-		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
+		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO WITH(NOLOCK) 
 		ON GRO.cod_garantia_real	= GR3.cod_garantia_real
-		INNER JOIN dbo.GAR_OPERACION GO1 
+		INNER JOIN dbo.GAR_OPERACION GO1 WITH(NOLOCK) 
 		ON GRO.cod_operacion = GO1.cod_operacion
-		INNER JOIN dbo.GAR_SICC_PRMCA GSP 
+		INNER JOIN dbo.GAR_SICC_PRMCA GSP WITH(NOLOCK) 
 		ON GSP.prmca_pnu_contr = GO1.num_contrato
 		AND GSP.prmca_pco_ofici = GO1.cod_oficina
 		AND GSP.prmca_pco_moned = GO1.cod_moneda 
 		AND GSP.prmca_pco_produc = GO1.cod_producto
 		AND GSP.prmca_pco_conta = GO1.cod_contabilidad
-		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR
+		LEFT OUTER JOIN dbo.GAR_POLIZAS_RELACIONADAS GPR WITH(NOLOCK)
 		ON GPR.cod_operacion = GO1.cod_operacion
 		AND GPR.cod_garantia_real = GRO.cod_garantia_real
 		AND GPR.Estado_Registro = 1	
@@ -263,7 +283,7 @@ BEGIN
 		AND GSP.prmca_estado = 'A'
 		AND GSP.prmca_pfe_defin < @viFecha_Entero
 		AND EXISTS (SELECT	1
-					FROM	dbo.GAR_SICC_PRMGT MGT 
+					FROM	dbo.GAR_SICC_PRMGT MGT WITH(NOLOCK) 
 					WHERE	MGT.prmgt_pnu_oper = GSP.prmca_pnu_contr
 						AND MGT.prmgt_pco_ofici = GSP.prmca_pco_ofici
 						AND MGT.prmgt_pco_moned = GSP.prmca_pco_moned
@@ -277,16 +297,14 @@ BEGIN
 													END
 						AND MGT.prmgt_pcoclagar = GR3.cod_clase_garantia)
 		AND EXISTS (	SELECT	1
-						FROM	dbo.GAR_SICC_PRMOC SPM 
-						WHERE	SPM.prmoc_pnu_contr > 0
-							AND SPM.prmoc_pnu_oper IS NOT NULL
-							AND SPM.prmoc_pse_proces = 1		--Operaciones activas
+						FROM	dbo.GAR_SICC_PRMOC SPM WITH(NOLOCK) 
+						WHERE	SPM.prmoc_pse_proces = 1 --Operaciones activas
 							AND ((SPM.prmoc_pcoctamay < 815)
 								OR (SPM.prmoc_pcoctamay	> 815))	--Operaciones no insolutas
-							AND SPM.prmoc_estado = 'A'	
-							AND SPM.prmoc_pco_oficon = GO1.cod_oficina
-							AND SPM.prmoc_pcomonint = GO1.cod_moneda
-							AND SPM.prmoc_pnu_contr = GO1.num_contrato)
+							AND SPM.prmoc_estado = 'A'
+							AND SPM.prmoc_pco_oficon = GSP.prmca_pco_ofici
+							AND SPM.prmoc_pcomonint = GSP.prmca_pco_moned
+							AND SPM.prmoc_pnu_contr = GSP.prmca_pnu_contr)
 
 	RETURN
 END

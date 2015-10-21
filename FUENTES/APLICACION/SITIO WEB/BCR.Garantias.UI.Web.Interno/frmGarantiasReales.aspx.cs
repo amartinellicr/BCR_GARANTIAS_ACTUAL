@@ -105,6 +105,10 @@ namespace BCRGARANTIAS.Forms
 
         private bool mostrarErrorRelacionPolizaGarantia = false;
 
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
+
         #endregion
 
         #region Propiedades
@@ -1730,6 +1734,18 @@ namespace BCRGARANTIAS.Forms
 
             gdvGarantiasReales.Attributes.Add("OnDataBinding", "document.body.style.cursor = 'wait'; document.documentElement.style.cursor = 'wait';");
 
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            txtPorcentajeAceptacionTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionNoTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionTerrenoCalculado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionTerrenoCalculado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+            txtPorcentajeAceptacionNoTerrenoCalculado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacionNoTerrenoCalculado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+
+
             MostrarListaOperaciones = false;
             MostrarErrorMontoMitigador = false;
             MostrarErrorInfraSeguro = false;
@@ -1783,7 +1799,7 @@ namespace BCRGARANTIAS.Forms
 
                         }
 
-                        AplicarCalculoMontoMitigador();                                            
+                        AplicarCalculoMontoMitigador();
 
                         #region Bloquear campos según requerimiento Siebel No. 1-21317176  ---> 009 Req_Validaciones Indicador Inscripción, por AMM-Lidersoft Internacional S.A., el 11/07/2012
 
@@ -1937,20 +1953,29 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Acceso Denegado" +
-                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ACCESO_DENEGADO, Mensajes.ASSEMBLY) +
-                            "&bBotonVisible=0");
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Acceso Denegado" +
+                                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ACCESO_DENEGADO, Mensajes.ASSEMBLY) +
+                                            "&bBotonVisible=0");
+                    }
                     else
                     {
                         Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA_DETALLE, "del mantenimiento de garantías reales", ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Problemas Cargando Página" +
-                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA, Mensajes.ASSEMBLY) +
-                            "&bBotonVisible=0");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Cargando Página" +
+                                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA, Mensajes.ASSEMBLY) +
+                                            "&bBotonVisible=0");
                     }
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
             else
@@ -2066,11 +2091,12 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                    Response.Redirect("frmMensaje.aspx?" +
-                        "bError=1" +
-                        "&strTitulo=" + "Problemas Validando Operación" +
-                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
-                        "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Validando Operación" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=0");
                 }
                 finally
                 {
@@ -2078,6 +2104,11 @@ namespace BCRGARANTIAS.Forms
                     {
                         oleDbConnection1.Close();
                     }
+                }
+                
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
 
                 ResetearCampos();
@@ -2159,11 +2190,17 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                    Response.Redirect("frmMensaje.aspx?" +
-                        "bError=1" +
-                        "&strTitulo=" + "Problemas Cargando Garantías" +
-                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
-                        "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Cargando Garantías" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=0");
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
         }
@@ -2302,14 +2339,20 @@ namespace BCRGARANTIAS.Forms
                 }
                 else
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Modificando Registro" +
-                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasReales.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Modificando Registro" +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasReales.aspx");
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -2368,24 +2411,31 @@ namespace BCRGARANTIAS.Forms
                 contenedorDatosModificacion.Visible = false;
                 contenedorDatosModificacion.Controls.Clear();
 
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=0" +
-                                "&strTitulo=" + "Eliminación Exitosa" +
-                                "&strMensaje=" + Mensajes.Obtener(Mensajes.ELIMINACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                "&bBotonVisible=1" +
-                                "&strTextoBoton=Regresar" +
-                                "&strHref=frmGarantiasReales.aspx", false);
+                seRedirecciona = true;
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=0" +
+                                    "&strTitulo=" + "Eliminación Exitosa" +
+                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ELIMINACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                    "&bBotonVisible=1" +
+                                    "&strTextoBoton=Regresar" +
+                                    "&strHref=frmGarantiasReales.aspx");
             }
             catch (Exception ex)
             {
                 Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA_DETALLE, "real", ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=1" +
-                                "&strTitulo=" + "Problemas Eliminando Registro" +
-                                "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
-                                "&bBotonVisible=1" +
-                                "&strTextoBoton=Regresar" +
-                                "&strHref=frmGarantiasReales.aspx");
+                seRedirecciona = true;
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=1" +
+                                    "&strTitulo=" + "Problemas Eliminando Registro" +
+                                    "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA, "real", Mensajes.ASSEMBLY) +
+                                    "&bBotonVisible=1" +
+                                    "&strTextoBoton=Regresar" +
+                                    "&strHref=frmGarantiasReales.aspx");
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -2717,7 +2767,7 @@ namespace BCRGARANTIAS.Forms
                 {
                     case ("SelectedGarantiaReal"):
 
-                        LimpiarCampos();                      
+                         LimpiarCampos();
 
                         rowIndex = (int.Parse(e.CommandArgument.ToString()));
 
@@ -2870,8 +2920,13 @@ namespace BCRGARANTIAS.Forms
 
                 lblUsrModifico.Text = string.Empty;
                 lblFechaModificacion.Text = string.Empty;
-                lblFechaReplica.Text = string.Empty; 
+                lblFechaReplica.Text = string.Empty;
 
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionNoTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
+                txtPorcentajeAceptacionTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -2973,6 +3028,12 @@ namespace BCRGARANTIAS.Forms
                 txtPorcentajeAceptacionCalculado.Text = string.Empty;
 
                 #endregion Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionNoTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
+                txtPorcentajeAceptacionTerreno.Text = string.Empty;
+                txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3021,6 +3082,12 @@ namespace BCRGARANTIAS.Forms
                 igbCalendarioConstruccion.Enabled = ((bloqueoInicial) ? false : bBloqueado);
                 txtMontoTasActTerreno.Enabled = ((bloqueoInicial) ? false : ((BloquearCamposMTATMTANT) ? false : true));
                 txtMontoTasActNoTerreno.Enabled = ((bloqueoInicial) ? false : ((BloquearCamposMTATMTANT) ? false : true));
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionNoTerreno.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionTerrenoCalculado.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+                txtPorcentajeAceptacionNoTerrenoCalculado.Enabled = ((bloqueoInicial) ? false : bBloqueado);
+
 
                 //Pólizas
                 cbCodigoSap.Enabled = ((bloqueoInicial) ? false : bBloqueado);
@@ -3244,6 +3311,11 @@ namespace BCRGARANTIAS.Forms
                 decimal montoTasacionActTerreno;
                 decimal montoTasacionActNoTerreno;
                 decimal montoTotalAvaluo;
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                decimal porcAceptacionTerreno;
+                decimal porcAceptacionNoTerreno;
+                decimal porcAceptacionTerrenoCalculado;
+                decimal porcAceptacionNoTerrenoCalculado;
 
                 decimal montoAcreenciaBien;
 
@@ -3334,6 +3406,13 @@ namespace BCRGARANTIAS.Forms
 
                 BloquearCamposMTATMTANT = (((nTipoBien == 1) || (nTipoBien == 2)) ? true : false);
 
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                porcAceptacionTerreno = Convert.ToDecimal( (txtPorcentajeAceptacionTerreno.Text.Length > 0) ? txtPorcentajeAceptacionTerreno.Text : "0"  );
+                porcAceptacionNoTerreno = Convert.ToDecimal((txtPorcentajeAceptacionNoTerreno.Text.Length > 0) ? txtPorcentajeAceptacionNoTerreno.Text : "0");
+                porcAceptacionTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionTerrenoCalculado.Text : "0"); 
+                porcAceptacionNoTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionNoTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionNoTerrenoCalculado.Text : "0"); 
+
                 #endregion Datos del avalúo
 
                 #region Datos de la Póliza
@@ -3410,6 +3489,12 @@ namespace BCRGARANTIAS.Forms
 
                 entidadGarantia.AvaluoActualizado = AvaluoActualizado;
                 entidadGarantia.FechaSemestreCalculado = FechaSemestreActualizado;
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                entidadGarantia.PorcentajeAceptacionTerreno = porcAceptacionTerreno;
+                entidadGarantia.PorcentajeAceptacionNoTerreno = porcAceptacionNoTerreno;
+                entidadGarantia.PorcentajeAceptacionTerrenoCalculado = porcAceptacionTerrenoCalculado;
+                entidadGarantia.PorcentajeAceptacionNoTerrenoCalculado = porcAceptacionNoTerrenoCalculado;
 
                 //Datos generales
                 listaDescripcionValoresActualesCombos.Add(clsGarantiaReal._codTipoBien, cbTipoBien.SelectedItem.Text);
@@ -4153,7 +4238,7 @@ namespace BCRGARANTIAS.Forms
             ErrorGraveAvaluo = false;
 
             ExisteValuacion = false;
-            
+
             BloquearCampos(true, false);
 
             bloquearControles = false;
@@ -4179,12 +4264,12 @@ namespace BCRGARANTIAS.Forms
 
                 mostrarErrorRelacionPolizaGarantia = true;
 
-                porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2")); 
+                porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));
 
                 ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
 
                 string m = ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString();
-              
+
                 if ((entidadGarantia.FechaValuacion != DateTime.MinValue) && ((entidadGarantia.MontoUltimaTasacionTerreno + entidadGarantia.MontoUltimaTasacionNoTerreno) > 0))
                 {
                     ExisteValuacion = true;
@@ -4232,7 +4317,7 @@ namespace BCRGARANTIAS.Forms
             if ((entidadGarantia != null) && (!entidadGarantia.ErrorDatos))
             {
                 Entidad_Real = entidadGarantia;
-                                
+
                 MontoTotalAvaluo = entidadGarantia.MontoTotalAvaluo.ToString("N");
 
                 FormatearCamposNumericos();
@@ -4241,9 +4326,9 @@ namespace BCRGARANTIAS.Forms
                 #region Datos de la Garantía
 
                 if ((Session["EsCambioTipoGarantia"] != null)
-                   && (Session["Accion"] != null)
-                   && ((!bool.Parse(Session["EsCambioTipoGarantia"].ToString())) ||
-                    (Session["Accion"].ToString() == "INSERTAR")))
+                  && (Session["Accion"] != null)
+                  && ((!bool.Parse(Session["EsCambioTipoGarantia"].ToString())) ||
+                   (Session["Accion"].ToString() == "INSERTAR")))
                 {
                     CargarTiposGarantiaReal();
                     cbTipoGarantiaReal.ClearSelection();
@@ -4479,6 +4564,13 @@ namespace BCRGARANTIAS.Forms
 
                 HabilitarValuacion = true;
 
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Text = entidadGarantia.PorcentajeAceptacionTerreno.ToString("N2");
+                txtPorcentajeAceptacionNoTerreno.Text = entidadGarantia.PorcentajeAceptacionNoTerreno.ToString("N2");
+                txtPorcentajeAceptacionTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionTerrenoCalculado.ToString("N2");
+                txtPorcentajeAceptacionNoTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionNoTerrenoCalculado.ToString("N2");
+
                 #endregion Datos del avalúo más reciente
 
                 #region Datos de la póliza
@@ -4506,7 +4598,7 @@ namespace BCRGARANTIAS.Forms
                         clsPolizaSap entidadPolizaSap = entidadGarantia.PolizasSap.ObtenerPolizaSapSeleccionada();
 
                         if (cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()) != null)
-                        {                        
+                        {
                             cbCodigoSap.Items.FindByValue(entidadPolizaSap.CodigoPolizaSap.ToString()).Selected = true;
                             asignarPoliza = true;
                         }
@@ -4545,7 +4637,7 @@ namespace BCRGARANTIAS.Forms
                             polizaEstaVigente = entidadPolizaSap.IndicadorPolizaSapVigente;
 
                         }
-                    }      
+                    }
                 }
                 else
                 {
@@ -4553,7 +4645,7 @@ namespace BCRGARANTIAS.Forms
                     cbCodigoSap.Items.Clear();
                 }
 
-                #endregion Datos de la póliza
+                 #endregion Datos de la póliza
 
                 ConsecutivoGarantia = entidadGarantia.CodGarantiaReal;
 
@@ -4671,7 +4763,7 @@ namespace BCRGARANTIAS.Forms
                     txtFechaSeguimiento.Enabled = false;
                     txtFechaConstruccion.Enabled = false;
                     igbCalendarioSeguimiento.Enabled = false;
-                    igbCalendarioConstruccion.Enabled = false; 
+                    igbCalendarioConstruccion.Enabled = false;
                 }
 
                 if ((entidadGarantia.CodTipoBien == 0) || (entidadGarantia.CodTipoBien == -1) || (entidadGarantia.CodTipoMitigador == -1))
@@ -4680,10 +4772,10 @@ namespace BCRGARANTIAS.Forms
                     txtPorcentajeAceptacionCalculado.Text = "0.00";
                 }
                 else
-                {           
+                {
 
                     //Se valida tipos de bien diferente 1-2-3-4, lo que no se evalua y no tiene % calculado respetará el % aceptacion,no debe de aplicar validaciones para % ingresado por el usuario
-                   
+
                     //if ((entidadGarantia.CodTipoBien > 4) || (entidadGarantia.PorcentajeAceptacionCalculado == 0))
                     //if ((entidadGarantia.CodTipoBien > 4) || (entidadGarantia.PorcentajeAceptacionCalculadoOriginal == 0))
                     if (entidadGarantia.CodTipoBien > 4)
@@ -4701,22 +4793,22 @@ namespace BCRGARANTIAS.Forms
                         ////se debe validar para que  cuando da error el % calculado no sea borrado por el original                    
                         if (entidadGarantia.InconsistenciaPorcentajeAceptacionCalculado)
                         {
-                            porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));   
+                            porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                             ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                         }
                         else
                         {
                             txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2");
-                            porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");                         
+                            porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                             ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
 
-                        }                
+                        }
 
                     }
-                
-                }                
+
+                }
 
             }
             else
@@ -4851,7 +4943,7 @@ namespace BCRGARANTIAS.Forms
                         #region Inconsistencia de % Aceptacion Calculado, porcentaje aceptacion mayor al porcentaje de aceptacion calculado
 
                         txtPorcentajeAceptacionCalculado.Text = porcentajeAceptacionCalculado.ToString("N2");
-
+                        
                         if (entidadGarantiaReal.InconsistenciaPorceAcepMayorPorceAcepCalculado)
                         {
                             estadoVerificacion = false;
@@ -6865,8 +6957,9 @@ namespace BCRGARANTIAS.Forms
             url.Append("?bError=0&strTitulo=Modificación Exitosa&strMensaje=");
             url.Append(Mensajes.Obtener(Mensajes.MODIFICACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY));
             url.Append("&bBotonVisible=1&strTextoBoton=Regresar&strHref=frmGarantiasReales.aspx");
-
-            Response.Redirect(url.ToString(), false);
+            seRedirecciona = true;
+            urlPaginaMensaje = url.ToString();
+            //Response.Redirect(url.ToString(), false);
         }
 
         /// <summary>
@@ -7047,6 +7140,66 @@ namespace BCRGARANTIAS.Forms
                         igbCalendarioConstruccion.Enabled = true;
                         igbCalendarioSeguimiento.Enabled = true;
                     }
+
+                    //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+                    #region HABILITACION DE LOS CAMPOS PORCENTAJE DE ACEPTACION Y PORCENTAJE ACEPTACION CALCULADO
+
+                        bool habilitarCamposPorcentajeAceptacion = false;
+
+                        int tipoGarReal = int.Parse((((cbTipoGarantiaReal != null) && (cbTipoGarantiaReal.Items != null) && (cbTipoGarantiaReal.Items.Count > 0)) ? cbTipoGarantiaReal.SelectedItem.Value : "-1"));
+                        int tipoMitigadorRiesgo = int.Parse((((cbMitigador != null) && (cbMitigador.Items != null) && (cbMitigador.Items.Count > 0)) ? cbMitigador.SelectedItem.Value : "-1"));
+
+                        //SI TIPO BIEN ES DISTINTO DE 1,2,3 Y 4 PARA CUALQUIER TIPO DE GARANTIA
+                        if (!(tipoBien.Equals(1) && tipoBien.Equals(2) && tipoBien.Equals(3) && tipoBien.Equals(4)))
+                            habilitarCamposPorcentajeAceptacion = true;
+                        else
+                        { 
+                            //SI LA CLASE DE GARANTIA REAL ES HIPOTECA COMUN
+                            if (tipoGarReal.Equals(1))
+                            { 
+                                //SI TIPO BIEN ES IGUAL TERRENOS Y TIPO MITIGADOR RIESGO DIFERENTE DE HIPOTECA SOBRE TERRENOS
+                                if (tipoBien.Equals(1) && !tipoMitigadorRiesgo.Equals(1))
+                                    habilitarCamposPorcentajeAceptacion = true;
+
+                                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO DIFERENTE DE 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                                if (tipoBien.Equals(2) && (!tipoMitigadorRiesgo.Equals(2) && !tipoMitigadorRiesgo.Equals(3) 
+                                                            && !tipoMitigadorRiesgo.Equals(5) && !tipoMitigadorRiesgo.Equals(6)) )
+                                {
+                                    habilitarCamposPorcentajeAceptacion = true;
+                                }
+                            }
+
+                            //SI LA CLASE DE GARANTIA REAL ES CEDULA HIPOTECARIA O IGUAL A PRENDA
+                            if (tipoGarReal.Equals(2) || tipoGarReal.Equals(3))
+                            {
+                                //SI TIPO BIEN ES IGUAL TERRENOS Y, TIPO MITIGADOR RIESGO DIFERENTE DE HIPOTECA SOBRE TERRENOS Y CED HIPOT SOBRE TERRENOS
+                                if (tipoBien.Equals(1) && (!tipoMitigadorRiesgo.Equals(1) && !tipoMitigadorRiesgo.Equals(4)) )
+                                    habilitarCamposPorcentajeAceptacion = true;
+
+                                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO DIFERENTE DE 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                                if (tipoBien.Equals(2) && (!tipoMitigadorRiesgo.Equals(2) && !tipoMitigadorRiesgo.Equals(3)
+                                                            && !tipoMitigadorRiesgo.Equals(5) && !tipoMitigadorRiesgo.Equals(6)))
+                                {
+                                    habilitarCamposPorcentajeAceptacion = true;
+                                }
+
+                                //SI TIPO BIEN IGUAL A VEHICULOS O IGUAL A MAQUINARIA Y EQUIPO
+                                //Y TIPO MITIGADOR RIESDO DISTINTO DE 7 (PRENDA S/BIENES MUEBLES E HIPOTECAS S/MAQUINARIA FIJADA PERM. AL TERRENO)
+                                if ( (tipoBien.Equals(3) || tipoBien.Equals(4) ) && (!tipoMitigadorRiesgo.Equals(7)) )
+                                    habilitarCamposPorcentajeAceptacion = true;
+                            }
+                        }
+
+                        txtPorcentajeAceptacion.Enabled = habilitarCamposPorcentajeAceptacion;
+                        txtPorcentajeAceptacionCalculado.Enabled = habilitarCamposPorcentajeAceptacion;
+
+                    #endregion
+
                 }
                 else
                 {
@@ -7059,6 +7212,7 @@ namespace BCRGARANTIAS.Forms
                     igbCalendarioConstruccion.Enabled = false;
                     igbCalendarioSeguimiento.Enabled = false;
                 }
+
             }
             else
             {
@@ -7070,6 +7224,12 @@ namespace BCRGARANTIAS.Forms
                 txtFechaSeguimiento.Enabled = false;
                 igbCalendarioConstruccion.Enabled = false;
                 igbCalendarioSeguimiento.Enabled = false;
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                txtPorcentajeAceptacionTerreno.Enabled = false;
+                txtPorcentajeAceptacionNoTerreno.Enabled = false;
+                txtPorcentajeAceptacionTerrenoCalculado.Enabled = false;
+                txtPorcentajeAceptacionNoTerrenoCalculado.Enabled = false;
             }
         }
 
@@ -7478,6 +7638,26 @@ namespace BCRGARANTIAS.Forms
                 
                 if (existeMensaje)
                 {
+                    if ((this.Entidad_Real != null) && (this.Entidad_Real.PolizaSapAsociada != null))
+                    {
+                        if (requestSM != null && requestSM.IsInAsyncPostBack)
+                        {
+                            ScriptManager.RegisterClientScriptBlock(this,
+                                                                    typeof(Page),
+                                                                    Guid.NewGuid().ToString(),
+                                                                    "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                    false);
+                        }
+                        else
+                        {
+                            this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                   Guid.NewGuid().ToString(),
+                                                                   "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                   false);
+                        }
+                    }
+
+
                     //Se obtiene el error de la lista de errores
                     if (requestSM != null && requestSM.IsInAsyncPostBack)
                     {
