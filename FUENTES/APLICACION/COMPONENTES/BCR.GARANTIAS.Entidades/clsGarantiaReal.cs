@@ -474,7 +474,8 @@ namespace BCR.GARANTIAS.Entidades
         /// Porcentaje de Aceptación del No Terreno Calculado
         /// </summary>
         private decimal porcentajeAceptacionNoTerrenoCalculado;
-
+        
+        
         #endregion Avalúos
 
         #region Inconsistencias
@@ -664,8 +665,6 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private bool inconsistenciaCoberturasObligatoriasInvalidas;
 
-
-
         ///////////////////
 
 
@@ -746,9 +745,33 @@ namespace BCR.GARANTIAS.Entidades
             get { return inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro; }
             set { inconsistenciaPorceAcepFechaSeguimientoMenorUnAnnoBienCuatro = value; }
         }
-   
+
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+        /// <summary>
+        /// Indicador de que se presentó un error con el valor del PorAcepTerreno (rango fuera de 0-100 o  mayor al % Aceptación Terreno calculado)
+        /// </summary>
+        private bool inconsistenciaPorceAcepTerreno;
+
+        /// <summary>
+        /// Indicador de que se presentó un error con el valor del PorAcepNoTerreno (rango fuera de 0-100 o  mayor al % Aceptación No Terreno calculado)
+        /// </summary>
+        private bool inconsistenciaPorceAcepNoTerreno;
     
         ///////////////////
+
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+        public bool inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita;
+        public bool inconsistenciaPorcAceptTerrenoCalcAnotada;
+        public bool inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento;
+        public bool inconsistenciaPorcAceptTerrenoCalcFechaValuacion;
+
+        public bool inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita;
+        public bool inconsistenciaPorcAceptNoTerrenoCalcAnotada;
+        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento;
+        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo;
+        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion;
+
+
         #endregion Inconsistencias
 
         #region Generales
@@ -1137,7 +1160,21 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajeClaseGarantiaInvalida58 = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeClaseGarantia58) !== 'undefined'){$MensajeClaseGarantia58.dialog('open');} </script>";
 
         private const string _mensajeCoberturasObligatoriasInvalidas = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeCoberturasObligatoriasInvalidas) !== 'undefined'){$MensajeCoberturasObligatoriasInvalidas.dialog('open');} </script>";
-       
+
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+        private const string _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptTerrenoCalcAnotada = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcAnotadaInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcAnotadaInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptTerrenoCalcFechaValuacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open');} </script>";
+
+        private const string _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptNoTerrenoCalcAnotada = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcAnotadaInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcAnotadaInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido.dialog('open');} </script>";
+        private const string _mensajePorcAceptNoTerrenoCalcFechaValuacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open');} </script>";
+
+
+
 
         //Tags referentes a la parte del avalúo más reciente
         private const string _fechaValuacion = "fecha_valuacion";
@@ -1336,6 +1373,15 @@ namespace BCR.GARANTIAS.Entidades
             montoTasacionActualizadaTerrenoCalculado = null;
             montoTasacionActualizadaNoTerrenoCalculado = null;
 
+            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                
+                porcentajeAceptacionTerreno = 0;
+                porcentajeAceptacionNoTerreno = 0;
+                porcentajeAceptacionTerrenoCalculado = 0;
+                porcentajeAceptacionNoTerrenoCalculado = 0;
+
+            #endregion
+
             #endregion Avalúos
 
             #region Inconsistencias
@@ -1395,6 +1441,18 @@ namespace BCR.GARANTIAS.Entidades
 
             inconsistenciaCoberturasObligatoriasInvalidas = false;
 
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+
+            inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+
             #endregion Inconsistencias
 
             #region Generales
@@ -1430,6 +1488,8 @@ namespace BCR.GARANTIAS.Entidades
             string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
                                               _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno, 
                                               _fechaUltimoSeguimiento, _montoTotalAvaluo, _fechaConstruccion ,
+                                              //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                              _porcentajeAceptacionTerreno, _porcentajeAceptacionNoTerreno, _porcentajeAceptacionNoTerrenoCalculado, _porcentajeAceptacionTerrenoCalculado,
                                               _fechaModifico, _usuarioModifico};
 
             listaCamposAvaluoGarantia = new List<string>(listaCamposValuacion);
@@ -1697,6 +1757,15 @@ namespace BCR.GARANTIAS.Entidades
             montoTasacionActualizadaTerrenoCalculado = null;
             montoTasacionActualizadaNoTerrenoCalculado = null;
 
+            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+            porcentajeAceptacionTerreno = 0;
+            porcentajeAceptacionNoTerreno = 0;
+            porcentajeAceptacionTerrenoCalculado = 0;
+            porcentajeAceptacionNoTerrenoCalculado = 0;
+
+            #endregion
+
             #endregion Avalúos
 
             #region Inconsistencias
@@ -1754,6 +1823,18 @@ namespace BCR.GARANTIAS.Entidades
             inconsistenciaPorcentajeAceptacionCalculado = false;
 
             inconsistenciaCoberturasObligatoriasInvalidas = false;
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+
+            inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
+            inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
+            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
            
             #endregion Inconsistencias
 
@@ -1788,6 +1869,8 @@ namespace BCR.GARANTIAS.Entidades
             string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
                                               _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno, 
                                               _fechaUltimoSeguimiento, _montoTotalAvaluo, _fechaConstruccion, _avaluoActualizado, 
+                                               //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                              _porcentajeAceptacionTerreno, _porcentajeAceptacionNoTerreno, _porcentajeAceptacionNoTerrenoCalculado, _porcentajeAceptacionTerrenoCalculado,
                                               _fechaSemestreActualizado,_fechaModifico, _usuarioModifico  };
             listaCamposAvaluoGarantia = new List<string>(listaCamposValuacion);
 
@@ -2223,7 +2306,10 @@ namespace BCR.GARANTIAS.Entidades
                         decimal montoTAT;
                         decimal montoTANT;
                         decimal montoTA;
-
+                        decimal porcAceptTerreno;
+                        decimal porcAceptNoTerreno;
+                        decimal porcAceptTerrenoCalc;
+                        decimal porcAceptNoTerrenoCalc;
 
                         try
                         {
@@ -2245,6 +2331,14 @@ namespace BCR.GARANTIAS.Entidades
                             cedulaPerito = ((xmlAvaluo.SelectSingleNode("//" + _cedulaPerito) != null) ? xmlAvaluo.SelectSingleNode("//" + _cedulaPerito).InnerText : string.Empty);
 
                             avaluoActualizado = ((xmlAvaluo.SelectSingleNode("//" + _avaluoActualizado) != null) ? ((xmlAvaluo.SelectSingleNode("//" + _avaluoActualizado).InnerText == "1") ? true : false) : false);
+
+                            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+                            porcentajeAceptacionNoTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno).InnerText), out porcAceptNoTerreno)) ? porcAceptNoTerreno : 0) : 0);
+                            porcentajeAceptacionTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno).InnerText), out porcAceptTerreno)) ? porcAceptTerreno : 0) : 0);
+                            porcentajeAceptacionNoTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado).InnerText), out porcAceptNoTerrenoCalc)) ? porcAceptNoTerrenoCalc : 0) : 0);
+                            porcentajeAceptacionTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado).InnerText), out porcAceptTerrenoCalc)) ? porcAceptTerrenoCalc : 0) : 0);
+
                         }
                         catch (Exception ex)
                         {
@@ -3367,7 +3461,46 @@ namespace BCR.GARANTIAS.Entidades
             get { return fechaValuacionSICC; }
         }
 
+        #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion Terreno
+            /// </summary>
+            public decimal PorcentajeAceptacionTerreno 
+            {
+                get { return porcentajeAceptacionTerreno; }
+                set { porcentajeAceptacionTerreno = value; }
+            }
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion No Terreno
+            /// </summary>
+            public decimal PorcentajeAceptacionNoTerreno
+            {
+                get { return porcentajeAceptacionNoTerreno; }
+                set { porcentajeAceptacionNoTerreno = value; }
+            }
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion Terreno Calculado
+            /// </summary>
+            public decimal PorcentajeAceptacionTerrenoCalculado
+            {
+                get { return porcentajeAceptacionTerrenoCalculado; }
+                set { porcentajeAceptacionTerrenoCalculado = value; }
+            }
+
+            /// <summary>
+            /// Obtiene o establece el Porcentaje de Aceptacion No Terreno Calculado
+            /// </summary>
+            public decimal PorcentajeAceptacionNoTerrenoCalculado
+            {
+                get { return porcentajeAceptacionNoTerrenoCalculado; }
+                set { porcentajeAceptacionNoTerrenoCalculado = value; }
+            }
+
+        #endregion
+        
         #endregion Avalúo
 
         #region Inconsistencias
@@ -3815,6 +3948,90 @@ namespace BCR.GARANTIAS.Entidades
         {
             get { return inconsistenciaCoberturasObligatoriasInvalidas; }
             set { inconsistenciaCoberturasObligatoriasInvalidas = value; }
+        }
+
+
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en el Indicador Inscripción cuando sea No anotada/No Inscrita
+        /// </summary>
+        public bool InconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita
+        {
+            get { return inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita; }
+            set { inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en el Indicador Inscripción cuando sea Anotada
+        /// </summary>
+        public bool InconsistenciaPorcAceptTerrenoCalcAnotada
+        {
+            get { return inconsistenciaPorcAceptTerrenoCalcAnotada; }
+            set { inconsistenciaPorcAceptTerrenoCalcAnotada = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en la Fecha Último Seguimiento (la fecha actual supera en un año la fecha último seguimiento)
+        /// </summary>
+        public bool InconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento
+        {
+            get { return inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento; }
+            set { inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en la Fecha de Valuación (la fecha actual supera en 5 años la fecha valuación)
+        /// </summary>
+        public bool InconsistenciaPorcAceptTerrenoCalcFechaValuacion
+        {
+            get { return inconsistenciaPorcAceptTerrenoCalcFechaValuacion; }
+            set { inconsistenciaPorcAceptTerrenoCalcFechaValuacion = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en el Indicador Inscripción cuando sea No anotada/No Inscrita
+        /// </summary>
+        public bool InconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita
+        {
+            get { return inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita; }
+            set { inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en el Indicador Inscripción cuando sea Anotada
+        /// </summary>
+        public bool InconsistenciaPorcAceptNoTerrenoCalcAnotada
+        {
+            get { return inconsistenciaPorcAceptNoTerrenoCalcAnotada; }
+            set { inconsistenciaPorcAceptNoTerrenoCalcAnotada = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en la Fecha Último Seguimiento (la fecha actual supera en un año la fecha último seguimiento)
+        /// </summary>
+        public bool InconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento
+        {
+            get { return inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento; }
+            set { inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = value; }
+        }
+
+        /// <summary>
+        /// Obtiene o establece el indicador de que se presentó la inconsistenca en la Fecha Último Seguimiento (la fecha actual supera en 6 meses la fecha último seguimiento)
+        /// </summary>
+        public bool InconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo
+        {
+            get { return inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo; }
+            set { inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = value; }
+        }
+
+        /// <summary>
+        /// /// Obtiene o establece el indicador de que se presentó la inconsistenca en la Fecha de Valuación (la fecha actual supera en 5 años la fecha valuación)
+        /// </summary>
+        public bool InconsistenciaPorcAceptNoTerrenoCalcFechaValuacion
+        {
+            get { return inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion; }
+            set { inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = value; }
         }
 
         #endregion Inconsistencias
@@ -4294,6 +4511,19 @@ namespace BCR.GARANTIAS.Entidades
                 inconsistenciaPorcentajeAceptacionCalculado = false;
 
                 inconsistenciaCoberturasObligatoriasInvalidas = false;
+                
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = false;
+                inconsistenciaPorcAceptTerrenoCalcAnotada = false;
+                inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
+                inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+
+                inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
+                inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
+                inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+
 
                 #region Cargar listas de datos
 
@@ -5715,7 +5945,162 @@ namespace BCR.GARANTIAS.Entidades
 
                 #endregion Se aplican las validaciones correspondientes al porcentaje de aceptacion calculado
 
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación Terreno Calculado
+                
+                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                if (inconsistenciaIndicadorInscripcion)
+                {
+                    //NO ANOTADA - NO INSCRITA
+                    if (codInscripcion.Equals(1))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita);
+                    }
+                    else
+                    {
+                        //ANOTADA
+                        if (codInscripcion.Equals(2))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptTerrenoCalcAnotada = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada, _mensajePorcAceptTerrenoCalcAnotada);
+                        }
+                    }
+                }
+
+                //NO EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                if (!inconsistenciaIndicadorInscripcion)
+                {
+                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
+                    if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                    }
+                }
+
+                //NO EXISTE INCONSISTENCIA EN FECHA ULTIMO SEGUIMIENTO
+                if (!inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento)
+                {
+                    //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
+                    if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion, _mensajePorcAceptTerrenoCalcFechaValuacion);
+                    }
+                }
+
+                #endregion
+
+                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación No Terreno Calculado
+
+                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                if (inconsistenciaIndicadorInscripcion)
+                {
+                    //NO ANOTADA - NO INSCRITA
+                    if (codInscripcion.Equals(1))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
+                    }
+                    else
+                    {
+                        //ANOTADA
+                        if (codInscripcion.Equals(2))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcAnotada = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada, _mensajePorcAceptNoTerrenoCalcAnotada);
+                        }
+                    }
+                }
+
+                //NO EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                if (!inconsistenciaIndicadorInscripcion)
+                {
+                    //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )
+                    if (codTipoBien.Equals(2) && (codTipoGarantiaReal.Equals(1) || codTipoGarantiaReal.Equals(2)))
+                    { 
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
+                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 && indicadorViviendaHabitadaDeudor == false)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                        }
+                    }
+
+                    //SI TIPO BIEN IGUAL VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    if (codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)) )
+                    {
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 )
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                        }
+                    }
+
+                    //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
+                    if (codTipoBien.Equals(4) && codTipoGarantiaReal.Equals(3))
+                    {
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+                        }
+                    }
+                }
+
+                //NO EXISTE INCONSISTENCIA EN FECHA ULTIMO SEGUIMIENTO
+                if (!inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento && !inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)
+                { 
+                    //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
+                    if ((!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)) )
+                    {
+                        //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion, _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+                        }
+                    }
+                }
+
+                #endregion
+
                 //agregar validaciones
+
             }
             else
             {
@@ -6105,6 +6490,15 @@ namespace BCR.GARANTIAS.Entidades
                                             break;
                                         case _fechaModifico: valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
                                             break;
+                                        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                        case _porcentajeAceptacionTerreno: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                            break;
+                                        case _porcentajeAceptacionNoTerreno: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                            break;
+                                        case _porcentajeAceptacionTerrenoCalculado: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                            break;
+                                        case _porcentajeAceptacionNoTerrenoCalculado: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                            break;
                                         default: valorAct = valorActual;
                                             break;
                                     }
@@ -6459,7 +6853,16 @@ namespace BCR.GARANTIAS.Entidades
                                             case _fechaUltimoSeguimiento: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParseExact(datoInicialAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecUS) ? fecUS.ToString("dd/MM/yyyy") : datoInicialAval;
                                                 break;
                                             case _fechaConstruccion: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParseExact(datoInicialAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecCons) ? fecCons.ToString("dd/MM/yyyy") : datoInicialAval;
-                                                break;                                      
+                                                break;
+                                            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                            case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
                                             //case _fechaModifico: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParse(datoInicialAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoInicialAval;
                                             //  break;
                                             default: entidadBitacoraAvaluo.ValorAnterior = datoInicialAval;
@@ -6497,6 +6900,15 @@ namespace BCR.GARANTIAS.Entidades
                                             case _fechaUltimoSeguimiento: entidadBitacoraAvaluo.ValorActual = DateTime.TryParseExact(datoActualAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecUSAct) ? fecUSAct.ToString("dd/MM/yyyy") : datoActualAval;
                                                 break;
                                             case _fechaConstruccion: entidadBitacoraAvaluo.ValorActual = DateTime.TryParseExact(datoActualAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecConsAct) ? fecConsAct.ToString("dd/MM/yyyy") : datoActualAval;
+                                                break;
+                                            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                            case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                break;
+                                            case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                 break;
                                             //case _fechaModifico: entidadBitacoraAvaluo.ValorActual = DateTime.TryParse(datoActualAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoActualAval;
                                             //    break;
@@ -7762,6 +8174,30 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteString(this.fechaValuacionSICC.ToString("yyyyMMdd"));
                     objEscritor.WriteEndElement();
 
+                    #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+                    //Crea el nodo del porcentaje de aceptación del terreno
+                    objEscritor.WriteStartElement(_porcentajeAceptacionTerreno);
+                    objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionTerreno));
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del porcentaje de aceptación del no terreno
+                    objEscritor.WriteStartElement(_porcentajeAceptacionNoTerreno);
+                    objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionNoTerreno));
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del porcentaje de aceptación del terreno calculado
+                    objEscritor.WriteStartElement(_porcentajeAceptacionTerrenoCalculado);
+                    objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionTerrenoCalculado));
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del porcentaje de aceptación del no terreno calculado
+                    objEscritor.WriteStartElement(_porcentajeAceptacionNoTerrenoCalculado);
+                    objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionNoTerrenoCalculado));
+                    objEscritor.WriteEndElement();
+
+                    #endregion
+
                     //Final del tag AVALUO_MAS_RECIENTE
                     objEscritor.WriteEndElement();
                 }
@@ -8149,25 +8585,7 @@ namespace BCR.GARANTIAS.Entidades
                                 objEscritor.WriteString(this.porcentajeAceptacionCalculadoOriginal.ToString("N2"));
                                 objEscritor.WriteEndElement();
 
-                                //Crea el nodo del porcentaje de aceptación del terreno
-                                objEscritor.WriteStartElement(_porcentajeAceptacionTerreno);
-                                objEscritor.WriteString(this.porcentajeAceptacionTerreno.ToString("N2"));
-                                objEscritor.WriteEndElement();
-
-                                //Crea el nodo del porcentaje de aceptación del no terreno
-                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerreno);
-                                objEscritor.WriteString(this.porcentajeAceptacionNoTerreno.ToString("N2"));
-                                objEscritor.WriteEndElement();
-
-                                //Crea el nodo del porcentaje de aceptación del terreno calculado
-                                objEscritor.WriteStartElement(_porcentajeAceptacionTerrenoCalculado);
-                                objEscritor.WriteString(this.porcentajeAceptacionTerrenoCalculado.ToString("N2"));
-                                objEscritor.WriteEndElement();
-
-                                //Crea el nodo del porcentaje de aceptación del no terreno calculado
-                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerrenoCalculado);
-                                objEscritor.WriteString(this.porcentajeAceptacionNoTerrenoCalculado.ToString("N2"));
-                                objEscritor.WriteEndElement();
+                                
                             }
 
                             //Final del tag SEMESTRE
