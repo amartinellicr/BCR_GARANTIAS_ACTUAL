@@ -218,11 +218,6 @@ namespace BCR.GARANTIAS.Comun
 
         public const string _errorObteniendoCoberturasPolizasSap                    = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP";
         public const string _errorObteniendoCoberturasPolizasSapDetalle             = "ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP_DETALLE";
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> origin/BLOQUE-2_SPRINT-2
 
         //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
         public const string _errorPorcAceptTerrenoCalcNoAnotadaNoInscrita                       = "ERROR_PORC_ACEPT_TERRENO_CALC_NO_ANOTADA_NO_INSCRITA";

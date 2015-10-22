@@ -5016,18 +5016,9 @@ namespace BCRGARANTIAS.Forms
                             /*Las validaciones se colocan al revés, del orden establecido en el enumerador "Inconsistencias", con el fin de que los 
                              * mensajes se desplieguen en el orden establecido en dicho enumerador.*/
 
-
-<<<<<<< HEAD
-                        txtPorcentajeAceptacionCalculado.Text = porcentajeAceptacionCalculado.ToString("N2");
-                        
-                        if (entidadGarantiaReal.InconsistenciaPorceAcepMayorPorceAcepCalculado)
-                        {
-                            estadoVerificacion = false;
-=======
                             #region Inconsistencia de % Aceptacion Calculado, porcentaje aceptacion mayor al porcentaje de aceptacion calculado
 
                             txtPorcentajeAceptacionCalculado.Text = porcentajeAceptacionCalculado.ToString("N2");
->>>>>>> origin/BLOQUE-2_SPRINT-2
 
                             if (entidadGarantiaReal.InconsistenciaPorceAcepMayorPorceAcepCalculado)
                             {

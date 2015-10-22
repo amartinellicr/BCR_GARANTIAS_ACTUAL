@@ -56,11 +56,7 @@ namespace BCR.GARANTIAS.Comun
             MontoPolizaNoCubreBien      = 40,
             CoberturasObligatoriasInvalidas = 41,
             //agregar mas indicadores para que no se se caiga. 
-<<<<<<< HEAD
 
-=======
-          
->>>>>>> origin/BLOQUE-2_SPRINT-2
             //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
             PorcAceptTerrenoCalcNoAnotadaNoInscrita = 42,
             PorcAceptTerrenoCalcAnotada = 43,
