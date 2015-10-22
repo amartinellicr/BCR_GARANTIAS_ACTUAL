@@ -271,7 +271,7 @@
 								                                                     ToolTip="Monto de Última Tasación No Terreno (Utilice el punto como separador de decimales)" BackColor="AliceBlue" Width="136px"/>
 															        </td>
 													            </tr>
-													            <tr>
+													            <tr id="filaPorAcep" runat="server">
 														           <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación Terreno:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
@@ -303,20 +303,20 @@
 								                                                     ToolTip="Monto Tasación Actualizada No Terreno Calculado" BackColor="AliceBlue"  Width="136px" />
 															        </td>
 													            </tr>
-													            <tr>
+													            <tr id="filaPorAcepCalc" runat="server">
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación Terreno Calculado:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
 														            
 														                <asp:TextBox ID="txtPorcentajeAceptacionTerrenoCalculado" tabIndex="38" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
-								                                                     ToolTip="% Aceptación Terreno Calculado" BackColor="AliceBlue" />
+								                                                     ToolTip="% Aceptación Terreno Calculado" Enabled="false" BackColor="AliceBlue" />
 															        </td>
 														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación No Terreno Calculado:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:140px; height:15px; font-size:14px;" valign="middle">
 														            
 														                <asp:TextBox ID="txtPorcentajeAceptacionNoTerrenoCalculado" tabIndex="39" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
-								                                                     ToolTip="% Aceptación No Terreno Calculado" BackColor="AliceBlue" />
+								                                                     ToolTip="% Aceptación No Terreno Calculado" Enabled="false" BackColor="AliceBlue" />
 															        </td>
 													            </tr>
 													           <tr>
