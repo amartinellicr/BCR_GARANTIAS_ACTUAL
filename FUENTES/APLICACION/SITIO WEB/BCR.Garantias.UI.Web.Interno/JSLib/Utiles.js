@@ -2276,10 +2276,14 @@
                         {
                             $$('btnValidarOperacion').attr('BCMM', '1');
                             $$('btnValidarOperacion').attr('BCPA', '1');
-                            
+
                             $$('txtMontoMitigador').removeAttr('disabled');
-                            $$('txtPorcentajeAceptacion').removeAttr('disabled');
-                            
+
+                            if (($$('btnValidarOperacion').attr("HPAA")) == '0')
+                            {
+                                $$('txtPorcentajeAceptacion').removeAttr('disabled');
+                            }
+
                             if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                             {
                                 $$('btnValidarOperacion').attr('BCMM', '0');
@@ -2335,9 +2339,12 @@
                         {
                             $$('btnValidarOperacion').attr('BCMM', '1');
                             $$('btnValidarOperacion').attr('BCPA', '1');
-                            
+
                             $$('txtMontoMitigador').removeAttr('disabled');
-                            $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                            if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+                                $$('txtPorcentajeAceptacion').removeAttr('disabled');
+                            }
                             
                             if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                             {
@@ -2382,9 +2389,12 @@
                 
                     $$('btnValidarOperacion').attr('BCMM', '1');
                     $$('btnValidarOperacion').attr('BCPA', '1');
-                    
+
                     $$('txtMontoMitigador').removeAttr('disabled');
-                    $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                    if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+                        $$('txtPorcentajeAceptacion').removeAttr('disabled');
+                    }
 
                     if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                     {
@@ -2424,246 +2434,226 @@
 
    //Función que valida el porcentaje de aceptación que fue ingresado por el usuario
    function ValidarPorcentajeAceptacion() 
-   {      
-        
-        var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();      
+   {
+       if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
 
-        if (($$('txtPorcentajeAceptacion').val().length === 0))
-        {
-            $$('txtPorcentajeAceptacion').val(porcentajeAceptacionCalculado);                    
-        } 
+           var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();
+
+           if (($$('txtPorcentajeAceptacion').val().length === 0)) {
+               $$('txtPorcentajeAceptacion').val(porcentajeAceptacionCalculado);
+           }
 
 
-        if(($$('btnValidarOperacion').attr("IEG")) == '0')
-        {
-            var fecPresentacion = $.trim($$('txtFechaRegistro').val().replace("__/__/____", ""));
+           if (($$('btnValidarOperacion').attr("IEG")) == '0') {
+               var fecPresentacion = $.trim($$('txtFechaRegistro').val().replace("__/__/____", ""));
 
-            $$('cbInscripcion').attr('disabled', 'disabled');
-            $$('btnValidarOperacion').attr('BCII', '0');
-        
-            if(fecPresentacion.length > 0)
-            {
-                var fecPresent = fecPresentacion.split('/');
-                var fechaPresentacion = new Date(fecPresent[2], fecPresent[1], fecPresent[0]);
-                var fecConstitucion = $$('txtFechaConstitucion').val();
-                
-                if(fecConstitucion.length > 0)
-                {
-                    var fecConst = fecConstitucion.split('/');
+               $$('cbInscripcion').attr('disabled', 'disabled');
+               $$('btnValidarOperacion').attr('BCII', '0');
 
-                    var fechaConstitucion = new Date(fecConst[2], fecConst[1], fecConst[0]);
-                
-                    if(fechaConstitucion.getTime() <= fechaPresentacion.getTime())
-                    {
-                        $$('txtPorcentajeAceptacion').removeAttr('disabled');
-                        
-                        var indicador = $$('cbInscripcion').val();
-                        var fechaActual = new Date();
-                        var parteFechaActual = ($$('hdnFechaActual').val().length != 0) ? $$('hdnFechaActual').val() : '';
-                        
-                        if(parteFechaActual.length > 0)
-                        {
-                            var partesFecha = parteFechaActual.split('|');
-                            
-                            fechaActual = new Date(partesFecha[0], partesFecha[1] - 1 , partesFecha[2]);
-                        }
-                            
-                        switch(indicador)
-                        {
-                            case '0':
-                            
-                                $$('btnValidarOperacion').attr('BCMM', '0');
-                                $$('btnValidarOperacion').attr('BCPA', '0');
-                                
-                                $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                                
-                                $MensajePorcentajeAceptacionInvalido.dialog('open');
-                                
-                            break;
-                            case '1': 
-                            
-                                $$('btnValidarOperacion').attr('BCMM', '0');
-                                $$('btnValidarOperacion').attr('BCPA', '0');
-                                
-                                var fecConstitucion         = $.trim($$('txtFechaConstitucion').val().replace("__/__/____", ""));
+               if (fecPresentacion.length > 0) {
+                   var fecPresent = fecPresentacion.split('/');
+                   var fechaPresentacion = new Date(fecPresent[2], fecPresent[1], fecPresent[0]);
+                   var fecConstitucion = $$('txtFechaConstitucion').val();
 
-                                if(fecConstitucion.length > 0)
-                                {
-                                    var fecConst                = fecConstitucion.split('/');
-                                    var fechaConstitucion       = new Date(fecConst[2], fecConst[1] - 1, fecConst[0]);
-                                    
-                                    var fechaConstitucionComp   = new Date(fechaConstitucion.getTime() + (30 * 24 * 3600 * 1000))
-                                    
-                                    var datoPorcentajeAcep      = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                    var porcentajeAceptacion    = parseFloat(datoPorcentajeAcep);
-                                    
-                                    if(fechaActual.getTime() < fechaConstitucionComp.getTime())
-                                    {
-                                        $$('btnValidarOperacion').attr('BCMM', '1');
-                                        $$('btnValidarOperacion').attr('BCPA', '1');
-                                        
-                                        $$('txtMontoMitigador').removeAttr('disabled');
-                                        $$('txtPorcentajeAceptacion').removeAttr('disabled');
-                                        
-                                        if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
-                                        {
-                                            $$('btnValidarOperacion').attr('BCMM', '0');
-                                            $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                            
-                                            if(porcentajeAceptacion != 0)
-                                            {
-    	                                        $MensajePorcentajeAceptacionInvalido.dialog('open');
-    	                                    }
-                                        }
-                                        
-                                        ValidarExistenciaAvaluo();
+                   if (fecConstitucion.length > 0) {
+                       var fecConst = fecConstitucion.split('/');
 
-                                        if(($$('btnValidarOperacion').attr("HAYAVAL")) == '0')
-                                        {
-                                            $$('btnValidarOperacion').attr('BCMM', '0');
-                                            $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var montoMitigador          = parseFloat($$('txtMontoMitigador').val());
-                                        var porcentajeAceptacion    = parseFloat($$('txtPorcentajeAceptacion').val());
-                                    
-                                        $$('btnValidarOperacion').attr('BCMM', '0');
-                                        $$('btnValidarOperacion').attr('BCPA', '0');
-                                        
-                                        $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                        	            
-    	                                $MensajePorcentajeAceptacionInvalido.dialog('open');
-                                    }
-                                }
-                                
-                            break;
-                            case '2': 
-                                
-                                var fecConstitucion = $.trim($$('txtFechaConstitucion').val().replace("__/__/____", ""));
+                       var fechaConstitucion = new Date(fecConst[2], fecConst[1], fecConst[0]);
 
-                                if(fecConstitucion.length > 0)
-                                {
-                                    var fecConst                = fecConstitucion.split('/');
-                                    var fechaConstitucion       = new Date(fecConst[2], fecConst[1] - 1, fecConst[0]);
-                                    
-                                    var fechaConstitucionComp   = new Date(fechaConstitucion.getTime() + (60 * 24 * 3600 * 1000))
-                                
-                                    var datoPorcentajeAcep      = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                    var porcentajeAceptacion    = parseFloat(datoPorcentajeAcep);
-                                    
-                                    if(fechaActual.getTime() < fechaConstitucionComp.getTime())
-                                    {
-                                        $$('btnValidarOperacion').attr('BCMM', '1');
-                                        $$('btnValidarOperacion').attr('BCPA', '1');
-                                        
-                                        $$('txtMontoMitigador').removeAttr('disabled');
-                                        $$('txtPorcentajeAceptacion').removeAttr('disabled');
-                                        
-                                        if((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
-                                        {
-                                            $$('btnValidarOperacion').attr('BCMM', '0');
-                                            $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                            
-                                            if(porcentajeAceptacion != 0)
-                                            {
-    	                                        $MensajePorcentajeAceptacionInvalido.dialog('open');
-    	                                    }
-                                        }
+                       if (fechaConstitucion.getTime() <= fechaPresentacion.getTime()) {
+                           $$('txtPorcentajeAceptacion').removeAttr('disabled');
 
-    	                                ValidarExistenciaAvaluo();
+                           var indicador = $$('cbInscripcion').val();
+                           var fechaActual = new Date();
+                           var parteFechaActual = ($$('hdnFechaActual').val().length != 0) ? $$('hdnFechaActual').val() : '';
 
-                                        if(($$('btnValidarOperacion').attr("HAYAVAL")) == '0')
-                                        {
-                                            $$('btnValidarOperacion').attr('BCMM', '0');
-                                            $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                        }
-                                    }
-                                    else
-                                    {
-                                        $$('btnValidarOperacion').attr('BCMM', '0');
-                                        $$('btnValidarOperacion').attr('BCPA', '0');
-                                        
-                                        $$('txtMontoMitigador').attr('disabled', 'disabled');
-                                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                    	                
-                                        $MensajePorcentajeAceptacionInvalido.dialog('open');
-                                    }
-                                }
-                                
-                            break;
-                        case '3':
+                           if (parteFechaActual.length > 0) {
+                               var partesFecha = parteFechaActual.split('|');
 
-                            $$('btnValidarOperacion').attr('BCMM', '1');
-                            $$('btnValidarOperacion').attr('BCPA', '1');
+                               fechaActual = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
+                           }
 
-                            $$('txtMontoMitigador').removeAttr('disabled');
-                            $$('txtPorcentajeAceptacion').removeAttr('disabled');
+                           switch (indicador) {
+                               case '0':
 
-                            var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                            var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+                                   $$('btnValidarOperacion').attr('BCMM', '0');
+                                   $$('btnValidarOperacion').attr('BCPA', '0');
 
-                            if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
-                                $$('btnValidarOperacion').attr('BCMM', '0');
-                                $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                   $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                   $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
 
-                                if (porcentajeAceptacion != 0) {
-                                    $MensajePorcentajeAceptacionInvalido.dialog('open');
-                                }
+                                   $MensajePorcentajeAceptacionInvalido.dialog('open');
 
-//                                if (porcentajeAceptacion === 0) {
-//                                    $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
-//                                }
-                            }
+                                   break;
+                               case '1':
 
-                            ValidarExistenciaAvaluo();
-                            
-                            if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
-                                $$('btnValidarOperacion').attr('BCMM', '0');
-                                $$('txtMontoMitigador').attr('disabled', 'disabled');
-                            }
+                                   $$('btnValidarOperacion').attr('BCMM', '0');
+                                   $$('btnValidarOperacion').attr('BCPA', '0');
 
-                            break;
-                            case '-1':
-                                        $$('btnValidarOperacion').attr('BCMM', '0');
-                                        $$('btnValidarOperacion').attr('BCPA', '0');
-                                        
-                                        $$('txtMontoMitigador').attr('disabled', 'disabled');
-	                                    $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                            break;
-                            default: break;
-                        }
-                    }
-                    else
-                    {
-                        $$('txtMontoMitigador').attr('disabled', 'disabled');
-                        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                        $$('cbInscripcion').attr('disabled', 'disabled');
-                    }
-                }
-                else
-                {
-                    $$('txtMontoMitigador').attr('disabled', 'disabled');
-                    $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-                    $$('cbInscripcion').attr('disabled', 'disabled');
-                }
-            }
-        }
-        else
-        {
-            $$('txtMontoMitigador').attr('disabled', 'disabled');
-            $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
-            $$('cbInscripcion').attr('disabled', 'disabled');
-            
-            $$('btnValidarOperacion').attr('BCMM', '0');
-            $$('btnValidarOperacion').attr('BCPA', '0');
-            $$('btnValidarOperacion').attr('BCII', '0');
-        }
-    
-        CalcularMontoMitigador();
+                                   var fecConstitucion = $.trim($$('txtFechaConstitucion').val().replace("__/__/____", ""));
+
+                                   if (fecConstitucion.length > 0) {
+                                       var fecConst = fecConstitucion.split('/');
+                                       var fechaConstitucion = new Date(fecConst[2], fecConst[1] - 1, fecConst[0]);
+
+                                       var fechaConstitucionComp = new Date(fechaConstitucion.getTime() + (30 * 24 * 3600 * 1000))
+
+                                       var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
+                                       var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+
+                                       if (fechaActual.getTime() < fechaConstitucionComp.getTime()) {
+                                           $$('btnValidarOperacion').attr('BCMM', '1');
+                                           $$('btnValidarOperacion').attr('BCPA', '1');
+
+                                           $$('txtMontoMitigador').removeAttr('disabled');
+                                           $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                                           if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
+                                               $$('btnValidarOperacion').attr('BCMM', '0');
+                                               $$('txtMontoMitigador').attr('disabled', 'disabled');
+
+                                               if (porcentajeAceptacion != 0) {
+                                                   $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                               }
+                                           }
+
+                                           ValidarExistenciaAvaluo();
+
+                                           if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                                               $$('btnValidarOperacion').attr('BCMM', '0');
+                                               $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                           }
+                                       }
+                                       else {
+                                           var montoMitigador = parseFloat($$('txtMontoMitigador').val());
+                                           var porcentajeAceptacion = parseFloat($$('txtPorcentajeAceptacion').val());
+
+                                           $$('btnValidarOperacion').attr('BCMM', '0');
+                                           $$('btnValidarOperacion').attr('BCPA', '0');
+
+                                           $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                           $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+
+                                           $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                       }
+                                   }
+
+                                   break;
+                               case '2':
+
+                                   var fecConstitucion = $.trim($$('txtFechaConstitucion').val().replace("__/__/____", ""));
+
+                                   if (fecConstitucion.length > 0) {
+                                       var fecConst = fecConstitucion.split('/');
+                                       var fechaConstitucion = new Date(fecConst[2], fecConst[1] - 1, fecConst[0]);
+
+                                       var fechaConstitucionComp = new Date(fechaConstitucion.getTime() + (60 * 24 * 3600 * 1000))
+
+                                       var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
+                                       var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+
+                                       if (fechaActual.getTime() < fechaConstitucionComp.getTime()) {
+                                           $$('btnValidarOperacion').attr('BCMM', '1');
+                                           $$('btnValidarOperacion').attr('BCPA', '1');
+
+                                           $$('txtMontoMitigador').removeAttr('disabled');
+                                           $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                                           if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
+                                               $$('btnValidarOperacion').attr('BCMM', '0');
+                                               $$('txtMontoMitigador').attr('disabled', 'disabled');
+
+                                               if (porcentajeAceptacion != 0) {
+                                                   $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                               }
+                                           }
+
+                                           ValidarExistenciaAvaluo();
+
+                                           if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                                               $$('btnValidarOperacion').attr('BCMM', '0');
+                                               $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                           }
+                                       }
+                                       else {
+                                           $$('btnValidarOperacion').attr('BCMM', '0');
+                                           $$('btnValidarOperacion').attr('BCPA', '0');
+
+                                           $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                           $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+
+                                           $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                       }
+                                   }
+
+                                   break;
+                               case '3':
+
+                                   $$('btnValidarOperacion').attr('BCMM', '1');
+                                   $$('btnValidarOperacion').attr('BCPA', '1');
+
+                                   $$('txtMontoMitigador').removeAttr('disabled');
+                                   $$('txtPorcentajeAceptacion').removeAttr('disabled');
+
+                                   var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
+                                   var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+
+                                   if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
+                                       $$('btnValidarOperacion').attr('BCMM', '0');
+                                       $$('txtMontoMitigador').attr('disabled', 'disabled');
+
+                                       if (porcentajeAceptacion != 0) {
+                                           $MensajePorcentajeAceptacionInvalido.dialog('open');
+                                       }
+
+                                       //                                if (porcentajeAceptacion === 0) {
+                                       //                                    $MensajePorcentajeAceptacionInvalidoIndIns.dialog('open');
+                                       //                                }
+                                   }
+
+                                   ValidarExistenciaAvaluo();
+
+                                   if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                                       $$('btnValidarOperacion').attr('BCMM', '0');
+                                       $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                   }
+
+                                   break;
+                               case '-1':
+                                   $$('btnValidarOperacion').attr('BCMM', '0');
+                                   $$('btnValidarOperacion').attr('BCPA', '0');
+
+                                   $$('txtMontoMitigador').attr('disabled', 'disabled');
+                                   $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                                   break;
+                               default: break;
+                           }
+                       }
+                       else {
+                           $$('txtMontoMitigador').attr('disabled', 'disabled');
+                           $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                           $$('cbInscripcion').attr('disabled', 'disabled');
+                       }
+                   }
+                   else {
+                       $$('txtMontoMitigador').attr('disabled', 'disabled');
+                       $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                       $$('cbInscripcion').attr('disabled', 'disabled');
+                   }
+               }
+           }
+           else {
+               $$('txtMontoMitigador').attr('disabled', 'disabled');
+               $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+               $$('cbInscripcion').attr('disabled', 'disabled');
+
+               $$('btnValidarOperacion').attr('BCMM', '0');
+               $$('btnValidarOperacion').attr('BCPA', '0');
+               $$('btnValidarOperacion').attr('BCII', '0');
+           }
+
+           CalcularMontoMitigador();
+       }
     }
 
     

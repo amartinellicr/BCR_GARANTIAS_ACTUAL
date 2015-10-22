@@ -2356,9 +2356,14 @@ namespace BCR.GARANTIAS.Entidades
 
                             porcentajeAceptacionNoTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno).InnerText), out porcAceptNoTerreno)) ? porcAceptNoTerreno : 0) : 0);
                             porcentajeAceptacionTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno).InnerText), out porcAceptTerreno)) ? porcAceptTerreno : 0) : 0);
-                            porcentajeAceptacionNoTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado).InnerText), out porcAceptNoTerrenoCalc)) ? porcAceptNoTerrenoCalc : 0) : 0);
-                            porcentajeAceptacionTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado).InnerText), out porcAceptTerrenoCalc)) ? porcAceptTerrenoCalc : 0) : 0);
+                            porcentajeAceptacionNoTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado).InnerText), out porcAceptNoTerrenoCalc)) ? porcAceptNoTerrenoCalc : -1) : -1);
+                            porcentajeAceptacionTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado).InnerText), out porcAceptTerrenoCalc)) ? porcAceptTerrenoCalc : -1) : -1);
 
+                            if (HabilitarPorcentajesAceptacionAvaluo())
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = ((porcentajeAceptacionNoTerrenoCalculado >= 0) ? porcentajeAceptacionNoTerrenoCalculado : porcentajeAceptacionCalculado);
+                                porcentajeAceptacionTerrenoCalculado = ((porcentajeAceptacionTerrenoCalculado >= 0) ? porcentajeAceptacionTerrenoCalculado : porcentajeAceptacionCalculado);
+                            }                            
                         }
                         catch (Exception ex)
                         {
@@ -6082,7 +6087,7 @@ namespace BCR.GARANTIAS.Entidades
                         errorValidaciones = true;
                         desplegarErrorVentanaEmergente = true;
                         inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
                     }
                     else
                     {
@@ -7530,7 +7535,7 @@ namespace BCR.GARANTIAS.Entidades
         }
 
         /// <summary>
-        /// Estrae lal ista de operaciones relacionadas, esto de la trama inicial de datos
+        /// Extrae la lista de operaciones relacionadas, esto de la trama inicial de datos
         /// </summary>
         /// <param name="tramaDatos">Trama XML que posee la lista de operaciones asociadas</param>
         /// <returns></returns>
@@ -7658,6 +7663,55 @@ namespace BCR.GARANTIAS.Entidades
             }
 
             return PolizasSap;
+        }
+
+        /// <summary>
+        /// Determina si los campos de los porcentajes de aceptación del terreno y no terreno deben de ser habilitados
+        /// </summary>
+        /// <returns>True: Los campos deben de ser habilitados. False: Los campos deben de ser bloqueados</returns>
+        public bool HabilitarPorcentajesAceptacionAvaluo()
+        {
+            bool debenHabilitarse = false;
+
+            //SI LA CLASE DE GARANTIA REAL ES HIPOTECA COMUN
+            if (this.codTipoGarantiaReal.Equals(1))
+            {
+               if (this.codTipoBien.Equals(1) && this.codTipoMitigador.Equals(1))
+                   debenHabilitarse = true;
+
+                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO IGUAL A 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                if (this.codTipoBien.Equals(2) && ((this.codTipoMitigador.Equals(2) || this.codTipoMitigador.Equals(3)
+                                            || this.codTipoMitigador.Equals(5) || this.codTipoMitigador.Equals(6))))
+                {
+                    debenHabilitarse = true;
+                }
+            }
+
+            //SI LA CLASE DE GARANTIA REAL ES CEDULA HIPOTECARIA O IGUAL A PRENDA
+            if (this.codTipoGarantiaReal.Equals(2) || this.codTipoGarantiaReal.Equals(3))
+            {
+                //SI TIPO BIEN ES IGUAL TERRENOS Y, TIPO MITIGADOR RIESGO IGUAL A HIPOTECA SOBRE TERRENOS Y CED HIPOT SOBRE TERRENOS
+                if (this.codTipoBien.Equals(1) && ((this.codTipoMitigador.Equals(1) || this.codTipoMitigador.Equals(4))))
+                    debenHabilitarse = true;
+
+                //SI TIPO BIEN ES IGUAL A EDIFICACIONES Y TIPO MITIGADOR RIESGO IGUAL A 2 (HIPOTECAS SOBRE EDIFICACIONES), 
+                //3 (HIPOTECAS SOBRE RESIDENCIAS HABITADAS POR EL DEUDOR (PONDERACIÓN DEL 50%)), 5 (CÉDULAS HIPOTECARIAS SOBRE TERRENOS) 
+                //Y 6 (CÉDULAS HIPOTECARIAS SOBRE EDIFICACIONES)
+                if (this.codTipoBien.Equals(2) && ((this.codTipoMitigador.Equals(2) || this.codTipoMitigador.Equals(3)
+                                            || this.codTipoMitigador.Equals(5) || this.codTipoMitigador.Equals(6))))
+                {
+                    debenHabilitarse = true;
+                }
+
+                //SI TIPO BIEN IGUAL A VEHICULOS O IGUAL A MAQUINARIA Y EQUIPO
+                //Y TIPO MITIGADOR RIESDO IGUAL A 7 (PRENDA S/BIENES MUEBLES E HIPOTECAS S/MAQUINARIA FIJADA PERM. AL TERRENO)
+                if ((this.codTipoBien.Equals(3) || this.codTipoBien.Equals(4)) && (this.codTipoMitigador.Equals(7)))
+                    debenHabilitarse = true;
+            }
+            
+            return debenHabilitarse;
         }
 
         #endregion Métodos Públicos
