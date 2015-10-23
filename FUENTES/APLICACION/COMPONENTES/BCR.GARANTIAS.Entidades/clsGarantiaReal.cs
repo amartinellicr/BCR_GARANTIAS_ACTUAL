@@ -5981,6 +5981,9 @@ namespace BCR.GARANTIAS.Entidades
                     //BANDERA EXCLUYENTE PARA LOS CASTIGOS
                     bool castigoAplicado = false;
 
+                    //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
+                    porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
+
                     //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
                     if (codTipoMitigador.Equals(-1))
                     {
@@ -6059,6 +6062,9 @@ namespace BCR.GARANTIAS.Entidades
 
                     //SE REESTABLECE LA BANDERA PARA SER UTILIZADA EN EL CAMPO PORC ACEPT NO TERRENO CALC
                     castigoAplicado = false;
+
+                    //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
+                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
 
                     //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
                     if (codTipoMitigador.Equals(-1))

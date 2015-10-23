@@ -2612,6 +2612,11 @@ namespace BCRGARANTIAS.Forms
                         ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, 0);
                     }
 
+                    txtPorcentajeAceptacionCalculado.Text = "0.00";
+                    txtPorcentajeAceptacionTerrenoCalculado.Text = "0.00";
+                    txtPorcentajeAceptacionNoTerrenoCalculado.Text = "0.00";
+
+                    
                     if ((tipoGarantiaReal != 1) && (porcentajeAceptacionCalculado == 0))
                     {
                         int tipoMitigador = int.Parse(((cbMitigador.Items.Count > 0) ? cbMitigador.SelectedItem.Value : "-1"));
@@ -2737,9 +2742,9 @@ namespace BCRGARANTIAS.Forms
                     entidadGarantia.PorcentajeAceptacionCalculadoOriginal = porcentajeOriginal;
 
                     entidadGarantia.EntidadValida(false); // true: validar campos requeridos esten con datos, false: aplica solo validaciones sin tomar en cuanta datos requeridos
-                                 
 
-                    if ((tipoBien > 4) || (porcentajeOriginal == 0)) 
+
+                    if ((tipoBien > 4) || (porcentajeOriginal == 0))
                     {
                         txtPorcentajeAceptacionCalculado.Text = txtPorcentajeAceptacion.Text;
                         btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, "0.00");
@@ -2748,7 +2753,8 @@ namespace BCRGARANTIAS.Forms
                     else
                     {
                         MostrarListaOperaciones = true;
-                        VerificarValidaciones(entidadGarantia,false);
+                        VerificarValidaciones(entidadGarantia, false);
+
 
                         ////se debe validar para que  cuando da error el % calculado no sea borrado por el original                    
                         if (entidadGarantia.InconsistenciaPorcentajeAceptacionCalculado)
@@ -2759,14 +2765,29 @@ namespace BCRGARANTIAS.Forms
                         }
                         else
                         {
-                            txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeAceptacionCalculadoOriginal.ToString("N2");
-                            porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
-                            ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));                      
+                            ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
 
-                        }   
+                            if (entidadGarantia.HabilitarPorcentajesAceptacionAvaluo())
+                            {
+                                txtPorcentajeAceptacionTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionTerrenoCalculado.ToString("N2");
+                                txtPorcentajeAceptacionNoTerrenoCalculado.Text = entidadGarantia.PorcentajeAceptacionNoTerrenoCalculado.ToString("N2");
 
-                    }                                        
+                                txtPorcentajeAceptacionCalculado.Text = "0.00";
+                                txtPorcentajeAceptacion.Text = "0.00";
+                           
+                            }
+                            else
+                            {
+                                txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeAceptacionCalculadoOriginal.ToString("N2");
+                                porcentajeAceptacionCalculado = decimal.Parse((txtPorcentajeAceptacionCalculado.Text.Length > 0) ? txtPorcentajeAceptacionCalculado.Text : "0.00");
+
+                                 txtPorcentajeAceptacionTerrenoCalculado.Text = "0.00";
+                                 txtPorcentajeAceptacionNoTerrenoCalculado.Text = "0.00";
+
+                            }
+                        }
+                    }                                       
                 }
                 else
                 {
@@ -7560,7 +7581,7 @@ namespace BCRGARANTIAS.Forms
                         int tipoMitigadorRiesgo = int.Parse((((cbMitigador != null) && (cbMitigador.Items != null) && (cbMitigador.Items.Count > 0)) ? cbMitigador.SelectedItem.Value : "-1"));
 
                         //SI TIPO BIEN ES DISTINTO DE 1,2,3 Y 4 PARA CUALQUIER TIPO DE GARANTIA
-                        if (!(tipoBien.Equals(1) && tipoBien.Equals(2) && tipoBien.Equals(3) && tipoBien.Equals(4)))
+                        if (!tipoBien.Equals(1) && !tipoBien.Equals(2) && !tipoBien.Equals(3) && !tipoBien.Equals(4))
                             habilitarCamposPorcentajeAceptacion = true;
                         else
                         { 
@@ -7626,8 +7647,7 @@ namespace BCRGARANTIAS.Forms
                         }
 
                         txtPorcentajeAceptacion.Enabled = habilitarCamposPorcentajeAceptacion;
-                        txtPorcentajeAceptacionCalculado.Enabled = habilitarCamposPorcentajeAceptacion;
-
+                        
                         txtPorcentajeAceptacionTerreno.Enabled = habilitarCamposPorcentajeAceptacionAvaluo;
                         txtPorcentajeAceptacionNoTerreno.Enabled = habilitarCamposPorcentajeAceptacionAvaluo;
                         filaPorAcep.Visible = habilitarCamposPorcentajeAceptacionAvaluo;

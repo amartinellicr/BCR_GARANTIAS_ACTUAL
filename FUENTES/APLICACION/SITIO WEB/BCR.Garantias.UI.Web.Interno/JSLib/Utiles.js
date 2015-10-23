@@ -4366,6 +4366,10 @@
         else {
             //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
+
+            //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO EN CASO DE QUE NO EXISTAN INCONSUSTENCIAS
+            $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptCalculadoOriginal);
+
             //VALIDACIONES A CERO
 
                 /****PORC ACPT TERRENO CALCULADO Y PORC ACPT NO TERRENO CALCULADO****/
@@ -4410,7 +4414,10 @@
                 }
 
                 /****PORC ACPT NO TERRENO CALCULADO****/
-                
+
+                //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO EN CASO DE QUE NO EXISTAN INCONSUSTENCIAS
+                $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptCalculadoOriginal);
+
                 castigoAplicado = 0; //SE LIMPIA LA BANDERA
 
                 //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )                
@@ -4454,64 +4461,71 @@
                     }
                 }
 
-                if (castigoAplicado === 0) {
-                    //SI LA POLIZA ESTÁ VENCIDA
-                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
-                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                        castigoAplicado = 1
-                    }
-                }
+                if (datoCodigoSap !== -1) {
 
-                if (castigoAplicado === 0) {
-                    //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO
-                    if ($$('txtMontoAcreenciaPoliza').val().length > 0) {
-                        if (acreenciaBien > montoUltTasNoTerr) {
+                    if (castigoAplicado === 0) {
+                        //SI LA POLIZA ESTÁ VENCIDA
+                        if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
                             $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                             castigoAplicado = 1
                         }
                     }
-                }
 
-                //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
-                if (castigoAplicado === 0) {
-                    var cantidadCPAObligatorias = 0;
-                    var cantidadCPObligatorias = 0;
-                    var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+                    if (castigoAplicado === 0) {
+                        //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO
+                        if ($$('txtMontoAcreenciaPoliza').val().length > 0) {
+                            if (acreenciaBien > montoUltTasNoTerr) {
+                                $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                                castigoAplicado = 1
+                            }
+                        }
+                    }
 
-                    if (datoCodigoSap !== -1) {
-                        if ((datoCodigoSap > 0) && ($listaPolizas.length > 0)) {
-                            var polizasSap = eval('(' + $listaPolizas + ')')
-                            for (var i = 0; i < polizasSap.length; i++) {
-                                var codigoSap = parseInt(polizasSap[i].Codigo_SAP);
+                    //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
+                    if (castigoAplicado === 0) {
+                        var cantidadCPAObligatorias = 0;
+                        var cantidadCPObligatorias = 0;
+                        var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
 
-                                if (codigoSap === datoCodigoSap) {
-                                    if (polizasSap[i].Cobertura !== "undefined") {
-                                        for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
-                                            if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
-                                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
-                                            }
-                                            else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
-                                                cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                        if (datoCodigoSap !== -1) {
+                            if ((datoCodigoSap > 0) && ($listaPolizas.length > 0)) {
+                                var polizasSap = eval('(' + $listaPolizas + ')')
+                                for (var i = 0; i < polizasSap.length; i++) {
+                                    var codigoSap = parseInt(polizasSap[i].Codigo_SAP);
+
+                                    if (codigoSap === datoCodigoSap) {
+                                        if (polizasSap[i].Cobertura !== "undefined") {
+                                            for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
+                                                if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
+                                                    cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                                                }
+                                                else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                                                    cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        if (cantidadCPAObligatorias != cantidadCPObligatorias) {
+                            if (cantidadCPAObligatorias != cantidadCPObligatorias) {
+                                $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                                castigoAplicado = 1
+                            }
+                        }
+                    }
+
+                    if (castigoAplicado === 0) {
+                        //SI EL ACREEDOR ES DISTINTO DE 4000000019
+                        if ($$('txtCedulaAcreedorPoliza').val() !== '4000000019') {
                             $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                             castigoAplicado = 1
                         }
                     }
                 }
-
-                if (castigoAplicado === 0) {
-                    //SI EL ACREEDOR ES DISTINTO DE 4000000019
-                    if ( $$('txtCedulaAcreedorPoliza').val() !== '4000000019'){
-                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                        castigoAplicado = 1
-                    }
+                //SI NO TIENE UNA POLIZA ASOCIADA
+                else {
+                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                 }
         }
 
