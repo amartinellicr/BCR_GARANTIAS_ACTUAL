@@ -4754,16 +4754,25 @@ namespace BCRGARANTIAS.Forms
                             {
                                 this.txtFechaSeguimiento.Enabled = true;
                                 this.igbCalendarioSeguimiento.Enabled = true;
+                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                this.txtPorcentajeAceptacionNoTerreno.Enabled = false;
+                                this.txtPorcentajeAceptacionTerreno.Enabled = true;
                             }
                             else if ((entidadGarantia.CodTipoBien == 2) && (this.txtMontoTasActTerreno.Text.Length > 0) && (this.txtMontoTasActNoTerreno.Text.Length > 0))
                             {
                                 this.txtFechaSeguimiento.Enabled = true;
                                 this.igbCalendarioSeguimiento.Enabled = true;
+                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                this.txtPorcentajeAceptacionNoTerreno.Enabled = true;
+                                this.txtPorcentajeAceptacionTerreno.Enabled = true;
                             }
                             else
                             {
                                 this.txtFechaSeguimiento.Enabled = false;
                                 this.igbCalendarioSeguimiento.Enabled = false;
+                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                                this.txtPorcentajeAceptacionNoTerreno.Enabled = true;
+                                this.txtPorcentajeAceptacionTerreno.Enabled = false;
                             }
 
                             AvaluoActualizado = entidadGarantia.AvaluoActualizado;
@@ -5417,24 +5426,324 @@ namespace BCRGARANTIAS.Forms
                         }
                         else
                         {
-                            #region Validaciones del porcentaje de aceptación del terreno
+                            //BANDERA PARA APLICAR LOS CASTIGOS DE FORMA EXCLUYENTE
+                            bool existeErrorPorcentajesAceptacionAvaluos = false;
 
-                            #region VALIDACIONES QUE REDUCEN A 0
+                            #region Validaciones del porcentaje de aceptación calculado del terreno
+
+                                #region VALIDACIONES QUE REDUCEN A 0
+
+                                    #region Inconsistencia, Mitigador Riesgo no ha sido seleccionado
+                                    
+                                        if (cbMitigador.SelectedValue.Equals("-1"))
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+                                            //txtPorcentajeAceptacionTerreno.Text = "0.00";
+                                        }
+
+                                    #endregion
+
+                                    #region Inconsistencia en Indicador inscripción No anotada/No inscrita
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+                                        
+                                    #endregion
+
+                                    #region Inconsistencia en Indicador inscripción Anotada
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcAnotada)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                #endregion
+
+                                #region VALIDACIONES QUE REDUCEN A LA MITAD
+
+                                    #region Inconsistencia, la fecha actual supera en un año la Fecha Último Seguimiento
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+                                    #endregion
+
+                                    #region Inconsistencia, la fecha actual supera en cinco años la Fecha de Valuación
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcFechaValuacion)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                #endregion
+
                             #endregion
 
-                            #region VALIDACIONES QUE REDUCEN A LA MITAD
-                            #endregion
+                            //SE REESTABLECE LA BANDERA YA QUE EXCLUSIÓN DE CASTIGOS ES INDEPENDIENTE POR CADA CAMPO
+                            existeErrorPorcentajesAceptacionAvaluos = false;
 
-                            #endregion
+                            #region Validaciones del porcentaje de aceptación calculado del no terreno
 
+                                #region VALIDACIONES QUE REDUCEN A 0
 
-                            #region Validaciones del porcentaje de aceptación del no terreno
+                                    #region Inconsistencia, Mitigador Riesgo no ha sido seleccionado
 
-                            #region VALIDACIONES QUE REDUCEN A 0
-                            #endregion
+                                    if (cbMitigador.SelectedValue.Equals("-1"))
+                                    {
+                                        estadoVerificacion = false;
+                                        //existeErrorPorcentajesAceptacionAvaluos = true;
+                                        //txtPorcentajeAceptacionTerreno.Text = "0.00";
+                                    }
 
-                            #region VALIDACIONES QUE REDUCEN A LA MITAD
-                            #endregion
+                                    #endregion
+
+                                    #region Inconsistencia en Indicador inscripción No anotada/No inscrita
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                    #region Inconsistencia en Indicador inscripción Anotada
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcAnotada)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                #endregion
+
+                                #region VALIDACIONES QUE REDUCEN A LA MITAD
+
+                                    #region Inconsistencia, la fecha actual supera en un año la Fecha Último Seguimiento 
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                    #region Inconsistencia, la fecha actual supera en 6 meses la Fecha Último Seguimiento (Maquinaria y Equipo)
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                    #region Inconsistencia, la fecha actual supera en 5 años la Fecha Valuación
+
+                                        if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcFechaValuacion)
+                                        {
+                                            estadoVerificacion = false;
+                                            //existeErrorPorcentajesAceptacionAvaluos = true;
+
+                                            if (mostrarErrorEmergente)
+                                            {
+                                                //Se obtiene el error de la lista de errores
+                                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                                {
+                                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                                            typeof(Page),
+                                                                                            Guid.NewGuid().ToString(),
+                                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                                                            false);
+                                                }
+                                                else
+                                                {
+                                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                           Guid.NewGuid().ToString(),
+                                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                                                           false);
+                                                }
+                                            }
+                                        }
+
+                                    #endregion
+
+                                #endregion
 
                             #endregion
                         }
@@ -7323,6 +7632,14 @@ namespace BCRGARANTIAS.Forms
                         txtPorcentajeAceptacionNoTerreno.Enabled = habilitarCamposPorcentajeAceptacionAvaluo;
                         filaPorAcep.Visible = habilitarCamposPorcentajeAceptacionAvaluo;
                         filaPorAcepCalc.Visible = habilitarCamposPorcentajeAceptacionAvaluo;
+
+                        if (filaPorAcep.Visible)
+                        {
+                            if (tipoBien.Equals(1))
+                            {
+                                this.txtPorcentajeAceptacionNoTerreno.Enabled = false;
+                            }
+                        }
 
                     #endregion
 

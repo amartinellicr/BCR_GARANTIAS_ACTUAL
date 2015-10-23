@@ -67,7 +67,8 @@ namespace BCR.GARANTIAS.Comun
             PorcAceptNoTerrenoCalcAnotada = 47,
             PorcAceptNoTerrenoCalcFechaUltimoSeguimiento = 48,
             PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = 49,
-            PorcAceptNoTerrenoCalcFechaValuacion = 50
+            PorcAceptNoTerrenoCalcFechaValuacion = 50,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos = 51
         }
         #endregion Orden de Inconsistencias
 

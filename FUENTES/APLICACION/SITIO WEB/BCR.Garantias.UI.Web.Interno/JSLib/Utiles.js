@@ -401,7 +401,7 @@
 
 
             //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción Anotada
-            $MensajePorcAceptTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (Anotada) para esta garantía.</p></div></div>')
+            $MensajePorcAceptTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (Anotada) para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Indicador Inscripción Inválido',
@@ -423,7 +423,7 @@
             });
 
             //Función que el mensaje de error cuando existe una inconsistencia para la Fecha Último Seguimiento
-            $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Fecha Último Seguimiento Inválida',
@@ -445,7 +445,7 @@
             });
 
             //Función que el mensaje de error cuando existe una inconsistencia para la Fecha de Valuación
-            $MensajePorcAceptTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a 6 meses) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            $MensajePorcAceptTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a 6 meses) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Fecha de Valuación Inválida',
@@ -514,7 +514,7 @@
             });
 
             //Función que el mensaje de error cuando existe una inconsistencia para la Fecha Último Seguimiento
-            $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+            $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a un año) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Fecha Último Seguimiento Inválida',
@@ -4075,7 +4075,6 @@
    //Se aplica las validaciones del requerimiento
    function ValidarPorcentajeAceptacionCalculado() 
    {
-
         var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : '-1'));    
         var tipoBien = parseInt((($$('cbTipoBien').val() != null) ? $$('cbTipoBien').val() : "-1"));
         var tipoGarantiaReal = parseInt((($$('cbTipoGarantiaReal').val() != null) ? $$('cbTipoGarantiaReal').val() : '-1'));
@@ -4092,129 +4091,129 @@
         var porcentajeAceptacion = $$('txtPorcentajeAceptacion').val().toString('N2');
         var indicadorDeudorHabitaVivienda = $$('chkDeudorHabitaVivienda').prop('checked');
 
-        if( (tipoBien === -1) || (tipoMitigador === -1)  ) {      
-            $$('txtPorcentajeAceptacionCalculado').val('0.00');
-            $$('txtPorcentajeAceptacion').val('0.00');          
-           return;
-       }
+        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+        var indHabilitarPorcAceptAvaluo = parseInt($$('btnValidarOperacion').attr('HPAA').toString());
+        var acreenciaBien = parseFloat((($$('txtMontoAcreenciaPoliza').val().length > 0) ? $$('txtMontoAcreenciaPoliza').val().replace(/[^0-9-.]/g, '') : '0'));
 
-       if ((tipoBien > 4) || (porceAceptCalculadoOriginal === 0)) {
 
-           $$('txtPorcentajeAceptacionCalculado').val(porcentajeAceptacion);    
-           return;        
-       }
-
-       $$('txtPorcentajeAceptacionCalculado').val(porceAceptCalculadoOriginal);                 
-                
-        if(parteFechaActual.length > 0)
-        {
+        if (parteFechaActual.length > 0) {
             var partesFecha = parteFechaActual.split('|');
 
             //parametros : año-mes-dia
 
             fechaActual = new Date(partesFecha[0], partesFecha[1] - 1, partesFecha[2]);
-        }            
-
-        if(fechaValu.length > 0)
-        {
-            var fecValu              = fechaValu.split('/');
-            var fechaValuacion       = new Date(fecValu[2], fecValu[1] - 1, fecValu[0]);
         }
 
-        if(fechaSegui.length > 0)                        
-        {
-                
-            var fecSegui              = fechaSegui.split('/');
-            var fechaSeguimiento      = new Date(fecSegui[2], fecSegui[1] - 1, fecSegui[0]);
+        if (fechaValu.length > 0) {
+            var fecValu = fechaValu.split('/');
+            var fechaValuacion = new Date(fecValu[2], fecValu[1] - 1, fecValu[0]);
+        }
+
+        if (fechaSegui.length > 0) {
+
+            var fecSegui = fechaSegui.split('/');
+            var fechaSeguimiento = new Date(fecSegui[2], fecSegui[1] - 1, fecSegui[0]);
         }
 
 
-        if (datoCodigoSap !== -1) 
-        {   
+        if (datoCodigoSap !== -1) {
 
-            var fechaVenciPoliza =  $.trim($$('txtFechaVencimientoPoliza').val().replace("__/__/____", ""));
+            var fechaVenciPoliza = $.trim($$('txtFechaVencimientoPoliza').val().replace("__/__/____", ""));
             var montoPoliza = parseFloat((($$('txtMontoPoliza').val().length > 0) ? $$('txtMontoPoliza').val().replace(/[^0-9-.]/g, '') : '0'));
-                        
-            if (fechaVenciPoliza.length > 0)
-            {
+
+            if (fechaVenciPoliza.length > 0) {
                 var fecVenci = fechaVenciPoliza.split('/');
                 var fechaVencimientoPoliza = new Date(fecVenci[2], fecVenci[1] - 1, fecVenci[0]);
             }
         }
-        
-        /**********************************************************************************************/
-        //VALIDACIONES SE REDUCEN  0
 
+        //SI LOS CAMPOS DE PORCENTAJE ACEPT TERRENO CALCULADO Y NO TERRENO CALCULADO NO ESTÁN DISPONIBLES
+        if (indHabilitarPorcAceptAvaluo === 0) {
 
-        if (errorIndicadorInscripcion === 1) {           
-            $$('txtPorcentajeAceptacionCalculado').val('0.00');
-            porceAceptaCalculadoMenor = 0.00;
-            return;
-
-        }
-
-        if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2))) {
-
-            //Se verifica si tiene una poliza asociada
-
-            if (datoCodigoSap !== -1) {
+            if ((tipoBien === -1) || (tipoMitigador === -1)) {
                 $$('txtPorcentajeAceptacionCalculado').val('0.00');
-                porceAceptaCalculadoMenor = 0;                
+                $$('txtPorcentajeAceptacion').val('0.00');
+                return;
             }
-        
-        
-        }
 
-        if ((tipoBien === 3) && (tipoGarantiaReal === 3)) {
-        
-            if (fechaValu.length > 0) {
+            if ((tipoBien > 4) || (porceAceptCalculadoOriginal === 0)) {
 
-                //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                $$('txtPorcentajeAceptacionCalculado').val(porcentajeAceptacion);
+                return;
+            }
+
+            $$('txtPorcentajeAceptacionCalculado').val(porceAceptCalculadoOriginal);
+
+            
+            /**********************************************************************************************/
+            //VALIDACIONES SE REDUCEN  0
+
+
+            if (errorIndicadorInscripcion === 1) {
+                $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                porceAceptaCalculadoMenor = 0.00;                
+                return;
+
+            }
+
+            if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2))) {
+
+                //Se verifica si tiene una poliza asociada
+
+                if (datoCodigoSap !== -1) {
                     $$('txtPorcentajeAceptacionCalculado').val('0.00');
-                    porceAceptaCalculadoMenor = 0.00;                    
+                    porceAceptaCalculadoMenor = 0;
                 }
 
+
             }
 
-//            if (fechaSegui.length > 0) {
+            if ((tipoBien === 3) && (tipoGarantiaReal === 3)) {
 
-//                //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+                if (fechaValu.length > 0) {
 
-//                if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
-//                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
-//                    porceAceptaCalculadoMenor = 0.00;                    
-//                }
-
-//            }
-
-        }
-
-        /**********************************************************************************************/
-
-        //VALIDACIONES SE REDUCEN  MITAD
-
-        if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  //--1 es decir que no ha entrado en las validaciones
-            {            
-                if(fechaValu.length > 0)
-                {
                     //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5)
-                    {
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-                                                                                          
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                        $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                        porceAceptaCalculadoMenor = 0.00;
                     }
 
-                }                 
+                }
 
-                if(fechaSegui.length > 0)                        
-                {
+                //            if (fechaSegui.length > 0) {
+
+                //                //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+
+                //                if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
+                //                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                //                    porceAceptaCalculadoMenor = 0.00;                    
+                //                }
+
+                //            }
+
+            }
+
+            /**********************************************************************************************/
+
+            //VALIDACIONES SE REDUCEN  MITAD
+
+            if ((tipoBien === 1) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  //--1 es decir que no ha entrado en las validaciones
+            {
+                if (fechaValu.length > 0) {
+                    //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                    if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+
+                    }
+
+                }
+
+                if (fechaSegui.length > 0) {
                     //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
 
-                    if((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1)
-                    {
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                 
-                        
+                    if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+
                     }
 
                 }
@@ -4223,29 +4222,28 @@
 
                 if (datoCodigoSap !== -1) {
                     $$('txtPorcentajeAceptacionCalculado').val('0.00');
-                    porceAceptaCalculadoMenor = 0;                   
+                    porceAceptaCalculadoMenor = 0;
                 }
-               
+
 
             }
 
-            if ((tipoBien === 2) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1))  
-            {
-//                if ((fechaValu.length > 0) && (fechaSegui.length > 0)) 
-//                {
-//                    var diferenciaMesesFechaValuacion =  parseInt((getDateDiff(fechaValuacion, fechaActual, "months")));
-//                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
+            if ((tipoBien === 2) && ((tipoGarantiaReal === 1) || (tipoGarantiaReal === 2)) && (porceAceptaCalculadoMenor === -1)) {
+                //                if ((fechaValu.length > 0) && (fechaSegui.length > 0)) 
+                //                {
+                //                    var diferenciaMesesFechaValuacion =  parseInt((getDateDiff(fechaValuacion, fechaActual, "months")));
+                //                    var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
 
-//                     //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
+                //                     //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA
 
-//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!indicadorDeudorHabitaVivienda)) {
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-//                    }
+                //                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!indicadorDeudorHabitaVivienda)) {
+                //                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                //                    }
 
-//                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (indicadorDeudorHabitaVivienda)) {
-//                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
-//                    }            
-//                }
+                //                    if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (indicadorDeudorHabitaVivienda)) {
+                //                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                //                    }            
+                //                }
 
                 if (fechaValu.length > 0) {
                     //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
@@ -4253,121 +4251,270 @@
                         $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
 
                     }
-                }   
+                }
 
                 //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
 
                 if ((fechaSegui.length > 0) && ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) && (!indicadorDeudorHabitaVivienda)) {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);         
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                 }
 
                 //Poliza Seleccionada
-               
+
                 if (datoCodigoSap !== -1) {
                     //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                   
-                    if ( (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
-                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                        
+
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
 
                     //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                   
-                    if (  (fechaVenciPoliza.length > 0) &&  (fechaVencimientoPoliza.getTime() > fechaActual.getTime())   && (montoPoliza < montoUltTasNoTerr)   ) {
-                       $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
-                  
+
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+
                     }
                 }
-                else 
-                {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                
+                else {
+                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                 }
-            } 
+            }
             //fin if tipo bien 2
 
 
-            if ((tipoBien === 3) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) 
-            {         
+            if ((tipoBien === 3) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) {
 
                 //Poliza Seleccionada
-                
+
                 if (datoCodigoSap !== -1) {
 
                     //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                    
-                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime()  )   ) {
-                                         
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                                        
+
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
 
                     //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                    
-                    if ( (fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {                     
 
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                   
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
                 }
-                else {              
+                else {
                     $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                 }
 
 
-            } 
+            }
             //fin if tipo bien 3
 
 
-            if ((tipoBien === 4) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) 
-            {        
-                   
+            if ((tipoBien === 4) && (tipoGarantiaReal === 3) && (porceAceptaCalculadoMenor === -1)) {
+
                 if (fechaValu.length > 0) {
-                    
+
                     //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                    
+
                     if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
-                     
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
 
                 }
 
-                if (fechaSegui.length > 0) 
-                {
+                if (fechaSegui.length > 0) {
                     //getDateDiff(date1, date2, interval);
                     //date1: fecha actual, date2: fecha seguimi, fecha valuacion, interval:  years , months
 
                     var diferenciaMesesFechaUltSegui = parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months")));
 
                     //Se verifica que la fecha de ultimo seguimiento es mayor 6 meses en realacion a la fecha del sistema
-                    
+
                     if (diferenciaMesesFechaUltSegui > 6) {
 
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
-                                 
+
                 }
 
                 //Poliza Seleccionada
-               
+
                 if (datoCodigoSap !== -1) {
 
                     //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                   
-                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {   
-                                     
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                  
+
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                     }
 
                     //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                    
+
                     if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() > fechaActual.getTime()) && (montoPoliza < montoUltTasNoTerr)) {
-                                         
-                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);                       
-               }
+
+                        $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                    }
                 }
-                else {             
+                else {
 
                     $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
                 }
-            }  
+            }
+        }
+        else {
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
+            //VALIDACIONES A CERO
+
+                /****PORC ACPT TERRENO CALCULADO Y PORC ACPT NO TERRENO CALCULADO****/
+
+                //SI NO HAY SELECCION PARA TIPO MITIGADOR
+                if ((tipoBien === -1) || (tipoMitigador === -1)) {
+                    $$('txtPorcentajeAceptacionTerrenoCalculado').val('0.00');
+                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val('0.00');
+                    return;
+                }
+
+                //SI EXISTE ERROR EN INDICADOR INSCRIPCION
+                if (errorIndicadorInscripcion === 1) {
+                    $$('txtPorcentajeAceptacionTerrenoCalculado').val('0.00');
+                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val('0.00');
+                    return;
+                }
+
+            //VALIDACIONES AL 50%
+
+                /****PORC ACPT TERRENO CALCULADO****/
+
+                var castigoAplicado = 0; // 0 = NO APLICADO | 1 = APLICADO (SOLO SE DEBE APLICAR 1 CASTIGO X CAMPO)
+
+                //SE VERIFICA QUE LA FECHA DE ULTIMO SEGUIMIENTO ES MAYOR 1 AÑO EN REALACION A LA FECHA DEL SISTEMA
+                if (fechaSegui.length > 0) {
+                    if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
+                        $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1;
+                    }
+                }
+
+                //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
+                if (castigoAplicado === 0) {
+                    if (fechaValu.length > 0) {
+                        if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                            $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1;
+                        }
+
+                    }
+                }
+
+                /****PORC ACPT NO TERRENO CALCULADO****/
+                
+                castigoAplicado = 0; //SE LIMPIA LA BANDERA
+
+                //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )                
+                if (tipoBien === 2 && (tipoGarantiaReal === 1 || tipoGarantiaReal === 2)) {
+                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
+                    if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1 && !indicadorDeudorHabitaVivienda) {
+                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
+                        if (getDateDiff(fechaSeguimiento, fechaActual, "years") > 1) {
+                            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1
+                        }
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
+                    if (tipoBien === 4 && tipoGarantiaReal === 3) {
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
+                        if (parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months"))) > 6) {
+                            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1
+                        }
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
+                    if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
+                        //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+                        if ( parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
+                            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1
+                        }
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI LA POLIZA ESTÁ VENCIDA
+                    if ((fechaVenciPoliza.length > 0) && (fechaVencimientoPoliza.getTime() < fechaActual.getTime())) {
+                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO
+                    if ($$('txtMontoAcreenciaPoliza').val().length > 0) {
+                        if (acreenciaBien > montoUltTasNoTerr) {
+                            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1
+                        }
+                    }
+                }
+
+                //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
+                if (castigoAplicado === 0) {
+                    var cantidadCPAObligatorias = 0;
+                    var cantidadCPObligatorias = 0;
+                    var datoCodigoSap = parseInt((($$('cbCodigoSap').val() != null) ? $$('cbCodigoSap').val() : "-1"));
+
+                    if (datoCodigoSap !== -1) {
+                        if ((datoCodigoSap > 0) && ($listaPolizas.length > 0)) {
+                            var polizasSap = eval('(' + $listaPolizas + ')')
+                            for (var i = 0; i < polizasSap.length; i++) {
+                                var codigoSap = parseInt(polizasSap[i].Codigo_SAP);
+
+                                if (codigoSap === datoCodigoSap) {
+                                    if (polizasSap[i].Cobertura !== "undefined") {
+                                        for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
+                                            if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
+                                                cantidadCPAObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                                            }
+                                            else if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '2') {
+                                                cantidadCPObligatorias += ((polizasSap[i].Cobertura[indice].Indicador_Obligatoria === '1') ? 1 : 0);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (cantidadCPAObligatorias != cantidadCPObligatorias) {
+                            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                            castigoAplicado = 1
+                        }
+                    }
+                }
+
+                if (castigoAplicado === 0) {
+                    //SI EL ACREEDOR ES DISTINTO DE 4000000019
+                    if ( $$('txtCedulaAcreedorPoliza').val() !== '4000000019'){
+                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1
+                    }
+                }
+        }
+
     }
 
  

@@ -4467,12 +4467,12 @@ namespace BCR.GARANTIAS.Entidades
             DateTime fechaLimite;
             DateTime fechaNula = new DateTime(1900, 01, 01);
             DateTime fechaPrescripcionCalculada;
-
+            
 
             bool aplicarValidacionCamposRequeridos = (validarCamposRequeridos) ? CamposRequeridosValidos() : true;
             List<clsPolizaSap> listaPolizas = this.PolizasSap.ObtenerPolizasPorTipoBien(this.CodTipoBien);
             bool errorRelacionGarantiaPoliza = this.PolizasSap.ErrorRelacionTipoBienPolizaSap;
-
+            
 
             if (aplicarValidacionCamposRequeridos)
             {
@@ -5978,35 +5978,48 @@ namespace BCR.GARANTIAS.Entidades
                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
                 #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación Terreno Calculado
                 
-                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
-                if (inconsistenciaIndicadorInscripcion)
-                {
-                    //NO ANOTADA - NO INSCRITA
-                    if (codInscripcion.Equals(1))
+                    //BANDERA EXCLUYENTE PARA LOS CASTIGOS
+                    bool castigoAplicado = false;
+
+                    //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
+                    if (codTipoMitigador.Equals(-1))
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita);
+                        porcentajeAceptacionTerrenoCalculado = 0;
+                        castigoAplicado = true;
                     }
-                    else
+
+                    //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION                
+                    if (inconsistenciaIndicadorInscripcion)
                     {
-                        //ANOTADA
-                        if (codInscripcion.Equals(2))
+                        //NO ANOTADA - NO INSCRITA
+                        if (codInscripcion.Equals(1))
                         {
                             esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptTerrenoCalcAnotada = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada, _mensajePorcAceptTerrenoCalcAnotada);
+                            inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita);
+                        }
+                        else
+                        {
+                            //ANOTADA
+                            if (codInscripcion.Equals(2))
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptTerrenoCalcAnotada = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada, _mensajePorcAceptTerrenoCalcAnotada);
+                            }
+                        }
+
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionTerrenoCalculado = 0;
+                            castigoAplicado = true;
                         }
                     }
-                }
 
-                //NO EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
-                if (!inconsistenciaIndicadorInscripcion)
-                {
                     //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
                     if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
                     {
@@ -6015,12 +6028,14 @@ namespace BCR.GARANTIAS.Entidades
                         desplegarErrorVentanaEmergente = true;
                         inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
                         listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
-                    }
-                }
 
-                //NO EXISTE INCONSISTENCIA EN FECHA ULTIMO SEGUIMIENTO
-                if (!inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento)
-                {
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            castigoAplicado = true;
+                        }
+                    }
+
                     //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
                     if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
                     {
@@ -6029,43 +6044,61 @@ namespace BCR.GARANTIAS.Entidades
                         desplegarErrorVentanaEmergente = true;
                         inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
                         listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion, _mensajePorcAceptTerrenoCalcFechaValuacion);
+
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            castigoAplicado = true;
+                        }
                     }
-                }
 
                 #endregion
 
                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
                 #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación No Terreno Calculado
 
-                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
-                if (inconsistenciaIndicadorInscripcion)
-                {
-                    //NO ANOTADA - NO INSCRITA
-                    if (codInscripcion.Equals(1))
+                    //SE REESTABLECE LA BANDERA PARA SER UTILIZADA EN EL CAMPO PORC ACEPT NO TERRENO CALC
+                    castigoAplicado = false;
+
+                    //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
+                    if (codTipoMitigador.Equals(-1))
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
+                        porcentajeAceptacionNoTerrenoCalculado = 0;
+                        castigoAplicado = true;
                     }
-                    else
+
+                    //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                    if (inconsistenciaIndicadorInscripcion)
                     {
-                        //ANOTADA
-                        if (codInscripcion.Equals(2))
+                        //NO ANOTADA - NO INSCRITA
+                        if (codInscripcion.Equals(1))
                         {
                             esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcAnotada = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada, _mensajePorcAceptNoTerrenoCalcAnotada);
+                            inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
+                        }
+                        else
+                        {
+                            //ANOTADA
+                            if (codInscripcion.Equals(2))
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcAnotada = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada, _mensajePorcAceptNoTerrenoCalcAnotada);
+                            }
+                        }
+
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionNoTerrenoCalculado = 0;
+                            castigoAplicado = true;
                         }
                     }
-                }
 
-                //NO EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
-                if (!inconsistenciaIndicadorInscripcion)
-                {
                     //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )
                     if (codTipoBien.Equals(2) && (codTipoGarantiaReal.Equals(1) || codTipoGarantiaReal.Equals(2)))
                     { 
@@ -6077,11 +6110,17 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
                             listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
 
-                    //SI TIPO BIEN IGUAL VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-                    if (codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)) )
+                    //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    if (!codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)) )
                     {
                         //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
                         if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 )
@@ -6090,7 +6129,13 @@ namespace BCR.GARANTIAS.Entidades
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
 
@@ -6105,13 +6150,15 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
                             listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
-                }
 
-                //NO EXISTE INCONSISTENCIA EN FECHA ULTIMO SEGUIMIENTO
-                if (!inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento && !inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)
-                { 
                     //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
                     if ((!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)) )
                     {
@@ -6123,9 +6170,60 @@ namespace BCR.GARANTIAS.Entidades
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
                             listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion, _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
-                }
+
+                    //SI LA POLIZA ESTÁ VENCIDA
+                    if (inconsistenciaPolizaVencida)
+                    {
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            castigoAplicado = true;
+                        }
+                    }
+
+                    //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO   
+                    if (this.polizaSapAsociada != null)
+                    {
+                        if (this.polizaSapAsociada.MontoAcreenciaPolizaSap > this.montoUltimaTasacionNoTerreno)
+                        {
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                    }
+
+                    //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
+                    if (this.polizaSapAsociada != null)
+                    {
+                        if (!this.polizaSapAsociada.DiferenciaCoberturasObligatorias.Equals(0))
+                        {
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                    }
+
+                    //SI EL ACREEDOR ES DISTINTO DE 4000000019
+                    if (!this.cedAcreedor.Trim().Equals("4000000019"))
+                    {
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            castigoAplicado = true;
+                        }
+                    }
 
                 #endregion
 
