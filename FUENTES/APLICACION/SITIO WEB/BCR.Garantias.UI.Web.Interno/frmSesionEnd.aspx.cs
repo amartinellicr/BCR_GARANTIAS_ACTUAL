@@ -13,7 +13,7 @@ using BCR.Web.SystemFramework;
 
 namespace BCRGARANTIAS.Presentacion
 {
-    public partial class frmSesionEnd : PaginaPersistente
+    public partial class frmSesionEnd : BCR.Web.SystemFramework.PaginaPersistente
     {
         protected void Page_Load(object sender, EventArgs e)
         {
