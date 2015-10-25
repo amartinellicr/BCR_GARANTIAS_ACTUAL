@@ -5588,624 +5588,544 @@ namespace BCR.GARANTIAS.Entidades
 
                 DateTime fechaActualSistema = DateTime.Now.Date;
 
-                if (this.porcentajeAceptacionCalculadoOriginal > 0)
+                if (!this.HabilitarPorcentajesAceptacionAvaluo())
                 {
-                    //aplica validciones
 
-                    #region Tipo Bien 1
-
-                    if ((this.codTipoBien == 1) && ((this.codTipoGarantiaReal == 1) || (this.codTipoGarantiaReal == 2)))
+                    if (this.porcentajeAceptacionCalculadoOriginal > 0)
                     {
-                        //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                        //aplica validciones
+
+                        #region Tipo Bien 1
+
+                        if ((this.codTipoBien == 1) && ((this.codTipoGarantiaReal == 1) || (this.codTipoGarantiaReal == 2)))
                         {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienUno = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
                             {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienUno);
-                            }
-                        }
-
-                        //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
-                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
-                            }
-                        }
-
-                        //Se verifica si tiene una poliza asociada
-                        if ((this.polizaSapAsociada != null) && (!errorRelacionGarantiaPoliza))
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepTipoBienUnoPolizaAsociada = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociada), _mensajePorceAcepTipoBienUnoPolizaAsociada);
-                            }
-                        }
-
-                    }
-                    #endregion Tipo Bien 1
-
-                    #region Tipo Bien 2
-
-                    if ((this.codTipoBien == 2) && ((this.codTipoGarantiaReal == 1) || (this.codTipoGarantiaReal == 2)))
-                    {
-
-                        //if ((this.fechaValuacion != fechaNula) && (this.fechaUltimoSeguimiento != fechaNula) 
-                        //    && (this.fechaValuacion !=  DateTime.MinValue) && (this.fechaUltimoSeguimiento !=  DateTime.MinValue))
-                        //{
-                        //    double diferenciaMesesFechaValuacion = UtilitariosComun.DateDiff("M", this.fechaValuacion, fechaActualSistema); // (this.fechaValuacion.Month - fechaActualSistema.Month) + 12 * (this.fechaValuacion.Year - fechaActualSistema.Year);
-                        //    double diferenciaMesesFechaUltSegui = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); //(this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
-
-                        //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTRAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR NO HABITE LA VIVIENDA
-
-                        //Se solicita eliminar esta validación, mediante el IRQA:
-                        //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!this.indicadorViviendaHabitadaDeudor))
-                        //{
-                        //    esValida = false;
-                        //    errorValidaciones = true;
-                        //    desplegarErrorVentanaEmergente = true;
-                        //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                        //    inconsistenciaPorcentajeAceptacionCalculado = true;
-                        //    //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorDieciochoMeses);
-                        //}
-
-                        //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (this.indicadorViviendaHabitadaDeudor))
-                        //{
-                        //    esValida = false;
-                        //    errorValidaciones = true;
-                        //    desplegarErrorVentanaEmergente = true;
-                        //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                        //    inconsistenciaPorcentajeAceptacionCalculado = true;
-                        // }   
-
-                        //}                     
-
-                        //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
-                        if ((this.fechaValuacion != fechaNula) && (this.fechaValuacion != DateTime.MinValue) &&
-                            (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5))
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                            }
-
-                        }
-
-                        //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
-                        if ((this.fechaUltimoSeguimiento != fechaNula) && (this.fechaUltimoSeguimiento != DateTime.MinValue) &&
-                            (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1) && (!this.indicadorViviendaHabitadaDeudor))
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
-                            }
-
-                        }
-
-
-                        //Se verifica si tiene no una poliza asociada
-                        if ((this.polizaSapAsociada == null)
-                            || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepNoPolizaAsociada = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
-                            }
-                        }
-                        else
-                        { //tiene poliza
-
-                            //Se verifica si al guardar existe el mensaje de que no tiene póliza asociada, esto para eliminarla
-                            if ((aplicarValidacionCamposRequeridos)
-                               && (ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada))))
-                            {
-                                listaMensajesValidaciones.Remove((int)Enumeradores.Inconsistencias.PolizaNoAsociada);
-                            }
-
-                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
-                            {
-                                //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                                if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
-                                {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
-                                    {
-                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
-                                    }
-                                }
-
-                                //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
-                                {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
-                                    //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
-
-                                }
-                            }
-                        }
-
-
-                    }
-                    #endregion Tipo Bien 2
-
-                    #region Tipo Bien 3
-
-
-                    if ((this.codTipoBien == 3) && (this.codTipoGarantiaReal == 3))
-                    {
-                        //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                            }
-                        }
-
-                        //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
-                        //if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
-                        //{
-                        //    esValida = false;
-                        //    errorValidaciones = true;
-                        //    desplegarErrorVentanaEmergente = true;                            
-                        //    inconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres = true;
-                        //    inconsistenciaPorcentajeAceptacionCalculado = true;
-                        //    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnnoBienTres);
-
-                        //}
-
-                        //Se verifica si no tiene una poliza asociada
-                        if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepNoPolizaAsociada = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-                            //  listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
-                            }
-                        }
-                        else
-                        { //tiene poliza
-
-                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
-                            {
-                                //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                                if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
-                                {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
-                                    {
-                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
-                                    }
-                                }
-
-
-                                //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
-                                {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                                    //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
-                                    //{
-                                    //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
-                                    //}
-                                }
-                            }
-
-                        }
-
-                    }
-
-                    #endregion Tipo Bien 3
-
-                    #region  Tipo Bien 4
-
-                    if ((this.codTipoBien == 4) && (this.codTipoGarantiaReal == 3))
-                    {
-                        //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                            }
-                        }
-
-                        if (this.fechaUltimoSeguimiento != fechaNula)
-                        {
-                            double diferenciaMesesFechaSeguimiento = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); // (this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
-
-                            //Se verifica que la fecha de ultimo seguimiento es mayor 6 meses en realacion a la fecha del sistema                  
-                            if (diferenciaMesesFechaSeguimiento > 6)
-                            {
-                                //esValida = false;
+                                esValida = false;
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaSeguimientoMayorSeisMeses = true;
+                                inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienUno = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienUno);
+                                }
+                            }
+
+                            //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+                            if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
                                 inconsistenciaPorcentajeAceptacionCalculado = true;
 
                                 if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
                                 {
-                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorSeisMeses);
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
                                 }
                             }
-                        }
 
-                        //Se verifica si tiene no una poliza asociada
-                        if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
-                        {
-                            //esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorceAcepNoPolizaAsociada = true;
-                            inconsistenciaPorcentajeAceptacionCalculado = true;
-                            //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                            //Se verifica si tiene una poliza asociada
+                            if ((this.polizaSapAsociada != null) && (!errorRelacionGarantiaPoliza))
                             {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
-                            }
-                        }
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepTipoBienUnoPolizaAsociada = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
 
-                        else
-                        {//tiene poliza
-
-                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
-                            {
-                                //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
-                                if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada)))
                                 {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociada), _mensajePorceAcepTipoBienUnoPolizaAsociada);
+                                }
+                            }
 
-                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                        }
+                        #endregion Tipo Bien 1
+
+                        #region Tipo Bien 2
+
+                        if ((this.codTipoBien == 2) && ((this.codTipoGarantiaReal == 1) || (this.codTipoGarantiaReal == 2)))
+                        {
+
+                            //if ((this.fechaValuacion != fechaNula) && (this.fechaUltimoSeguimiento != fechaNula) 
+                            //    && (this.fechaValuacion !=  DateTime.MinValue) && (this.fechaUltimoSeguimiento !=  DateTime.MinValue))
+                            //{
+                            //    double diferenciaMesesFechaValuacion = UtilitariosComun.DateDiff("M", this.fechaValuacion, fechaActualSistema); // (this.fechaValuacion.Month - fechaActualSistema.Month) + 12 * (this.fechaValuacion.Year - fechaActualSistema.Year);
+                            //    double diferenciaMesesFechaUltSegui = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); //(this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
+
+                            //Se verifica que la fecha de valuacion MAYOR A 18 MESES FECHA SISTEMA, MIENTRAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR NO HABITE LA VIVIENDA
+
+                            //Se solicita eliminar esta validación, mediante el IRQA:
+                            //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui > 3) && (!this.indicadorViviendaHabitadaDeudor))
+                            //{
+                            //    esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //    //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorDieciochoMeses);
+                            //}
+
+                            //if ((diferenciaMesesFechaValuacion > 18) && (diferenciaMesesFechaUltSegui <= 3) && (this.indicadorViviendaHabitadaDeudor))
+                            //{
+                            //    esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
+                            // }   
+
+                            //}                     
+
+                            //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
+                            if ((this.fechaValuacion != fechaNula) && (this.fechaValuacion != DateTime.MinValue) &&
+                                (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5))
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                                }
+
+                            }
+
+                            //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
+                            if ((this.fechaUltimoSeguimiento != fechaNula) && (this.fechaUltimoSeguimiento != DateTime.MinValue) &&
+                                (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1) && (!this.indicadorViviendaHabitadaDeudor))
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepFechaSeguimientoMayorUnAnno = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnno);
+                                }
+
+                            }
+
+
+                            //Se verifica si tiene no una poliza asociada
+                            if ((this.polizaSapAsociada == null)
+                                || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepNoPolizaAsociada = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                                }
+                            }
+                            else
+                            { //tiene poliza
+
+                                //Se verifica si al guardar existe el mensaje de que no tiene póliza asociada, esto para eliminarla
+                                if ((aplicarValidacionCamposRequeridos)
+                                   && (ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada))))
+                                {
+                                    listaMensajesValidaciones.Remove((int)Enumeradores.Inconsistencias.PolizaNoAsociada);
+                                }
+
+                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
+                                {
+                                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                                    if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
                                     {
-                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                        {
+                                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                        }
+                                    }
+
+                                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                                    if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
+                                    {
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+                                        //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
+
+                                    }
+                                }
+                            }
+
+
+                        }
+                        #endregion Tipo Bien 2
+
+                        #region Tipo Bien 3
+
+
+                        if ((this.codTipoBien == 3) && (this.codTipoGarantiaReal == 3))
+                        {
+                            //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                                }
+                            }
+
+                            //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
+                            //if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                            //{
+                            //    esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;                            
+                            //    inconsistenciaPorceAcepFechaSeguimientoMayorUnAnnoBienTres = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //    listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorUnAnnoBienTres);
+
+                            //}
+
+                            //Se verifica si no tiene una poliza asociada
+                            if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepNoPolizaAsociada = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+                                //  listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                                }
+                            }
+                            else
+                            { //tiene poliza
+
+                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
+                                {
+                                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                                    if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
+                                    {
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                        {
+                                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                        }
+                                    }
+
+
+                                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                                    if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
+                                    {
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                        //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
+                                        //{
+                                        //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
+                                        //}
                                     }
                                 }
 
-                                //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
-                                {
-                                    esValida = false;
-                                    errorValidaciones = true;
-                                    desplegarErrorVentanaEmergente = true;
-                                    inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
-                                    inconsistenciaPorcentajeAceptacionCalculado = true;
-
-                                    //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
-                                    //{
-                                    //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
-                                    //}
-                                }
                             }
 
                         }
 
+                        #endregion Tipo Bien 3
+
+                        #region  Tipo Bien 4
+
+                        if ((this.codTipoBien == 4) && (this.codTipoGarantiaReal == 3))
+                        {
+                            //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
+                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                                }
+                            }
+
+                            if (this.fechaUltimoSeguimiento != fechaNula)
+                            {
+                                double diferenciaMesesFechaSeguimiento = UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema); // (this.fechaUltimoSeguimiento.Month - fechaActualSistema.Month) + 12 * (this.fechaUltimoSeguimiento.Year - fechaActualSistema.Year);
+
+                                //Se verifica que la fecha de ultimo seguimiento es mayor 6 meses en realacion a la fecha del sistema                  
+                                if (diferenciaMesesFechaSeguimiento > 6)
+                                {
+                                    //esValida = false;
+                                    errorValidaciones = true;
+                                    desplegarErrorVentanaEmergente = true;
+                                    inconsistenciaPorceAcepFechaSeguimientoMayorSeisMeses = true;
+                                    inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor)))
+                                    {
+                                        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaSeguimientoMayor), _mensajePorceAcepFechaSeguimientoMayorSeisMeses);
+                                    }
+                                }
+                            }
+
+                            //Se verifica si tiene no una poliza asociada
+                            if ((this.polizaSapAsociada == null) || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
+                            {
+                                //esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepNoPolizaAsociada = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+                                //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                                }
+                            }
+
+                            else
+                            {//tiene poliza
+
+                                if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
+                                {
+                                    //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                                    if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
+                                    {
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                        {
+                                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                        }
+                                    }
+
+                                    //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                                    if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
+                                    {
+                                        esValida = false;
+                                        errorValidaciones = true;
+                                        desplegarErrorVentanaEmergente = true;
+                                        inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
+                                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                        //if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor)))
+                                        //{
+                                        //    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor), _mensajePorceAcepPolizaFechaVencimientoMontoNoTerreno);
+                                        //}
+                                    }
+                                }
+
+                            }
+
+                        }
+                        #endregion Tipo Bien 4
+
+
                     }
-                    #endregion Tipo Bien 4
 
-
-                }
-
-                if ((this.codTipoBien >= 1) && (this.codTipoBien <= 4))
-                {
-                    //si el PorcentajeAceptacionCalculado da 0 se debe corregir la inconsitencia antes de continuar 
-                    if (this.porcentajeResponsabilidad > this.PorcentajeAceptacionCalculado) //PorcentajeAceptacionCalculado se inicializa en 0, 
+                    if ((this.codTipoBien >= 1) && (this.codTipoBien <= 4))
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorceAcepMayorPorceAcepCalculado = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacionMayorCalculado), _mensajePorceAcepMayorPorceAcepCalculado);
+                        //si el PorcentajeAceptacionCalculado da 0 se debe corregir la inconsitencia antes de continuar 
+                        if (this.porcentajeResponsabilidad > this.PorcentajeAceptacionCalculado) //PorcentajeAceptacionCalculado se inicializa en 0, 
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorceAcepMayorPorceAcepCalculado = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacionMayorCalculado), _mensajePorceAcepMayorPorceAcepCalculado);
 
+                        }
                     }
                 }
 
                 #endregion Se aplican las validaciones correspondientes al porcentaje de aceptacion calculado
-
-                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación Terreno Calculado
-
-                //BANDERA EXCLUYENTE PARA LOS CASTIGOS
-                bool castigoAplicado = false;
-
-                //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
-                porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
-
-                //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
-                if (codTipoMitigador.Equals(-1))
+ 
+                if (this.HabilitarPorcentajesAceptacionAvaluo())
                 {
-                    porcentajeAceptacionTerrenoCalculado = 0;
-                    castigoAplicado = true;
-                }
+                    //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                    #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación Terreno Calculado
 
-                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION                
-                if (inconsistenciaIndicadorInscripcion)
-                {
-                    //NO ANOTADA - NO INSCRITA
-                    if (codInscripcion.Equals(1))
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita);
-                    }
-                    else
-                    {
-                        //ANOTADA
-                        if (codInscripcion.Equals(2))
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptTerrenoCalcAnotada = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada, _mensajePorcAceptTerrenoCalcAnotada);
-                        }
-                    }
 
-                    if (!castigoAplicado)
+                    //BANDERA EXCLUYENTE PARA LOS CASTIGOS
+                    bool castigoAplicado = false;
+
+                    //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
+                    porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
+
+                    //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
+                    if (codTipoMitigador.Equals(-1))
                     {
                         porcentajeAceptacionTerrenoCalculado = 0;
                         castigoAplicado = true;
                     }
-                }
 
-                //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
-                if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
-                {
-                    esValida = false;
-                    errorValidaciones = true;
-                    desplegarErrorVentanaEmergente = true;
-                    inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
-                    listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
-
-                    if (!castigoAplicado)
+                    //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION                
+                    if (inconsistenciaIndicadorInscripcion)
                     {
-                        porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                        castigoAplicado = true;
-                    }
-                }
-
-                //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
-                if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
-                {
-                    esValida = false;
-                    errorValidaciones = true;
-                    desplegarErrorVentanaEmergente = true;
-                    inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
-                    listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion, _mensajePorcAceptTerrenoCalcFechaValuacion);
-
-                    if (!castigoAplicado)
-                    {
-                        porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                        castigoAplicado = true;
-                    }
-                }
-
-                #endregion
-
-                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación No Terreno Calculado
-
-                //SE REESTABLECE LA BANDERA PARA SER UTILIZADA EN EL CAMPO PORC ACEPT NO TERRENO CALC
-                castigoAplicado = false;
-
-                //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
-                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
-
-                //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
-                if (codTipoMitigador.Equals(-1))
-                {
-                    porcentajeAceptacionNoTerrenoCalculado = 0;
-                    castigoAplicado = true;
-                }
-
-                //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
-                if (inconsistenciaIndicadorInscripcion)
-                {
-                    //NO ANOTADA - NO INSCRITA
-                    if (codInscripcion.Equals(1))
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
-                    }
-                    else
-                    {
-                        //ANOTADA
-                        if (codInscripcion.Equals(2))
+                        //NO ANOTADA - NO INSCRITA
+                        if (codInscripcion.Equals(1))
                         {
                             esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcAnotada = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada, _mensajePorcAceptNoTerrenoCalcAnotada);
+                            inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptTerrenoCalcNoAnotadaNoInscrita);
                         }
-                    }
-
-                    if (!castigoAplicado)
-                    {
-                        porcentajeAceptacionNoTerrenoCalculado = 0;
-                        castigoAplicado = true;
-                    }
-                }
-
-                //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )
-                if (codTipoBien.Equals(2) && (codTipoGarantiaReal.Equals(1) || codTipoGarantiaReal.Equals(2)))
-                {
-                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
-                    if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 && indicadorViviendaHabitadaDeudor == false)
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                        else
+                        {
+                            //ANOTADA
+                            if (codInscripcion.Equals(2))
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptTerrenoCalcAnotada = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcAnotada, _mensajePorcAceptTerrenoCalcAnotada);
+                            }
+                        }
 
                         if (!castigoAplicado)
                         {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            porcentajeAceptacionTerrenoCalculado = 0;
                             castigoAplicado = true;
                         }
                     }
-                }
 
-                //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-                if (!codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)))
-                {
-                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
+                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
                     if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
                     {
                         esValida = false;
                         errorValidaciones = true;
                         desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                        inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
 
                         if (!castigoAplicado)
                         {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
                             castigoAplicado = true;
                         }
                     }
-                }
 
-                //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
-                if (codTipoBien.Equals(4) && codTipoGarantiaReal.Equals(3))
-                {
-                    //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
-                    if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
-
-                        if (!castigoAplicado)
-                        {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                            castigoAplicado = true;
-                        }
-                    }
-                }
-
-                //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
-                if ((!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)))
-                {
-                    //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+                    //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
                     if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
                     {
                         esValida = false;
                         errorValidaciones = true;
                         desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion, _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+                        inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion, _mensajePorcAceptTerrenoCalcFechaValuacion);
 
                         if (!castigoAplicado)
                         {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                            castigoAplicado = true;
-                        }
-                    }
-                }
-
-                //SI TIENE POLIZA ASOCIADA
-                if (this.polizaSapAsociada != null)
-                {
-
-                    //SI LA POLIZA ESTÁ VENCIDA
-                    if (inconsistenciaPolizaVencida)
-                    {
-                        if (!castigoAplicado)
-                        {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
                             castigoAplicado = true;
                         }
                     }
 
-                    //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO   
-                    if (this.polizaSapAsociada != null)
+                    #endregion
+
+                    //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                    #region Se aplican la validaciones correspondientes al Porcentaje de Aceptación No Terreno Calculado
+
+                    //SE REESTABLECE LA BANDERA PARA SER UTILIZADA EN EL CAMPO PORC ACEPT NO TERRENO CALC
+                    castigoAplicado = false;
+
+                    //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO, ESTO POR AQUELLO DE QUE NO HAYAN INCONSISTENCIAS
+                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal;
+
+                    //SI NO EXISTE SELECCION PARA TIPO MITIGADOR RIESGO
+                    if (codTipoMitigador.Equals(-1))
                     {
-                        if (this.polizaSapAsociada.MontoAcreenciaPolizaSap > this.montoUltimaTasacionNoTerreno)
+                        porcentajeAceptacionNoTerrenoCalculado = 0;
+                        castigoAplicado = true;
+                    }
+
+                    //EXISTE INCONSISTENCIA EN INDICADOR INSCRIPCION
+                    if (inconsistenciaIndicadorInscripcion)
+                    {
+                        //NO ANOTADA - NO INSCRITA
+                        if (codInscripcion.Equals(1))
                         {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcNoAnotadaNoInscrita, _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita);
+                        }
+                        else
+                        {
+                            //ANOTADA
+                            if (codInscripcion.Equals(2))
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcAnotada = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcAnotada, _mensajePorcAceptNoTerrenoCalcAnotada);
+                            }
+                        }
+
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionNoTerrenoCalculado = 0;
+                            castigoAplicado = true;
+                        }
+                    }
+
+                    //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )
+                    if (codTipoBien.Equals(2) && (codTipoGarantiaReal.Equals(1) || codTipoGarantiaReal.Equals(2)))
+                    {
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
+                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 && indicadorViviendaHabitadaDeudor == false)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
                             if (!castigoAplicado)
                             {
                                 porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
@@ -6214,11 +6134,18 @@ namespace BCR.GARANTIAS.Entidades
                         }
                     }
 
-                    //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
-                    if (this.polizaSapAsociada != null)
+                    //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    if (!codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)))
                     {
-                        if (!this.polizaSapAsociada.DiferenciaCoberturasObligatorias.Equals(0))
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
                         {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
                             if (!castigoAplicado)
                             {
                                 porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
@@ -6227,27 +6154,143 @@ namespace BCR.GARANTIAS.Entidades
                         }
                     }
 
-                    //SI EL ACREEDOR ES DISTINTO DE 4000000019
-                    if (!this.cedAcreedor.Trim().Equals("4000000019"))
+                    //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
+                    if (codTipoBien.Equals(4) && codTipoGarantiaReal.Equals(3))
                     {
-                        if (!castigoAplicado)
+                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
                         {
-                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                            castigoAplicado = true;
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
+
+                    //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
+                    if ((!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)))
+                    {
+                        //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion, _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                    }
+
+                    //SI TIENE POLIZA ASOCIADA
+                    if (this.polizaSapAsociada != null)
+                    {
+                        //Se verifica si al guardar existe el mensaje de que no tiene póliza asociada, esto para eliminarla
+                        if ((aplicarValidacionCamposRequeridos)
+                           && (ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada))))
+                        {
+                            listaMensajesValidaciones.Remove((int)Enumeradores.Inconsistencias.PolizaNoAsociada);
+                        }
+
+                        if ((this.polizaSapAsociada.FechaVencimientoPolizaSap != fechaNula) && (this.polizaSapAsociada.FechaVencimientoPolizaSap != DateTime.MinValue))
+                        {
+                            //Se verifica si tiene una poliza asociada y la fecha de vencimiento de la poliza es menor a la fecha del sistema
+                            if (this.polizaSapAsociada.FechaVencimientoPolizaSap < fechaActualSistema)
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepPolizaFechaVencimientoMenor = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor), _mensajePorceAcepPolizaFechaVencimientoMenor);
+                                }
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+
+                            //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
+                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorceAcepPolizaFechaVencimientoMontoNoTerreno = true;
+                                inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+                        }
+
+                        //SI NO POSEE TODAS LAS COBERTURAS OBLIGATORIAS
+                        if (this.polizaSapAsociada != null)
+                        {
+                            if (!this.polizaSapAsociada.DiferenciaCoberturasObligatorias.Equals(0))
+                            {
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+                        }
+
+                        //SI EL ACREEDOR ES DISTINTO DE 4000000019
+                        if (!this.cedAcreedor.Trim().Equals("4000000019"))
+                        {
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                    }
+                    else if ((this.polizaSapAsociada == null)
+                         || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
+                    {
+
+                        //esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorceAcepNoPolizaAsociada = true;
+                        inconsistenciaPorcentajeAceptacionCalculado = true;
+
+                        //SI NO TIENE POLIZA ASOCIADA SE CASTIGA
+                        porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                        castigoAplicado = true;
+
+                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
+                        }
+                    }
+
+                    #endregion
+
+                    //agregar validaciones
                 }
-                else
-                {
-                    //SI NO TIENE POLIZA ASOCIADA SE CASTIGA
-                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                    castigoAplicado = true;
-                }
-
-                #endregion
-
-                //agregar validaciones
-
             }
             else
             {

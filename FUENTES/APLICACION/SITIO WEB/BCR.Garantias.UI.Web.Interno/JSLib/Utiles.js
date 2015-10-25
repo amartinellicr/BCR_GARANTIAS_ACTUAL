@@ -2249,7 +2249,7 @@ function validarIndicadorInscripcion() {
 
                         $$('txtMontoMitigador').removeAttr('disabled');
 
-                        if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+                        if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
                             $$('txtPorcentajeAceptacion').removeAttr('disabled');
                         }
 
@@ -2258,7 +2258,7 @@ function validarIndicadorInscripcion() {
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
                         }
 
-                        if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                        if (($$('btnValidarOperacion').attr("HAYAVAL")) === '0') {
                             $$('btnValidarOperacion').attr('BCMM', '0');
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
                         }
@@ -2304,7 +2304,7 @@ function validarIndicadorInscripcion() {
 
                         $$('txtMontoMitigador').removeAttr('disabled');
 
-                        if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+                        if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
                             $$('txtPorcentajeAceptacion').removeAttr('disabled');
                         }
 
@@ -2313,7 +2313,7 @@ function validarIndicadorInscripcion() {
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
                         }
 
-                        if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                        if (($$('btnValidarOperacion').attr("HAYAVAL")) === '0') {
                             $$('btnValidarOperacion').attr('BCMM', '0');
                             $$('txtMontoMitigador').attr('disabled', 'disabled');
                         }
@@ -2349,7 +2349,7 @@ function validarIndicadorInscripcion() {
 
                 $$('txtMontoMitigador').removeAttr('disabled');
 
-                if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+                if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
                     $$('txtPorcentajeAceptacion').removeAttr('disabled');
                 }
 
@@ -2358,7 +2358,7 @@ function validarIndicadorInscripcion() {
                     $$('txtMontoMitigador').attr('disabled', 'disabled');
                 }
 
-                if (($$('btnValidarOperacion').attr("HAYAVAL")) == '0') {
+                if (($$('btnValidarOperacion').attr("HAYAVAL")) === '0') {
                     $$('btnValidarOperacion').attr('BCMM', '0');
                     $$('txtMontoMitigador').attr('disabled', 'disabled');
                 }
@@ -2388,7 +2388,7 @@ function validarIndicadorInscripcion() {
 
 //Función que valida el porcentaje de aceptación que fue ingresado por el usuario
 function ValidarPorcentajeAceptacion() {
-    if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+    if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
 
         var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();
 
@@ -2633,7 +2633,7 @@ function CalcularMontoMitigador() {
     var pcjAceptNoTerrenoCalculado = (($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerrenoCalculado').val() : '0');
 
 
-    if (($$('btnValidarOperacion').attr("HPAA")) == '0') {
+    if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
 
         $.ajax({
             type: "POST",

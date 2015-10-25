@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
     <title>BCR GARANTIAS - Pantalla de Login</title>
-    <link href="Estilos/WebStyles.min.css" type="text/css" rel="stylesheet">
+    <link href="Estilos/WebStyles.min.css" type="text/css" rel="stylesheet" />
     <script src="<%#ResolveUrl("~/JSLib/FuncionesGenericas.js")%>" type="text/javascript"></script>
 	<script language="JavaScript" type="text/javascript">
 		window.history.forward(1);

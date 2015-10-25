@@ -3606,6 +3606,8 @@ namespace BCRGARANTIAS.Forms
                 entidadGarantia.MostrarErrorRelacionTipoBienTipoPolizaSap = false;
                 entidadGarantia.EntidadValida(false);
 
+                HabilitarPorcentajesAceptacionAvaluo = entidadGarantia.HabilitarPorcentajesAceptacionAvaluo();
+
                 Entidad_Real = entidadGarantia;
 
                 #endregion Carga de la entidad
@@ -5766,6 +5768,79 @@ namespace BCRGARANTIAS.Forms
                             }
 
                             #endregion
+
+                            #region Inconsistencia de % Aceptacion Calculado, cuando no tiene poliza asociada
+
+                            //Se valida si el error es debido a la 
+                            if (entidadGarantiaReal.InconsistenciaPorceAcepNoPolizaAsociada) 
+                            {
+                                estadoVerificacion = false;
+ 
+                                MostrarErrorSinPolizaAsociada = false;
+
+                                if (mostrarErrorEmergente)
+                                {
+
+                                    if (entidadGarantiaReal.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
+                                    {
+
+                                        //Se obtiene el error de la lista de errores
+                                        if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                        {
+                                            ScriptManager.RegisterClientScriptBlock(this,
+                                                                                    typeof(Page),
+                                                                                    Guid.NewGuid().ToString(),
+                                                                                   entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaNoAsociada)],
+                                                                                    false);
+
+                                        }
+                                        else
+                                        {
+                                            this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                                   Guid.NewGuid().ToString(),
+                                                                                  entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaNoAsociada)],
+                                                                                   false);
+                                        }
+
+                                    }
+
+
+                                }
+                            }
+
+                            #endregion Inconsistencia de % Aceptacion Calculado,  cuando no tiene poliza asociada
+
+                            #region Inconsistencia de % Aceptacion Calculado, cuando tiene una poliza asociada y tiene la fecha de vencimiento es menor a la fecha del sistema
+
+                            //Se valida si el error es debido a la 
+                            if (entidadGarantiaReal.InconsistenciaPorceAcepPolizaFechaVencimientoMenor) 
+                            {
+                                estadoVerificacion = false;
+ 
+                                MostrarErrorPolizaVencida = false;
+
+                                if (mostrarErrorEmergente)
+                                {
+                                    //Se obtiene el error de la lista de errores
+                                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                    {
+                                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                                typeof(Page),
+                                                                                Guid.NewGuid().ToString(),
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                                                false);
+                                    }
+                                    else
+                                    {
+                                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                               Guid.NewGuid().ToString(),
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor)],
+                                                                               false);
+                                    }
+                                }
+                            }
+
+                            #endregion Inconsistencia de % Aceptacion Calculado,  cuando tiene una poliza asociada y tiene la fecha de vencimiento es menor a la fecha del sistema
 
                             #endregion
 
