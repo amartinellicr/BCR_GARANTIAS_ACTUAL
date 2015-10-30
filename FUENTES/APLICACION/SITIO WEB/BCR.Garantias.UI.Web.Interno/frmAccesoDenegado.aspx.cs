@@ -49,15 +49,24 @@ namespace BCRGARANTIAS.Presentacion
             Session.Abandon();
             Session.RemoveAll();
 
-            if (Request.Cookies["ASP.NET_SessionId"] != null)
+            if (base.ArchivoPerdido)
             {
-                Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
-                Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddMonths(-20);
+                base.Eliminar_Archivo_VS();
+
+                Response.Redirect("frmLogin.aspx", true);
             }
+            else
+            {
+                if (Request.Cookies["ASP.NET_SessionId"] != null)
+                {
+                    Response.Cookies["ASP.NET_SessionId"].Value = string.Empty;
+                    Response.Cookies["ASP.NET_SessionId"].Expires = DateTime.Now.AddMonths(-20);
+                }
 
-            base.Eliminar_Archivo_VS();
+                base.Eliminar_Archivo_VS();
 
-            Response.Redirect("frmLogin.aspx", false);
+                Response.Redirect("frmLogin.aspx", true);
+            }
         }
 
         #endregion

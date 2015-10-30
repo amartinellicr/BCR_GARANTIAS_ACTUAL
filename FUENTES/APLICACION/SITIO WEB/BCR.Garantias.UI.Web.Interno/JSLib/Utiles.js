@@ -12,6 +12,8 @@ function PageInit() {
     $arregloCamposValuacion[1] = '';
     $arregloCamposValuacion[2] = '';
 
+    $calculoMontoMitigadorAplicado = false;
+
     /************************************************************************/
     /* VALIDACIONES DEL CAMPO REFERENTE A LA FECHA DE PRESENTACION */
 
@@ -263,15 +265,20 @@ function PageInit() {
 
                         $$('txtMontoMitigador').attr('disabled', 'disabled');
 
-                        if (($$('btnValidarOperacion').attr("IEG")) == '1') {
+                        if (($$('btnValidarOperacion').attr("IEG")) === '1') {
                             $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
                             $$('btnValidarOperacion').attr('BCPA', '0');
                         }
                         else {
-                            if (($$('btnValidarOperacion').attr("BCPA")) == '1') {
+                            if ((($$('btnValidarOperacion').attr("BCPA")) === '1') &&
+                               (($$('btnValidarOperacion').attr("HPAA")) === '0')) {
                                 $$('txtPorcentajeAceptacion').removeAttr('disabled');
                                 $$('btnValidarOperacion').attr('BCPA', '1');
                             }
+                            else if (($$('btnValidarOperacion').attr("HPAA")) === '1') {
+                                $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                                $$('btnValidarOperacion').attr('BCPA', '0');
+                            } 
                         }
 
                         document.body.style.cursor = 'default';
@@ -304,9 +311,14 @@ function PageInit() {
                                 $$('btnValidarOperacion').attr('BCPA', '0');
                             }
                             else {
-                                if (($$('btnValidarOperacion').attr("BCPA")) == '1') {
+                                if ((($$('btnValidarOperacion').attr("BCPA")) === '1') &&
+                               (($$('btnValidarOperacion').attr("HPAA")) === '0')) {
                                     $$('txtPorcentajeAceptacion').removeAttr('disabled');
                                     $$('btnValidarOperacion').attr('BCPA', '1');
+                                }
+                                else if (($$('btnValidarOperacion').attr("HPAA")) === '1') {
+                                    $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+                                    $$('btnValidarOperacion').attr('BCPA', '0');
                                 }
                             }
 
@@ -457,6 +469,27 @@ function PageInit() {
                 }
             });
 
+
+    //Función que muestra el mensaje de alerta cuando el % aceptacion terreno es mayor al % aceptacion terreno calculado
+    $MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span> El campo % Aceptación Terreno es mayor al valor del campo % Aceptación Terreno Calculado favor corregir el mismo, el valor de este campo debe ser igual o menor al campo calculado.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Porcentaje Aceptación Terreno Inválido',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
     /********************************************************************/
     /* PORCENTAJE ACEPTACION NO TERRENO CALCULADO */
 
@@ -565,6 +598,27 @@ function PageInit() {
 
                         $(this).dialog("close");
 
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
+
+
+    //Función que muestra el mensaje de alerta cuando el % aceptacion terreno es mayor al % aceptacion terreno calculado
+    $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span> El campo % Aceptación No Terreno es mayor al valor del campo % Aceptación No Terreno Calculado favor corregir el mismo, el valor de este campo debe ser igual o menor al campo calculado.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Porcentaje Aceptación No Terreno Inválido',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
                         document.body.style.cursor = 'default';
                     }
                 }
@@ -2390,6 +2444,13 @@ function validarIndicadorInscripcion() {
 function ValidarPorcentajeAceptacion() {
     if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
 
+        var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
+        var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
+
+        if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 100)) {
+            return;
+        }
+
         var porcentajeAceptacionCalculado = $$('txtPorcentajeAceptacionCalculado').val();
 
         if (($$('txtPorcentajeAceptacion').val().length === 0)) {
@@ -2450,10 +2511,7 @@ function ValidarPorcentajeAceptacion() {
                                     var fechaConstitucion = new Date(fecConst[2], fecConst[1] - 1, fecConst[0]);
 
                                     var fechaConstitucionComp = new Date(fechaConstitucion.getTime() + (30 * 24 * 3600 * 1000))
-
-                                    var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                    var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
-
+                                                                        
                                     if (fechaActual.getTime() < fechaConstitucionComp.getTime()) {
                                         $$('btnValidarOperacion').attr('BCMM', '1');
                                         $$('btnValidarOperacion').attr('BCPA', '1');
@@ -2502,9 +2560,6 @@ function ValidarPorcentajeAceptacion() {
 
                                     var fechaConstitucionComp = new Date(fechaConstitucion.getTime() + (60 * 24 * 3600 * 1000))
 
-                                    var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                    var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
-
                                     if (fechaActual.getTime() < fechaConstitucionComp.getTime()) {
                                         $$('btnValidarOperacion').attr('BCMM', '1');
                                         $$('btnValidarOperacion').attr('BCPA', '1');
@@ -2547,10 +2602,7 @@ function ValidarPorcentajeAceptacion() {
 
                                 $$('txtMontoMitigador').removeAttr('disabled');
                                 $$('txtPorcentajeAceptacion').removeAttr('disabled');
-
-                                var datoPorcentajeAcep = (($$('txtPorcentajeAceptacion').val().length > 0) ? $$('txtPorcentajeAceptacion').val() : '0');
-                                var porcentajeAceptacion = parseFloat(datoPorcentajeAcep);
-
+                                                                
                                 if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)) {
                                     $$('btnValidarOperacion').attr('BCMM', '0');
                                     $$('txtMontoMitigador').attr('disabled', 'disabled');
@@ -2605,7 +2657,13 @@ function ValidarPorcentajeAceptacion() {
             $$('btnValidarOperacion').attr('BCII', '0');
         }
 
-        CalcularMontoMitigador();
+        if (!$calculoMontoMitigadorAplicado) {
+            CalcularMontoMitigador();
+        }
+    }
+    else {
+        $$('txtPorcentajeAceptacion').attr('disabled', 'disabled');
+        $$('btnValidarOperacion').attr('BCPA', '0');
     }
 }
 
@@ -2626,12 +2684,12 @@ function CalcularMontoMitigador() {
     var datoPorcentajeAcepCalc = (($$('txtPorcentajeAceptacionCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionCalculado').val() : '0');
 
 
-  
-    var pcjAceptTerreno = (($$('txtPorcentajeAceptacionTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionTerreno').val() : '0');
-    var pcjAceptNoTerreno = (($$('txtPorcentajeAceptacionNoTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerreno').val() : '0');
-    var pcjAceptTerrenoCalculado = (($$('txtPorcentajeAceptacionTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionTerrenoCalculado').val() : '0');
-    var pcjAceptNoTerrenoCalculado = (($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerrenoCalculado').val() : '0');
-
+    if (($$('btnValidarOperacion').attr("HPAA")) === '1') {
+        var pcjAceptTerreno = (($$('txtPorcentajeAceptacionTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionTerreno').val() : '0');
+        var pcjAceptNoTerreno = (($$('txtPorcentajeAceptacionNoTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerreno').val() : '0');
+        var pcjAceptTerrenoCalculado = (($$('txtPorcentajeAceptacionTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionTerrenoCalculado').val() : '0');
+        var pcjAceptNoTerrenoCalculado = (($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerrenoCalculado').val() : '0');
+    }
 
     if (($$('btnValidarOperacion').attr("HPAA")) === '0') {
 
@@ -3562,6 +3620,9 @@ function CalcularMontoTAT_TANT() {
             }
         });
     }
+    else {
+        ValidarPorcentajeAceptacionCalculado();
+    }
 }
 
 function calculoExitoso(response) {
@@ -3977,7 +4038,14 @@ function ValidarPorcentajeAceptacionCalculado() {
     //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
     var indHabilitarPorcAceptAvaluo = parseInt($$('btnValidarOperacion').attr('HPAA').toString());
     var acreenciaBien = parseFloat((($$('txtMontoAcreenciaPoliza').val().length > 0) ? $$('txtMontoAcreenciaPoliza').val().replace(/[^0-9-.]/g, '') : '0'));
+    var indicadorInscripcion = parseInt((($$('cbInscripcion').val() != null) ? $$('cbInscripcion').val() : '-1'));
 
+     if (indHabilitarPorcAceptAvaluo === 1) {
+        var porAceptTerreno = parseFloat((($$('txtPorcentajeAceptacionTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionTerreno').val().replace(/[^0-9-.]/g, '') : '0'));
+        var porAceptNoTerreno = parseFloat((($$('txtPorcentajeAceptacionNoTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerreno').val().replace(/[^0-9-.]/g, '') : '0'));
+        var porAceptTerrenoCalculado = parseFloat((($$('txtPorcentajeAceptacionTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionTerrenoCalculado').val().replace(/[^0-9-.]/g, '') : '0'));
+        var porAceptNoTerrenoCalculado = parseFloat((($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length > 0) ? $$('txtPorcentajeAceptacionNoTerrenoCalculado').val().replace(/[^0-9-.]/g, '') : '0'));
+    }
 
     if (parteFechaActual.length > 0) {
         var partesFecha = parteFechaActual.split('|');
@@ -4268,6 +4336,29 @@ function ValidarPorcentajeAceptacionCalculado() {
         if (errorIndicadorInscripcion === 1) {
             $$('txtPorcentajeAceptacionTerrenoCalculado').val('0.00');
             $$('txtPorcentajeAceptacionNoTerrenoCalculado').val('0.00');
+
+            if (indicadorInscripcion === 1) {
+
+                if (typeof ($MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined') {
+                    $MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open');
+                }
+
+                if (typeof ($MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open'); 
+                }
+            }
+
+            if (indicadorInscripcion === 2) {
+
+                if (typeof ($MensajePorcAceptTerrenoCalcAnotadaInvalido) !== 'undefined') {
+                    $MensajePorcAceptTerrenoCalcAnotadaInvalido.dialog('open');
+                }
+
+                if (typeof ($MensajePorcAceptNoTerrenoCalcAnotadaInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcAnotadaInvalido.dialog('open'); 
+                }
+            }
+
             return;
         }
 
@@ -4282,26 +4373,41 @@ function ValidarPorcentajeAceptacionCalculado() {
             if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
                 $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
                 castigoAplicado = 1;
+
+                if (typeof ($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                    $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');
+                }
             }
         }
 
         //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
-        if (castigoAplicado === 0) {
-            if (fechaValu.length > 0) {
-                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+
+        if (fechaValu.length > 0) {
+            if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                if (castigoAplicado === 0) {
                     $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
                     castigoAplicado = 1;
                 }
 
+                if (typeof ($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined') {
+                    $MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open'); 
+                }               
             }
         }
 
         /****PORC ACPT NO TERRENO CALCULADO****/
 
         //SE INICIALIZA EL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO EN CASO DE QUE NO EXISTAN INCONSUSTENCIAS
-        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptCalculadoOriginal);
+        if (tipoBien !== 1) {
+            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptCalculadoOriginal);
 
-        castigoAplicado = 0; //SE LIMPIA LA BANDERA
+            castigoAplicado = 0; //SE LIMPIA LA BANDERA
+        }
+        else {
+            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val('0.00');
+
+            castigoAplicado = 1;
+        }
 
         //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )                
         if (tipoBien === 2 && (tipoGarantiaReal === 1 || tipoGarantiaReal === 2)) {
@@ -4309,37 +4415,56 @@ function ValidarPorcentajeAceptacionCalculado() {
             if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1 && !indicadorDeudorHabitaVivienda) {
                 $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                 castigoAplicado = 1
-            }
-        }
 
-        if (castigoAplicado === 0) {
-            //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-            if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
-                if (getDateDiff(fechaSeguimiento, fechaActual, "years") > 1) {
-                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                    castigoAplicado = 1
+                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open'); 
                 }
             }
         }
 
-        if (castigoAplicado === 0) {
-            //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
-            if (tipoBien === 4 && tipoGarantiaReal === 3) {
-                //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
-                if (parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months"))) > 6) {
+        
+        //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+        if (tipoBien !== 1 && tipoBien !== 3 && tipoGarantiaReal !== 3) {
+            if (getDateDiff(fechaSeguimiento, fechaActual, "years") > 1) {
+                if (castigoAplicado === 0) {
                     $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                     castigoAplicado = 1
+                }
+
+                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');
                 }
             }
         }
 
-        if (castigoAplicado === 0) {
-            //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
-            if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
-                //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
-                if (parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
+        
+        //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
+        if (tipoBien === 4 && tipoGarantiaReal === 3) {
+            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
+            if (parseInt((getDateDiff(fechaSeguimiento, fechaActual, "months"))) > 6) {
+                if (castigoAplicado === 0) {
                     $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                     castigoAplicado = 1
+                }
+
+                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido.dialog('open');
+                }
+            }
+        }
+
+        
+        //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
+        if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
+            //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+            if (parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
+                if (castigoAplicado === 0) {
+                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                    castigoAplicado = 1
+                }
+
+                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined') {
+                    $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open'); 
                 }
             }
         }
@@ -4357,7 +4482,7 @@ function ValidarPorcentajeAceptacionCalculado() {
             if (castigoAplicado === 0) {
                 //SI ACREENCIA DEL BIEN ES MAYOR AL VALOR REGISTRADO EN EL CAMPO MTO ÚLTIMA TASACIÓN NO TERRENO
                 if ($$('txtMontoAcreenciaPoliza').val().length > 0) {
-                    if (acreenciaBien > montoUltTasNoTerr) {
+                    if (acreenciaBien < montoUltTasNoTerr) {
                         $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
                         castigoAplicado = 1
                     }
@@ -4408,9 +4533,28 @@ function ValidarPorcentajeAceptacionCalculado() {
         }
         //SI NO TIENE UNA POLIZA ASOCIADA
         else {
-            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+            if (castigoAplicado === 0) {
+                $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+            }
         }
 
+
+        //Si los porcentajes de aceptación son mayoreas a los calculados
+        if (porAceptTerreno > porAceptTerrenoCalculado) {
+
+            if (typeof ($MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado) !== 'undefined') {
+                $MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado.dialog('open'); 
+            }
+        }
+
+        if (porAceptNoTerreno > porAceptNoTerrenoCalculado) {
+
+            if (typeof ($MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado) !== 'undefined') {
+                $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado.dialog('open'); 
+            }
+        }
+
+        $calculoMontoMitigadorAplicado = true;
         CalcularMontoMitigador();
     }
 

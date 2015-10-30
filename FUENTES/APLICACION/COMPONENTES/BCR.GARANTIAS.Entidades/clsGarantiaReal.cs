@@ -760,18 +760,20 @@ namespace BCR.GARANTIAS.Entidades
         ///////////////////
 
         //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-        public bool inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita;
-        public bool inconsistenciaPorcAceptTerrenoCalcAnotada;
-        public bool inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento;
-        public bool inconsistenciaPorcAceptTerrenoCalcFechaValuacion;
+        private bool inconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita;
+        private bool inconsistenciaPorcAceptTerrenoCalcAnotada;
+        private bool inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento;
+        private bool inconsistenciaPorcAceptTerrenoCalcFechaValuacion;
+        private bool inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado;
 
-        public bool inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita;
-        public bool inconsistenciaPorcAceptNoTerrenoCalcAnotada;
-        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento;
-        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo;
-        public bool inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion;
+        private bool inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita;
+        private bool inconsistenciaPorcAceptNoTerrenoCalcAnotada;
+        private bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento;
+        private bool inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo;
+        private bool inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion;
+        private bool inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado;
 
-
+        
         #endregion Inconsistencias
 
         #region Generales
@@ -1166,12 +1168,15 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajePorcAceptTerrenoCalcAnotada = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcAnotadaInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcAnotadaInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptTerrenoCalcFechaValuacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined'){$MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open');} </script>";
+        private const string _mensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado) !== 'undefined'){$MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado.dialog('open');} </script>";
+
 
         private const string _mensajePorcAceptNoTerrenoCalcNoAnotadaNoInscrita = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptNoTerrenoCalcAnotada = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcAnotadaInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcAnotadaInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido.dialog('open');} </script>";
         private const string _mensajePorcAceptNoTerrenoCalcFechaValuacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open');} </script>";
+        private const string _mensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado) !== 'undefined'){$MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado.dialog('open');} </script>";
 
 
 
@@ -1446,12 +1451,15 @@ namespace BCR.GARANTIAS.Entidades
             inconsistenciaPorcAceptTerrenoCalcAnotada = false;
             inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
             inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+            inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado = false;
 
             inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
             inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+            inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
+
 
             #endregion Inconsistencias
 
@@ -1841,12 +1849,15 @@ namespace BCR.GARANTIAS.Entidades
             inconsistenciaPorcAceptTerrenoCalcAnotada = false;
             inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
             inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+            inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado = false;
 
             inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
             inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+            inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
+
 
             #endregion Inconsistencias
 
@@ -2346,8 +2357,8 @@ namespace BCR.GARANTIAS.Entidades
 
                             //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
-                            porcentajeAceptacionNoTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno).InnerText), out porcAceptNoTerreno)) ? porcAceptNoTerreno : 0) : 0);
-                            porcentajeAceptacionTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno).InnerText), out porcAceptTerreno)) ? porcAceptTerreno : 0) : 0);
+                            porcentajeAceptacionNoTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerreno).InnerText), out porcAceptNoTerreno)) ? porcAceptNoTerreno : -1) : -1);
+                            porcentajeAceptacionTerreno = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerreno).InnerText), out porcAceptTerreno)) ? porcAceptTerreno : -1) : -1);
                             porcentajeAceptacionNoTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionNoTerrenoCalculado).InnerText), out porcAceptNoTerrenoCalc)) ? porcAceptNoTerrenoCalc : -1) : -1);
                             porcentajeAceptacionTerrenoCalculado = ((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _porcentajeAceptacionTerrenoCalculado).InnerText), out porcAceptTerrenoCalc)) ? porcAceptTerrenoCalc : -1) : -1);
 
@@ -4051,6 +4062,25 @@ namespace BCR.GARANTIAS.Entidades
             set { inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = value; }
         }
 
+        /// <summary>
+        /// /// Obtiene o establece el indicador de que se presentó la inconsistenca en la que el porcentaje de aceptación del terreno es mayor al calculado
+        /// </summary>
+        public bool InconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado
+        {
+            get { return inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado; }
+            set { inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado = value; }
+        }
+
+        /// <summary>
+        /// /// Obtiene o establece el indicador de que se presentó la inconsistenca en la que el porcentaje de aceptación del no terreno es mayor al calculado
+        /// </summary>
+        public bool InconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado
+        {
+            get { return inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado; }
+            set { inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = value; }
+        }
+
+
         #endregion Inconsistencias
 
         #region Generales
@@ -4547,12 +4577,14 @@ namespace BCR.GARANTIAS.Entidades
                 inconsistenciaPorcAceptTerrenoCalcAnotada = false;
                 inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = false;
                 inconsistenciaPorcAceptTerrenoCalcFechaValuacion = false;
+                inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado = false;
 
                 inconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita = false;
                 inconsistenciaPorcAceptNoTerrenoCalcAnotada = false;
                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = false;
                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = false;
                 inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
+                inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
 
 
                 #region Cargar listas de datos
@@ -4738,81 +4770,84 @@ namespace BCR.GARANTIAS.Entidades
                 #endregion Se aplica la validación correspondiente al monto mitigador
 
                 #region Se aplica la validación correspondiente al porcentaje de aceptación
-
-                //Se valida que para el indicador de inscripción "No anotada/No inscrita" el porcentaje de aceptación sea válido
-                if (this.codInscripcion == 1)
+                //Se verifica que el campo esté habilitado, para así aplicar las validaciones
+                if (!this.HabilitarPorcentajesAceptacionAvaluo())
                 {
-                    fechaLimite = this.fechaConstitucion.AddDays(30);
+                    //Se valida que para el indicador de inscripción "No anotada/No inscrita" el porcentaje de aceptación sea válido
+                    if (this.codInscripcion == 1)
+                    {
+                        fechaLimite = this.fechaConstitucion.AddDays(30);
 
-                    //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 30 días posteriores a la 
-                    //fecha de constitución
-                    if ((DateTime.Today >= fechaLimite) && (this.porcentajeResponsabilidad != 0))
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 30 días posteriores a la 
+                        //fecha de constitución
+                        if ((DateTime.Today >= fechaLimite) && (this.porcentajeResponsabilidad != 0))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        }
+                        //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 30 días 
+                        //hábiles
+                        else if ((DateTime.Today < fechaLimite) && ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80)))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        }
                     }
-                    //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 30 días 
-                    //hábiles
-                    else if ((DateTime.Today < fechaLimite) && ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80)))
+                    //Se valida que para el indicador de inscripción "Anotada" el porcentaje de aceptación sea válido
+                    if (this.codInscripcion == 2)
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
-                    }
-                }
-                //Se valida que para el indicador de inscripción "Anotada" el porcentaje de aceptación sea válido
-                if (this.codInscripcion == 2)
-                {
-                    fechaLimite = this.fechaConstitucion.AddDays(60);
+                        fechaLimite = this.fechaConstitucion.AddDays(60);
 
-                    //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 60 días posteriores a la 
-                    //fecha de constitución
-                    if ((DateTime.Today >= fechaLimite) && (this.porcentajeResponsabilidad != 0))
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 60 días posteriores a la 
+                        //fecha de constitución
+                        if ((DateTime.Today >= fechaLimite) && (this.porcentajeResponsabilidad != 0))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        }
+                        //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 60 días 
+                        //hábiles
+                        else if ((DateTime.Today < fechaLimite) && ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80)))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        }
                     }
-                    //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 60 días 
-                    //hábiles
-                    else if ((DateTime.Today < fechaLimite) && ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80)))
+                    //Se valida que para el indicador de inscripción "No anotada/No inscrita" el porcentaje de aceptación sea válido
+                    if (this.codInscripcion == 3)
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
-                    }
-                }
-                //Se valida que para el indicador de inscripción "No anotada/No inscrita" el porcentaje de aceptación sea válido
-                if (this.codInscripcion == 3)
-                {
-                    /*REQ: Siebel 1 - 23969281. Se elimina la validación en la que se evaluaba que para las garantías inscritas se cumpliera el plazo
-                    normado por SUGEF.*/
+                        /*REQ: Siebel 1 - 23969281. Se elimina la validación en la que se evaluaba que para las garantías inscritas se cumpliera el plazo
+                        normado por SUGEF.*/
 
-                    /*if (this.porcentajeResponsabilidad == 0)
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalidoIndIns);
-                    }
-                    else*/
-                    if ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80))
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcentajeAceptacion = true;
-                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        /*if (this.porcentajeResponsabilidad == 0)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalidoIndIns);
+                        }
+                        else*/
+                        if ((this.porcentajeResponsabilidad < 0) || (this.porcentajeResponsabilidad > 80))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcentajeAceptacion = true;
+                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalido);
+                        }
                     }
                 }
                 #endregion Se aplica la validación correspondiente al porcentaje de aceptación
@@ -6064,6 +6099,16 @@ namespace BCR.GARANTIAS.Entidades
                         }
                     }
 
+                    if(this.porcentajeAceptacionTerreno > this.porcentajeAceptacionTerrenoCalculado)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorceAcepTerrenoMayorPorceAcepCalculado = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoMayorCalculado, _mensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado);
+
+                    }
+
                     #endregion
 
                     //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
@@ -6228,7 +6273,7 @@ namespace BCR.GARANTIAS.Entidades
                             }
 
                             //Se verifica si tiene una poliza asociada, fecha de vencimiento es mayor a la fecha del sistema y monto poliza no cubre monto ultima tasacion no terreno
-                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoPolizaSapColonizado < this.montoUltimaTasacionNoTerreno))
+                            if ((this.polizaSapAsociada.FechaVencimientoPolizaSap > fechaActualSistema) && (this.polizaSapAsociada.MontoAcreenciaPolizaSap < this.montoUltimaTasacionNoTerreno))
                             {
                                 esValida = false;
                                 errorValidaciones = true;
@@ -6267,7 +6312,7 @@ namespace BCR.GARANTIAS.Entidades
                             }
                         }
                     }
-                    else if ((this.polizaSapAsociada == null)
+                    else if ((this.codTipoBien != 1) && (this.polizaSapAsociada == null)
                          || ((this.polizaSapAsociada != null) && (errorRelacionGarantiaPoliza)))
                     {
 
@@ -6278,13 +6323,26 @@ namespace BCR.GARANTIAS.Entidades
                         inconsistenciaPorcentajeAceptacionCalculado = true;
 
                         //SI NO TIENE POLIZA ASOCIADA SE CASTIGA
-                        porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                        castigoAplicado = true;
+                        if (!castigoAplicado)
+                        {
+                            porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                            castigoAplicado = true;
+                        }
 
                         if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaNoAsociada)))
                         {
                             listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaNoAsociada), _mensajePorceAcepNoPolizaAsociada);
                         }
+                    }
+
+                    if (this.porcentajeAceptacionNoTerreno > this.porcentajeAceptacionNoTerrenoCalculado)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = true;
+                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoMayorCalculado, _mensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado);
+
                     }
 
                     #endregion
@@ -7045,13 +7103,13 @@ namespace BCR.GARANTIAS.Entidades
                                                 case _fechaConstruccion: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParseExact(datoInicialAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecCons) ? fecCons.ToString("dd/MM/yyyy") : datoInicialAval;
                                                     break;
                                                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                                case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerreno: datoInicialAval = ((datoInicialAval.CompareTo("-1") == 0) ? "0" : datoInicialAval); entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerreno: datoInicialAval = ((datoInicialAval.CompareTo("-1") == 0) ? "0" : datoInicialAval); entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerrenoCalculado: datoInicialAval = ((datoInicialAval.CompareTo("-1") == 0) ? "0" : datoInicialAval); entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerrenoCalculado: datoInicialAval = ((datoInicialAval.CompareTo("-1") == 0) ? "0" : datoInicialAval); entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
                                                 //case _fechaModifico: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParse(datoInicialAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoInicialAval;
                                                 //  break;
@@ -7092,13 +7150,13 @@ namespace BCR.GARANTIAS.Entidades
                                                 case _fechaConstruccion: entidadBitacoraAvaluo.ValorActual = DateTime.TryParseExact(datoActualAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecConsAct) ? fecConsAct.ToString("dd/MM/yyyy") : datoActualAval;
                                                     break;
                                                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                                case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorAnterior = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
                                                     break;
                                                 //case _fechaModifico: entidadBitacoraAvaluo.ValorActual = DateTime.TryParse(datoActualAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoActualAval;
                                                 //    break;
@@ -7844,18 +7902,33 @@ namespace BCR.GARANTIAS.Entidades
 
             if (this.HabilitarPorcentajesAceptacionAvaluo())
             {
-                //Se obtiene el menor de cada porcentaje
-                decimal porcentajeAceptTerrenoMenor = ((this.porcentajeAceptacionTerreno <= this.porcentajeAceptacionTerrenoCalculado) ? this.porcentajeAceptacionTerreno : this.porcentajeAceptacionTerrenoCalculado);
-                decimal porcentajeAceptNoTerrenoMenor = ((this.porcentajeAceptacionNoTerreno <= this.porcentajeAceptacionNoTerrenoCalculado) ? this.porcentajeAceptacionNoTerreno : this.porcentajeAceptacionNoTerrenoCalculado);
+                //Se establecen los porcentajes de aceptación en caso de que no existan
+                decimal porcentaAceptTerreno = ((this.porcentajeAceptacionTerreno >= 0) ? this.porcentajeAceptacionTerreno : this.porcentajeAceptacionTerrenoCalculado);
+                decimal porcentaAceptaNoTerreno = ((this.porcentajeAceptacionNoTerreno >= 0) ? this.porcentajeAceptacionNoTerreno : this.porcentajeAceptacionNoTerrenoCalculado);
 
-                //Se obtiene la proporcionalidad del terreno
-                decimal montoProporcionalTerrneo = Convert.ToDecimal((this.montoTasacionActualizadaTerreno * (Convert.ToDecimal((porcentajeAceptTerrenoMenor / 100)))));
+                if (this.codTipoBien == 1)
+                {
+                    //Se obtiene el menor de cada porcentaje
+                    decimal porcentajeAceptTerrenoMenor = ((porcentaAceptTerreno <= this.porcentajeAceptacionTerrenoCalculado) ? porcentaAceptTerreno : this.porcentajeAceptacionTerrenoCalculado);
 
-                //Se obtiene la proporcionalidad del no terreno
-                decimal montoProporcionalNoTerrneo = Convert.ToDecimal((this.montoTasacionActualizadaNoTerreno * (Convert.ToDecimal((porcentajeAceptNoTerrenoMenor / 100)))));
+                    //Se calcula el monto mitigador
+                    montoMitigadorCalculado = Convert.ToDecimal((this.montoTasacionActualizadaTerreno * (Convert.ToDecimal((porcentajeAceptTerrenoMenor / 100)))));
+                }
+                else
+                {
+                    //Se obtiene el menor de cada porcentaje
+                    decimal porcentajeAceptTerrenoMenor = ((porcentaAceptTerreno <= this.porcentajeAceptacionTerrenoCalculado) ? porcentaAceptTerreno : this.porcentajeAceptacionTerrenoCalculado);
+                    decimal porcentajeAceptNoTerrenoMenor = ((porcentaAceptaNoTerreno <= this.porcentajeAceptacionNoTerrenoCalculado) ? porcentaAceptaNoTerreno : this.porcentajeAceptacionNoTerrenoCalculado);
 
-                //Se calcula el monto mitigador
-                montoMitigadorCalculado = Convert.ToDecimal(montoProporcionalTerrneo + montoProporcionalNoTerrneo);
+                    //Se obtiene la proporcionalidad del terreno
+                    decimal montoProporcionalTerreno = Convert.ToDecimal((this.montoTasacionActualizadaTerreno * (Convert.ToDecimal((porcentajeAceptTerrenoMenor / 100)))));
+
+                    //Se obtiene la proporcionalidad del no terreno
+                    decimal montoProporcionalNoTerreno = Convert.ToDecimal((this.montoTasacionActualizadaNoTerreno * (Convert.ToDecimal((porcentajeAceptNoTerrenoMenor / 100)))));
+
+                    //Se calcula el monto mitigador
+                    montoMitigadorCalculado = Convert.ToDecimal(montoProporcionalTerreno + montoProporcionalNoTerreno);
+                }
             }
             else
             {

@@ -62,13 +62,15 @@ namespace BCR.GARANTIAS.Comun
             PorcAceptTerrenoCalcAnotada = 43,
             PorcAceptTerrenoCalcFechaUltimoSeguimiento = 44,
             PorcAceptTerrenoCalcFechaValuacion = 45,
+            PorcAceptTerrenoMayorCalculado = 46,
 
-            PorcAceptNoTerrenoCalcNoAnotadaNoInscrita = 46,
-            PorcAceptNoTerrenoCalcAnotada = 47,
-            PorcAceptNoTerrenoCalcFechaUltimoSeguimiento = 48,
-            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = 49,
-            PorcAceptNoTerrenoCalcFechaValuacion = 50,
-            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos = 51
+            PorcAceptNoTerrenoCalcNoAnotadaNoInscrita = 47,
+            PorcAceptNoTerrenoCalcAnotada = 48,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimiento = 49,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = 50,
+            PorcAceptNoTerrenoCalcFechaValuacion = 51,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos = 52,
+            PorcAceptNoTerrenoMayorCalculado = 53
         }
         #endregion Orden de Inconsistencias
 
