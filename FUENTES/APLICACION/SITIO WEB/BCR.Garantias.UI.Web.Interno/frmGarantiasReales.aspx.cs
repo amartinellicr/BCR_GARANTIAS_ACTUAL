@@ -4837,6 +4837,8 @@ namespace BCRGARANTIAS.Forms
                     }
                 }
 
+                BloquearCamposAvaluo();
+
                 ////Se valida que en casode que el porcentaje de aceptación sea igual a 0 (cero) se bloquee el campo del monto mitigador
                 //if (entidadGarantia.PorcentajeResponsabilidad == 0)
                 //{
@@ -4867,25 +4869,16 @@ namespace BCRGARANTIAS.Forms
                             {
                                 this.txtFechaSeguimiento.Enabled = true;
                                 this.igbCalendarioSeguimiento.Enabled = true;
-                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                //this.txtPorcentajeAceptacionNoTerreno.Enabled = false;
-                                this.txtPorcentajeAceptacionTerreno.Enabled = true;
                             }
                             else if ((entidadGarantia.CodTipoBien == 2) && (this.txtMontoTasActTerreno.Text.Length > 0) && (this.txtMontoTasActNoTerreno.Text.Length > 0))
                             {
                                 this.txtFechaSeguimiento.Enabled = true;
                                 this.igbCalendarioSeguimiento.Enabled = true;
-                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                this.txtPorcentajeAceptacionNoTerreno.Enabled = true;
-                                this.txtPorcentajeAceptacionTerreno.Enabled = true;
                             }
                             else
                             {
                                 this.txtFechaSeguimiento.Enabled = false;
                                 this.igbCalendarioSeguimiento.Enabled = false;
-                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                this.txtPorcentajeAceptacionNoTerreno.Enabled = true;
-                                this.txtPorcentajeAceptacionTerreno.Enabled = false;
                             }
 
                             AvaluoActualizado = entidadGarantia.AvaluoActualizado;
