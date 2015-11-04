@@ -2874,7 +2874,7 @@ namespace BCRGARANTIAS.Forms
         }
 
         #endregion
-         
+        
         #region Métodos GridView
 
         protected void gdvGarantiasReales_RowCommand(object sender, GridViewCommandEventArgs e)
