@@ -4538,6 +4538,16 @@ function ValidarPorcentajeAceptacionCalculado() {
             }
         }
 
+        //Si el campo de lso porcentajes se ha dejado vacío
+        if (($$('txtPorcentajeAceptacionTerreno').val().length === 0)) {
+            porAceptTerreno = porAceptTerrenoCalculado;
+            $$('txtPorcentajeAceptacionTerreno').val(porAceptTerreno.toFixed(2));
+        }
+
+        if (($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length === 0)) {
+            porAceptNoTerreno = porAceptNoTerrenoCalculado;
+            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porAceptNoTerreno.toFixed(2));
+        }
 
         //Si los porcentajes de aceptación son mayoreas a los calculados
         if (porAceptTerreno > porAceptTerrenoCalculado) {
