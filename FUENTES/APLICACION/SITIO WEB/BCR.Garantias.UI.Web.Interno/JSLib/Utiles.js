@@ -516,7 +516,7 @@ function PageInit() {
             });
 
     //Función que el mensaje de error cuando existe una inconsistencia para el indicador Inscripción Anotada
-    $MensajePorcAceptNoTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (No anotada/ No inscrita) para esta garantía.</p></div></div>')
+    $MensajePorcAceptNoTerrenoCalcAnotadaInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación No Terreno Calculado ha sido reducido a cero dado que no se cumple con el criterio de inscripción (Anotada) para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Indicador Inscripción Inválida',

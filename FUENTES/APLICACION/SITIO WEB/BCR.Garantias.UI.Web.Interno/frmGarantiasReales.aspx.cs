@@ -5585,6 +5585,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcNoAnotadaNoInscrita)
                             {
                                 estadoVerificacion = false;
+                                ErrorIndicadorInscripcion = true;
                                 //existeErrorPorcentajesAceptacionAvaluos = true;
 
                                 if (mostrarErrorEmergente)
@@ -5615,6 +5616,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcAnotada)
                             {
                                 estadoVerificacion = false;
+                                ErrorIndicadorInscripcion = true;
                                 //existeErrorPorcentajesAceptacionAvaluos = true;
 
                                 if (mostrarErrorEmergente)
@@ -5760,6 +5762,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcNoAnotadaNoInscrita)
                             {
                                 estadoVerificacion = false;
+                                ErrorIndicadorInscripcion = true;
                                 //existeErrorPorcentajesAceptacionAvaluos = true;
 
                                 if (mostrarErrorEmergente)
@@ -5790,6 +5793,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcAnotada)
                             {
                                 estadoVerificacion = false;
+                                ErrorIndicadorInscripcion = true;
                                 //existeErrorPorcentajesAceptacionAvaluos = true;
 
                                 if (mostrarErrorEmergente)
