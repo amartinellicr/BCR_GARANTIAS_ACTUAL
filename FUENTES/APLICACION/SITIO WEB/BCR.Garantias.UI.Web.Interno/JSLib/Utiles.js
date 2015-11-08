@@ -4369,6 +4369,7 @@ function ValidarPorcentajeAceptacionCalculado() {
         var castigoAplicado = 0; // 0 = NO APLICADO | 1 = APLICADO (SOLO SE DEBE APLICAR 1 CASTIGO X CAMPO)
 
         //SE VERIFICA QUE LA FECHA DE ULTIMO SEGUIMIENTO ES MAYOR 1 AÑO EN REALACION A LA FECHA DEL SISTEMA
+
         if (fechaSegui.length > 0) {
             if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
                 $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
@@ -4455,7 +4456,7 @@ function ValidarPorcentajeAceptacionCalculado() {
 
         
         //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
-        if (tipoBien !== 3 && tipoGarantiaReal !== 3) {
+        if (tipoBien !== 3) {
             //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
             if (parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
                 if (castigoAplicado === 0) {
@@ -4544,9 +4545,9 @@ function ValidarPorcentajeAceptacionCalculado() {
             $$('txtPorcentajeAceptacionTerreno').val(porAceptTerreno.toFixed(2));
         }
 
-        if (($$('txtPorcentajeAceptacionNoTerrenoCalculado').val().length === 0)) {
+        if (($$('txtPorcentajeAceptacionNoTerreno').val().length === 0)) {
             porAceptNoTerreno = porAceptNoTerrenoCalculado;
-            $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porAceptNoTerreno.toFixed(2));
+            $$('txtPorcentajeAceptacionNoTerreno').val(porAceptNoTerreno.toFixed(2));
         }
 
         //Si los porcentajes de aceptación son mayoreas a los calculados

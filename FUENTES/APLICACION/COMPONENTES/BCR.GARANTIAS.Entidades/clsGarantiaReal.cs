@@ -6068,18 +6068,21 @@ namespace BCR.GARANTIAS.Entidades
                     }
 
                     //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
-                    if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                    if (this.fechaUltimoSeguimiento != fechaNula)
                     {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
-
-                        if (!castigoAplicado)
+                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
                         {
-                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                            castigoAplicado = true;
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
                         }
                     }
 
@@ -6162,19 +6165,22 @@ namespace BCR.GARANTIAS.Entidades
                     //SI TIPO BIEN IGUAL A EDIFICACIONES Y ( TIPO GARANTIA REAL IGUAL A HIPOTECA COMÚN O CEDULA HIPOTECARIA )
                     if (codTipoBien.Equals(2) && (codTipoGarantiaReal.Equals(1) || codTipoGarantiaReal.Equals(2)))
                     {
-                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
-                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 && indicadorViviendaHabitadaDeudor == false)
+                        if (this.fechaUltimoSeguimiento != fechaNula)
                         {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
-
-                            if (!castigoAplicado)
+                            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
+                            if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1 && indicadorViviendaHabitadaDeudor == false)
                             {
-                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                castigoAplicado = true;
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
                             }
                         }
                     }
@@ -6182,19 +6188,22 @@ namespace BCR.GARANTIAS.Entidades
                     //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
                     if (!codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)))
                     {
-                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
-                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                        if (this.fechaUltimoSeguimiento != fechaNula)
                         {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
-
-                            if (!castigoAplicado)
+                            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
+                            if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
                             {
-                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                castigoAplicado = true;
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
                             }
                         }
                     }
@@ -6202,25 +6211,28 @@ namespace BCR.GARANTIAS.Entidades
                     //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
                     if (codTipoBien.Equals(4) && codTipoGarantiaReal.Equals(3))
                     {
-                        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
-                        if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
+                        if (this.fechaUltimoSeguimiento != fechaNula)
                         {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
-
-                            if (!castigoAplicado)
+                            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
+                            if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
                             {
-                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                castigoAplicado = true;
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
                             }
                         }
                     }
 
                     //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
-                    if ((!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)))
+                    if (!codTipoBien.Equals(3))
                     {
                         //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
                         if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
