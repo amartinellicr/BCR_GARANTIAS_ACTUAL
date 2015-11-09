@@ -6085,6 +6085,24 @@ namespace BCR.GARANTIAS.Entidades
                             }
                         }
                     }
+                    else
+                    {
+                        //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
+                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                    }
 
                     //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
                     if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 5)
@@ -6183,15 +6201,51 @@ namespace BCR.GARANTIAS.Entidades
                                 }
                             }
                         }
+                        else
+                        {
+                            //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
+                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+                        }
                     }
 
-                    //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-                    if (!codTipoBien.Equals(3) && (!codTipoGarantiaReal.Equals(3)))
+                    //SI TIPO BIEN DIFERENTE DE TRERENOS O VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    if ((!codTipoBien.Equals(1)) && (!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)))
                     {
                         if (this.fechaUltimoSeguimiento != fechaNula)
                         {
                             //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
                             if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
+                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
                             {
                                 esValida = false;
                                 errorValidaciones = true;
@@ -6215,6 +6269,24 @@ namespace BCR.GARANTIAS.Entidades
                         {
                             //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 6 MESES EN RELACION A LA FECHA DEL SISTEMA 
                             if (UtilitariosComun.DateDiff("M", this.fechaUltimoSeguimiento, fechaActualSistema) > 6)
+                            {
+                                esValida = false;
+                                errorValidaciones = true;
+                                desplegarErrorVentanaEmergente = true;
+                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
+                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+
+                                if (!castigoAplicado)
+                                {
+                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                    castigoAplicado = true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
+                            if (UtilitariosComun.DateDiff("M", this.fechaValuacion, fechaActualSistema) > 6)
                             {
                                 esValida = false;
                                 errorValidaciones = true;

@@ -4039,6 +4039,7 @@ function ValidarPorcentajeAceptacionCalculado() {
     var indHabilitarPorcAceptAvaluo = parseInt($$('btnValidarOperacion').attr('HPAA').toString());
     var acreenciaBien = parseFloat((($$('txtMontoAcreenciaPoliza').val().length > 0) ? $$('txtMontoAcreenciaPoliza').val().replace(/[^0-9-.]/g, '') : '0'));
     var indicadorInscripcion = parseInt((($$('cbInscripcion').val() != null) ? $$('cbInscripcion').val() : '-1'));
+    
 
      if (indHabilitarPorcAceptAvaluo === 1) {
         var porAceptTerreno = parseFloat((($$('txtPorcentajeAceptacionTerreno').val().length > 0) ? $$('txtPorcentajeAceptacionTerreno').val().replace(/[^0-9-.]/g, '') : '0'));
@@ -4414,8 +4415,10 @@ function ValidarPorcentajeAceptacionCalculado() {
         if (tipoBien === 2 && (tipoGarantiaReal === 1 || tipoGarantiaReal === 2)) {
             //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
             if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1 && !indicadorDeudorHabitaVivienda) {
-                $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                castigoAplicado = 1
+                if (castigoAplicado === 0) {
+                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                    castigoAplicado = 1
+                }
 
                 if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
                     $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open'); 
@@ -4551,14 +4554,18 @@ function ValidarPorcentajeAceptacionCalculado() {
         }
 
         //Si los porcentajes de aceptación son mayoreas a los calculados
-        if (porAceptTerreno > porAceptTerrenoCalculado) {
+        var porcentajeAceptaTerrenoCalculado = $$('txtPorcentajeAceptacionTerreno').val().toString('N2');
+        var porcentajeAceptaNoTerrenoCalculado = $$('txtPorcentajeAceptacionNoTerreno').val().toString('N2');
+
+
+        if (porAceptTerreno > porcentajeAceptaTerrenoCalculado) {
 
             if (typeof ($MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado) !== 'undefined') {
                 $MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado.dialog('open'); 
             }
         }
 
-        if (porAceptNoTerreno > porAceptNoTerrenoCalculado) {
+        if (porAceptNoTerreno > porcentajeAceptaNoTerrenoCalculado) {
 
             if (typeof ($MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado) !== 'undefined') {
                 $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado.dialog('open'); 
