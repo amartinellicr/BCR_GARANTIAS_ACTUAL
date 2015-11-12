@@ -69,6 +69,14 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015062410418218_00090 Creación Campos Archivos GaRea y GaReaCo</Requerimiento>
+			<Fecha>11/10/2015</Fecha>
+			<Descripción>
+				Se inicializan en -1 los siguientes campos: Porcentaje_Aceptacion_Terreno_Calculado, Porcentaje_Aceptacion_No_Terreno_Calculado.
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -392,14 +400,15 @@ BEGIN
 		SELECT  MG1.prmgt_pcoclagar,
 				MG1.prmgt_pnu_part,
 				MG1.prmgt_pnuidegar
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT	MG1.prmgt_pcoclagar,
@@ -411,8 +420,8 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-		WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-			AND MG1.prmgt_estado = 'A'
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT	MG1.prmgt_pcoclagar,
@@ -424,16 +433,16 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
-		WHERE	MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
-			AND MG1.prmgt_estado = 'A'
-			
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+		
 		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real)
 		SELECT	GGR.cod_garantia_real
 		FROM	dbo.GAR_GARANTIA_REAL GGR
 			INNER JOIN 	#TEMP_GAR_HIPOTECAS TMP
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
-			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 		WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
 
 
@@ -443,14 +452,14 @@ BEGIN
 				MG1.prmgt_pnu_part,
 				MG1.prmgt_pnuidegar,
 				MG1.prmgt_pnuide_alf
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_pcoclagar = 11
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 11
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS_ALF(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -463,8 +472,8 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-		WHERE	MG1.prmgt_pcoclagar = 11
-			AND MG1.prmgt_estado = 'A'
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 11
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS_ALF(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -477,8 +486,8 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
-		WHERE	MG1.prmgt_pcoclagar = 11
-			AND MG1.prmgt_estado = 'A'
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 11
 			
 		
 		/*Se carga la información de las garantías reales de tipo hipoteca común y que están relacionadas a una operación o contrato*/
@@ -487,8 +496,8 @@ BEGIN
 		FROM	dbo.GAR_GARANTIA_REAL GGR
 			INNER JOIN 	#TEMP_GAR_HIPOTECAS_ALF TMP
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
-			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
 		WHERE	GGR.cod_clase_garantia = 11
 		
@@ -501,14 +510,14 @@ BEGIN
 		SELECT  MG1.prmgt_pcoclagar,
 				MG1.prmgt_pnu_part,
 				MG1.prmgt_pnuidegar
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_pcoclagar = 18
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 18
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -520,8 +529,8 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-		WHERE	MG1.prmgt_pcoclagar = 18
-			AND MG1.prmgt_estado = 'A'
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 18
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -533,23 +542,23 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
-		WHERE	MG1.prmgt_pcoclagar = 18
-			AND MG1.prmgt_estado = 'A'		
+		WHERE	MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar = 18		
 		
 		
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
 				MG1.prmgt_pnu_part,
 				MG1.prmgt_pnuidegar
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_pcotengar = 1
-				AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_pcotengar = 1
+			AND MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -562,8 +571,8 @@ BEGIN
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
 		WHERE	MG1.prmgt_pcotengar = 1
-			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
 			AND MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -576,8 +585,8 @@ BEGIN
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 		WHERE	MG1.prmgt_pcotengar = 1
-			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
 			AND MG1.prmgt_estado = 'A'
+			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
 			
 		
 		/*Se carga la información de las garantías reales de tipo cédula hipotecaria y que están relacionadas a una operación o contrato*/
@@ -586,8 +595,8 @@ BEGIN
 		FROM	dbo.GAR_GARANTIA_REAL GGR
 			INNER JOIN 	#TEMP_GAR_HIPOTECAS TMP
 			ON	GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
-			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
+			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 		WHERE	GGR.cod_clase_garantia = 18
 			OR  GGR.cod_clase_garantia BETWEEN 20 AND 29
 			
@@ -598,16 +607,16 @@ BEGIN
 		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar)
 		SELECT  MG1.prmgt_pcoclagar,
 				MG1.prmgt_pnuidegar
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-						OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-						OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
+					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
 
 		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar)
 		SELECT	MG1.prmgt_pcoclagar,
@@ -618,10 +627,10 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-		WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
 					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
 					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-			AND MG1.prmgt_estado = 'A'
 
 		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar)
 		SELECT	MG1.prmgt_pcoclagar,
@@ -632,10 +641,10 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
-		WHERE	((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
 					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
 					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-			AND MG1.prmgt_estado = 'A'
 			
 		/*Se carga la información de las garantías reales de tipo prenda y que están relacionadas a una operación o contrato*/
 		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real)
@@ -654,15 +663,15 @@ BEGIN
 		SELECT  MG1.prmgt_pcoclagar,
 				MG1.prmgt_pnuidegar,
 				MG1.prmgt_pnuide_alf
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	((MG1.prmgt_pcoclagar = 38)
-						OR (MG1.prmgt_pcoclagar = 43))
-				AND MG1.prmgt_estado = 'A'
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar = 38)
+					OR (MG1.prmgt_pcoclagar = 43))
 
 		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -674,9 +683,9 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
-		WHERE	((MG1.prmgt_pcoclagar = 38)
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar = 38)
 					OR (MG1.prmgt_pcoclagar = 43))
-			AND MG1.prmgt_estado = 'A'
 
 		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -688,9 +697,9 @@ BEGIN
 			AND MCA.prmca_pco_moned = MG1.prmgt_pco_moned
 			AND MCA.producto_prmgt = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
-		WHERE	((MG1.prmgt_pcoclagar = 38)
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar = 38)
 					OR (MG1.prmgt_pcoclagar = 43))
-			AND MG1.prmgt_estado = 'A'
 			
 		/*Se carga la información de las garantías reales de tipo prenda y que están relacionadas a una operación o contrato*/
 		INSERT	INTO #TEMP_GARANTIA_REAL(cod_garantia_real)
@@ -1963,7 +1972,7 @@ BEGIN
 				GRV.Porcentaje_Aceptacion_Terreno AS Porcentaje_Aceptacion_Terreno, 
 				GRV.Porcentaje_Aceptacion_No_Terreno AS Porcentaje_Aceptacion_No_Terreno, 
 				-1 AS Porcentaje_Aceptacion_Terreno_Calculado, 
-				0 AS Porcentaje_Aceptacion_No_Terreno_Calculado,
+				-1 AS Porcentaje_Aceptacion_No_Terreno_Calculado, --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 				TGR.Indicador_Calcular_PATC AS Indicador_Calculo,
 				COALESCE(GRV.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento, 
 				0 AS Cantidad_Coberturas_Obligatorias, 
@@ -2062,7 +2071,7 @@ BEGIN
 		
 		--Se reinicializa el porcentaje de aceptación del terreno calculado, para todos los registros obtenidos hasta el momento
 		UPDATE	dbo.TMP_CALCULO_MTAT_MTANT
-		SET		Porcentaje_Aceptacion_Terreno_Calculado = 0
+		SET		Porcentaje_Aceptacion_Terreno_Calculado = -1 --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 		WHERE	Usuario = @psCedula_Usuario
 		
 		--Se insertan en la tabla temporal del cálculo aquellos registros que no existan
@@ -2146,11 +2155,11 @@ BEGIN
 		--Se limpia la tabla temporal
 		DELETE FROM #TMP_GARANTIAS_REALES_X_OPERACION_PAC
 		
-		--Se reincializa a 0 (cero) el porcentaje de aceptación del terreno calculado de todos los avalúos válidos 
+		--Se reincializa a -1 el porcentaje de aceptación del terreno calculado de todos los avalúos válidos 
 		BEGIN TRANSACTION TRA_Ajustar_Porcentaje1
 
 				UPDATE	dbo.GAR_VALUACIONES_REALES
-				SET		Porcentaje_Aceptacion_Terreno_Calculado = 0
+				SET		Porcentaje_Aceptacion_Terreno_Calculado = -1 --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 				WHERE	Indicador_Tipo_Registro = 1
 
 		IF (@@ERROR <> 0)
@@ -2326,7 +2335,7 @@ BEGIN
 				0 AS Porcentaje_Aceptacion_Parametrizado, 
 				GRV.Porcentaje_Aceptacion_Terreno AS Porcentaje_Aceptacion_Terreno, 
 				GRV.Porcentaje_Aceptacion_No_Terreno AS Porcentaje_Aceptacion_No_Terreno, 
-				0 AS Porcentaje_Aceptacion_Terreno_Calculado, 
+				-1 AS Porcentaje_Aceptacion_Terreno_Calculado, --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 				-1 AS Porcentaje_Aceptacion_No_Terreno_Calculado,
 				TGR.Indicador_Calcular_PANTC AS Indicador_Calculo,
 				COALESCE(GRV.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento, 
@@ -2557,7 +2566,7 @@ BEGIN
 		
 		--Se reinicializa el porcentaje de aceptación del terreno calculado, para todos los registros obtenidos hasta el momento
 		UPDATE	dbo.TMP_CALCULO_MTAT_MTANT
-		SET	    Porcentaje_Aceptacion_No_Terreno_Calculado = 0
+		SET	    Porcentaje_Aceptacion_No_Terreno_Calculado = -1 --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 		WHERE	Usuario = @psCedula_Usuario
 		
 		--Se insertan en la tabla temporal del cálculo aquellos registros que no existan
@@ -2638,11 +2647,11 @@ BEGIN
 		WHERE	TCM.Usuario = @psCedula_Usuario
 		
 				
-		--Se reincializa a 0 (cero) el porcentaje de aceptación del terreno calculado de todos los avalúos válidos 
+		--Se reincializa a -1 el porcentaje de aceptación del terreno calculado de todos los avalúos válidos 
 		BEGIN TRANSACTION TRA_Ajustar_Porcentaje1
 
 				UPDATE	dbo.GAR_VALUACIONES_REALES
-				SET		Porcentaje_Aceptacion_No_Terreno_Calculado = 0
+				SET		Porcentaje_Aceptacion_No_Terreno_Calculado = -1 --RQ_MANT_2015062410418218_00090: Se inicializa en -1.
 				WHERE	Indicador_Tipo_Registro = 1
 
 		IF (@@ERROR <> 0)
