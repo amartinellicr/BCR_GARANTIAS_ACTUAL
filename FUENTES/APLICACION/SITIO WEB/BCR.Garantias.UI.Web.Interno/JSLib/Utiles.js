@@ -4554,8 +4554,8 @@ function ValidarPorcentajeAceptacionCalculado() {
         }
 
         //Si los porcentajes de aceptación son mayoreas a los calculados
-        var porcentajeAceptaTerrenoCalculado = $$('txtPorcentajeAceptacionTerreno').val().toString('N2');
-        var porcentajeAceptaNoTerrenoCalculado = $$('txtPorcentajeAceptacionNoTerreno').val().toString('N2');
+        var porcentajeAceptaTerrenoCalculado = $$('txtPorcentajeAceptacionTerrenoCalculado').val().toString('N2');
+        var porcentajeAceptaNoTerrenoCalculado = $$('txtPorcentajeAceptacionNoTerrenoCalculado').val().toString('N2');
 
 
         if (porAceptTerreno > porcentajeAceptaTerrenoCalculado) {
