@@ -456,3 +456,10 @@
     font-style:normal;
     overflow:auto;
 }
+
+.erb-image-wrapper img{
+    max-width:100% !important;
+    height:auto;
+    display:block;
+}
+

@@ -96,8 +96,22 @@
             var $arregloCamposValuacion;
             var $listaSemestreEvaluar;
             var $listaPolizas;
+            var $calculoMontoMitigadorAplicado;
 
             var $MensajeDuplicadoTipoPolizaBienRelacionado;
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            var $MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaValuacionInvalido;
+            var $MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado;
+            var $MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido;
+            var $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado;
 
 
 
@@ -197,6 +211,15 @@
         function FormatNumber(oControl, num, decimalPlaces, appendZeros, insertCommas, EsPorcentaje) 
         {
             var bSeFormatea = true;
+            var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
+            var bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerreno") != -1) ? true : false);
+            
+            bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacionCalculado") != -1) ? true : ((bValidarPorAcept) ? true : false));
+            
+            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerreno") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+           
             
             if(num.toString().length > 0)
 		    {
@@ -278,10 +301,23 @@
 
                             oControl.value = strNum;
                             
-                            return strNum;
+                            //return strNum;
                         }
                     }
                 }
+            }
+
+            if ((bSeFormatea) && (bValidarPorAcept)) {
+                ValidarPorcentajeAceptacionCalculado();
+                ValidarPorcentajeAceptacion();
+            }
+
+            if ((bSeFormatea) && (bValidarPorAceptAvaluo)) {
+                ValidarPorcentajeAceptacionCalculado();
+            }
+
+            if (bSeFormatea) {
+                return strNum;
             }
         }
         
@@ -322,8 +358,10 @@
             <table id="tblPrincipal" cellspacing="0" cellpadding="0" width="300" align="center"
                 bgcolor="window" border="0">
                 <tr>
-                    <td style="width: 880px" align="center">
-                        <asp:Image ID="Image2" runat="server" ImageUrl="..\Images\Encabezado.jpg" Width="100%"></asp:Image>
+                    <td align="center">
+                        <div class="erb-image-wrapper">
+                            <asp:Image ID="Image2" runat="server" ImageUrl="..\Images\Encabezado.jpg" Width="100%"></asp:Image>
+                        </div>
                     </td>
                 </tr>
                 <tr>

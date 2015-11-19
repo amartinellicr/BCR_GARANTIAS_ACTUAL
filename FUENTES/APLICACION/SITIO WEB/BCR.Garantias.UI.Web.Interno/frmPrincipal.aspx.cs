@@ -28,6 +28,10 @@ namespace BCRGARANTIAS.Presentacion
         protected System.Web.UI.WebControls.Image Image1;
         private bool mbValido;
 
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
+
         #endregion
 
         #region Eventos
@@ -54,17 +58,28 @@ namespace BCRGARANTIAS.Presentacion
                 catch (Exception ex)
                 {
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect("frmMensaje.aspx?" +
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
                             "bError=1" +
                             "&strTitulo=" + "Acceso Denegado" +
                             "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
                             "&bBotonVisible=0");
+                    }
                     else
-                        Response.Redirect("frmMensaje.aspx?" +
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
                             "bError=1" +
                             "&strTitulo=" + "Problemas Cargando Página" +
                             "&strMensaje=" + ex.Message +
                             "&bBotonVisible=0");
+                    }
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
         }

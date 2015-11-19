@@ -37,6 +37,15 @@ BEGIN
 	<Versión>1.0</Versión>
 	<Historial>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+			<Requerimiento>RQ_MANT_2015062410418218_00025 Segmentación campos % aceptacion Terreno y No terreno</Requerimiento>
+			<Fecha>21/09/2015</Fecha>
+			<Descripción>
+				Se incorpora la inserción de los campos referentes al porcentaje de aceptación del terreno, porcentaje de aceptación del no terreno,
+				porcentaje de aceptación del terreno calculado y el porcentaje de aceptación del no terreno calculado.
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -79,7 +88,19 @@ BEGIN
 			Codigo_Garantia, 
 			Tipo_Bien, 
 			Total_Semestres_Calcular, 
-			Usuario)
+			Usuario,
+			
+			--INICIO RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+			
+			Porcentaje_Aceptacion_Base,
+			Porcentaje_Aceptacion_Terreno,
+			Porcentaje_Aceptacion_No_Terreno,
+			Porcentaje_Aceptacion_Terreno_Calculado,
+			Porcentaje_Aceptacion_No_Terreno_Calculado
+			
+			--FIN RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+			
+			)
 		SELECT	
 			datosCalculo.Fecha_Hora, 
 			datosCalculo.Id_Garantia, 
@@ -103,7 +124,18 @@ BEGIN
 			datosCalculo.Codigo_Garantia, 
 			datosCalculo.Tipo_Bien, 
 			datosCalculo.Total_Semestres_Calcular, 
-			@psCedula_Usuario
+			@psCedula_Usuario,
+			
+			--INICIO RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+			
+			datosCalculo.Porcentaje_Aceptacion_Base,
+			datosCalculo.Porcentaje_Aceptacion_Terreno,
+			datosCalculo.Porcentaje_Aceptacion_No_Terreno,
+			datosCalculo.Porcentaje_Aceptacion_Terreno_Calculado,
+			datosCalculo.Porcentaje_Aceptacion_No_Terreno_Calculado
+			
+			--FIN RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+			
 		FROM	OPENXML(@viControladorDocXML, 'DATOS/SEMESTRES_A_CALCULAR/SEMESTRE', 2)
 			WITH (Fecha_Hora DATETIME, Id_Garantia VARCHAR(30), Tipo_Garantia_Real TINYINT,
 				  Clase_Garantia SMALLINT, Semestre_Calculado DATETIME, Fecha_Valuacion DATETIME,
@@ -115,7 +147,19 @@ BEGIN
 				  Monto_Tasacion_Actualizada_Terreno FLOAT, 
 				  Monto_Tasacion_Actualizada_No_Terreno FLOAT, Numero_Registro SMALLINT,
 				  Codigo_Operacion BIGINT, Codigo_Garantia BIGINT, Tipo_Bien TINYINT,
-				  Total_Semestres_Calcular SMALLINT) datosCalculo              
+				  Total_Semestres_Calcular SMALLINT,
+				  
+				  --INICIO RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+				  
+				  Porcentaje_Aceptacion_Base DECIMAL(5,2),
+				  Porcentaje_Aceptacion_Terreno DECIMAL(5,2),
+				  Porcentaje_Aceptacion_No_Terreno DECIMAL(5,2),
+				  Porcentaje_Aceptacion_Terreno_Calculado DECIMAL(5,2),
+				  Porcentaje_Aceptacion_No_Terreno_Calculado DECIMAL(5,2)
+				  
+				  --FIN RQ: RQ_MANT_2015062410418218_00025. Se incorporan campos nuevos
+				  
+				  ) datosCalculo              
 		
 		IF (@@ERROR <> 0) 
 		BEGIN 

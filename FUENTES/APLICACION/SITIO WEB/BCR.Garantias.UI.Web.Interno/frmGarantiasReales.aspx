@@ -7,27 +7,22 @@
     <asp:UpdatePanel id="UpdatePanel1" runat="server">
         <contenttemplate>
             <div>
-		        <table style="width: 880px" cellspacing="1" cellpadding="1" width="875" align="center" bgColor="window" border="0">
-			         <div id="contenedorDatosModificacion" runat="server" enableviewstate="true"  >
-			              <tr>
-                            <td bgcolor="#e0e0df">
-                                <table>                               
-                                    <tr>
-                                        <td align="left">
-                                            <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label></td>
-                                        <td align="right">
-                                            <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label></td>
-                                      
-                                    </tr>
-                                    <tr>
-                                      <td align="right" colspan="2">
-                                            <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label></td>
-                                    </tr>                                                                
-                 
-                                </table>
-                            </td>
-                         </tr>  
-			            </div>  
+		        <table style="width: 880px; background-color:Window;" cellspacing="1" cellpadding="1" width="875" align="center" border="0">
+                    <tr style="border-color:#E0E0DF; border-width:0px;">
+                        <td>
+			                <div id="contenedorDatosModificacion" runat="server" enableviewstate="true" style="clear:both; width:880px; border-color:#E0E0DF; background-color:#E0E0DF; padding-left:7px; padding-right:7px;">
+                                <div style="text-align:left; width:540px; float:left; display:inline; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label>
+                                </div>
+                                <div style="text-align:right; width:320px; float:right; display:inline; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
+                                </div>
+                                <div style="text-align:right; float:right; display:block; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>
+                                </div>
+			                </div> 
+                        </td> 
+                    </tr>
 			        <tr>
 				        <td style="height: 43px" align="center" colspan="3">
 					        <!--TITULO PRINCIPAL-->
@@ -266,47 +261,69 @@
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
 																        
 														                <asp:TextBox ID="txtMontoUltTasacionTerreno" tabIndex="32" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
-								                                                     ToolTip="Monto de Última Tasación Terreno" BackColor="AliceBlue" Width="136px"/>
+								                                                     ToolTip="Monto de Última Tasación Terreno (Utilice el punto como separador de decimales)" BackColor="AliceBlue" Width="136px"/>
 															        </td>
 														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Mto Última Tasación no Terreno:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:140px; height:15px; font-size:14px;" valign="middle">
 																        
 														                <asp:TextBox ID="txtMontoUltTasacionNoTerreno" tabIndex="33" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
-								                                                     ToolTip="Monto de Última Tasación No Terreno" BackColor="AliceBlue" Width="136px"/>
+								                                                     ToolTip="Monto de Última Tasación No Terreno (Utilice el punto como separador de decimales)" BackColor="AliceBlue" Width="136px"/>
 															        </td>
 													            </tr>
-													            <tr>
-														            <td style="width:250px;"></td>
+													            <tr id="filaPorAcep" runat="server">
+														           <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación Terreno:</td>
 														            <td style="width:2px;"></td>
-														            <td class="td_TextoLeyenda" colspan="3"><asp:label id="lblLeyendaMonto" runat="server" ForeColor="DimGray">(Utilice el punto como separador de decimales)</asp:label></td>
+														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
+																        
+														                <asp:TextBox ID="txtPorcentajeAceptacionTerreno" tabIndex="34" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+								                                                     ToolTip="% Aceptación Terreno (Utilice el punto como separador de decimales)" BackColor="AliceBlue" />
+															        </td>
+														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación No Terreno:</td>
+														            <td style="width:2px;"></td>
+														            <td style="width:140px; height:15px; font-size:14px;" valign="middle">
+																        
+														                <asp:TextBox ID="txtPorcentajeAceptacionNoTerreno" tabIndex="35" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+								                                                     ToolTip="% Aceptación No Terreno (Utilice el punto como separador de decimales)" BackColor="AliceBlue" />
+															        </td>
 													            </tr>
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Mto Tasación Actualizada Terreno Calculado:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
 														            
-														                <asp:TextBox ID="txtMontoTasActTerreno" tabIndex="34" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
-								                                                     ToolTip="Monto Tasación Actualizada Terreno Calculado" BackColor="AliceBlue" Width="136px" />
+														                <asp:TextBox ID="txtMontoTasActTerreno" tabIndex="36" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
+								                                                     ToolTip="Monto Tasación Actualizada Terreno Calculado" BackColor="AliceBlue"  Width="136px" />
 															        </td>
 														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Mto Tasación Actualizada No Terreno Calculado:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:140px; height:15px; font-size:14px;" valign="middle">
 														            
-														                <asp:TextBox ID="txtMontoTasActNoTerreno" tabIndex="35" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
-								                                                     ToolTip="Monto Tasación Actualizada No Terreno Calculado" BackColor="AliceBlue" Width="136px" />
+														                <asp:TextBox ID="txtMontoTasActNoTerreno" tabIndex="37" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
+								                                                     ToolTip="Monto Tasación Actualizada No Terreno Calculado" BackColor="AliceBlue"  Width="136px" />
 															        </td>
 													            </tr>
-													            <tr>
-														            <td style="width:250px;"></td>
+													            <tr id="filaPorAcepCalc" runat="server">
+														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación Terreno Calculado:</td>
 														            <td style="width:2px;"></td>
-														            <td class="td_TextoLeyenda" colspan="3"><asp:label id="Leyenda" runat="server" ForeColor="DimGray">(Utilice el punto como separador de decimales)</asp:label></td>
+														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
+														            
+														                <asp:TextBox ID="txtPorcentajeAceptacionTerrenoCalculado" tabIndex="38" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+								                                                     ToolTip="% Aceptación Terreno Calculado" Enabled="false" BackColor="AliceBlue" />
+															        </td>
+														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">% Aceptación No Terreno Calculado:</td>
+														            <td style="width:2px;"></td>
+														            <td style="width:140px; height:15px; font-size:14px;" valign="middle">
+														            
+														                <asp:TextBox ID="txtPorcentajeAceptacionNoTerrenoCalculado" tabIndex="39" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+								                                                     ToolTip="% Aceptación No Terreno Calculado" Enabled="false" BackColor="AliceBlue" />
+															        </td>
 													            </tr>
 													           <tr>
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Fecha Último Seguimiento:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:15px;">
-														                <asp:TextBox ID="txtFechaSeguimiento" BackColor="AliceBlue" tabIndex="36" runat="server" Width="115px" 
+														                <asp:TextBox ID="txtFechaSeguimiento" BackColor="AliceBlue" tabIndex="40" runat="server" Width="115px" 
 								                                                     MaxLength="1" style="text-align:justify" ToolTip="Ingrese una fecha: día/mes/año" ValidationGroup="MKE" />
                                                                         <asp:ImageButton ID="igbCalendarioSeguimiento" runat="server" ImageUrl="~/Images/Calendario.png" CausesValidation="False" />
                                                                         <ajaxToolkit:MaskedEditExtender ID="meeFechaSeguimiento" runat="server"
@@ -334,7 +351,7 @@
 														            <td style="width:280px; min-height:280px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Fecha de Construcción:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:140px; height:15px; font-size:15px;">
-														                <asp:TextBox ID="txtFechaConstruccion" BackColor="White" tabIndex="37" runat="server" Width="112px" 
+														                <asp:TextBox ID="txtFechaConstruccion" BackColor="White" tabIndex="41" runat="server" Width="112px" 
 								                                                     MaxLength="1" style="text-align:justify" ToolTip="Ingrese una fecha: día/mes/año" ValidationGroup="MKE" />
                                                                         <asp:ImageButton ID="igbCalendarioConstruccion" runat="server" ImageUrl="~/Images/Calendario.png" CausesValidation="False" />
                                                                         <ajaxToolkit:MaskedEditExtender ID="meeFechaConstruccion" runat="server"
@@ -364,7 +381,7 @@
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Monto Total Avalúo:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
-														                <asp:TextBox ID="txtMontoAvaluo" tabIndex="38" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
+														                <asp:TextBox ID="txtMontoAvaluo" tabIndex="42" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
 								                                                     ToolTip="Monto Total Avalúo" BackColor="AliceBlue" Width="136px" Enabled="False" />
 															        </td>
 															        <td style="width:280px;"></td>
@@ -385,7 +402,7 @@
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Código SAP:</td>
 														            <td style="width:2px;"></td>
-														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbCodigoSap" tabIndex="39" runat="server" Width="450px" Height="100%"></asp:dropdownlist></td>
+														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbCodigoSap" tabIndex="43" runat="server" Width="450px" Height="100%"></asp:dropdownlist></td>
 															        <%--<td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
 															        <td style="width:140px;"></td>--%>
@@ -394,7 +411,7 @@
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Monto Póliza:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
-														                <asp:TextBox ID="txtMontoPoliza" tabIndex="40" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
+														                <asp:TextBox ID="txtMontoPoliza" tabIndex="44" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
 								                                                     ToolTip="Monto de la póliza" BackColor="AliceBlue" Width="140px" Enabled="false"/>
 															        </td>
 															       <%-- <td style="width:280px;"></td>
@@ -404,7 +421,7 @@
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Moneda Póliza:</td>
 														            <td style="width:2px;"></td>
-														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbMonedaPoliza" tabIndex="41" runat="server" Width="100%" Height="100%" Enabled="false"></asp:dropdownlist></td>
+														            <td style="width:150px; height:20px; font-size:15px;" colspan="5"><asp:dropdownlist id="cbMonedaPoliza" tabIndex="45" runat="server" Width="100%" Height="100%" Enabled="false"></asp:dropdownlist></td>
 															       <%-- <td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
 															        <td style="width:140px;"></td>--%>
@@ -412,7 +429,7 @@
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Identificación del Acreedor:</td>
 														            <td style="width:2px;"></td>
-										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtCedulaAcreedorPoliza" tabIndex="42" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
+										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtCedulaAcreedorPoliza" tabIndex="46" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
 												                            Width="140px" MaxLength="30" style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ToolTip="Cédula del acreedor de la póliza" Enabled="false"></asp:textbox></td>
 															        <td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
@@ -423,7 +440,7 @@
 													            <tr>
 														            <td style="width:250px; min-width:250px; height:25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Nombre del Acreedor:</td>
 														            <td style="width:2px;"></td>
-										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtNombreAcreedorPoliza" tabIndex="44" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
+										                            <td style="width:150px; height:24px; font-size:15px;"><asp:textbox id="txtNombreAcreedorPoliza" tabIndex="47" runat="server" CssClass="Txt_Style_Default" BackColor="AliceBlue"
 												                            Width="140px" MaxLength="30" style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ToolTip="Nombre del acreedor de la póliza" Enabled="false"></asp:textbox></td>
 															        <td style="width:280px;"></td>
 															        <td style="width:2px;"></td>
@@ -433,13 +450,13 @@
 													                <td style="width:650px; min-width:550px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Fecha de Vencimiento Póliza:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:15px;">
-														                <asp:TextBox ID="txtFechaVencimientoPoliza" BackColor="AliceBlue" Enabled="false" tabIndex="45" runat="server" Width="140px" 
+														                <asp:TextBox ID="txtFechaVencimientoPoliza" BackColor="AliceBlue" Enabled="false" tabIndex="48" runat="server" Width="140px" 
 								                                                      style="text-align:left; font-size:11px; font-style:normal; font-family:Verdana, Tahoma, Arial;" ValidationGroup="MKE" ToolTip="Fecha de vencimiento de la póliza" />
                                                                     </td>
 															        <td style="width:200px;"></td>
 															        <td style="width:2px;"></td>
 															        <td style="width:160px; text-align:center; vertical-align:middle; font-size:15px;">
-                                                                        <asp:RadioButtonList ID="rdlEstadoPoliza" Enabled="false" runat="server" CssClass="id-tabla-texto" tabIndex="46" RepeatDirection="Horizontal" TextAlign="Right" ForeColor="black">
+                                                                        <asp:RadioButtonList ID="rdlEstadoPoliza" Enabled="false" runat="server" CssClass="id-tabla-texto" tabIndex="49" RepeatDirection="Horizontal" TextAlign="Right" ForeColor="black">
                                                                             <asp:ListItem Enabled="true" Text="Vencida" Value="0"></asp:ListItem>
                                                                             <asp:ListItem Enabled="true" Text="Vigente" Value="1"></asp:ListItem>
                                                                         </asp:RadioButtonList>
@@ -449,7 +466,7 @@
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Acreencia del Bien:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:150px; height:15px; font-size:14px;" valign="middle">
-														                <asp:TextBox ID="txtMontoAcreenciaPoliza" tabIndex="47" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
+														                <asp:TextBox ID="txtMontoAcreenciaPoliza" tabIndex="49" runat="server" CssClass="id-tabla-texto" MaxLength="17" ValidationGroup="MKE" 
 								                                                     ToolTip="Monto de la acreencia de la póliza" BackColor="AliceBlue" Width="140px"/>
 															        </td>
 															        <td style="width:280px;"></td>
@@ -460,7 +477,7 @@
 														            <td style="width:250px; min-width:250px; height: 25px; text-align:right; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px;">Detalle Póliza:</td>
 														            <td style="width:2px;"></td>
 														            <td style="width:450px; height:15px; font-size:15px"; colspan="4">
-														                <asp:TextBox ID="txtDetallePoliza" tabIndex="48" runat="server" CssClass="id-tabla-texto-multilinea" ValidationGroup="MKE"
+														                <asp:TextBox ID="txtDetallePoliza" tabIndex="50" runat="server" CssClass="id-tabla-texto-multilinea" ValidationGroup="MKE"
 								                                                     ToolTip="Detalle de la póliza" BackColor="AliceBlue" Width="450px" Height="50px" TextMode="MultiLine" ReadOnly="true"/>
 															        </td>
 													            </tr>
@@ -481,10 +498,10 @@
                                                                 <tr>
 														            <td colspan="6" style="clear:both;" valign="top">
                                                                         <div id="divCoberturasPorAsignar" style="display:inline; float:left; width:340px; height:150px; text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border-left-width:thin; border-right-width:thin; border-top:thin; border-bottom:thin; border-color:#79B7E7; border-style:solid; margin-right:0.5px; overflow:auto;">
-                                                                            <div id="lbCoberturasPorAsignar" tabindex="49" runat="server" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px; border:0px; overflow:visible; display:block; padding:5px 0px 5px 5px; float:left; margin:5px; max-width:0px;"></div>
+                                                                            <div id="lbCoberturasPorAsignar" tabindex="51" runat="server" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px; border:0px; overflow:visible; display:block; padding:5px 0px 5px 5px; float:left; margin:5px; max-width:0px;"></div>
                                                                         </div>
                                                                         <div id="divCoberturasAsignadas" style="display:inline; float:left; width:340px; height:150px; text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:12px; border-left-width:thin; border-right-width:thin; border-top:thin; border-bottom:thin; border-color:#79B7E7; border-style:solid; margin-left:0.5px; overflow:auto;">
-                                                                            <div id="lbCoberturasAsignadas" tabindex="50" runat="server" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px; border:0px; overflow:visible; display:block; padding:5px 0px 5px 5px; float:left; margin:5px; max-width:0px;"></div>
+                                                                            <div id="lbCoberturasAsignadas" tabindex="52" runat="server" style="text-align:left; font-style:normal; font-family:Verdana, Tahoma, Arial; font-size:11px; border:0px; overflow:visible; display:block; padding:5px 0px 5px 5px; float:left; margin:5px; max-width:0px;"></div>
                                                                          </div>
 															        </td>
 													            </tr>
@@ -502,9 +519,9 @@
 										        <td colspan="2">
 										        </td>
 										        <td class="td_Texto" colspan="2">
-										            <asp:button id="btnLimpiar" tabIndex="49" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
-												    <asp:button id="btnModificar" tabIndex="50" runat="server" ToolTip="Modificar Garantía" Text="Modificar"></asp:button>
-												    <asp:button id="btnEliminar" tabIndex="51" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar"></asp:button>
+										            <asp:button id="btnLimpiar" tabIndex="53" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
+												    <asp:button id="btnModificar" tabIndex="54" runat="server" ToolTip="Modificar Garantía" Text="Modificar"></asp:button>
+												    <asp:button id="btnEliminar" tabIndex="55" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar"></asp:button>
 											    </td>
 									        </tr>
 								        </table>
