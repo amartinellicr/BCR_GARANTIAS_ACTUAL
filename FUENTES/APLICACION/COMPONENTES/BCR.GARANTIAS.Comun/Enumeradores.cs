@@ -54,9 +54,23 @@ namespace BCR.GARANTIAS.Comun
             PolizaAsociada              = 38,
             PolizaInvalidaTipoBienPoliza = 39,
             MontoPolizaNoCubreBien      = 40,
-            CoberturasObligatoriasInvalidas = 41
+            CoberturasObligatoriasInvalidas = 41,
             //agregar mas indicadores para que no se se caiga. 
-          
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            PorcAceptTerrenoCalcNoAnotadaNoInscrita = 42,
+            PorcAceptTerrenoCalcAnotada = 43,
+            PorcAceptTerrenoCalcFechaUltimoSeguimiento = 44,
+            PorcAceptTerrenoCalcFechaValuacion = 45,
+            PorcAceptTerrenoMayorCalculado = 46,
+
+            PorcAceptNoTerrenoCalcNoAnotadaNoInscrita = 47,
+            PorcAceptNoTerrenoCalcAnotada = 48,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimiento = 49,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = 50,
+            PorcAceptNoTerrenoCalcFechaValuacion = 51,
+            PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos = 52,
+            PorcAceptNoTerrenoMayorCalculado = 53
         }
         #endregion Orden de Inconsistencias
 

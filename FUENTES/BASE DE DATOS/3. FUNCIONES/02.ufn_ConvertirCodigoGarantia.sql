@@ -30,6 +30,14 @@ AS
 <Versión>1.0</Versión>
 <Historial>
 	<Cambio>
+		<Autor>Arnoldo Martinelli Marín, GrupoMas S.A.</Autor>
+		<Requerimiento>RQ_MANT_2015062410418218_00025 Segmentación campos % aceptacion Terreno y No terreno</Requerimiento>
+		<Fecha>21/09/2015</Fecha>
+		<Descripción>
+			Se optimiza la función.
+		</Descripción>
+	</Cambio>
+	<Cambio>
 		<Autor></Autor>
 		<Requerimiento></Requerimiento>
 		<Fecha></Fecha>
@@ -43,10 +51,14 @@ BEGIN
     DECLARE @viCodigo DECIMAL(12,0),
 			@viContador INT,
 			@vvCodigoObtenido VARCHAR(64),
-			@viEncontroNumero BIT
- 
+			@viEncontroNumero BIT,
+			@viExpresion VARCHAR(50)
+			
+			
 	SET @viCodigo = -1
 	SET @vvCodigoObtenido = ''
+	SET @viExpresion = '%[^0-9]%'
+	SET @vvCodigoObtenido = @pvCodigo
 
 	IF (dbo.ufn_EsNumero(@pvCodigo) = 1)
 	BEGIN
@@ -54,37 +66,11 @@ BEGIN
 	END
 	ELSE
     BEGIN
-		SET @viContador = 0
-		SET @viEncontroNumero = 0
-
-		WHILE (@viContador <= (LEN(@pvCodigo)))
+    		
+		WHILE PATINDEX(@viExpresion, @vvCodigoObtenido) > 0
 		BEGIN
-			IF(dbo.ufn_EsNumero((SELECT SUBSTRING(@pvCodigo,@viContador,1))) = 1) 
-			BEGIN
-				IF(((SELECT SUBSTRING(@pvCodigo,@viContador,1)) = ' ') OR ((SELECT SUBSTRING(@pvCodigo,@viContador,1)) = '-'))
-				BEGIN
-					IF(@viEncontroNumero = 1) 
-					BEGIN
-						BREAK
-					END
-				END
-				ELSE
-				BEGIN
-					SET @vvCodigoObtenido = @vvCodigoObtenido + (SELECT SUBSTRING(@pvCodigo,@viContador,1))
-					SET @viEncontroNumero = 1
-				END
-			END
-			ELSE
-			BEGIN
-				IF(@viEncontroNumero = 1) 
-				BEGIN
-					BREAK
-				END
-			END
-			SET @viContador = @viContador + 1
-		END
-
-		
+			SET @vvCodigoObtenido = Stuff(@vvCodigoObtenido, PatIndex(@viExpresion, @vvCodigoObtenido), 1, '')
+		END	
 	END
  
 	IF(LEN(@vvCodigoObtenido) > 0)
@@ -95,4 +81,4 @@ BEGIN
 	
     RETURN @viCodigo 
  
-END  
+END

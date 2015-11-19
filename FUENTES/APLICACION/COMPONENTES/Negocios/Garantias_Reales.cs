@@ -2285,6 +2285,12 @@ namespace BCRGARANTIAS.Negocios
                         garantiaRealNormalizar.AvaluoActualizado = datosGarantiaReal.AvaluoActualizado;
                         garantiaRealNormalizar.FechaSemestreCalculado = datosGarantiaReal.FechaSemestreCalculado;
 
+                        //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                        garantiaRealNormalizar.PorcentajeAceptacionTerreno = datosGarantiaReal.PorcentajeAceptacionTerreno;
+                        garantiaRealNormalizar.PorcentajeAceptacionNoTerreno = datosGarantiaReal.PorcentajeAceptacionNoTerreno;
+                        garantiaRealNormalizar.PorcentajeAceptacionTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionTerrenoCalculado;
+                        garantiaRealNormalizar.PorcentajeAceptacionNoTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionNoTerrenoCalculado;
+
                         //Se procede a modificar la información de la póliza, sólo si dicha póliza está asociada a la operación replicada
                         List<clsPolizaSap> listaPolizas = garantiaRealNormalizar.PolizasSap.ObtenerPolizasPorTipoBien(garantiaRealNormalizar.CodTipoBien);
 

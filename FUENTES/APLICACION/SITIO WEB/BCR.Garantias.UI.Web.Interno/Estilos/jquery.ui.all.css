@@ -12,3 +12,6 @@
 @import "jquery.ui.base.css";
 @import "jquery.ui.theme.min.css";
 
+@import url('../Estilos/WebStyles.min.css') screen;
+@import url('../Estilos/jquery.ui.base.css') screen;
+@import url('../Estilos/jquery.ui.theme.min.css') screen;

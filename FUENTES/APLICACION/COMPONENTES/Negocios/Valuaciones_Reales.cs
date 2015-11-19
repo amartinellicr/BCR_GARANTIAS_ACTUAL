@@ -1193,107 +1193,108 @@ namespace BCRGARANTIAS.Negocios
         /// <returns></returns>
         public string AplicarCalculoMTANTAvaluos(string strUsuario, bool esServicioWindows)
         {
-            string respuestaObtenida = string.Empty;
+            //string respuestaObtenida = string.Empty;
             string[] strMensajeObtenido = new string[] { string.Empty };
-            
+            string[] respuestasObtenidasBD = new string[5] { string.Empty, string.Empty, string.Empty, string.Empty, string.Empty };
+
             string vsObtenerVGR = string.Empty;
             string descripcionErrorRetornado = string.Empty;
 
-            StringBuilder sbVGR = new StringBuilder();
+            StringBuilder sbErroresCalculo = new StringBuilder();
 
             try
             {
                 SqlParameter[] parametrosProcedimiento = new SqlParameter[] { 
                         new SqlParameter("@psCedula_Usuario", SqlDbType.VarChar, 30),
+                        new SqlParameter("@piIndicadorProceso", SqlDbType.TinyInt),
                         new SqlParameter("psRespuesta", SqlDbType.VarChar,1000)
                     };
 
                 parametrosProcedimiento[0].Value = strUsuario;
-                parametrosProcedimiento[1].Value = null;
-                parametrosProcedimiento[1].Direction = ParameterDirection.Output;
+                parametrosProcedimiento[1].Value = 1;
+                parametrosProcedimiento[2].Value = null;
+                parametrosProcedimiento[2].Direction = ParameterDirection.Output;
 
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
                     oConexion.Open();
 
+                    #region Se inicializan objetos de base de datos
+
                     AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
 
-                    respuestaObtenida = parametrosProcedimiento[1].Value.ToString();
+                    respuestasObtenidasBD[0] = parametrosProcedimiento[2].Value.ToString();
+
+                    #endregion Se inicializan objetos de base de datos
+
+                    #region Se obtienen los registros que participarán en el cálculo
+
+                    parametrosProcedimiento[0].Value = strUsuario;
+                    parametrosProcedimiento[1].Value = 2;
+                    parametrosProcedimiento[2].Value = null;
+                    parametrosProcedimiento[2].Direction = ParameterDirection.Output;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
+
+                    respuestasObtenidasBD[1] = parametrosProcedimiento[2].Value.ToString();
+
+                    #endregion Se obtienen los registros que participarán en el cálculo
+
+                    #region Se obtienen los montos de las tasaciones actualizadas del terreno y no terreno calculados
+
+                    parametrosProcedimiento[0].Value = strUsuario;
+                    parametrosProcedimiento[1].Value = 3;
+                    parametrosProcedimiento[2].Value = null;
+                    parametrosProcedimiento[2].Direction = ParameterDirection.Output;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
+
+                    respuestasObtenidasBD[2] = parametrosProcedimiento[2].Value.ToString();
+
+                    #endregion Se obtienen los montos de las tasaciones actualizadas del terreno y no terreno calculados
+
+                    #region Se obtiene el porcentaje de aceptación del terreno calculado
+
+                    parametrosProcedimiento[0].Value = strUsuario;
+                    parametrosProcedimiento[1].Value = 4;
+                    parametrosProcedimiento[2].Value = null;
+                    parametrosProcedimiento[2].Direction = ParameterDirection.Output;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
+
+                    respuestasObtenidasBD[3] = parametrosProcedimiento[2].Value.ToString();
+
+                    #endregion Se obtiene el porcentaje de aceptación del terreno calculado
+
+                    #region Se obtiene el porcentaje de aceptación del no terreno calculado
+
+                    parametrosProcedimiento[0].Value = strUsuario;
+                    parametrosProcedimiento[1].Value = 5;
+                    parametrosProcedimiento[2].Value = null;
+                    parametrosProcedimiento[2].Direction = ParameterDirection.Output;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
+
+                    respuestasObtenidasBD[4] = parametrosProcedimiento[2].Value.ToString();
+
+                    #endregion Se obtiene el porcentaje de aceptación del no terreno calculado
+                                        
                 }
 
-                if (respuestaObtenida.Length > 0)
+                foreach (string respuestaObtenida in respuestasObtenidasBD)
                 {
-                    strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
-
-                    if (strMensajeObtenido[0].CompareTo("0") != 0)
+                    if (respuestaObtenida.Length > 0)
                     {
-                        descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
+                        strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
+
+                        if (strMensajeObtenido[0].CompareTo("0") != 0)
+                        {
+                            descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANTDetalleServicioWindows, strMensajeObtenido[1], Mensajes.ASSEMBLY);
+
+                            sbErroresCalculo.AppendLine(descripcionErrorRetornado);
+                        }
                     }
                 }
-
-                //using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-                //{
-                //    oConexion.Open();
-                    
-                //    //Ejecuta el comando
-                //    oRetornoVGR = AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Aplicar_Calculo_Avaluo_MTAT_MTANT", 0, parametrosProcedimiento);
-
-                //    if (oRetornoVGR != null)
-                //    {
-                //        while (oRetornoVGR.Read())
-                //        {
-                //            sbVGR.AppendLine(oRetornoVGR.ReadOuterXml());
-                //        }
-
-                //        vsObtenerVGR = sbVGR.ToString();
-
-                //        if (vsObtenerVGR.Length > 0)
-                //        {
-                //            strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(vsObtenerVGR);
-                //            if (strMensajeObtenido.Length > 1)
-                //            {
-                //                if (strMensajeObtenido[0].CompareTo("0") == 0)
-                //                {
-                //                    if (vsObtenerVGR.Length == 0)
-                //                    {
-                //                        descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
-                //                    }
-                //                }
-                //                else
-                //                {
-                //                    if (strMensajeObtenido[0].CompareTo("1") != 0)
-                //                    {
-                //                        descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
-
-                //                        if ((strMensajeObtenido.Length > 1) && (strMensajeObtenido[1] != null) && (strMensajeObtenido[1].Length > 0))
-                //                        {
-                //                            if (!esServicioWindows)
-                //                            {
-                //                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANTDetalleServicioWindows, strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
-                //                            }
-                //                            else
-                //                            {
-                //                                descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANTDetalleServicioWindows, strMensajeObtenido[1], Mensajes.ASSEMBLY);
-                //                            }
-                //                        }
-                //                    }
-                //                }
-                //            }
-                //            else
-                //            {
-                //                descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
-                //            }
-                //        }
-                //        else
-                //        {
-                //            descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANT, Mensajes.ASSEMBLY);
-                //    }
-                //}
             }
             catch (Exception ex)
             {
@@ -1303,9 +1304,11 @@ namespace BCRGARANTIAS.Negocios
                 }
 
                 descripcionErrorRetornado = Mensajes.Obtener(Mensajes._errorAplicandoCalculoMontoTATTANTDetalleServicioWindows, ex.Message, Mensajes.ASSEMBLY);
+
+                sbErroresCalculo.AppendLine(descripcionErrorRetornado);
             }
 
-            return descripcionErrorRetornado;
+            return sbErroresCalculo.ToString();
         }
 
         /// <summary>

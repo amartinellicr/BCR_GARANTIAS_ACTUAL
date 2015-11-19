@@ -1,12 +1,15 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BCR.Garantias.UI.Web.Interno", "http://localhost/BCR.Garantias.UI.Web.Interno", "{C748731F-A71C-4306-9459-70A53D2CBD8C}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""$/CONTRATO_MANTENIMIENTO/03 - ENTREGABLES/REQUERIMIENTO 038/Solución/SITIO WEB/BCR.Garantias.UI.Web.Interno", QENBAAAA"
 		SccAuxPath = ""
 		SccLocalPath = "."
 		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
 		ProjectReferences = "{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}|BCR.GARANTIAS.Comun.dll;{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}|BCR.GARANTIAS.Entidades.dll;{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}|Datos.dll;{646A5EBB-35FD-4497-8C35-8D4EFC921541}|BCRGarantias.Contenedores.dll;{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}|Utilidades.dll;{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}|Negocios.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/BCR.Garantias.UI.Web.Interno"
@@ -32,7 +35,9 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BCR.Garantias.WSI", "http:/
 		SccAuxPath = ""
 		SccLocalPath = "."
 		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv2.0"
+		ProjectReferences = "{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}|Negocios.dll;{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}|BCR.GARANTIAS.Comun.dll;{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}|BCR.GARANTIAS.Entidades.dll;{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}|Datos.dll;{646A5EBB-35FD-4497-8C35-8D4EFC921541}|BCRGarantias.Contenedores.dll;{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}|Utilidades.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/BCR.Garantias.WSI"
 		Debug.AspNetCompiler.PhysicalPath = "..\SERVICIO WEB\BCR.Garantias.WSI\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\BCR.Garantias.WSI\"
@@ -67,21 +72,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilidades", "..\COMPONENTES\Utilidades\Utilidades.csproj", "{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}"
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 2
-		SccWebProject0 = true
-		SccProjectUniqueName0 = http://localhost/BCR.Garantias.UI.Web.Interno
-		SccProjectName0 = \u0022$/CONTRATO_MANTENIMIENTO/03\u0020-\u0020ENTREGABLES/REQUERIMIENTO\u0020038/Solución/SITIO\u0020WEB/BCR.Garantias.UI.Web.Interno\u0022,\u0020QENBAAAA
-		SccLocalPath0 = D:\\BCR_GARANTIAS\\ACTUAL\\CONTRATO_MANTENIMIENTO\\03\u0020-\u0020ENTREGABLES\\REQUERIMIENTO\u0020038\\Solución\\SITIO\u0020WEB\\BCR.Garantias.UI.Web.Interno
-		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
-		SccProjectEnlistmentChoice0 = 2
-		SccWebProject1 = true
-		SccProjectUniqueName1 = http://localhost/BCR.Garantias.WSI
-		SccProjectName1 = \u0022$/CONTRATO_MANTENIMIENTO/03\u0020-\u0020ENTREGABLES/REQUERIMIENTO\u0020038/Solución/SERVICIO\u0020WEB/BCR.Garantias.WSI\u0022,\u0020WXMBAAAA
-		SccLocalPath1 = D:\\BCR_GARANTIAS\\ACTUAL\\CONTRATO_MANTENIMIENTO\\03\u0020-\u0020ENTREGABLES\\REQUERIMIENTO\u0020038\\Solución\\SERVICIO\u0020WEB\\BCR.Garantias.WSI
-		SccProvider1 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
-		SccProjectEnlistmentChoice1 = 2
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -110,7 +100,6 @@ Global
 		{72ECCED6-12EF-43A2-B6CA-B30E46418184}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{72ECCED6-12EF-43A2-B6CA-B30E46418184}.Release|x86.ActiveCfg = Debug|Any CPU
 		{DBD20F57-2D0A-4DE6-96B9-16F01D41F89A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBD20F57-2D0A-4DE6-96B9-16F01D41F89A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBD20F57-2D0A-4DE6-96B9-16F01D41F89A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{DBD20F57-2D0A-4DE6-96B9-16F01D41F89A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{DBD20F57-2D0A-4DE6-96B9-16F01D41F89A}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -129,7 +118,6 @@ Global
 		{7FC78698-F68D-43BD-B449-34AE45A1B0BE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7FC78698-F68D-43BD-B449-34AE45A1B0BE}.Release|x86.ActiveCfg = Release|Any CPU
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -139,7 +127,6 @@ Global
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}.Release|x86.ActiveCfg = Release|Any CPU
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -149,7 +136,6 @@ Global
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}.Release|x86.ActiveCfg = Release|Any CPU
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -159,7 +145,6 @@ Global
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{646A5EBB-35FD-4497-8C35-8D4EFC921541}.Release|x86.ActiveCfg = Release|Any CPU
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -169,7 +154,6 @@ Global
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}.Release|x86.ActiveCfg = Release|Any CPU
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -179,7 +163,6 @@ Global
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}.Release|x86.ActiveCfg = Release|Any CPU
 		{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -191,5 +174,20 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccWebProject0 = true
+		SccProjectUniqueName0 = http://localhost/BCR.Garantias.UI.Web.Interno
+		SccProjectName0 = \u0022$/CONTRATO_MANTENIMIENTO/03\u0020-\u0020ENTREGABLES/REQUERIMIENTO\u0020038/Solución/SITIO\u0020WEB/BCR.Garantias.UI.Web.Interno\u0022,\u0020QENBAAAA
+		SccLocalPath0 = D:\\BCR_GARANTIAS\\ACTUAL\\CONTRATO_MANTENIMIENTO\\03\u0020-\u0020ENTREGABLES\\REQUERIMIENTO\u0020038\\Solución\\SITIO\u0020WEB\\BCR.Garantias.UI.Web.Interno
+		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+		SccProjectEnlistmentChoice0 = 2
+		SccWebProject1 = true
+		SccProjectUniqueName1 = http://localhost/BCR.Garantias.WSI
+		SccProjectName1 = \u0022$/CONTRATO_MANTENIMIENTO/03\u0020-\u0020ENTREGABLES/REQUERIMIENTO\u0020038/Solución/SERVICIO\u0020WEB/BCR.Garantias.WSI\u0022,\u0020WXMBAAAA
+		SccLocalPath1 = D:\\BCR_GARANTIAS\\ACTUAL\\CONTRATO_MANTENIMIENTO\\03\u0020-\u0020ENTREGABLES\\REQUERIMIENTO\u0020038\\Solución\\SERVICIO\u0020WEB\\BCR.Garantias.WSI
+		SccProvider1 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+		SccProjectEnlistmentChoice1 = 2
 	EndGlobalSection
 EndGlobal

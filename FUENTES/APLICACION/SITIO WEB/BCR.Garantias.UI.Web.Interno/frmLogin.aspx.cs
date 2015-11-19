@@ -21,6 +21,10 @@ namespace BCRGARANTIAS
     {
         #region Variables Globales
 
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
+
         #endregion
 
         #region Eventos
@@ -88,7 +92,9 @@ namespace BCRGARANTIAS
                     if (Gestor.ValidarUsuario(txtUsuario.Text, txtClave.Text))
                     {
                         Session["strUSER"] = txtUsuario.Text.Trim().ToString();
-                        Response.Redirect("frmPrincipal.aspx",false);
+                        seRedirecciona = true;
+                        urlPaginaMensaje = "frmPrincipal.aspx";
+                        //Response.Redirect("frmPrincipal.aspx",false);
                     }
                     else
                     {
@@ -102,6 +108,11 @@ namespace BCRGARANTIAS
 
                 Utilitarios.RegistraEventLog((mensajeError + " Detalle Tcnico: " + ex.Message), EventLogEntryType.Error);
                 lblMensaje.Text = mensajeError;
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 

@@ -542,12 +542,42 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_REALES
 	cod_estado            smallint  NULL ,
 	cod_llave             uniqueidentifier  NOT NULL 
 	CONSTRAINT DF_GAR_GIROS_GARANTIAS_REALES_codllave
-		 DEFAULT  newid() 
+		 DEFAULT  newid(),
+	Porcentaje_Aceptacion_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2) NULL 
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'GAR_GIROS_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno'
+GO
 
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'GAR_GIROS_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'GAR_GIROS_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'GAR_GIROS_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
+GO
 
 CREATE TABLE dbo.GAR_GIROS_GARANTIAS_VALOR
 (
@@ -1016,11 +1046,22 @@ CREATE TABLE dbo.GAR_VALUACIONES_REALES
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
-	Fecha_Replica DATETIME NULL	  
+	Fecha_Replica DATETIME NULL,
+	Porcentaje_Aceptacion_Terreno  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_GAR_VALUACIONES_REALES_PorcentajeAceptacionTerreno
+		 DEFAULT  -1,
+	Porcentaje_Aceptacion_No_Terreno  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_GAR_VALUACIONES_REALES_PorcentajeAceptacionNoTerreno
+		 DEFAULT  -1,
+	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_GAR_VALUACIONES_REALES_PorcentajeAceptacionTerrenoCalculado
+		 DEFAULT  -1,
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_GAR_VALUACIONES_REALES_PorcentajeAceptacionNoTerrenoCalculado
+		 DEFAULT  -1  
 )
  ON "PRIMARY"
 GO
-
 
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Indica el tipo de fecha según la siguiente clasificación:
@@ -1049,6 +1090,34 @@ EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el regis
 GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_VALUACIONES_REALES', 'column' , 'Fecha_Replica'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'GAR_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'GAR_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'GAR_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'GAR_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
 GO
 
 
@@ -1416,11 +1485,25 @@ CREATE TABLE dbo.TMP_CALCULO_MTAT_MTANT
 	Codigo_Garantia       bigint  NOT NULL ,
 	Tipo_Bien             tinyint  NOT NULL ,
 	Total_Semestres_Calcular  smallint  NULL ,
-	Usuario               varchar(30)  NOT NULL 
+	Usuario               varchar(30)  NOT NULL,
+	Porcentaje_Aceptacion_Base  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_TMP_CALCULO_MTAT_MTANT_PorcentajeAceptacionBase
+		 DEFAULT  0,
+	Porcentaje_Aceptacion_Terreno  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_TMP_CALCULO_MTAT_MTANT_PorcentajeAceptacionTerreno
+		 DEFAULT  0,
+	Porcentaje_Aceptacion_No_Terreno  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_TMP_CALCULO_MTAT_MTANT_PorcentajeAceptacionNoTerreno
+		 DEFAULT  0,
+	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_TMP_CALCULO_MTAT_MTANT_PorcentajeAceptacionTerrenoCalculado
+		 DEFAULT  0,
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2)  NOT NULL 
+	CONSTRAINT  DF_TMP_CALCULO_MTAT_MTANT_PorcentajeAceptacionNoTerrenoCalculado
+		 DEFAULT  0
 )
  ON "PRIMARY"
 GO
-
 
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla alamcenará, de forma temporal, los registros generados por el cálculo del monto de la tasación actualizada del terreno y no terreno. Cada registro corresponde a un semestre.' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT'
@@ -1525,6 +1608,42 @@ GO
 
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Este campo almacenará la identificación del usuario que ejecuta el cálculo del monto. En el caso del proceso diario se asigna el valor "UsuarioBD".' , 'user' , 'dbo' , 'table' , 'TMP_CALCULO_MTAT_MTANT', 'column' , 'Usuario'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_CALCULO_MTAT_MTANT',
+'column', 'Porcentaje_Aceptacion_Terreno'
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_CALCULO_MTAT_MTANT',
+'column', 'Porcentaje_Aceptacion_No_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_CALCULO_MTAT_MTANT',
+'column', 'Porcentaje_Aceptacion_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_CALCULO_MTAT_MTANT',
+'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación parametrizado, para el tipo de mitigador, al momento de aplicar el cáclulo.',
+'user', 'dbo',
+'table', 'TMP_CALCULO_MTAT_MTANT',
+'column', 'Porcentaje_Aceptacion_Base'
 GO
 
 
@@ -1646,11 +1765,90 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES
 	CONSTRAINT DF_GAR_GIROS_GARANTIAS_REALES_ind_duplicidad
 		 DEFAULT  1 ,
 	cod_usuario           varchar(30)  NOT NULL ,
-	cod_llave             bigint  IDENTITY (1,1) 
+	cod_llave             bigint  IDENTITY (1,1),
+	Porcentaje_Aceptacion_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2) NULL,
+	Codigo_SAP numeric(8,0) NULL,
+	Monto_Poliza_Colonizado numeric(16,2) NULL,
+	Fecha_Vencimiento_Poliza datetime NULL,
+	Codigo_Tipo_Poliza_Sugef  int NULL,
+	Indicador_Poliza char(1) NULL,
+	Indicador_Coberturas_Obligatorias  char(2) NULL
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Código de la póliza dentro del sistema de pólizas (SAP).',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Codigo_SAP'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Guardará el monto de la póliza colonizado, para lo cual debe usar el tipo de cambio de compra del dólar, almacenado en la tabla CAT_INDICES_ACTUALIZACION_AVALUO.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Monto_Poliza_Colonizado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Fecha de vencimiento de la póliza.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Fecha_Vencimiento_Poliza'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Código asignado al tipo de póliza SUGEF.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Codigo_Tipo_Poliza_Sugef'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Indica si la garantía posee una póliza relacionada (S) o no (N).',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Indicador_Poliza'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Indica si la póliza relacionada a la garantía posee todas las coberturas obligatorias (SI) o no (NO).',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES',
+'column', 'Indicador_Coberturas_Obligatorias'
+GO
 
 
 CREATE TABLE dbo.TMP_GARANTIAS_REALES_OPERACIONES
@@ -1725,7 +1923,16 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES_OPERACIONES
 	Numero_Placa_Bien     varchar(25)  NOT NULL 
 	CONSTRAINT DF_TMP_GARANTIAS_REALES_OPERACIONES_Numero_Placa_Bien
 		 DEFAULT  '' ,
-	Codigo_Usuario        varchar(30)  NOT NULL 
+	Codigo_Usuario        varchar(30)  NOT NULL,
+	Indicador_Calcular_MTAT_MTANT  bit  NOT NULL 
+	CONSTRAINT  DF_TMP_GARANTIAS_REALES_OPERACIONES_IndicadorCalcularMTATMTANT
+		 DEFAULT  0,
+	Indicador_Calcular_PATC  bit  NOT NULL 
+	CONSTRAINT  DF_TMP_GARANTIAS_REALES_OPERACIONES_IndicadorCalcularPATC
+		 DEFAULT  0,
+	Indicador_Calcular_PANTC  bit  NOT NULL 
+	CONSTRAINT  DF_TMP_GARANTIAS_REALES_OPERACIONES_IndicadorCalcularPANTC
+		 DEFAULT  0
 )
  ON "PRIMARY"
 GO
@@ -1866,6 +2073,27 @@ GO
 
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_OPERACIONES', 'column' , 'Codigo_Usuario'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Indicador de que el registro participará en el cálculo automático de los montos de las tasaciones actualizadas del terreno y no terreno.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES_OPERACIONES',
+'column', 'Indicador_Calcular_MTAT_MTANT'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Indicador de que el registro participará en el cálculo automático del porcentaje de aceptación del terreno calculado.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES_OPERACIONES',
+'column', 'Indicador_Calcular_PATC'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Indicador de que el registro participará en el cálculo automático del porcentaje de aceptación del no terreno calculado.',
+'user', 'dbo',
+'table', 'TMP_GARANTIAS_REALES_OPERACIONES',
+'column', 'Indicador_Calcular_PANTC'
 GO
 
 
@@ -2189,10 +2417,44 @@ CREATE TABLE dbo.TMP_VALUACIONES_REALES
 	ind_avaluo_completo   tinyint  NULL 
 	CONSTRAINT DF_TMP_VALUACIONES_REALES_ind_avaluo_completo
 		 DEFAULT  1 ,
-	cod_usuario           varchar(30)  NULL 
+	cod_usuario           varchar(30)  NULL,
+	Porcentaje_Aceptacion_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2) NULL,
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2) NULL
 )
  ON "PRIMARY"
 GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno, ingresado por el usuario.',
+'user', 'dbo',
+'table', 'TMP_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_Terreno_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Porcentaje de aceptación del no terreno calculado, es definido por el sistema.',
+'user', 'dbo',
+'table', 'TMP_VALUACIONES_REALES',
+'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
+GO
+
+
 
 CREATE TABLE dbo.GAR_SICC_DAMHT
 (
