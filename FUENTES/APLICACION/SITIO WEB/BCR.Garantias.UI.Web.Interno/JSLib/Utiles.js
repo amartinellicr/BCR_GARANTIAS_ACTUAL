@@ -4428,7 +4428,7 @@ function ValidarPorcentajeAceptacionCalculado() {
 
         
         //SI TIPO BIEN DIFERENTE DE VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-        if (tipoBien !== 1 && tipoBien !== 3 && tipoGarantiaReal !== 3) {
+        if (tipoBien !== 1 && tipoBien !== 2 && tipoBien !== 3 && tipoGarantiaReal !== 3) {
             if (getDateDiff(fechaSeguimiento, fechaActual, "years") > 1) {
                 if (castigoAplicado === 0) {
                     $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
