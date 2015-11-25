@@ -82,6 +82,13 @@ namespace BCRGARANTIAS.Forms
 
         private const string LLAVE_HABILITAR_PORCENTAJES_ACEPTACION_AVALUO = "HPAA";
 
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC = "EIFUSMPATC";
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC = "EIFUSMPANTC";
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ = "EIFUSMPANTCMAQ";
+
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC = "EIFVMPATC";
+        private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC = "EIFVMPANTC";
+
         #endregion Constantes
 
         #region Variables Globales
@@ -1604,6 +1611,170 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de último seguimiento mayor a un año debe mostrarse (1) o no (0), esto para el porcentaje de aceptación del terreno calculado
+        /// </summary>
+        public bool MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PATC, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de último seguimiento mayor a un año debe mostrarse (1) o no (0), esto para el porcentaje de aceptación del no terreno calculado
+        /// </summary>
+        public bool MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de último seguimiento mayor a un año debe mostrarse (1) o no (0), esto para el porcentaje de aceptación del no terreno calculado de maquinaria o equipo
+        /// </summary>
+        public bool MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_ULTIMO_SEGUIMIENTO_MAYOR_1ANNO_PANTC_MAQ, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de valuación mayor a cinco años debe mostrarse (1) o no (0), esto del porcentaje de aceptación del terreno calculado
+        /// </summary>
+        public bool MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC, "0");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que la fecha de valuación mayor a cinco años debe mostrarse (1) o no (0), esto del porcentaje de aceptación del no terreno calculado
+        /// </summary>
+        public bool MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado
+        {
+            get
+            {
+
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC, "0");
+                }
+            }
+        }
 
 
         #endregion Propiedades
@@ -1769,7 +1940,7 @@ namespace BCRGARANTIAS.Forms
             txtPorcentajeAceptacionCalculado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtPorcentajeAceptacionCalculado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
 
-            txtFechaSeguimiento.Attributes.Add("onblur", "javascript:ValidarPorcentajeAceptacionCalculado();");
+            txtFechaSeguimiento.Attributes.Add("onblur", "javascript:MostrarMensajesPorAceptAvaluo(true); javascript:ValidarPorcentajeAceptacionCalculado();");
 
             #endregion Siebel 1-24613011. Realizado por: Leonardo Cortés Mora. - Lidersoft Internacional S.A., 12/12/2014.
 
@@ -1784,29 +1955,29 @@ namespace BCRGARANTIAS.Forms
             txtFechaVencimiento.Attributes.Add("onblur", "javascript:ActualizarFechaPrescripcion();");
 
             txtMontoUltTasacionTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-            txtMontoUltTasacionTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:CalcularMontoTAT_TANT();");
+            txtMontoUltTasacionTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:MostrarMensajesPorAceptAvaluo(true); javascript:CalcularMontoTAT_TANT();");
 
             txtMontoUltTasacionNoTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-            txtMontoUltTasacionNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:CalcularMontoTAT_TANT();");
+            txtMontoUltTasacionNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:MostrarMensajesPorAceptAvaluo(true); javascript:CalcularMontoTAT_TANT();");
 
             txtMontoTasActTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-            txtMontoTasActTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:CalcularMontoMitigador();");
+            txtMontoTasActTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:MostrarMensajesPorAceptAvaluo(true); javascript:CalcularMontoMitigador();");
 
             txtMontoTasActNoTerreno.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-            txtMontoTasActNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:CalcularMontoMitigador();");
+            txtMontoTasActNoTerreno.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:MostrarMensajesPorAceptAvaluo(true); javascript:CalcularMontoMitigador();");
 
             txtMontoAvaluo.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtMontoAvaluo.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false);");
 
             txtMontoAcreenciaPoliza.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-            txtMontoAcreenciaPoliza.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:ValidarPorcentajeAceptacionCalculado();");
+            txtMontoAcreenciaPoliza.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false); javascript:MostrarMensajesPorAceptAvaluo(true); javascript:ValidarPorcentajeAceptacionCalculado();");
 
-            cbCodigoSap.Attributes.Add("onchange", "javascript:cargarDatosPoliza();");
+            cbCodigoSap.Attributes.Add("onchange", "javascript:MostrarMensajesPorAceptAvaluo(true); javascript:cargarDatosPoliza();");
 
             btnValidarOperacion.Attributes["onclick"] = "javascript:document.body.style.cursor = 'wait'; return true;";
             btnLimpiar.Attributes["onclick"] = "javascript:document.body.style.cursor = 'wait'; return true;";
 
-            chkDeudorHabitaVivienda.Attributes.Add("onclick", "javascript:ValidarPorcentajeAceptacionCalculado();");
+            chkDeudorHabitaVivienda.Attributes.Add("onclick", "javascript:MostrarMensajesPorAceptAvaluo(true); javascript:ValidarPorcentajeAceptacionCalculado();");
 
             gdvGarantiasReales.Attributes.Add("OnDataBinding", "document.body.style.cursor = 'wait'; document.documentElement.style.cursor = 'wait';");
 
@@ -1836,8 +2007,12 @@ namespace BCRGARANTIAS.Forms
             MostrarErrorPolizaAsociadaTB1 = false;
             MostrarErrorCoberturasObligatoriasInvalidas = false;
             HabilitarPorcentajesAceptacionAvaluo = false;
+            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = false;
+            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = false;
+            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = false;
+            MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = false;
+            MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = false;
 
-                        
             if (!IsPostBack)
             {
                 try
@@ -1871,6 +2046,11 @@ namespace BCRGARANTIAS.Forms
                             MostrarErrorPolizaVencida = true;
                             MostrarErrorPolizaAsociadaTB1 = true;
                             MostrarErrorCoberturasObligatoriasInvalidas = true;
+                            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = true;
+                            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                            MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
+                            MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
+                            MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
 
                         }
 
@@ -1977,6 +2157,11 @@ namespace BCRGARANTIAS.Forms
                                 MostrarErrorPolizaVencida = true;
                                 MostrarErrorPolizaAsociadaTB1 = true;
                                 MostrarErrorCoberturasObligatoriasInvalidas = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
+                                MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
+                                MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
 
                                 CargarDatosSession(true);
 
@@ -2089,6 +2274,11 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorPolizaVencida = true;
                     MostrarErrorPolizaAsociadaTB1 = true;
                     MostrarErrorCoberturasObligatoriasInvalidas = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
 
                     btnModificar_Click(sender, e);
                 }
@@ -2371,7 +2561,12 @@ namespace BCRGARANTIAS.Forms
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
                         || (!MostrarErrorSinPolizaAsociada) || (!MostrarErrorPolizaInvalida) || (!MostrarErrorMontoPolizaCubreBien)
                         || (!MostrarErrorFechaUltimoSeguimientoMayor) || (!MostrarErrorFechaValuacionMayor) /*|| (!MostrarErrorPolizaMontoMenor)*/
-                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1) || (!MostrarErrorCoberturasObligatoriasInvalidas))
+                        || (!MostrarErrorPolizaVencida) || (!MostrarErrorPolizaAsociadaTB1) || (!MostrarErrorCoberturasObligatoriasInvalidas)
+                        || (!MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado)
+                        || (!MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado)
+                        || (!MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq)
+                        || (!MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado)
+                        || (!MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
@@ -2383,7 +2578,12 @@ namespace BCRGARANTIAS.Forms
                             //(entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaMontoMenor))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociadaVencimientoMenor))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaAsociada))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
                             )
                         {
                             MostrarMensajesInformativos();
@@ -2716,6 +2916,8 @@ namespace BCRGARANTIAS.Forms
 
         protected void cbMitigador_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            ScriptManager requestSM = ScriptManager.GetCurrent(this.Page);
+
             try
             {
                 int tipoBien = -1;
@@ -2856,6 +3058,26 @@ namespace BCRGARANTIAS.Forms
                     }
 
                     AplicarCalculoMontoMitigador();
+                }
+
+                if ((cbCodigoSap != null) && (cbCodigoSap.Items.Count > 0) && (cbCodigoSap.SelectedItem.Value.CompareTo("-1") != 0)
+                    && (entidadGarantia.PolizasSap.Count > 0))
+                {
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function(){cargarPoliza('" + entidadGarantia.PolizasSap.ObtenerJSON() + "');});</script>",
+                                                               false);
+                    }
                 }
             }
             catch (Exception ex)
@@ -5651,7 +5873,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento)
                             {
                                 estadoVerificacion = false;
-                                //existeErrorPorcentajesAceptacionAvaluos = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = false;
 
                                 if (mostrarErrorEmergente)
                                 {
@@ -5661,14 +5883,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
                                                                                false);
                                     }
                                 }
@@ -5680,7 +5902,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptTerrenoCalcFechaValuacion)
                             {
                                 estadoVerificacion = false;
-                                //existeErrorPorcentajesAceptacionAvaluos = true;
+                                MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = false;
 
                                 if (mostrarErrorEmergente)
                                 {
@@ -5690,14 +5912,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
                                                                                false);
                                     }
                                 }
@@ -5828,7 +6050,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento)
                             {
                                 estadoVerificacion = false;
-                                //existeErrorPorcentajesAceptacionAvaluos = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = false;
 
                                 if (mostrarErrorEmergente)
                                 {
@@ -5838,14 +6060,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
                                                                                false);
                                     }
                                 }
@@ -5858,7 +6080,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)
                             {
                                 estadoVerificacion = false;
-                                //existeErrorPorcentajesAceptacionAvaluos = true;
+                                MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = false;
 
                                 if (mostrarErrorEmergente)
                                 {
@@ -5868,14 +6090,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
                                                                                false);
                                     }
                                 }
@@ -5888,7 +6110,7 @@ namespace BCRGARANTIAS.Forms
                             if (!existeErrorPorcentajesAceptacionAvaluos && entidadGarantiaReal.InconsistenciaPorcAceptNoTerrenoCalcFechaValuacion)
                             {
                                 estadoVerificacion = false;
-                                //existeErrorPorcentajesAceptacionAvaluos = true;
+                                MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = false;
 
                                 if (mostrarErrorEmergente)
                                 {
@@ -5898,14 +6120,14 @@ namespace BCRGARANTIAS.Forms
                                         ScriptManager.RegisterClientScriptBlock(this,
                                                                                 typeof(Page),
                                                                                 Guid.NewGuid().ToString(),
-                                                                                entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                                                entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
                                                                                 false);
                                     }
                                     else
                                     {
                                         this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
                                                                                Guid.NewGuid().ToString(),
-                                                                               entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                                               entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
                                                                                false);
                                     }
                                 }
@@ -8552,6 +8774,151 @@ namespace BCRGARANTIAS.Forms
                 else
                 {
                     MostrarErrorCoberturasObligatoriasInvalidas = true;
+                }
+                //
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionTerrenoCalculado = true;
+                }
+                //
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
+                }
+                //
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                }
+                //
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
+                }
+                //
+
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
                 }
                 //
 
