@@ -11,12 +11,12 @@ IF OBJECT_ID ('pa_ObtenerGarantiasRealesOperaciones', 'P') IS NOT NULL
 GO
 
 CREATE PROCEDURE [dbo].[pa_ObtenerGarantiasRealesOperaciones]
-	@pdCodigo_Operacion BIGINT = NULL,
-	@piContabilidad TINYINT,
-	@piOficina SMALLINT,
-	@piMoneda TINYINT,
-	@piProducto TINYINT,
-	@pdOperacion DECIMAL(7),
+	@piConsecutivo_Operacion BIGINT = NULL,
+	@piCodigo_Contabilidad TINYINT,
+	@piCodigo_Oficina SMALLINT,
+	@piCodigo_Moneda TINYINT,
+	@piCodigo_Producto TINYINT,
+	@piNumero_Operacion DECIMAL(7),
 	@pbObtener_Solo_Codigo BIT = 0,
 	@psID_Usuario VARCHAR(30) = NULL
 AS
@@ -28,14 +28,14 @@ BEGIN
 		Procedimiento almacenado que obtiene la información referente a las garantías reales relacionadas a las operaciones y giros activos.
 	</Descripción>
 	<Entradas>
-		@pdCodigo_Operacion	= Conseutivo de la operación, del cual se obtendrán las garantías reales asociadas. 
-		@piContabilidad	= Código de la contabilidad de la operación.
-		@piOficina		= Número de la oficina de la operación.
-		@piMoneda		= Código de la moneda de la operación.
-		@piProducto		= Código del producto de la operación.
-		@nContrato		= Número de la operación.
-		@pbObtener_Solo_Codigo	= Indica si se obtiene sólo la inforación referente al código del a garantía o la información completa.
-		@psID_Usuario		= Identificación del usuario que realzia la consulta de la operación.
+		@piConsecutivo_Operacion	= Conseutivo de la operación, del cual se obtendrán las garantías reales asociadas. 
+		@piCodigo_Contabilidad		= Código de la contabilidad de la operación.
+		@piCodigo_Oficina			= Número de la oficina de la operación.
+		@piCodigo_Moneda			= Código de la moneda de la operación.
+		@piCodigo_Producto			= Código del producto de la operación.
+		@nContrato					= Número de la operación.
+		@pbObtener_Solo_Codigo		= Indica si se obtiene sólo la inforación referente al código del a garantía o la información completa.
+		@psID_Usuario				= Identificación del usuario que realzia la consulta de la operación.
 	</Entradas>
 	<Salidas></Salidas>
 	<Autor>Javier Chaves Alvarado, BCR</Autor>
@@ -102,8 +102,7 @@ BEGIN
 	SET DATEFORMAT dmy
 
 	/*Se declaran las variables que se usuarna para trabajar la fecha actual como un entero*/
-	DECLARE @vbEs_Giro BIT,
-			@vdCodigo_Operacion BIGINT,
+	DECLARE @vdCodigo_Operacion BIGINT,
 			@viConsecutivo	BIGINT --Se usa para generar los códigos de la tabla temporal de números.
 
 	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT IDENTITY(1,1),
@@ -150,53 +149,19 @@ BEGIN
 	
 
 	/*Se determina si se ha enviado el consecutivo de la operación*/
-	IF(@pdCodigo_Operacion IS NULL)
+	IF(@piConsecutivo_Operacion IS NULL)
 	BEGIN
-		SET @pdCodigo_Operacion = (	SELECT	cod_operacion 
-									FROM	dbo.GAR_OPERACION
-									WHERE	cod_contabilidad = @piContabilidad
-										AND cod_oficina = @piOficina
-										AND cod_moneda = @piMoneda
-										AND cod_producto = @piProducto
-										AND num_operacion = @pdOperacion
-										AND cod_estado = 1)
+		SET @piConsecutivo_Operacion = (SELECT	cod_operacion 
+										FROM	dbo.GAR_OPERACION
+										WHERE	cod_contabilidad = @piCodigo_Contabilidad
+											AND cod_oficina = @piCodigo_Oficina
+											AND cod_moneda = @piCodigo_Moneda
+											AND cod_producto = @piCodigo_Producto
+											AND num_operacion = @piNumero_Operacion
+											AND cod_estado = 1)
 	END
 
-
-	/*Se determina si es un giro, ante lo cual, se procederá a obtener el consecutivo del contrato al cual está asociado dicho giro, esto con la
-      la finalidad de obtener las garantías asociadas al mismo. En caso de no ser un giro, entonces se uitliza el consecutivo pasado o encontrado anteirormente*/
-	SET @vbEs_Giro =	CASE 
-							WHEN (SELECT num_contrato FROM dbo.GAR_OPERACION WHERE cod_operacion = @pdCodigo_Operacion AND num_operacion IS NOT NULL AND num_contrato > 0) > 0 THEN 1
-							ELSE 0
-						END
-
-	IF(@vbEs_Giro = 1)
-	BEGIN
-		SET @vdCodigo_Operacion = (	SELECT	DISTINCT GO1.cod_operacion
-									FROM  (	SELECT	MCA.prmca_pco_conta, MCA.prmca_pco_ofici, MCA.prmca_pco_moned, 
-													MCA.prmca_pco_produc, MCA.prmca_pnu_contr
-											FROM	dbo.GAR_SICC_PRMOC MOC
-												INNER JOIN  dbo.GAR_SICC_PRMCA MCA
-												ON MCA.prmca_pco_ofici = MOC.prmoc_pco_oficon
-												AND MCA.prmca_pco_moned = MOC.prmoc_pcomonint
-												AND MCA.prmca_pnu_contr = MOC.prmoc_pnu_contr
-											WHERE	MOC.prmoc_pnu_oper = @pdOperacion
-												AND MOC.prmoc_pco_ofici = @piOficina
-												AND MOC.prmoc_pco_moned = @piMoneda
-												AND MOC.prmoc_pco_produ = @piProducto
-												AND MOC.prmoc_pco_conta = @piContabilidad) MC1
-										INNER JOIN dbo.GAR_OPERACION GO1
-										ON GO1.cod_contabilidad = MC1.prmca_pco_conta
-										AND GO1.cod_oficina = MC1.prmca_pco_ofici
-										AND GO1.cod_moneda = MC1.prmca_pco_moned
-										AND GO1.cod_producto = MC1.prmca_pco_produc
-										AND GO1.num_contrato = MC1.prmca_pnu_contr
-									WHERE GO1.num_operacion IS NULL)
-	END
-	ELSE
-	BEGIN
-		SET @vdCodigo_Operacion = @pdCodigo_Operacion
-	END
+	SET @vdCodigo_Operacion = @piConsecutivo_Operacion
 
 	--Se carga la tabla temporal de consecutivos
 	WHILE	@viConsecutivo <= 69
@@ -217,11 +182,11 @@ BEGIN
 			INNER JOIN @CLASES_GARANTIAS_REALES CGR
 			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
 		WHERE	MGT.prmgt_estado = 'A'
-			AND MGT.prmgt_pnu_oper = @pdOperacion
-			AND MGT.prmgt_pco_ofici = @piOficina
-			AND MGT.prmgt_pco_moned = @piMoneda
-			AND MGT.prmgt_pco_produ = @piProducto
-			AND MGT.prmgt_pco_conta = @piContabilidad
+			AND MGT.prmgt_pnu_oper = @piNumero_Operacion
+			AND MGT.prmgt_pco_ofici = @piCodigo_Oficina
+			AND MGT.prmgt_pco_moned = @piCodigo_Moneda
+			AND MGT.prmgt_pco_produ = @piCodigo_Producto
+			AND MGT.prmgt_pco_conta = @piCodigo_Contabilidad
 
 
 	/*Se eliminan los registros con clase de garantía entre 20 y 29, pero con código de tenencia distinto de 1*/
@@ -276,7 +241,7 @@ BEGIN
 		ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 		AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
 		AND MGT.prmgt_pnuide_alf = GGR.Identificacion_Alfanumerica_Sicc COLLATE DATABASE_DEFAULT
-	WHERE	GO1.cod_operacion = @pdCodigo_Operacion
+	WHERE	GO1.cod_operacion = @piConsecutivo_Operacion
 		AND MGT.prmgt_pco_grado = COALESCE(GGR.cod_grado, MGT.prmgt_pco_grado)
 		AND MGT.prmgt_pnu_part = CASE 
 									WHEN  GGR.cod_clase_garantia BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part

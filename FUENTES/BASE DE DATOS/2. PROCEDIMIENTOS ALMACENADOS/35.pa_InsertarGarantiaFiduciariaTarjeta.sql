@@ -11,34 +11,31 @@ GO
 
 CREATE PROCEDURE [dbo].[pa_InsertarGarantiaFiduciariaTarjeta]
 	--Garantia fiduciaria
-	@nTipoGarantia			SMALLINT,
-	@nClaseGarantia			SMALLINT,
-	@strCedulaFiador		VARCHAR(25),
-	@strNombreFiador		VARCHAR(100),
-	@nTipoFiador			SMALLINT,
+	@piTipo_Garantia			SMALLINT,
+	@piClase_Garantia			SMALLINT,
+	@psCedula_Fiador			VARCHAR(25),
+	@psNombre_Fiador			VARCHAR(100),
+	@piTipo_Fiador				SMALLINT,
 	--Garantia fiduciaria X Tarjeta
-	@strTarjeta				VARCHAR(16),
-	@nTipoMitigador			SMALLINT,
-	@nTipoDocumentoLegal	SMALLINT,
-	@nMontoMitigador		DECIMAL(18,2),
-	@nPorcentaje			DECIMAL(5,2),
-	@nOperacionEspecial		SMALLINT,
-	@nTipoAcreedor			SMALLINT,
-	@strCedulaAcreedor		VARCHAR(30),
-	@dFechaExpiracion		DATETIME,
-	@nMontoCobertura		MONEY,
-	@strCedulaDeudor		VARCHAR(30),
-	@nBIN					INT,
-	@nCodigoInternoSISTAR	INT,
-	@nMoneda				TINYINT,
-	@nOficinaRegistra		SMALLINT,
-	@strObservacion			VARCHAR(150),
+	@psTarjeta					VARCHAR(16),
+	@piTipo_Mitigador			SMALLINT,
+	@piTipo_Documento_Legal		SMALLINT,
+	@pdMonto_Mitigador			DECIMAL(18,2),
+	@pdPorcentaje_Responsabilidad			DECIMAL(5,2),
+	@piOperacion_Especial		SMALLINT,
+	@piTipo_Acreedor			SMALLINT,
+	@psCedula_Acreedor			VARCHAR(30),
+	@pdtFecha_Expiracion		DATETIME,
+	@pmMonto_Cobertura			MONEY,
+	@psCedula_Deudor			VARCHAR(30),
+	@piBIN						INT,
+	@piCodigo_Interno_SISTAR	INT,
+	@piMoneda					TINYINT,
+	@piOficina_Registra			SMALLINT,
+	@psObservacion				VARCHAR(150),
+	@pdPorcentaje_Aceptacion	DECIMAL(5,2),
 	--Catálogo
-	@codigo_catalogo		INT,
-	--Bitacora
-	@strUsuario				VARCHAR(30),
-	@strIP					VARCHAR(20),
-	@nOficina				SMALLINT = NULL
+	@piCodigo_Catalogo			INT
 
 AS
 BEGIN
@@ -50,34 +47,30 @@ BEGIN
 	</Descripción>
 	<Entradas>
 			--Garantia fiduciaria
-			@nTipoGarantia			= Código del tipo de garantía.
-			@nClaseGarantia			= Código de la clase de garantía.
-			@strCedulaFiador		= Identificación del fiador.
-			@strNombreFiador		= Nombre del fiador.
-			@nTipoFiador			= Código del tipo de personadel fiador
+			@piTipo_Garantia			= Código del tipo de garantía.
+			@piClase_Garantia			= Código de la clase de garantía.
+			@psCedula_Fiador			= Identificación del fiador.
+			@psNombre_Fiador			= Nombre del fiador.
+			@piTipo_Fiador				= Código del tipo de personadel fiador
 			--Garantia fiduciaria X Tarjeta
-			@strTarjeta				= Número de la tarjeta
-			@nTipoMitigador			= Código del tipo de mitigador de riesgo.
-			@nTipoDocumentoLegal	= Código del tipo de documento legal.
-			@nMontoMitigador		= Monto mitigador de riesgo.
-			@nPorcentaje			= Porcentaje de aceptación.
-			@nOperacionEspecial		= Código del tipo de operación especial.
-			@nTipoAcreedor			= Código del tipo de persona del acreedor.
-			@strCedulaAcreedor		= Indentificación del acreedor.
-			@dFechaExpiracion		= Fehca de expiración de la garantía.
-			@nMontoCobertura		= Monto de cobertura de la garantía.
-			@strCedulaDeudor		= Identificación del deudor.
-			@nBIN					= Código del bin.
-			@nCodigoInternoSISTAR	= Código interno dentro del sistema de tarjetas
-			@nMoneda				= Código de la moneda.
-			@nOficinaRegistra		= Código de la oficina que registra.
-			@strObservacion			= Observación.
+			@psTarjeta					= Número de la tarjeta
+			@piTipo_Mitigador			= Código del tipo de mitigador de riesgo.
+			@piTipo_Documento_Legal		= Código del tipo de documento legal.
+			@pdMonto_Mitigador			= Monto mitigador de riesgo.
+			@pdPorcentaje_Responsabilidad = Porcentaje de aceptación.
+			@piOperacion_Especial		= Código del tipo de operación especial.
+			@piTipo_Acreedor			= Código del tipo de persona del acreedor.
+			@psCedula_Acreedor			= Indentificación del acreedor.
+			@pdtFecha_Expiracion		= Fehca de expiración de la garantía.
+			@pmMonto_Cobertura			= Monto de cobertura de la garantía.
+			@psCedula_Deudor			= Identificación del deudor.
+			@piBIN						= Código del bin.
+			@piCodigo_Interno_SISTAR	= Código interno dentro del sistema de tarjetas
+			@piMoneda					= Código de la moneda.
+			@piOficina_Registra			= Código de la oficina que registra.
+			@psObservacion				= Observación.
 			--Catálogo
-			@codigo_catalogo		= Código del catálogo de garantías por perfil.
-			--Bitacora
-			@strUsuario				= Identificación del usuario que realiza la inserción.
-			@strIP					= Dirección IP de la máquina desde donde se realiza la inserción.
-			@nOficina				= Códigode la oficina desde donde se realiza la inserción.
+			@piCodigo_Catalogo			= Código del catálogo de garantías por perfil.
 	</Entradas>
 	<Salidas>
 	</Salidas>
@@ -89,13 +82,23 @@ BEGIN
 	<Versión>1.1</Versión>
 	<Historial>
 		<Cambio>
-			<Autor>RArnoldo Martinelli Marín, Lidersoft Internacional S.A.</Autor>
+			<Autor>Arnoldo Martinelli Marín, Lidersoft Internacional S.A.</Autor>
 			<Requerimiento>
 				Req Bcr Garantias Migración, Siebel No.1-24015441
 			</Requerimiento>
 			<Fecha>13/02/2014</Fecha>
 			<Descripción>
 				Se eliminan las referencias al BNX.
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
+			<Fecha>04/12/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
+				crear el campo referente al porcentaje de aceptación, este campo reemplazará al camp oporcentaje de responsabilidad dentro de 
+				cualquier lógica existente. 
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -127,11 +130,12 @@ DECLARE		@nInsertaGarFidu INT
 
 BEGIN TRANSACTION	
 
-	SET @mensaje = 0
+	SET		@mensaje = 0
 
 	IF NOT EXISTS (	SELECT	1
 					FROM	dbo.TAR_TARJETA
-					WHERE	num_tarjeta =	@strTarjeta) BEGIN
+					WHERE	num_tarjeta = @psTarjeta) 
+	BEGIN
 
 		INSERT	INTO dbo.TAR_TARJETA
 		(
@@ -146,12 +150,12 @@ BEGIN TRANSACTION
 		)
 		VALUES
 		(
-			@strTarjeta,
-			@strCedulaDeudor,
-			@nBIN,
-			@nCodigoInternoSISTAR,
-			@nMoneda,
-			@nOficinaRegistra,
+			@psTarjeta,
+			@psCedula_Deudor,
+			@piBIN,
+			@piCodigo_Interno_SISTAR,
+			@piMoneda,
+			@piOficina_Registra,
 			1,
 			'N'
 		)
@@ -171,13 +175,14 @@ BEGIN TRANSACTION
 		SELECT	@nTarjeta = cod_tarjeta, 
 				@nCodigoTipoGarantia = cod_tipo_garantia
 		FROM	dbo.TAR_TARJETA
-		WHERE	num_tarjeta = @strTarjeta		
+		WHERE	num_tarjeta = @psTarjeta		
 
 	END
 
 	IF NOT EXISTS (	SELECT	1
 					FROM	dbo.TAR_GARANTIA_FIDUCIARIA
-					WHERE	cedula_fiador = @strCedulaFiador) BEGIN
+					WHERE	cedula_fiador = @psCedula_Fiador) 
+	BEGIN
 
 		INSERT INTO dbo.TAR_GARANTIA_FIDUCIARIA
 		(
@@ -189,11 +194,11 @@ BEGIN TRANSACTION
 		)
 		VALUES
 		(
-			@nTipoGarantia,
-			@nClaseGarantia,
-			@strCedulaFiador,
-			@strNombreFiador,
-			@nTipoFiador
+			@piTipo_Garantia,
+			@piClase_Garantia,
+			@psCedula_Fiador,
+			@psNombre_Fiador,
+			@piTipo_Fiador
 		)
 		
 		/*Evalua si se produjo un error*/
@@ -210,7 +215,7 @@ BEGIN TRANSACTION
 
 		SELECT	@nGarantiaFiduciaria = cod_garantia_fiduciaria
 		FROM	dbo.TAR_GARANTIA_FIDUCIARIA
-		WHERE	cedula_fiador = @strCedulaFiador		
+		WHERE	cedula_fiador = @psCedula_Fiador		
 
 	END 
 
@@ -221,7 +226,7 @@ BEGIN TRANSACTION
 		/*Evalua que el código tipo de garantía sea por perfil*/
 		IF EXISTS (	SELECT	1
 					FROM	dbo.CAT_ELEMENTO
-					WHERE	cat_catalogo = @codigo_catalogo
+					WHERE	cat_catalogo = @piCodigo_Catalogo
 						AND cat_campo = @nCodigoTipoGarantia)
 		BEGIN
 			/*Elimina la información de la garantía por perfil que se encuentra
@@ -275,22 +280,24 @@ BEGIN TRANSACTION
 			cedula_acreedor,
 			fecha_expiracion,	
 			monto_cobertura,
-			des_observacion
+			des_observacion,
+			Porcentaje_Aceptacion
 		)
 		VALUES
 		(
 			@nTarjeta,
 			@nGarantiaFiduciaria,
-			@nTipoMitigador,
-			@nTipoDocumentoLegal,
-			@nMontoMitigador,
-			@nPorcentaje,
-			@nOperacionEspecial,
-			@nTipoAcreedor,
-			@strCedulaAcreedor,
-			@dFechaExpiracion,
-			@nMontoCobertura,
-			@strObservacion
+			@piTipo_Mitigador,
+			@piTipo_Documento_Legal,
+			@pdMonto_Mitigador,
+			@pdPorcentaje_Responsabilidad,
+			@piOperacion_Especial,
+			@piTipo_Acreedor,
+			@psCedula_Acreedor,
+			@pdtFecha_Expiracion,
+			@pmMonto_Cobertura,
+			@psObservacion,
+			@pdPorcentaje_Aceptacion
 		)
 		
 		/*Evalua si se produjo un error*/

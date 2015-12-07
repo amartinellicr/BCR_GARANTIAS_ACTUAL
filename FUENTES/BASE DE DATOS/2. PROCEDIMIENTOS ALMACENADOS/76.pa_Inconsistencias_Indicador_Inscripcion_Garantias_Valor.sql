@@ -1,6 +1,9 @@
-set ANSI_NULLS ON
-set QUOTED_IDENTIFIER ON
-go
+USE [GARANTIAS]
+GO
+
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
 
 IF OBJECT_ID ('pa_Inconsistencias_Indicador_Inscripcion_Garantias_Valor', 'P') IS NOT NULL
 DROP PROCEDURE pa_Inconsistencias_Indicador_Inscripcion_Garantias_Valor;
@@ -43,6 +46,16 @@ BEGIN
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
+			<Fecha>09/12/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
+				crear el campo referente al porcentaje de aceptación, este campo reemplazará al camp oporcentaje de responsabilidad dentro de 
+				cualquier lógica existente. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -58,62 +71,82 @@ BEGIN
 	/*Se declaran estas estrucutras debido con el fin de disminuir el tiempo de respuesta del procedimiento
 	    almacenado */
 
-	DECLARE @TMP_INCONSISTENCIAS TABLE (
-											Contabilidad				tinyint			,
-											Oficina						smallint		,
-											Moneda						tinyint			,
-											Producto					tinyint			,
-											Operacion					decimal(7)		,
-											Tipo_Bien					smallint		,
-											Tipo_Mitigador				smallint		,
-											Tipo_Documento_Legal		smallint		,
-											Tipo_Garantia				tinyint			,
-											Tipo_Instrumento			smallint		,
-											Usuario						varchar(30)		collate database_default, 
-											Codigo_Bien					varchar(30)		collate database_default ,
-											Tipo_Inconsistencia			varchar(100)	collate database_default ,
-											Descripcion_Tipo_Garantia	varchar(15)		collate database_default ,
-											Numero_Seguridad			varchar(25)		collate database_default 
+	CREATE TABLE #TMP_INCONSISTENCIAS  (
+											Contabilidad				TINYINT			,
+											Oficina						SMALLINT		,
+											Moneda						TINYINT			,
+											Producto					TINYINT			,
+											Operacion					DECIMAL(7)		,
+											Tipo_Bien					SMALLINT		,
+											Tipo_Mitigador				SMALLINT		,
+											Tipo_Documento_Legal		SMALLINT		,
+											Tipo_Garantia				TINYINT			,
+											Tipo_Instrumento			SMALLINT		,
+											Usuario						VARCHAR(30)		COLLATE DATABASE_DEFAULT, 
+											Codigo_Bien					VARCHAR(30)		COLLATE DATABASE_DEFAULT ,
+											Tipo_Inconsistencia			VARCHAR(100)	COLLATE DATABASE_DEFAULT ,
+											Descripcion_Tipo_Garantia	VARCHAR(15)		COLLATE DATABASE_DEFAULT ,
+											Numero_Seguridad			VARCHAR(25)		COLLATE DATABASE_DEFAULT 
 										)
 
 
 
 	/*Se declara la variable tipo tabla que funcionara como maestra*/
-	DECLARE @TMP_GARANTIAS_VALOR TABLE (	cod_contabilidad				tinyint,
-											cod_oficina						smallint,
-											cod_moneda						tinyint,
-											cod_producto					tinyint,
-											operacion						decimal (7,0),
-											numero_seguridad				varchar (25)	collate database_default,
-											cod_tipo_mitigador				smallint,
-											cod_tipo_documento_legal		smallint,
-											monto_mitigador					decimal (18,2),
-											fecha_presentacion				varchar (10)		collate database_default,
-											cod_inscripcion					smallint,
-											porcentaje_responsabilidad		decimal (5,2),
-											fecha_constitucion				varchar (10)	collate database_default,
-											cod_clasificacion_instrumento	smallint,
-											des_instrumento					varchar (25)	collate database_default,
-											cod_tipo_garantia				smallint,
-											cod_garantia_valor				bigint,
-											cod_operacion					bigint,
-											cod_estado						smallint,
-											cod_tipo_operacion				tinyint,
-											ind_duplicidad					tinyint			DEFAULT (1)	,
-											cod_usuario						varchar (30)	collate database_default,
-											cod_llave						bigint			IDENTITY(1,1)
+	CREATE TABLE #TMP_GARANTIAS_VALOR  (	cod_contabilidad				TINYINT,
+											cod_oficina						SMALLINT,
+											cod_moneda						TINYINT,
+											cod_producto					TINYINT,
+											operacion						DECIMAL (7,0),
+											numero_seguridad				VARCHAR (25)	COLLATE DATABASE_DEFAULT,
+											cod_tipo_mitigador				SMALLINT,
+											cod_tipo_documento_legal		SMALLINT,
+											monto_mitigador					DECIMAL (18,2),
+											fecha_presentacion				VARCHAR (10)	COLLATE DATABASE_DEFAULT,
+											cod_inscripcion					SMALLINT,
+											porcentaje_responsabilidad		DECIMAL (5,2),
+											fecha_constitucion				VARCHAR (10)	COLLATE DATABASE_DEFAULT,
+											cod_clasificacion_instrumento	SMALLINT,
+											des_instrumento					VARCHAR (25)	COLLATE DATABASE_DEFAULT,
+											cod_tipo_garantia				SMALLINT,
+											cod_garantia_valor				BIGINT,
+											cod_operacion					BIGINT,
+											cod_estado						SMALLINT,
+											cod_tipo_operacion				TINYINT,
+											ind_duplicidad					TINYINT			DEFAULT (1)	,
+											cod_usuario						VARCHAR (30)	COLLATE DATABASE_DEFAULT,
+											cod_clase_garantia				SMALLINT,
+											Porcentaje_Aceptacion			DECIMAL(5,2),
+											cod_llave						BIGINT			IDENTITY(1,1)
 											PRIMARY KEY (cod_llave)
 										)
 
-	DECLARE @vdFechaActualSinHora	DATETIME  -- Fecha actual sin hora, utilizada en las comparaciones de las validaciones
+	/*Esta tabla almacenará las garantías registradas en el sistema*/
+	CREATE TABLE #TEMP_PRMGT (	prmgt_pcoclagar TINYINT,
+								prmgt_pnuidegar DECIMAL(12,0),
+								prmgt_pcotengar TINYINT,
+								prmgt_pco_produ TINYINT)
+		 
+	CREATE INDEX TEMP_PRMGT_IX_01 ON #TEMP_PRMGT (prmgt_pcoclagar, prmgt_pnuidegar)
+	
+	
+	
+	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT IDENTITY(1,1),
+											Campo_vacio	CHAR(8)
+											PRIMARY KEY (Consecutivo)) --Se utilizará para generar los semestres a ser calculados
 
-	SET @vdFechaActualSinHora		= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+	DECLARE @vdtFecha_Actual_Sin_Hora	DATETIME,  -- Fecha actual sin hora, utilizada en las comparaciones de las validaciones
+			@viConsecutivo	BIGINT --Se usa para generar los códigos de la tabla temporal de números.
 
+	SET @vdtFecha_Actual_Sin_Hora = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 
+	SET	@viConsecutivo = 20
 
-	/*Se elimina la información de las tablas temporales que hubiera generado el usuario previamente*/
-	DELETE FROM dbo.TMP_OPERACIONES_DUPLICADAS WHERE cod_usuario = @psCedula_Usuario AND cod_tipo_garantia = 3 AND cod_tipo_operacion = 1
-	DELETE FROM dbo.TMP_OPERACIONES_DUPLICADAS WHERE cod_usuario = @psCedula_Usuario AND cod_tipo_garantia = 3 AND cod_tipo_operacion = 2
+	--Se carga la tabla temporal de consecutivos
+	WHILE	@viConsecutivo <= 29
+	BEGIN
+		INSERT INTO @CLASES_GARANTIAS_REALES (Campo_vacio) VALUES(@viConsecutivo)
+		SET @viConsecutivo = @viConsecutivo + 1
+	END
 
 
 /************************************************************************************************
@@ -123,211 +156,139 @@ BEGIN
  *                                                                                              *
  ************************************************************************************************/
 
+	/*Se obtienen las garantías relacionadas al contrato*/
+	INSERT	INTO #TEMP_PRMGT(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pcotengar, prmgt_pco_produ)
+	SELECT  MGT.prmgt_pcoclagar,
+			MGT.prmgt_pnuidegar,
+			MGT.prmgt_pcotengar,
+			MGT.prmgt_pco_produ
+		FROM	dbo.GAR_SICC_PRMGT MGT
+			INNER JOIN @CLASES_GARANTIAS_REALES CGR
+			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
+		WHERE	MGT.prmgt_estado = 'A'
+			AND MGT.prmgt_pcotengar	IN (2,3,4,6)
+
 
 	/*Se selecciona la información de la garantías de valor asociadas a las operaciones*/
-	INSERT INTO @TMP_GARANTIAS_VALOR (	cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, 
+	INSERT INTO #TMP_GARANTIAS_VALOR (	cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, 
 										numero_seguridad, cod_tipo_mitigador, cod_tipo_documento_legal, 
 										monto_mitigador, fecha_presentacion, cod_inscripcion, 
 										porcentaje_responsabilidad, fecha_constitucion, 
 										cod_clasificacion_instrumento, des_instrumento, 
 										cod_tipo_garantia, cod_garantia_valor, cod_operacion, 
-										cod_estado, cod_tipo_operacion, ind_duplicidad, cod_usuario)
+										cod_estado, cod_tipo_operacion, ind_duplicidad, cod_usuario, cod_clase_garantia, Porcentaje_Aceptacion)
 	
-		SELECT DISTINCT 
-		1 AS cod_contabilidad, 
-		VOV.cod_oficina, 
-		VOV.cod_moneda, 
-		VOV.cod_producto, 
-		VOV.num_operacion AS operacion, 
-		GGV.numero_seguridad AS numero_seguridad, 
-		ISNULL(GVO.cod_tipo_mitigador, -1) AS cod_tipo_mitigador,
-		ISNULL(GVO.cod_tipo_documento_legal, -1) AS cod_tipo_documento_legal,
-		ISNULL(GVO.monto_mitigador, 0) AS monto_mitigador,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GVO.fecha_presentacion_registro, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
-		ISNULL(GVO.cod_inscripcion, -1) AS cod_inscripcion,
-		ISNULL(GVO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GGV.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_constitucion, 
-		ISNULL(GGV.cod_clasificacion_instrumento, -1) AS cod_clasificacion_instrumento,
-		ISNULL(GGV.des_instrumento, '') AS des_instrumento,
-		GGV.cod_tipo_garantia,
-		GVO.cod_garantia_valor,
-		GVO.cod_operacion,
-		GVO.cod_estado,
-		1 AS cod_tipo_operacion,	
-		1 AS ind_duplicidad,
-		@psCedula_Usuario AS cod_usuario
-		
-	FROM 
-		dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
-		INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
-		 ON VOV.cod_operacion		= GVO.cod_operacion 
-		INNER JOIN dbo.GAR_GARANTIA_VALOR GGV
-		ON GGV.cod_garantia_valor	= GVO.cod_garantia_valor 
-
-	WHERE VOV.cod_tipo_operacion	= 1
-		AND GVO.cod_estado			= 1
-
-	ORDER BY
-		GVO.cod_operacion,
-		GGV.numero_seguridad,
-		GVO.cod_tipo_documento_legal DESC
+		SELECT	DISTINCT 
+				1 AS cod_contabilidad, 
+				VOV.cod_oficina, 
+				VOV.cod_moneda, 
+				VOV.cod_producto, 
+				VOV.num_operacion AS operacion, 
+				GGV.numero_seguridad AS numero_seguridad, 
+				COALESCE(GVO.cod_tipo_mitigador, -1) AS cod_tipo_mitigador,
+				COALESCE(GVO.cod_tipo_documento_legal, -1) AS cod_tipo_documento_legal,
+				COALESCE(GVO.monto_mitigador, 0) AS monto_mitigador,
+				CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GVO.fecha_presentacion_registro, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
+				COALESCE(GVO.cod_inscripcion, -1) AS cod_inscripcion,
+				COALESCE(GVO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
+				CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GGV.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_constitucion, 
+				COALESCE(GGV.cod_clasificacion_instrumento, -1) AS cod_clasificacion_instrumento,
+				COALESCE(GGV.des_instrumento, '') AS des_instrumento,
+				GGV.cod_tipo_garantia,
+				GVO.cod_garantia_valor,
+				GVO.cod_operacion,
+				GVO.cod_estado,
+				1 AS cod_tipo_operacion,	
+				1 AS ind_duplicidad,
+				@psCedula_Usuario AS cod_usuario,
+				GGV.cod_clase_garantia,
+				GVO.Porcentaje_Aceptacion	
+		FROM	dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
+			INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
+			 ON VOV.cod_operacion = GVO.cod_operacion 
+			INNER JOIN dbo.GAR_GARANTIA_VALOR GGV
+			ON GGV.cod_garantia_valor = GVO.cod_garantia_valor 
+			INNER JOIN #TEMP_PRMGT MGT
+			ON MGT.prmgt_pcoclagar = GGV.cod_clase_garantia
+			AND MGT.prmgt_pnuidegar = GGV.Identificacion_Sicc 
+			AND MGT.prmgt_pco_produ = VOV.cod_producto
+		WHERE	VOV.cod_tipo_operacion = 1
+		ORDER BY
+			GVO.cod_operacion,
+			GGV.numero_seguridad,
+			GVO.cod_tipo_documento_legal DESC
 
 
 	/*Se selecciona la información de las garantías de valor asociada a los contratos*/
-	INSERT INTO @TMP_GARANTIAS_VALOR (	cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, 
+	INSERT INTO #TMP_GARANTIAS_VALOR (	cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, 
 										numero_seguridad, cod_tipo_mitigador, cod_tipo_documento_legal, 
 										monto_mitigador, fecha_presentacion, cod_inscripcion, 
 										porcentaje_responsabilidad, fecha_constitucion, 
 										cod_clasificacion_instrumento, des_instrumento, 
 										cod_tipo_garantia, cod_garantia_valor, cod_operacion, 
-										cod_estado, cod_tipo_operacion, ind_duplicidad, cod_usuario)
+										cod_estado, cod_tipo_operacion, ind_duplicidad, cod_usuario, cod_clase_garantia, Porcentaje_Aceptacion)
 	
-		SELECT DISTINCT 
-		1 AS cod_contabilidad, 
-		VOV.cod_oficina_contrato, 
-		VOV.cod_moneda_contrato, 
-		VOV.cod_producto_contrato, 
-		VOV.num_contrato AS operacion, 
-		GGV.numero_seguridad AS numero_seguridad, 
-		ISNULL(GVO.cod_tipo_mitigador, -1) AS cod_tipo_mitigador,
-		ISNULL(GVO.cod_tipo_documento_legal, -1) AS cod_tipo_documento_legal,
-		ISNULL(GVO.monto_mitigador, 0) AS monto_mitigador,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GVO.fecha_presentacion_registro, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
-		ISNULL(GVO.cod_inscripcion, -1) AS cod_inscripcion,
-		ISNULL(GVO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
-		CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((ISNULL(GGV.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_constitucion, 
-		ISNULL(GGV.cod_clasificacion_instrumento, -1) AS cod_clasificacion_instrumento,
-		ISNULL(GGV.des_instrumento, '') AS des_instrumento,
-		GGV.cod_tipo_garantia,
-		GVO.cod_garantia_valor,
-		GVO.cod_operacion,
-		GVO.cod_estado,
-		2 AS cod_tipo_operacion,	
-		1 AS ind_duplicidad,
-		@psCedula_Usuario AS cod_usuario
-		
-	FROM 
-		dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
-		INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
-		 ON VOV.cod_operacion		= GVO.cod_operacion 
-		INNER JOIN GAR_GARANTIA_VALOR GGV
-		ON GGV.cod_garantia_valor	= GVO.cod_garantia_valor 
-
-	WHERE VOV.cod_tipo_operacion = 2
-		AND EXISTS (SELECT 1
-					FROM dbo.GAR_SICC_PRMGT PMT
-					WHERE PMT.prmgt_pco_conta	= 1
-					 AND PMT.prmgt_pco_ofici	= VOV.cod_oficina_contrato
-					 AND PMT.prmgt_pco_moned	= VOV.cod_moneda_contrato
-					 AND PMT.prmgt_pnu_oper		= VOV.num_contrato
-					 AND PMT.prmgt_pcoclagar	BETWEEN 20 AND 29
-					 AND PMT.prmgt_pcotengar	IN (2,3,4,6)
-					--RQ: 1-23923921. Se cambia el tipo de dato de la compración, pasando de numérica a texto.
-					 AND CONVERT(VARCHAR(25), PMT.prmgt_pnuidegar)	= GGV.numero_seguridad
-					 AND PMT.prmgt_pco_produ	= 10
-					 AND PMT.prmgt_estado		= 'A') /*Aquí se ha determinado si la garantía existente en BCRGarantías está activa en la estructura del SICC*/
-
-	ORDER BY
-		GVO.cod_operacion,
-		GGV.numero_seguridad,
-		GVO.cod_tipo_documento_legal DESC
+		SELECT	DISTINCT 
+				1 AS cod_contabilidad, 
+				VOV.cod_oficina_contrato, 
+				VOV.cod_moneda_contrato, 
+				VOV.cod_producto_contrato, 
+				VOV.num_contrato AS operacion, 
+				GGV.numero_seguridad AS numero_seguridad, 
+				COALESCE(GVO.cod_tipo_mitigador, -1) AS cod_tipo_mitigador,
+				COALESCE(GVO.cod_tipo_documento_legal, -1) AS cod_tipo_documento_legal,
+				COALESCE(GVO.monto_mitigador, 0) AS monto_mitigador,
+				CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GVO.fecha_presentacion_registro, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
+				COALESCE(GVO.cod_inscripcion, -1) AS cod_inscripcion,
+				COALESCE(GVO.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
+				CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GGV.fecha_constitucion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_constitucion, 
+				COALESCE(GGV.cod_clasificacion_instrumento, -1) AS cod_clasificacion_instrumento,
+				COALESCE(GGV.des_instrumento, '') AS des_instrumento,
+				GGV.cod_tipo_garantia,
+				GVO.cod_garantia_valor,
+				GVO.cod_operacion,
+				GVO.cod_estado,
+				2 AS cod_tipo_operacion,	
+				1 AS ind_duplicidad,
+				@psCedula_Usuario AS cod_usuario,
+				GGV.cod_clase_garantia,
+				GVO.Porcentaje_Aceptacion		
+		FROM	dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
+			INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
+			ON VOV.cod_operacion = GVO.cod_operacion 
+			INNER JOIN GAR_GARANTIA_VALOR GGV
+			ON GGV.cod_garantia_valor = GVO.cod_garantia_valor 
+			INNER JOIN #TEMP_PRMGT MGT
+			ON MGT.prmgt_pcoclagar = GGV.cod_clase_garantia
+			AND MGT.prmgt_pnuidegar = GGV.Identificacion_Sicc 
+			AND MGT.prmgt_pco_produ = 10
+		WHERE	VOV.cod_tipo_operacion = 2		
+		ORDER BY
+			GVO.cod_operacion,
+			GGV.numero_seguridad,
+			GVO.cod_tipo_documento_legal DESC
 
 
-	/*Se obtienen las operaciones duplicadas*/
-	INSERT INTO dbo.TMP_OPERACIONES_DUPLICADAS
-	SELECT	cod_oficina, 
-			cod_moneda, 
-			cod_producto, 
-			operacion,
-			cod_tipo_operacion, 
-			numero_seguridad AS cod_garantia_sicc,
-			3 AS cod_tipo_garantia,
-			@psCedula_Usuario AS cod_usuario,
-			MAX(cod_garantia_valor) AS cod_garantia,
-			NULL AS cod_grado
+	/*Se eliminan los registros incompletos*/
+	DELETE	FROM #TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND cod_tipo_documento_legal = -1
+		AND fecha_presentacion = '19000101'
+		AND cod_tipo_mitigador = -1
+		AND cod_inscripcion = -1 
 
-	FROM @TMP_GARANTIAS_VALOR
-
-	WHERE cod_usuario			= @psCedula_Usuario
-		AND cod_tipo_operacion	IN (1, 2)
-
-	GROUP BY cod_oficina, cod_moneda, cod_producto, operacion, numero_seguridad, cod_tipo_operacion
-	HAVING COUNT(1) > 1
-
-	/*Se cambia el código del campo ind_duplicidad a 2, indicando con esto que la operación se encuentra duplicada.
-      Se toma en cuenta el valor de varios campos para poder determinar si el registro se encuentra duplicado.*/
-	UPDATE @TMP_GARANTIAS_VALOR
-	SET ind_duplicidad = 2
-	FROM @TMP_GARANTIAS_VALOR TGV
-	WHERE EXISTS (SELECT 1 
-				  FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
-				  WHERE TGV.cod_oficina						= TOD.cod_oficina
-					AND TGV.cod_moneda						= TOD.cod_moneda
-					AND TGV.cod_producto					= TOD.cod_producto
-					AND TGV.operacion						= TOD.operacion
-					AND ISNULL(TGV.numero_seguridad, '')	= ISNULL(TOD.cod_garantia_sicc, '')
-					AND ISNULL(TGV.cod_usuario, '')			= ISNULL(TOD.cod_usuario, '')
-					AND TOD.cod_tipo_operacion				IN (1, 2)
-					AND TOD.cod_tipo_garantia				= 3 
-					AND TGV.cod_tipo_documento_legal		IS NULL
-					AND TGV.fecha_presentacion				IS NULL
-					AND TGV.cod_tipo_mitigador				IS NULL
-					AND TGV.cod_inscripcion					IS NULL)
-
-		AND TGV.cod_usuario			= @psCedula_Usuario
-		AND TGV.cod_tipo_operacion	IN (1, 2)
-			 
-	/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
-	DELETE FROM @TMP_GARANTIAS_VALOR WHERE cod_tipo_operacion = 1 AND ind_duplicidad = 2 AND cod_usuario = @psCedula_Usuario
-	DELETE FROM @TMP_GARANTIAS_VALOR WHERE cod_tipo_operacion = 2 AND ind_duplicidad = 2 AND cod_usuario = @psCedula_Usuario
-
-	/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-	  cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-	UPDATE dbo.TMP_OPERACIONES_DUPLICADAS
-	SET cod_garantia = GV1.cod_llave
-	FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
-	INNER JOIN @TMP_GARANTIAS_VALOR GV1
-	ON GV1.cod_oficina						= TOD.cod_oficina
-	AND GV1.cod_moneda						= TOD.cod_moneda
-	AND GV1.cod_producto					= TOD.cod_producto
-	AND GV1.operacion						= TOD.operacion
-	AND ISNULL(GV1.numero_seguridad, '')	= ISNULL(TOD.cod_garantia_sicc, '')
-	WHERE GV1.cod_llave	= (	SELECT MIN(GV2.cod_llave)
-							FROM @TMP_GARANTIAS_VALOR GV2
-							WHERE GV2.cod_oficina					= TOD.cod_oficina
-							AND GV2.cod_moneda						= TOD.cod_moneda
-							AND GV2.cod_producto					= TOD.cod_producto
-							AND GV2.operacion						= TOD.operacion
-							AND ISNULL(GV2.numero_seguridad, '')	= ISNULL(TOD.cod_garantia_sicc, '')
-							AND ISNULL(GV2.cod_usuario, '')			= ISNULL(TOD.cod_usuario, '')
-							AND GV2.cod_tipo_operacion				IN (1, 2)
-							AND TOD.cod_tipo_garantia				= 3)
-	AND GV1.cod_usuario			= @psCedula_Usuario
-	AND GV1.cod_tipo_operacion	IN (1, 2)
-
-	/*Se eliminan los dupplicados que sean diferentes al código de garantía actualizado anteriormente*/
-	UPDATE @TMP_GARANTIAS_VALOR
-	SET ind_duplicidad = 2
-	FROM @TMP_GARANTIAS_VALOR TGV
-	WHERE EXISTS (SELECT 1 
-				  FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
-				  WHERE TGV.cod_oficina						= TOD.cod_oficina
-					AND TGV.cod_moneda						= TOD.cod_moneda
-					AND TGV.cod_producto					= TOD.cod_producto
-					AND TGV.operacion						= TOD.operacion
-					AND ISNULL(TGV.numero_seguridad, '')	= ISNULL(TOD.cod_garantia_sicc, '')
-					AND TGV.cod_llave						<> TOD.cod_garantia
-					AND ISNULL(TGV.cod_usuario, '')			= ISNULL(TOD.cod_usuario, '')
-					AND TGV.cod_tipo_operacion				IN (1, 2)
-					AND TOD.cod_tipo_garantia				= 3)
-
-	AND TGV.cod_usuario			= @psCedula_Usuario
-	AND TGV.cod_tipo_operacion	IN (1, 2)
-
-	/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
-	DELETE FROM @TMP_GARANTIAS_VALOR WHERE cod_tipo_operacion = 1 AND ind_duplicidad = 2 AND cod_usuario = @psCedula_Usuario
-	DELETE FROM @TMP_GARANTIAS_VALOR WHERE cod_tipo_operacion = 2 AND ind_duplicidad = 2 AND cod_usuario = @psCedula_Usuario
-
+	/*Se eliminan los registros de hipotecas comunes duplicadas*/
+	WITH CTE (cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion,cod_clase_garantia, numero_seguridad, cantidadRegistrosDuplicados)
+	AS
+	(
+		SELECT	cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, cod_clase_garantia, numero_seguridad, 
+				ROW_NUMBER() OVER(PARTITION BY cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, cod_clase_garantia, numero_seguridad  ORDER BY cod_contabilidad, cod_oficina, cod_moneda, cod_producto, operacion, cod_clase_garantia, numero_seguridad) AS cantidadRegistrosDuplicados
+		FROM	#TMP_GARANTIAS_VALOR
+		WHERE	cod_usuario =  @psCedula_Usuario
+	)
+	DELETE
+	FROM CTE
+	WHERE cantidadRegistrosDuplicados > 1
 
 /************************************************************************************************
  *                                                                                              * 
@@ -344,25 +305,25 @@ BEGIN
  *                                                                                              *
  ************************************************************************************************/
 
-	/*Se actualiza a NULL todas las fechas de presentación que sea igual a 01/01/1900*/
-	UPDATE @TMP_GARANTIAS_VALOR
-	SET fecha_presentacion		= NULL
-	WHERE fecha_presentacion	= '19000101'
+	--/*Se actualiza a NULL todas las fechas de presentación que sea igual a 01/01/1900*/
+	--UPDATE #TMP_GARANTIAS_VALOR
+	--SET fecha_presentacion		= NULL
+	--WHERE fecha_presentacion	= '19000101'
 
-	/*Se actualiza a NULL todas los indicadores de inscripción que sean igual a -1*/
-	UPDATE @TMP_GARANTIAS_VALOR
-	SET cod_inscripcion			= NULL
-	WHERE cod_inscripcion		= -1
+	--/*Se actualiza a NULL todas los indicadores de inscripción que sean igual a -1*/
+	--UPDATE #TMP_GARANTIAS_VALOR
+	--SET cod_inscripcion			= NULL
+	--WHERE cod_inscripcion		= -1
 
 
 /*INCONSISTENCIAS DEL CAMPO: FECHA DE PRESENTACION*/
 	
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que no poseen asignada una fecha de presentación. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
 
 	SELECT	1,
 			cod_oficina,
@@ -378,20 +339,18 @@ BEGIN
 			NULL, 
 			'ErrFechapresentación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario			= @psCedula_Usuario
-		AND cod_tipo_operacion	IN (1, 2)
-		AND fecha_presentacion	IS NULL
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_presentacion = '19000101'
 
 	
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignada una fecha de presentación menor a la fecha de constitución. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
 
 	SELECT	1,
 			cod_oficina,
@@ -407,13 +366,11 @@ BEGIN
 			NULL, 
 			'ErrFechapresentación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario			= @psCedula_Usuario
-		AND cod_tipo_operacion	IN (1, 2)
-		AND fecha_presentacion	IS NOT NULL 
-		AND fecha_presentacion	< fecha_constitucion
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_presentacion > '19000101' 
+		AND fecha_presentacion < fecha_constitucion
 
 
 /*INCONSISTENCIAS DEL CAMPO: INDICADOR DE INSCRIPCION*/
@@ -421,10 +378,11 @@ BEGIN
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "Anotada", pero cuya fecha de proceso (fecha actual) 
     --supera la fecha resultante de sumarle 60 días a la fecha de constitución. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -440,15 +398,12 @@ BEGIN
 			NULL, 
 			'ErrIndicadorInscrip',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND fecha_constitucion		IS NOT NULL
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 2 
-		AND @vdFechaActualSinHora	> DATEADD(day, 60, fecha_constitucion)
+			numero_seguridad	
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 2 
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 60, fecha_constitucion)
 
 
 
@@ -456,10 +411,11 @@ BEGIN
 	--que poseen asignado el indicador de inscripción "Inscrita", pero cuya fecha de proceso (fecha actual) 
     --se encuentra entre la fecha de constitución y la fecha resultante de sumarle 30 días a la fecha de 
     --constitución. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -475,25 +431,22 @@ BEGIN
 			NULL, 
 			'ErrIndicadorInscrip',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND fecha_constitucion		IS NOT NULL
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 3 
-		AND @vdFechaActualSinHora	BETWEEN fecha_constitucion AND DATEADD(day, 30, fecha_constitucion)
-
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 3 
+		AND @vdtFecha_Actual_Sin_Hora BETWEEN fecha_constitucion AND DATEADD(DAY, 30, fecha_constitucion)
 
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "No Anotada/No Inscrita", pero cuya fecha de proceso (fecha actual) 
     --es mayor a la fecha resultante de sumarle 30 días a la fecha de constitución. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -509,24 +462,22 @@ BEGIN
 			NULL, 
 			'ErrIndicadorInscrip',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND fecha_constitucion		IS NOT NULL
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 1 
-		AND @vdFechaActualSinHora	> DATEADD(day, 30, fecha_constitucion)
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 1 
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 30, fecha_constitucion)
 
 
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que no poseen asignado el indicador de inscripción. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -542,13 +493,11 @@ BEGIN
 			NULL, 
 			'ErrIndicadorInscrip',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario			= @psCedula_Usuario
-		AND cod_tipo_operacion	IN (1, 2)
-		AND fecha_presentacion	IS NOT NULL
-		AND cod_inscripcion		IS NULL
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_presentacion > '19000101'
+		AND cod_inscripcion IS NULL
 
 
 
@@ -558,10 +507,11 @@ BEGIN
 	--que poseen asignado el indicador de inscripción "Anotada", pero cuya fecha de proceso (fecha actual) 
     --supera la fecha resultante de sumarle 60 días a la fecha de constitución y además posee
     --un monto mitigador diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -577,26 +527,24 @@ BEGIN
 			NULL, 
 			'ErrMontomitiga',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND fecha_constitucion		IS NOT NULL
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 2 
-		AND @vdFechaActualSinHora	> DATEADD(day, 60, fecha_constitucion) 
-		AND monto_mitigador			<> 0
+			numero_seguridad	
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 2 
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 60, fecha_constitucion) 
+		AND monto_mitigador	<> 0
 		
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "Inscrita", pero cuya fecha de proceso (fecha actual) 
     --se encuentra entre la fecha de constitución y la fecha resultante de sumarle 30 días a la fecha de 
     --constitución y además posee un monto mitigador diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -612,25 +560,23 @@ BEGIN
 			NULL, 
 			'ErrMontomitiga',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND fecha_constitucion		IS NOT NULL
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 3 
-		AND @vdFechaActualSinHora	BETWEEN fecha_constitucion AND DATEADD(day, 30, fecha_constitucion) 
-		AND monto_mitigador			<> 0
+			numero_seguridad	
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		 AND cod_inscripcion = 3 
+		AND @vdtFecha_Actual_Sin_Hora BETWEEN fecha_constitucion AND DATEADD(DAY, 30, fecha_constitucion) 
+		AND monto_mitigador	<> 0
 		
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "No Aplica" y que posee
     --un monto mitigador diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -647,23 +593,20 @@ BEGIN
 			'ErrMontomitiga',
 			'Valor',
 			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario			= @psCedula_Usuario
-		AND cod_tipo_operacion	IN (1, 2)
-		AND cod_inscripcion		IS NOT NULL
-		AND cod_inscripcion		= 0 
-		AND monto_mitigador		<> 0
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND cod_inscripcion = 0 
+		AND monto_mitigador	<> 0
 
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "No Anotada/No Inscrita", además de que 
     --la fecha de proceso (fecha actual) sea mayor a la fecha resultante de sumarle 30 días a la 
     --fecha de constitución y que posee un monto mitigador diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
 
 	SELECT	1,
 			cod_oficina,
@@ -679,15 +622,12 @@ BEGIN
 			NULL, 
 			'ErrMontomitiga',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario				= @psCedula_Usuario
-		AND cod_tipo_operacion		IN (1, 2)
-		AND cod_inscripcion			IS NOT NULL
-		AND cod_inscripcion			= 1
-		AND @vdFechaActualSinHora	> DATEADD(day, 30, fecha_constitucion)
-		AND monto_mitigador			<> 0
+			numero_seguridad			
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario	= @psCedula_Usuario
+		AND cod_inscripcion = 1
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 30, fecha_constitucion)
+		AND monto_mitigador <> 0
 
 
 
@@ -697,10 +637,11 @@ BEGIN
 	--que poseen asignado el indicador de inscripción "Anotada", pero cuya fecha de proceso (fecha actual) 
     --supera la fecha resultante de sumarle 60 días a la fecha de constitución y además posee
     --un porcentaje de aceptación diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -716,26 +657,24 @@ BEGIN
 			NULL, 
 			'ErrAceptación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario					= @psCedula_Usuario
-		AND cod_tipo_operacion			IN (1, 2)
-		AND fecha_constitucion			IS NOT NULL
-		AND cod_inscripcion				IS NOT NULL
-		AND cod_inscripcion				= 2
-		AND @vdFechaActualSinHora		> DATEADD(day, 60, fecha_constitucion)
-		AND porcentaje_responsabilidad	<> 0
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 2
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 60, fecha_constitucion)
+		AND Porcentaje_Aceptacion <> 0
 
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "Inscrita", pero cuya fecha de proceso (fecha actual) 
     --se encuentra entre la fecha de constitución y la fecha resultante de sumarle 30 días a la fecha de 
     --constitución y un porcentaje de aceptación diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -751,25 +690,23 @@ BEGIN
 			NULL, 
 			'ErrAceptación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario					= @psCedula_Usuario
-		AND cod_tipo_operacion			IN (1, 2)
-		AND fecha_constitucion			IS NOT NULL
-		AND cod_inscripcion				IS NOT NULL
-		AND cod_inscripcion				= 3 
-		AND @vdFechaActualSinHora		BETWEEN fecha_constitucion AND DATEADD(day, 30, fecha_constitucion) 
-		AND porcentaje_responsabilidad	<> 0
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND fecha_constitucion > '19000101'
+		AND cod_inscripcion = 3 
+		AND @vdtFecha_Actual_Sin_Hora BETWEEN fecha_constitucion AND DATEADD(DAY, 30, fecha_constitucion) 
+		AND Porcentaje_Aceptacion <> 0
 
 
 	--Se escoge la información de las garantías reales asociadas a las operaciones 
 	--que poseen asignado el indicador de inscripción "No Aplica" y que posee
     --un porcentaje de aceptación diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -785,14 +722,11 @@ BEGIN
 			NULL, 
 			'ErrAceptación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario					= @psCedula_Usuario
-		AND cod_tipo_operacion			IN (1, 2)
-		AND cod_inscripcion				IS NOT NULL
-		AND cod_inscripcion				= 0
-		AND porcentaje_responsabilidad	<> 0
+			numero_seguridad		
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario	= @psCedula_Usuario
+		AND cod_inscripcion	= 0
+		AND Porcentaje_Aceptacion <> 0
 
 
 
@@ -800,10 +734,11 @@ BEGIN
 	--que poseen asignado el indicador de inscripción "No Anotada/No Inscrita", además de que la fecha de 
     --proceso (fecha actual) sea mayor a la fecha resultante de sumarle 30 días a la fecha de constitución y 
     --que posee un porcentaje de aceptación diferente de cero. 
-	INSERT INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
-										 Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
-										 Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
-                                         Descripcion_Tipo_Garantia, Numero_Seguridad)
+	INSERT INTO #TMP_INCONSISTENCIAS (	Contabilidad, Oficina, Moneda, Producto, Operacion, Tipo_Bien, 
+										Tipo_Mitigador, Tipo_Documento_Legal, Tipo_Garantia, 
+										Tipo_Instrumento, Usuario, Codigo_Bien, Tipo_Inconsistencia, 
+                                        Descripcion_Tipo_Garantia, Numero_Seguridad)
+
 
 	SELECT	1,
 			cod_oficina,
@@ -819,15 +754,12 @@ BEGIN
 			NULL, 
 			'ErrAceptación',
 			'Valor',
-			numero_seguridad
-			
-	FROM @TMP_GARANTIAS_VALOR
-	WHERE cod_usuario					= @psCedula_Usuario
-		AND cod_tipo_operacion			IN (1, 2)
-		AND cod_inscripcion				IS NOT NULL
-		AND cod_inscripcion				= 1
-		AND @vdFechaActualSinHora		> DATEADD(day, 30, fecha_constitucion)
-		AND porcentaje_responsabilidad	<> 0
+			numero_seguridad			
+	FROM	#TMP_GARANTIAS_VALOR
+	WHERE	cod_usuario = @psCedula_Usuario
+		AND cod_inscripcion = 1
+		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 30, fecha_constitucion)
+		AND Porcentaje_Aceptacion <> 0
 
 /************************************************************************************************
  *                                                                                              * 
@@ -849,7 +781,7 @@ BEGIN
 				NULL						AS [DETALLE!2!], 
 				NULL						AS [Inconsistencia!3!DATOS!element], 
 				NULL						AS [Inconsistencia!3!Usuario!hide]
-		FROM	@TMP_INCONSISTENCIAS 
+		FROM	#TMP_INCONSISTENCIAS 
 		WHERE	Usuario						=  @psCedula_Usuario
 		UNION ALL
 		SELECT	DISTINCT
@@ -864,7 +796,7 @@ BEGIN
 				NULL						AS [DETALLE!2!], 
 				NULL						AS [Inconsistencia!3!DATOS!element], 
 				NULL						AS [Inconsistencia!3!Usuario!hide]
-		FROM	@TMP_INCONSISTENCIAS 
+		FROM	#TMP_INCONSISTENCIAS 
 		WHERE	Usuario						=  @psCedula_Usuario
 		UNION ALL
 		SELECT	DISTINCT
@@ -882,8 +814,8 @@ BEGIN
 				 CONVERT(VARCHAR(5), Moneda) + CHAR(9) +
 				 CONVERT(VARCHAR(5), Producto) + CHAR(9) + 
                  CONVERT(VARCHAR(20), Operacion) + CHAR(9) + 
-                 ISNULL(CONVERT(VARCHAR(5), Tipo_Bien), '') + CHAR(9) +
-				 ISNULL(Codigo_Bien, '') + CHAR(9) + 
+                 COALESCE(CONVERT(VARCHAR(5), Tipo_Bien), '') + CHAR(9) +
+				 COALESCE(Codigo_Bien, '') + CHAR(9) + 
                  (CASE WHEN  Tipo_Mitigador = -1 THEN '' ELSE CONVERT(VARCHAR(5), Tipo_Mitigador) END) + CHAR(9) + 
 				 (CASE WHEN  Tipo_Documento_Legal = -1 THEN '' ELSE CONVERT(VARCHAR(5), Tipo_Documento_Legal) END) + CHAR(9) +
 				 Tipo_Inconsistencia + CHAR(9) + 
@@ -893,7 +825,7 @@ BEGIN
 				 (CASE WHEN  Tipo_Instrumento = -1 THEN '' ELSE CONVERT(VARCHAR(5), Tipo_Instrumento) END))
 											AS [Inconsistencia!3!DATOS!element],
 				Usuario						AS [Inconsistencia!3!Usuario!hide]
-		FROM	@TMP_INCONSISTENCIAS 
+		FROM	#TMP_INCONSISTENCIAS 
 		WHERE	Usuario						=  @psCedula_Usuario
 		FOR		XML EXPLICIT
 
