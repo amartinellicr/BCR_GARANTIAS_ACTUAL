@@ -6070,13 +6070,35 @@ namespace BCR.GARANTIAS.Entidades
                     //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA
                     if (this.fechaUltimoSeguimiento != fechaNula)
                     {
-                        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                        if ((!codTipoBien.Equals(2)) && (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1))
                         {
                             esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                            
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                            }
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                        else if ((codTipoBien.Equals(2)) && (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1) && (indicadorViviendaHabitadaDeudor == false))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                            }
 
                             if (!castigoAplicado)
                             {
@@ -6088,13 +6110,35 @@ namespace BCR.GARANTIAS.Entidades
                     else
                     {
                         //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
-                        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
+                        if ((!codTipoBien.Equals(2)) && (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1))
                         {
                             esValida = false;
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                            }
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
+                        else if ((codTipoBien.Equals(2)) && (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1) && (indicadorViviendaHabitadaDeudor == false))
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptTerrenoCalcFechaUltimoSeguimiento = true;
+
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptTerrenoCalcFechaUltimoSeguimiento);
+                            }
 
                             if (!castigoAplicado)
                             {
@@ -6111,7 +6155,11 @@ namespace BCR.GARANTIAS.Entidades
                         errorValidaciones = true;
                         desplegarErrorVentanaEmergente = true;
                         inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
-                        listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion, _mensajePorcAceptTerrenoCalcFechaValuacion);
+ 
+                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion), _mensajePorcAceptTerrenoCalcFechaValuacion);
+                        }
 
                         if (!castigoAplicado)
                         {
@@ -6192,7 +6240,11 @@ namespace BCR.GARANTIAS.Entidades
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
                                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                                
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                                }
 
                                 if (!castigoAplicado)
                                 {
@@ -6210,7 +6262,11 @@ namespace BCR.GARANTIAS.Entidades
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
                                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                                }
 
                                 if (!castigoAplicado)
                                 {
@@ -6221,46 +6277,54 @@ namespace BCR.GARANTIAS.Entidades
                         }
                     }
 
-                    //SI TIPO BIEN DIFERENTE DE TRERENOS O VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
-                    if ((!codTipoBien.Equals(1)) && (!codTipoBien.Equals(3)) && (!codTipoGarantiaReal.Equals(3)))
-                    {
-                        if (this.fechaUltimoSeguimiento != fechaNula)
-                        {
-                            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
-                            if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
-                            {
-                                esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                    ////SI TIPO BIEN DIFERENTE DE TRERENOS O VEHICULOS Y TIPO GARANTIA REAL DIFERENTE DE PRENDAS
+                    //if ((codTipoBien > 3) && (!codTipoGarantiaReal.Equals(3)))
+                    //{
+                    //    if (this.fechaUltimoSeguimiento != fechaNula)
+                    //    {
+                    //        //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA 
+                    //        if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
+                    //        {
+                    //            esValida = false;
+                    //            errorValidaciones = true;
+                    //            desplegarErrorVentanaEmergente = true;
+                    //            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
+                                
+                    //            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos)))
+                    //            {
+                    //                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                    //            }
 
-                                if (!castigoAplicado)
-                                {
-                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                    castigoAplicado = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
-                            if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
-                            {
-                                esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                    //            if (!castigoAplicado)
+                    //            {
+                    //                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                    //                castigoAplicado = true;
+                    //            }
+                    //        }
+                    //    }
+                    //    else
+                    //    {
+                    //        //Si la fecha de último seguimiento es nula, entonces se compara la fecha de valuación, esto porque la fecha dé último seguimiento será igual a la de valuación
+                    //        if (UtilitariosComun.DateDiff("Y", this.fechaValuacion, fechaActualSistema) > 1)
+                    //        {
+                    //            esValida = false;
+                    //            errorValidaciones = true;
+                    //            desplegarErrorVentanaEmergente = true;
+                    //            inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimiento = true;
 
-                                if (!castigoAplicado)
-                                {
-                                    porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                    castigoAplicado = true;
-                                }
-                            }
-                        }
-                    }
+                    //            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos)))
+                    //            {
+                    //                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoNoVehiculos), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimiento);
+                    //            }
+
+                    //            if (!castigoAplicado)
+                    //            {
+                    //                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                    //                castigoAplicado = true;
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     //SI TIPO BIEN IGUAL MAQUINARIA Y EQUIPO, Y TIPO GARANTIA REAL IGUAL A PRENDAS
                     if (codTipoBien.Equals(4) && codTipoGarantiaReal.Equals(3))
@@ -6274,7 +6338,11 @@ namespace BCR.GARANTIAS.Entidades
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
                                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+                                
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+                                }
 
                                 if (!castigoAplicado)
                                 {
@@ -6292,7 +6360,11 @@ namespace BCR.GARANTIAS.Entidades
                                 errorValidaciones = true;
                                 desplegarErrorVentanaEmergente = true;
                                 inconsistenciaPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo = true;
-                                listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo, _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+
+                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo)))
+                                {
+                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo), _mensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo);
+                                }
 
                                 if (!castigoAplicado)
                                 {
@@ -6313,7 +6385,11 @@ namespace BCR.GARANTIAS.Entidades
                             errorValidaciones = true;
                             desplegarErrorVentanaEmergente = true;
                             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
-                            listaErroresValidaciones.Add((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion, _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+  
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion), _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+                            }
 
                             if (!castigoAplicado)
                             {
@@ -9026,14 +9102,37 @@ namespace BCR.GARANTIAS.Entidades
                             objEscritor.WriteString(semestre.TotalRegistros.ToString());
                             objEscritor.WriteEndElement();
 
+                            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+
                             if (tipoGeneracion == 2)
                             {
                                 //Crea el nodo del porcentaje de aceptación parametrizado
                                 objEscritor.WriteStartElement(_porcentajeAceptacionBase);
-                                objEscritor.WriteString(this.porcentajeAceptacionCalculadoOriginal.ToString("N2"));
+                                objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionCalculadoOriginal));
                                 objEscritor.WriteEndElement();
 
+                                //Crea el nodo del porcentaje de aceptación del terreno
+                                objEscritor.WriteStartElement(_porcentajeAceptacionTerreno);
+                                objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionTerreno));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del no terreno
+                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerreno);
+                                objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionNoTerreno));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del terreno calculado
+                                objEscritor.WriteStartElement(_porcentajeAceptacionTerrenoCalculado);
+                                objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionTerrenoCalculado));
+                                objEscritor.WriteEndElement();
+
+                                //Crea el nodo del porcentaje de aceptación del no terreno calculado
+                                objEscritor.WriteStartElement(_porcentajeAceptacionNoTerrenoCalculado);
+                                objEscritor.WriteString(string.Format("{0:N2}", this.porcentajeAceptacionNoTerrenoCalculado));
+                                objEscritor.WriteEndElement();
                             }
+
+                            #endregion
 
                             //Final del tag SEMESTRE
                             objEscritor.WriteEndElement();

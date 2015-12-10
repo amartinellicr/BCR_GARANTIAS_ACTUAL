@@ -14,6 +14,8 @@ function PageInit() {
 
     $calculoMontoMitigadorAplicado = false;
 
+    $MostrarMensajesPorAceptAvaluo = false;
+
     /************************************************************************/
     /* VALIDACIONES DEL CAMPO REFERENTE A LA FECHA DE PRESENTACION */
 
@@ -441,14 +443,16 @@ function PageInit() {
                     "Aceptar": function () {
 
                         $(this).dialog("close");
-
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSMPATC', '1');
+                        ModificarGarantia();
                     }
                 }
             });
 
     //Función que el mensaje de error cuando existe una inconsistencia para la Fecha de Valuación
-    $MensajePorcAceptTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de seguimiento (Menor a 6 meses) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
+    $MensajePorcAceptTerrenoCalcFechaValuacionInvalido = $('<div class="ui-widget" style="padding-top:2.6em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El campo % Aceptación Terreno Calculado ha sido reducido a la mitad dado que no se cumple con el criterio de Valuación (Mayor a cinco años) lo indicado en SUGEF A-001  para esta garantía.</p></div></div>')
             .dialog({
                 autoOpen: false,
                 title: 'Fecha de Valuación Inválida',
@@ -463,8 +467,10 @@ function PageInit() {
                     "Aceptar": function () {
 
                         $(this).dialog("close");
-
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFVMPATC', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -553,8 +559,10 @@ function PageInit() {
                     "Aceptar": function () {
 
                         $(this).dialog("close");
-
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSMPANTC', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -575,8 +583,10 @@ function PageInit() {
                     "Aceptar": function () {
 
                         $(this).dialog("close");
-
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFUSMPANTCMAQ', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -597,8 +607,10 @@ function PageInit() {
                     "Aceptar": function () {
 
                         $(this).dialog("close");
-
                         document.body.style.cursor = 'default';
+
+                        $$('btnValidarOperacion').attr('EIFVMPANTC', '1');
+                        ModificarGarantia();
                     }
                 }
             });
@@ -2715,6 +2727,7 @@ function CalcularMontoMitigador() {
             dataType: "json",
             success: OnSuccess,
             failure: function (response) {
+                $$('lblMensaje').text(response);
                 alert(response);
             }
         });
@@ -3346,18 +3359,23 @@ function MostrarErrorMontoAcreenciaDiferente(listaOperacionesRelacionadas, lista
 function ModificarGarantia() {
 
     if ((($$('btnValidarOperacion').attr("CARGAINICIAL")) == '0')
-              && (($$('btnValidarOperacion').attr("MEMM")) == '1')
-              && (($$('btnValidarOperacion').attr("LISTAOPER")) == '1')
-              && (($$('btnValidarOperacion').attr("LISTAOPERINFRASEG")) == '1')
-              && (($$('btnValidarOperacion').attr("LISTAOPERACREDIF")) == '1')
-              && (($$('btnValidarOperacion').attr("EISP")) == '1')
-              && (($$('btnValidarOperacion').attr("EIPI")) == '1')
-              && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')
-              && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
-              && (($$('btnValidarOperacion').attr('EIFVM')) == '1')
-              && (($$('btnValidarOperacion').attr('EIPV')) == '1')
-              && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')
-              && (($$('btnValidarOperacion').attr('EICOI')) == '1')) {
+                && (($$('btnValidarOperacion').attr("MEMM")) == '1')
+                && (($$('btnValidarOperacion').attr("LISTAOPER")) == '1')
+                && (($$('btnValidarOperacion').attr("LISTAOPERINFRASEG")) == '1')
+                && (($$('btnValidarOperacion').attr("LISTAOPERACREDIF")) == '1')
+                && (($$('btnValidarOperacion').attr("EISP")) == '1')
+                && (($$('btnValidarOperacion').attr("EIPI")) == '1')
+                && (($$('btnValidarOperacion').attr('EIPNCB')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFUSM')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFVM')) == '1')
+                && (($$('btnValidarOperacion').attr('EIPV')) == '1')
+                && (($$('btnValidarOperacion').attr('EIPATB1')) == '1')
+                && (($$('btnValidarOperacion').attr('EICOI')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFUSMPATC')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFUSMPANTC')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFUSMPANTCMAQ')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFVMPATC')) == '1')
+                && (($$('btnValidarOperacion').attr('EIFVMPANTC')) == '1')) {
         __doPostBack('btnModificar', 'Metodo');
     }
 }
@@ -3615,7 +3633,7 @@ function CalcularMontoTAT_TANT() {
             dataType: "json",
             success: calculoExitoso,
             failure: function (response) {
-                $$('lblMensaje').val(response);
+                $$('lblMensaje').text(response);
                 alert(response);
             }
         });
@@ -4023,7 +4041,8 @@ function ValidarPorcentajeAceptacionCalculado() {
     var tipoBien = parseInt((($$('cbTipoBien').val() != null) ? $$('cbTipoBien').val() : "-1"));
     var tipoGarantiaReal = parseInt((($$('cbTipoGarantiaReal').val() != null) ? $$('cbTipoGarantiaReal').val() : '-1'));
     var tipoMitigador = parseInt((($$('cbMitigador').val() != null) ? $$('cbMitigador').val() : '-1'));
-    var porceAceptCalculadoOriginal = parseFloat($$('btnValidarOperacion').attr('MOPAC').toString('N2')).toFixed(2);
+    var porAceptCalcOri = $$('btnValidarOperacion').attr('MOPAC');
+    var porceAceptCalculadoOriginal = parseFloat(((typeof porAceptCalcOri !== typeof undefined && porAceptCalcOri !== false) ? $$('btnValidarOperacion').attr('MOPAC').toString('N2') : '0.00')).toFixed(2);
     var fechaValu = $.trim($$('txtFechaValuacion').val().replace("__/__/____", ""));
     var fechaSegui = $.trim($$('txtFechaSeguimiento').val().replace("__/__/____", ""));
     var fechaActual = new Date();
@@ -4371,12 +4390,25 @@ function ValidarPorcentajeAceptacionCalculado() {
 
         //SE VERIFICA QUE LA FECHA DE ULTIMO SEGUIMIENTO ES MAYOR 1 AÑO EN REALACION A LA FECHA DEL SISTEMA
 
-        if (fechaSegui.length > 0) {
+        if ((tipoBien !== 2) && (fechaSegui.length > 0)) {
             if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1) {
                 $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
                 castigoAplicado = 1;
 
-                if (typeof ($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined')) {
+                    $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');
+                }
+            }
+        }
+        else if (tipoBien === 2 && (tipoGarantiaReal === 1 || tipoGarantiaReal === 2)) {
+            //SE VERIFICA QUE LA FECHA ULTIMO SEGUIMIENTO SEA SEA MAYOR A 1 AÑO EN RELACION A LA FECHA DEL SISTEMA E INIDICADOR DEUDOR HABITA NO ESTÁ ACTIVADO
+            if ((getDateDiff(fechaSeguimiento, fechaActual, "years")) > 1 && !indicadorDeudorHabitaVivienda) {
+                if (castigoAplicado === 0) {
+                    $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                    castigoAplicado = 1;
+                }
+
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined')) {
                     $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');
                 }
             }
@@ -4391,7 +4423,7 @@ function ValidarPorcentajeAceptacionCalculado() {
                     castigoAplicado = 1;
                 }
 
-                if (typeof ($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
                     $MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open'); 
                 }               
             }
@@ -4420,7 +4452,7 @@ function ValidarPorcentajeAceptacionCalculado() {
                     castigoAplicado = 1
                 }
 
-                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined')) {
                     $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open'); 
                 }
             }
@@ -4435,7 +4467,7 @@ function ValidarPorcentajeAceptacionCalculado() {
                     castigoAplicado = 1
                 }
 
-                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido) !== 'undefined')) {
                     $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido.dialog('open');
                 }
             }
@@ -4451,7 +4483,7 @@ function ValidarPorcentajeAceptacionCalculado() {
                     castigoAplicado = 1
                 }
 
-                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido) !== 'undefined')) {
                     $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido.dialog('open');
                 }
             }
@@ -4467,7 +4499,7 @@ function ValidarPorcentajeAceptacionCalculado() {
                     castigoAplicado = 1
                 }
 
-                if (typeof ($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined') {
+                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
                     $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open'); 
                 }
             }
@@ -4576,6 +4608,11 @@ function ValidarPorcentajeAceptacionCalculado() {
         CalcularMontoMitigador();
     }
 
+}
+
+function MostrarMensajesPorAceptAvaluo(mostrar) {
+    $MostrarMensajesPorAceptAvaluo = mostrar;
+    return true;
 }
 
  

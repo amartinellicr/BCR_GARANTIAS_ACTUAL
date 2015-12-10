@@ -113,7 +113,7 @@
             var $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido;
             var $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado;
 
-
+            var $MostrarMensajesPorAceptAvaluo;
 
             PageInit();
 
@@ -308,11 +308,13 @@
             }
 
             if ((bSeFormatea) && (bValidarPorAcept)) {
+                $MostrarMensajesPorAceptAvaluo = true;
                 ValidarPorcentajeAceptacionCalculado();
                 ValidarPorcentajeAceptacion();
             }
 
             if ((bSeFormatea) && (bValidarPorAceptAvaluo)) {
+                $MostrarMensajesPorAceptAvaluo = true;
                 ValidarPorcentajeAceptacionCalculado();
             }
 
