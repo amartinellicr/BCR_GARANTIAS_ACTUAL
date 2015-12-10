@@ -698,24 +698,24 @@ public partial class Consultas_frmConsultaHistoricoValuaciones : BCR.Web.SystemF
             //declara las propiedades del comando
             oComando.CommandType = CommandType.StoredProcedure;
             oComando.CommandTimeout = 120;
-            oComando.Parameters.AddWithValue("@nCodOperacion", nCodOperacion);
-            oComando.Parameters.AddWithValue("@nContabilidad", nContabilidad);
-            oComando.Parameters.AddWithValue("@nOficina", nOficina);
-            oComando.Parameters.AddWithValue("@nMoneda", nMoneda);
+            oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", nCodOperacion);
+            oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", nContabilidad);
+            oComando.Parameters.AddWithValue("@piCodigo_Oficina", nOficina);
+            oComando.Parameters.AddWithValue("@piCodigo_Moneda", nMoneda);
 
             if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
             {
-                oComando.Parameters.AddWithValue("@nProducto", nProducto);
-                oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
+                oComando.Parameters.AddWithValue("@piCodigo_Producto", nProducto);
+                oComando.Parameters.AddWithValue("@pdNumero_Operacion", nOperacion);
             }
             else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
             {
-                oComando.Parameters.AddWithValue("@nContrato", nOperacion);
+                oComando.Parameters.AddWithValue("@pdNumero_Contrato", nOperacion);
             }
 
-            oComando.Parameters.AddWithValue("@IDUsuario", Global.UsuarioSistema);
+            oComando.Parameters.AddWithValue("@psCedula_Usuario", Global.UsuarioSistema);
 
-
+          
             //Abre la conexion
             oConexion.Open();
             oDataAdapter.SelectCommand = oComando;

@@ -21,7 +21,7 @@ CREATE PROCEDURE [dbo].[pa_InsertarGarantiaFiduciariaTarjeta]
 	@piTipo_Mitigador			SMALLINT,
 	@piTipo_Documento_Legal		SMALLINT,
 	@pdMonto_Mitigador			DECIMAL(18,2),
-	@pdPorcentaje_Responsabilidad			DECIMAL(5,2),
+	@pdPorcentaje_Responsabilidad DECIMAL(5,2),
 	@piOperacion_Especial		SMALLINT,
 	@piTipo_Acreedor			SMALLINT,
 	@psCedula_Acreedor			VARCHAR(30),
@@ -33,7 +33,7 @@ CREATE PROCEDURE [dbo].[pa_InsertarGarantiaFiduciariaTarjeta]
 	@piMoneda					TINYINT,
 	@piOficina_Registra			SMALLINT,
 	@psObservacion				VARCHAR(150),
-	@pdPorcentaje_Aceptacion	DECIMAL(5,2),
+	@pdPorcentaje_Aceptacion	DECIMAL(5,2), --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	--Catálogo
 	@piCodigo_Catalogo			INT
 
@@ -57,7 +57,7 @@ BEGIN
 			@piTipo_Mitigador			= Código del tipo de mitigador de riesgo.
 			@piTipo_Documento_Legal		= Código del tipo de documento legal.
 			@pdMonto_Mitigador			= Monto mitigador de riesgo.
-			@pdPorcentaje_Responsabilidad = Porcentaje de aceptación.
+			@pdPorcentaje_Responsabilidad = Porcentaje de responsabilidad.
 			@piOperacion_Especial		= Código del tipo de operación especial.
 			@piTipo_Acreedor			= Código del tipo de persona del acreedor.
 			@psCedula_Acreedor			= Indentificación del acreedor.
@@ -69,6 +69,7 @@ BEGIN
 			@piMoneda					= Código de la moneda.
 			@piOficina_Registra			= Código de la oficina que registra.
 			@psObservacion				= Observación.
+			@pdPorcentaje_Aceptacion	= Porcentaje de aceptación de la garantía.
 			--Catálogo
 			@piCodigo_Catalogo			= Código del catálogo de garantías por perfil.
 	</Entradas>
@@ -281,7 +282,7 @@ BEGIN TRANSACTION
 			fecha_expiracion,	
 			monto_cobertura,
 			des_observacion,
-			Porcentaje_Aceptacion
+			Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		)
 		VALUES
 		(
@@ -297,7 +298,7 @@ BEGIN TRANSACTION
 			@pdtFecha_Expiracion,
 			@pmMonto_Cobertura,
 			@psObservacion,
-			@pdPorcentaje_Aceptacion
+			@pdPorcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		)
 		
 		/*Evalua si se produjo un error*/

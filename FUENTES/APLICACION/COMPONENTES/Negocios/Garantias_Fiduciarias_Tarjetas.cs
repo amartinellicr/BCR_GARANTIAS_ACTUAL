@@ -1,8 +1,10 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using BCRGARANTIAS.Datos;
+using System.Diagnostics;
+
+using BCR.GARANTIAS.Comun;
 using BCRGarantias.Contenedores;
 
 namespace BCRGARANTIAS.Negocios
@@ -21,10 +23,12 @@ namespace BCRGARANTIAS.Negocios
 						string strCedulaDeudor, long nBIN, long nCodigoInterno, int nMoneda, int nOficinaRegistra,
                         string strUsuario, string strIP,
                         string strOperacionCrediticia,
-                        string strObservacion, int nCodigoCatalogo)
+                        string strObservacion, int nCodigoCatalogo, decimal porcentajeAceptacion)
 		{
-			try
-			{
+            string identifiacionGarantia = string.Format("Fiduciaria: {0} - {1}, relacionada a la tarjeta: {2}", strCedulaFiador, strNombreFiador, strOperacionCrediticia);
+
+            try
+            {
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
 					SqlCommand oComando = new SqlCommand("pa_InsertarGarantiaFiduciariaTarjeta", oConexion);
@@ -35,34 +39,32 @@ namespace BCRGARANTIAS.Negocios
 					oComando.CommandType = CommandType.StoredProcedure;
 
 					//Agrega los parametros
-					oComando.Parameters.AddWithValue("@nTipoGarantia", nTipoGarantia);
-					oComando.Parameters.AddWithValue("@nClaseGarantia", nClaseGarantia);
-					oComando.Parameters.AddWithValue("@strCedulaFiador", strCedulaFiador);
-					oComando.Parameters.AddWithValue("@strNombreFiador", strNombreFiador);
-					oComando.Parameters.AddWithValue("@nTipoFiador", nTipoFiador);
-					oComando.Parameters.AddWithValue("@strTarjeta", strTarjeta);
-					oComando.Parameters.AddWithValue("@nTipoMitigador", nTipoMitigador);
-					oComando.Parameters.AddWithValue("@nTipoDocumentoLegal", nTipoDocumento);
-					oComando.Parameters.AddWithValue("@nMontoMitigador", nMontoMitigador);
-					oComando.Parameters.AddWithValue("@nPorcentaje", nPorcentajeResponsabilidad);
-					oComando.Parameters.AddWithValue("@nOperacionEspecial", nOperacionEspecial);
-					oComando.Parameters.AddWithValue("@nTipoAcreedor", nTipoAcreedor);
-					oComando.Parameters.AddWithValue("@strCedulaAcreedor", strCedulaAcreedor);
-					oComando.Parameters.AddWithValue("@dFechaExpiracion", dFechaExpiracion);
-					oComando.Parameters.AddWithValue("@nMontoCobertura", nMontoCobertura);
-					oComando.Parameters.AddWithValue("@strCedulaDeudor", strCedulaDeudor);
-					oComando.Parameters.AddWithValue("@nBIN", nBIN);
-					oComando.Parameters.AddWithValue("@nCodigoInternoSISTAR", nCodigoInterno);
-					oComando.Parameters.AddWithValue("@nMoneda", nMoneda);
-					oComando.Parameters.AddWithValue("@nOficinaRegistra", nOficinaRegistra);
-					oComando.Parameters.AddWithValue("@strObservacion", strObservacion);
-					oComando.Parameters.AddWithValue("@codigo_catalogo", nCodigoCatalogo);
-					oComando.Parameters.AddWithValue("@strUsuario", strUsuario);
-					oComando.Parameters.AddWithValue("@strIP", strIP);
-					//oComando.Parameters.AddWithValue("@nOficina",nOficina);	
-
-					//Obtener la información sobre la Tarjeta y sobre la Garantía Fiduciaria, esto por si se deben insertar
-					DataSet dsTarjeta = AccesoBD.ejecutarConsulta("select " + ContenedorTarjeta.COD_TARJETA + "," +
+					oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
+					oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
+					oComando.Parameters.AddWithValue("@psCedula_Fiador", strCedulaFiador);
+					oComando.Parameters.AddWithValue("@psNombre_Fiador", strNombreFiador);
+					oComando.Parameters.AddWithValue("@piTipo_Fiador", nTipoFiador);
+					oComando.Parameters.AddWithValue("@psTarjeta", strTarjeta);
+					oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
+					oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
+					oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentajeResponsabilidad);
+					oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
+					oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
+					oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
+					oComando.Parameters.AddWithValue("@pdtFecha_Expiracion", dFechaExpiracion);
+					oComando.Parameters.AddWithValue("@pmMonto_Cobertura", nMontoCobertura);
+					oComando.Parameters.AddWithValue("@psCedula_Deudor", strCedulaDeudor);
+					oComando.Parameters.AddWithValue("@piBIN", nBIN);
+					oComando.Parameters.AddWithValue("@piCodigo_Interno_SISTAR", nCodigoInterno);
+					oComando.Parameters.AddWithValue("@piMoneda", nMoneda);
+					oComando.Parameters.AddWithValue("@piOficina_Registra", nOficinaRegistra);
+					oComando.Parameters.AddWithValue("@psObservacion", strObservacion);
+                    oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
+                    oComando.Parameters.AddWithValue("@piCodigo_Catalogo", nCodigoCatalogo);
+ 
+                    //Obtener la información sobre la Tarjeta y sobre la Garantía Fiduciaria, esto por si se deben insertar
+                    DataSet dsTarjeta = AccesoBD.ejecutarConsulta("select " + ContenedorTarjeta.COD_TARJETA + "," +
 							ContenedorTarjeta.COD_TIPO_GARANTIA +
 							" from TAR_TARJETA " +
 							" where " + ContenedorTarjeta.NUM_TARJETA + " = " + strTarjeta);
@@ -266,11 +268,11 @@ namespace BCRGARANTIAS.Negocios
 							string strInsertaGarFiduXTarjeta = "INSERT INTO TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA (" +
 								"cod_tarjeta,cod_garantia_fiduciaria,cod_tipo_mitigador,cod_tipo_documento_legal," +
 								"monto_mitigador,porcentaje_responsabilidad,cod_operacion_especial,cod_tipo_acreedor," +
-								"cedula_acreedor,fecha_expiracion,monto_cobertura, des_observacion) VALUES(" + strTarjeta + "," +
+								"cedula_acreedor,fecha_expiracion,monto_cobertura, des_observacion, Porcentaje_Aceptacion) VALUES(" + strTarjeta + "," +
 								strCodigoGarFidu + "," + nTipoMitigador.ToString() + "," + nTipoDocumento.ToString() + "," +
 								nMontoMitigador.ToString() + "," + nPorcentajeResponsabilidad.ToString() + "," +
 								nOperacionEspecial.ToString() + "," + nTipoAcreedor.ToString() + "," +
-								strCedulaAcreedor + "," + dFechaExpiracion + "," + nMontoCobertura.ToString() + "," + strObservacion + ")";
+								strCedulaAcreedor + "," + dFechaExpiracion + "," + nMontoCobertura.ToString() + "," + strObservacion + "," + porcentajeAceptacion.ToString() + ")";
 
 
 							oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
@@ -345,8 +347,14 @@ namespace BCRGARANTIAS.Negocios
 							   string.Empty,
 							   strObservacion);
 
-							#endregion
-						}
+                            oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
+                                1, nTipoGarantia, strCedulaFiador, strTarjeta, strInsertaGarFiduXTarjeta, string.Empty,
+                                "Porcentaje_Aceptacion",
+                                string.Empty,
+                                porcentajeAceptacion.ToString());
+
+                            #endregion
+                        }
 
 						#endregion
 					}
@@ -354,11 +362,18 @@ namespace BCRGARANTIAS.Negocios
 					return nMensaje;
 				}
 			}
-			catch
-			{
-				throw;
-			}
-		}
+            catch (SqlException ex)
+            {
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+        }
 
 		public void Modificar(long nGarantiaFiduciaria, long nTarjeta, string strCedulaFiador, int nTipoFiador, 
 							string strNombreFiador, int nTipoMitigador, int nTipoDocumento, decimal nMontoMitigador, 
@@ -366,10 +381,12 @@ namespace BCRGARANTIAS.Negocios
 							string strCedulaAcreedor, DateTime dFechaExpiracion, decimal nMontoCobertura,
                             string strUsuario, string strIP,
                             string strOperacionCrediticia,
-                            string strObservacion)
+                            string strObservacion, decimal porcentajeAceptacion)
 		{
-			try
-			{
+            string identifiacionGarantia = string.Format("Fiduciaria: {0} - {1}, relacionada a la tarjeta: {2}", strCedulaFiador, strNombreFiador, strOperacionCrediticia);
+
+            try
+            {
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
 					SqlCommand oComando = new SqlCommand("pa_ModificarGarantiaFiduciariaTarjeta", oConexion);
@@ -380,29 +397,25 @@ namespace BCRGARANTIAS.Negocios
 					oComando.CommandType = CommandType.StoredProcedure;
 
 					//Agrega los parametros
-					oComando.Parameters.AddWithValue("@nGarantiaFiduciaria", nGarantiaFiduciaria);
-					oComando.Parameters.AddWithValue("@nTarjeta", nTarjeta);
-					oComando.Parameters.AddWithValue("@strCedulaFiador", strCedulaFiador);
-					oComando.Parameters.AddWithValue("@strNombreFiador", strNombreFiador);
-					oComando.Parameters.AddWithValue("@nTipoFiador", nTipoFiador);
-					oComando.Parameters.AddWithValue("@nTipoMitigador", nTipoMitigador);
-					oComando.Parameters.AddWithValue("@nTipoDocumentoLegal", nTipoDocumento);
-					oComando.Parameters.AddWithValue("@nMontoMitigador", nMontoMitigador);
-					oComando.Parameters.AddWithValue("@nPorcentaje", nPorcentajeResponsabilidad);
-					oComando.Parameters.AddWithValue("@nOperacionEspecial", nOperacionEspecial);
-					oComando.Parameters.AddWithValue("@nTipoAcreedor", nTipoAcreedor);
-					oComando.Parameters.AddWithValue("@strCedulaAcreedor", strCedulaAcreedor);
-					oComando.Parameters.AddWithValue("@dFechaExpiracion", dFechaExpiracion);
-					oComando.Parameters.AddWithValue("@nMontoCobertura", nMontoCobertura);
-					oComando.Parameters.AddWithValue("@strObservacion", strObservacion);
-					oComando.Parameters.AddWithValue("@strUsuario", strUsuario);
-					oComando.Parameters.AddWithValue("@strIP", strIP);
-					//oComando.Parameters.AddWithValue("@nOficina",nOficina);	
+					oComando.Parameters.AddWithValue("@piConsecutivo_Garantia_Fiduciaria", nGarantiaFiduciaria);
+					oComando.Parameters.AddWithValue("@piTarjeta", nTarjeta);
+					oComando.Parameters.AddWithValue("@psCedula_Fiador", strCedulaFiador);
+					oComando.Parameters.AddWithValue("@piTipo_Fiador", nTipoFiador);
+					oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
+					oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
+					oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentajeResponsabilidad);
+					oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
+					oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
+					oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
+					oComando.Parameters.AddWithValue("@pdtFecha_Expiracion", dFechaExpiracion);
+					oComando.Parameters.AddWithValue("@pmMonto_Cobertura", nMontoCobertura);
+					oComando.Parameters.AddWithValue("@psObservacion", strObservacion);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
 
+                    #region Obtener los datos de la BD antes de que cambien
 
-					#region Obtener los datos de la BD antes de que cambien
-
-					DataSet dsGarantiaFiduciariaXTarjeta = new DataSet();
+                    DataSet dsGarantiaFiduciariaXTarjeta = new DataSet();
 
 					DataSet dsGarantiaFiduciaria = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_fiduciaria.COD_TIPO_FIADOR + " from TAR_GARANTIA_FIDUCIARIA where " + ContenedorGarantia_fiduciaria.CEDULA_FIADOR + " = '" + strCedulaFiador + "'");
 
@@ -418,7 +431,8 @@ namespace BCRGARANTIAS.Negocios
 							 ContenedorGarantias_fiduciarias_x_tarjeta.CEDULA_ACREEDOR + "," +
 							 ContenedorGarantias_fiduciarias_x_tarjeta.FECHA_EXPIRACION + "," +
 							 ContenedorGarantias_fiduciarias_x_tarjeta.MONTO_COBERTURA + "," +
-							 ContenedorGarantias_fiduciarias_x_tarjeta.DES_OBSERVACION +
+							 ContenedorGarantias_fiduciarias_x_tarjeta.DES_OBSERVACION + "," +
+                             "Porcentaje_Aceptacion" +
 							 " from " + ContenedorGarantias_fiduciarias_x_tarjeta.NOMBRE_ENTIDAD +
 							 " where " + ContenedorGarantias_fiduciarias_x_tarjeta.COD_TARJETA + " = " + nTarjeta.ToString() +
 							 " and " + ContenedorGarantias_fiduciarias_x_tarjeta.COD_GARANTIA_FIDUCIARIA + " = " + nGarantiaFiduciaria.ToString());
@@ -466,6 +480,7 @@ namespace BCRGARANTIAS.Negocios
 												 nOperacionEspecial.ToString() + ",cod_tipo_acreedor = " + nTipoAcreedor.ToString() + ",cedula_acreedor = " +
 												 strCedulaAcreedor + ",fecha_expiracion = " + dFechaExpiracion.ToShortDateString() + "', monto_cobertura = " +
 												 nMontoCobertura.ToString() +
+                                                 ",Porcentaje_Aceptacion = " + porcentajeAceptacion.ToString() +
 												 " WHERE cod_tarjeta = " + nTarjeta.ToString() +
 												 " AND cod_garantia_fiduciaria = " + nGarantiaFiduciaria.ToString();
 
@@ -557,7 +572,31 @@ namespace BCRGARANTIAS.Negocios
 									   nPorcentajeResponsabilidad.ToString());
 							}
 
-							if (!dsGarantiaFiduciariaXTarjeta.Tables[0].Rows[0].IsNull(ContenedorGarantias_fiduciarias_x_tarjeta.COD_OPERACION_ESPECIAL))
+                            if (!dsGarantiaFiduciariaXTarjeta.Tables[0].Rows[0].IsNull("Porcentaje_Aceptacion"))
+                            {
+                                decimal porcentajeAceptacionObt = Convert.ToDecimal(dsGarantiaFiduciariaXTarjeta.Tables[0].Rows[0]["Porcentaje_Aceptacion"].ToString());
+
+                                if (porcentajeAceptacionObt != porcentajeAceptacion)
+                                {
+                                    oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
+                                       2, 1, strCedulaFiador, strNumeroTarjeta, strModificaGarFiduXTarjeta, string.Empty,
+                                       "Porcentaje_Aceptacion",
+                                       porcentajeAceptacionObt.ToString(),
+                                       porcentajeAceptacion.ToString());
+                                }
+                            }
+                            else
+                            {
+                                oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
+                                       2, 1, strCedulaFiador, strNumeroTarjeta, strModificaGarFiduXTarjeta, string.Empty,
+                                       ContenedorGarantias_fiduciarias_x_tarjeta.PORCENTAJE_RESPONSABILIDAD,
+                                       string.Empty,
+                                       nPorcentajeResponsabilidad.ToString());
+                            }
+
+
+
+                            if (!dsGarantiaFiduciariaXTarjeta.Tables[0].Rows[0].IsNull(ContenedorGarantias_fiduciarias_x_tarjeta.COD_OPERACION_ESPECIAL))
 							{
 								int nOperacionEspecialObt = Convert.ToInt32(dsGarantiaFiduciariaXTarjeta.Tables[0].Rows[0][ContenedorGarantias_fiduciarias_x_tarjeta.COD_OPERACION_ESPECIAL].ToString());
 
@@ -731,11 +770,18 @@ namespace BCRGARANTIAS.Negocios
 					}
 				}
 			}
-			catch
-			{
-				throw;
-			}
-		}
+            catch (SqlException ex)
+            {
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA_DETALLE, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_MODIFICANDO_GARANTIA_DETALLE, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+        }
 
         public void Eliminar(long nGarantiaFiduciaria, long nTarjeta, string strUsuario, string strIP,
                              string strOperacionCrediticia)
@@ -766,7 +812,8 @@ namespace BCRGARANTIAS.Negocios
 							 ContenedorGarantias_fiduciarias_x_tarjeta.CEDULA_ACREEDOR + "," +
 							 ContenedorGarantias_fiduciarias_x_tarjeta.FECHA_EXPIRACION + "," +
 							 ContenedorGarantias_fiduciarias_x_tarjeta.MONTO_COBERTURA + "," +
-							 ContenedorGarantias_fiduciarias_x_tarjeta.DES_OBSERVACION +
+							 ContenedorGarantias_fiduciarias_x_tarjeta.DES_OBSERVACION + "," +
+                             "Porcentaje_Aceptacion" +
 							 " from " + ContenedorGarantias_fiduciarias_x_tarjeta.NOMBRE_ENTIDAD +
 							 " where " + ContenedorGarantias_fiduciarias_x_tarjeta.COD_TARJETA + " = " + nTarjeta.ToString() +
 							 " and " + ContenedorGarantias_fiduciarias_x_tarjeta.COD_GARANTIA_FIDUCIARIA + " = " + nGarantiaFiduciaria.ToString();

@@ -118,7 +118,7 @@ BEGIN
 														num_placa_bien				VARCHAR (25)	COLLATE DATABASE_DEFAULT,
 														cod_clase_bien				VARCHAR (3)		COLLATE DATABASE_DEFAULT,
 														cod_usuario					VARCHAR (30)	COLLATE DATABASE_DEFAULT,
-														Porcentaje_Aceptacion		DECIMAL(5,2),
+														Porcentaje_Aceptacion		DECIMAL(5,2), --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 														cod_clase_garantia			SMALLINT,
 														cod_partido					SMALLINT
 														PRIMARY KEY (cod_llave)
@@ -147,7 +147,7 @@ BEGIN
 														cod_usuario					VARCHAR (30)	COLLATE DATABASE_DEFAULT,
 														cod_inscripcion				SMALLINT,
 														fecha_presentacion			VARCHAR (10)	COLLATE DATABASE_DEFAULT,
-														Porcentaje_Aceptacion		DECIMAL(5,2)
+														Porcentaje_Aceptacion		DECIMAL(5,2) --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 														PRIMARY KEY (cod_llave)
 													)
 	
@@ -243,7 +243,7 @@ BEGIN
 			COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
 			COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
 			@psCedula_Usuario AS cod_usuario,
-			GRO.Porcentaje_Aceptacion,
+			GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			GGR.cod_clase_garantia,
 			GGR.cod_partido 
 	FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -305,7 +305,7 @@ BEGIN
 			COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
 			COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
 			@psCedula_Usuario AS cod_usuario,
-			GRO.Porcentaje_Aceptacion,
+			GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			GGR.cod_clase_garantia,
 			GGR.cod_partido 
 	FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -325,7 +325,6 @@ BEGIN
 										WHEN GGR.cod_clase_garantia BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 										ELSE GGR.cod_partido
 									END
-
 	ORDER BY
 		ROV.cod_operacion,
 		GGR.numero_finca,
@@ -437,7 +436,7 @@ BEGIN
 			TGR.cod_usuario,
 			TGR.cod_inscripcion, 
 			TGR.fecha_presentacion,
-			TGR.Porcentaje_Aceptacion
+			TGR.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	#TMP_GARANTIAS_REALES_OPERACIONES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 
@@ -764,7 +763,7 @@ BEGIN
 		AND fecha_constitucion > '19000101'
 		AND cod_inscripcion	= 2
 		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 60, fecha_constitucion)
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0  --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 	--Se escoge la información de las garantías reales asociadas a las operaciones 
@@ -790,7 +789,7 @@ BEGIN
 	WHERE	cod_usuario = @psCedula_Usuario
 		AND fecha_constitucion > '19000101'
 		AND cod_inscripcion	= 3
-		AND Porcentaje_Aceptacion <= 0
+		AND Porcentaje_Aceptacion <= 0  --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 	--Se escoge la información de las garantías reales asociadas a las operaciones 
@@ -816,7 +815,7 @@ BEGIN
 	FROM	#TMP_GARANTIAS_REALES_X_OPERACION
 	WHERE	cod_usuario = @psCedula_Usuario
 		AND cod_inscripcion = 0
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0  --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 	--Se escoge la información de las garantías reales asociadas a las operaciones 
@@ -844,7 +843,7 @@ BEGIN
 	WHERE	cod_usuario = @psCedula_Usuario
 		AND cod_inscripcion = 1 
 		AND @vdtFecha_Actual_Sin_Hora >= DATEADD(DAY, 30, fecha_constitucion)
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0  --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 /************************************************************************************************

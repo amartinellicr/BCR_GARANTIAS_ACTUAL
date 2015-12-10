@@ -11,13 +11,13 @@ IF OBJECT_ID ('pa_ObtenerGarantiasRealesContratos', 'P') IS NOT NULL
 GO
 
 CREATE PROCEDURE [dbo].[pa_ObtenerGarantiasRealesContratos]
-	@pdCodigo_Operacion BIGINT = NULL,
-	@piContabilidad TINYINT,
-	@piOficina SMALLINT,
-	@piMoneda TINYINT,
-	@pdContrato DECIMAL(7),
+	@piConsecutivo_Operacion BIGINT = NULL,
+	@piCodigo_Contabilidad TINYINT,
+	@piCodigo_Oficina SMALLINT,
+	@piCodigo_Moneda TINYINT,
+	@pdNumero_Contrato DECIMAL(7),
 	@pbObtener_Solo_Codigo BIT = 0,
-	@psID_Usuario VARCHAR(30) = NULL 
+	@psCedula_Usuario VARCHAR(30) = NULL 
 AS
 BEGIN
 /******************************************************************
@@ -28,13 +28,13 @@ BEGIN
 		relacionadas a los contratos vigentes.
 	</Descripción>
 	<Entradas>
-		@pdCodigo_Operacion	= Conseutivo del contrato, del cual se obtendrán las garantías reales asociadas. 
-		@piContabilidad	= Código de la contabilidad del contrato.
-		@piOficina		= Número de la oficina del contrato.
-		@piMoneda		= Código de la moneda del contrato.
-		@pdContrato		= Número del contrato.
+		@piConsecutivo_Operacion	= Conseutivo del contrato, del cual se obtendrán las garantías reales asociadas. 
+		@piCodigo_Contabilidad	= Código de la contabilidad del contrato.
+		@piCodigo_Oficina		= Número de la oficina del contrato.
+		@piCodigo_Moneda		= Código de la moneda del contrato.
+		@pdNumero_Contrato		= Número del contrato.
 		@pbObtener_Solo_Codigo	= Indica si se obtiene sólo la inforación referente al código del a garantía o la información completa.
-		@psID_Usuario		= Identificación del usuario que realzia la consulta de la operación.
+		@psCedula_Usuario		= Identificación del usuario que realzia la consulta de la operación.
 	</Entradas>
 	<Salidas></Salidas>
 	<Autor>Javier Chaves Alvarado, BCR</Autor>
@@ -84,7 +84,7 @@ BEGIN
 			<Fecha>03/12/2015</Fecha>
 			<Descripción>
 				Se realiza un ajuste general, en el que se eliminan aquellos campos que no son requeridos en la información retornada,
-				también se optimizan los mecanismo empleadosp ara la obtenición de los registros y la eliminación de posibles duplicados. 
+				también se optimizan los mecanismo empleados para la obtención de los registros y la eliminación de posibles duplicados. 
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -152,14 +152,14 @@ BEGIN
 
 		
 	/*Se determina si se ha enviado el consecutivo del contrato*/
-	IF(@pdCodigo_Operacion IS NULL)
+	IF(@piConsecutivo_Operacion IS NULL)
 	BEGIN
-		SET @pdCodigo_Operacion = (	SELECT	cod_operacion 
+		SET @piConsecutivo_Operacion = (	SELECT	cod_operacion 
 									FROM	dbo.GAR_OPERACION
-									WHERE	cod_contabilidad = @piContabilidad
-										AND cod_oficina = @piOficina
-										AND cod_moneda = @piMoneda
-										AND num_contrato = @pdContrato
+									WHERE	cod_contabilidad = @piCodigo_Contabilidad
+										AND cod_oficina = @piCodigo_Oficina
+										AND cod_moneda = @piCodigo_Moneda
+										AND num_contrato = @pdNumero_Contrato
 										AND num_operacion IS NULL)
 	END
 
@@ -182,11 +182,11 @@ BEGIN
 			INNER JOIN @CLASES_GARANTIAS_REALES CGR
 			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
 		WHERE	MGT.prmgt_estado = 'A'
-			AND MGT.prmgt_pnu_oper = @pdContrato
-			AND MGT.prmgt_pco_ofici = @piOficina
-			AND MGT.prmgt_pco_moned = @piMoneda
+			AND MGT.prmgt_pnu_oper = @pdNumero_Contrato
+			AND MGT.prmgt_pco_ofici = @piCodigo_Oficina
+			AND MGT.prmgt_pco_moned = @piCodigo_Moneda
 			AND MGT.prmgt_pco_produ = 10
-			AND MGT.prmgt_pco_conta = @piContabilidad
+			AND MGT.prmgt_pco_conta = @piCodigo_Contabilidad
 
 
 	/*Se eliminan los registros con clase de garantía entre 20 y 29, pero con código de tenencia distinto de 1*/
@@ -231,7 +231,7 @@ BEGIN
 			END	AS Garantia_Real,
 			2 AS cod_tipo_operacion,
 			1 AS ind_duplicidad,
-			@psID_Usuario AS cod_usuario
+			@psCedula_Usuario AS cod_usuario
 	FROM	dbo.GAR_OPERACION GO1 
 		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GO1.cod_operacion = GRO.cod_operacion 
@@ -241,7 +241,7 @@ BEGIN
 		ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 		AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc
 		AND MGT.prmgt_pnuide_alf = GGR.Identificacion_Alfanumerica_Sicc COLLATE DATABASE_DEFAULT
-	WHERE	GO1.cod_operacion = @pdCodigo_Operacion
+	WHERE	GO1.cod_operacion = @piConsecutivo_Operacion
 		AND MGT.prmgt_pco_grado = COALESCE(GGR.cod_grado, MGT.prmgt_pco_grado)
 		AND MGT.prmgt_pnu_part = CASE 
 									WHEN  GGR.cod_clase_garantia BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
@@ -257,7 +257,7 @@ BEGIN
 
 	/*Se eliminan los registros incompletos*/
 	DELETE	FROM @TMP_GARANTIAS_REALES_CONTRATOS
-	WHERE	cod_usuario = @psID_Usuario
+	WHERE	cod_usuario = @psCedula_Usuario
 		AND cod_tipo_documento_legal = -1
 		AND fecha_presentacion = '19000101'
 		AND cod_tipo_mitigador = -1
@@ -329,7 +329,7 @@ BEGIN
 			INNER JOIN CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRC.cod_tipo_garantia_real
 		
-		WHERE	GRC.cod_usuario = @psID_Usuario 
+		WHERE	GRC.cod_usuario = @psCedula_Usuario 
 			AND CE1.cat_catalogo= 23 
 
 		ORDER BY garantia
@@ -348,7 +348,7 @@ BEGIN
 			INNER JOIN CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRC.cod_tipo_garantia_real
 		WHERE	GRC.cod_tipo_operacion = 2 
-			AND GRC.cod_usuario = @psID_Usuario 
+			AND GRC.cod_usuario = @psCedula_Usuario 
 			AND CE1.cat_catalogo= 23 
 		ORDER BY
 			GRC.cod_tipo_garantia_real,

@@ -16,9 +16,9 @@ CREATE PROCEDURE [dbo].[pa_ObtenerGarantiasRealesOperaciones]
 	@piCodigo_Oficina SMALLINT,
 	@piCodigo_Moneda TINYINT,
 	@piCodigo_Producto TINYINT,
-	@piNumero_Operacion DECIMAL(7),
+	@pdNumero_Operacion DECIMAL(7),
 	@pbObtener_Solo_Codigo BIT = 0,
-	@psID_Usuario VARCHAR(30) = NULL
+	@psCedula_Usuario VARCHAR(30) = NULL
 AS
 BEGIN
 /******************************************************************
@@ -35,7 +35,7 @@ BEGIN
 		@piCodigo_Producto			= Código del producto de la operación.
 		@nContrato					= Número de la operación.
 		@pbObtener_Solo_Codigo		= Indica si se obtiene sólo la inforación referente al código del a garantía o la información completa.
-		@psID_Usuario				= Identificación del usuario que realzia la consulta de la operación.
+		@psCedula_Usuario				= Identificación del usuario que realzia la consulta de la operación.
 	</Entradas>
 	<Salidas></Salidas>
 	<Autor>Javier Chaves Alvarado, BCR</Autor>
@@ -85,7 +85,7 @@ BEGIN
 			<Fecha>03/12/2015</Fecha>
 			<Descripción>
 				Se realiza un ajuste general, en el que se eliminan aquellos campos que no son requeridos en la información retornada,
-				también se optimizan los mecanismo empleadosp ara la obtenición de los registros y la eliminación de posibles duplicados. 
+				también se optimizan los mecanismo empleados para la obtención de los registros y la eliminación de posibles duplicados. 
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -157,7 +157,7 @@ BEGIN
 											AND cod_oficina = @piCodigo_Oficina
 											AND cod_moneda = @piCodigo_Moneda
 											AND cod_producto = @piCodigo_Producto
-											AND num_operacion = @piNumero_Operacion
+											AND num_operacion = @pdNumero_Operacion
 											AND cod_estado = 1)
 	END
 
@@ -182,7 +182,7 @@ BEGIN
 			INNER JOIN @CLASES_GARANTIAS_REALES CGR
 			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
 		WHERE	MGT.prmgt_estado = 'A'
-			AND MGT.prmgt_pnu_oper = @piNumero_Operacion
+			AND MGT.prmgt_pnu_oper = @pdNumero_Operacion
 			AND MGT.prmgt_pco_ofici = @piCodigo_Oficina
 			AND MGT.prmgt_pco_moned = @piCodigo_Moneda
 			AND MGT.prmgt_pco_produ = @piCodigo_Producto
@@ -231,7 +231,7 @@ BEGIN
 			END	AS Garantia_Real,
 			2 AS cod_tipo_operacion,
 			1 AS ind_duplicidad,
-			@psID_Usuario AS cod_usuario
+			@psCedula_Usuario AS cod_usuario
 	FROM	dbo.GAR_OPERACION GO1 
 		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GO1.cod_operacion = GRO.cod_operacion 
@@ -257,7 +257,7 @@ BEGIN
 
 	/*Se eliminan los registros incompletos*/
 	DELETE	FROM @TMP_GARANTIAS_REALES_OPERACIONES
-	WHERE	cod_usuario = @psID_Usuario
+	WHERE	cod_usuario = @psCedula_Usuario
 		AND cod_tipo_documento_legal = -1
 		AND fecha_presentacion = '19000101'
 		AND cod_tipo_mitigador = -1
@@ -329,7 +329,7 @@ BEGIN
 			INNER JOIN CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRO.cod_tipo_garantia_real
 		
-		WHERE	GRO.cod_usuario = @psID_Usuario 
+		WHERE	GRO.cod_usuario = @psCedula_Usuario 
 			AND CE1.cat_catalogo= 23 
 
 		ORDER BY garantia
@@ -348,7 +348,7 @@ BEGIN
 			INNER JOIN CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRO.cod_tipo_garantia_real
 		WHERE	GRO.cod_tipo_operacion = 2 
-			AND GRO.cod_usuario = @psID_Usuario 
+			AND GRO.cod_usuario = @psCedula_Usuario 
 			AND CE1.cat_catalogo= 23 
 		ORDER BY
 			GRO.cod_tipo_garantia_real,

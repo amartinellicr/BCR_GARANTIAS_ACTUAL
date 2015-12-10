@@ -3032,8 +3032,7 @@ namespace BCRGARANTIAS.Forms
 
                 //lbCoberturasPorAsignar.Items.Clear();
                 //lbCoberturasAsignadas.Items.Clear();
-
-
+                
                 ckbPolizaExterna.Checked = false;
 
 
@@ -3052,6 +3051,9 @@ namespace BCRGARANTIAS.Forms
                 txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
                 txtPorcentajeAceptacionTerreno.Text = string.Empty;
                 txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
+
+                //RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías
+                txtPorcentajeResponsabilidad.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3159,6 +3161,9 @@ namespace BCRGARANTIAS.Forms
                 txtPorcentajeAceptacionNoTerrenoCalculado.Text = string.Empty;
                 txtPorcentajeAceptacionTerreno.Text = string.Empty;
                 txtPorcentajeAceptacionTerrenoCalculado.Text = string.Empty;
+
+                //RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías
+                txtPorcentajeResponsabilidad.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3259,22 +3264,22 @@ namespace BCRGARANTIAS.Forms
                 //declara las propiedades del comando
                 oComando.CommandType = CommandType.StoredProcedure;
                 oComando.CommandTimeout = 120;
-                oComando.Parameters.AddWithValue("@nCodOperacion", nCodOperacion);
-                oComando.Parameters.AddWithValue("@nContabilidad", nContabilidad);
-                oComando.Parameters.AddWithValue("@nOficina", nOficina);
-                oComando.Parameters.AddWithValue("@nMoneda", nMoneda);
+                oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", nCodOperacion);
+                oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", nContabilidad);
+                oComando.Parameters.AddWithValue("@piCodigo_Oficina", nOficina);
+                oComando.Parameters.AddWithValue("@piCodigo_Moneda", nMoneda);
 
                 if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
                 {
-                    oComando.Parameters.AddWithValue("@nProducto", nProducto);
-                    oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
+                    oComando.Parameters.AddWithValue("@piCodigo_Producto", nProducto);
+                    oComando.Parameters.AddWithValue("@pdNumero_Operacion", nOperacion);
                 }
                 else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
                 {
-                    oComando.Parameters.AddWithValue("@nContrato", nOperacion);
+                    oComando.Parameters.AddWithValue("@pdNumero_Contrato", nOperacion);
                 }
 
-                oComando.Parameters.AddWithValue("@IDUsuario", Global.UsuarioSistema);
+                oComando.Parameters.AddWithValue("@psCedula_Usuario", Global.UsuarioSistema);
 
 
                 //Abre la conexión
@@ -4588,7 +4593,8 @@ namespace BCRGARANTIAS.Forms
 
                 txtFechaRegistro.Text = ((entidadGarantia.FechaPresentacion != DateTime.MinValue) ? entidadGarantia.FechaPresentacion.ToShortDateString() : string.Empty);
 
-                txtPorcentajeAceptacion.Text = entidadGarantia.PorcentajeResponsabilidad.ToString("N2");
+                txtPorcentajeAceptacion.Text = entidadGarantia.PorcentajeAceptacion.ToString("N2");
+                txtPorcentajeResponsabilidad.Text = ((entidadGarantia.PorcentajeResponsabilidad > -1) ? entidadGarantia.PorcentajeResponsabilidad.ToString("N2") : "0.00");
 
                 if (entidadGarantia.CodTipoBien == 2)
                 {

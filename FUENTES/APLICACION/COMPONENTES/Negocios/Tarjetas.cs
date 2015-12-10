@@ -316,10 +316,11 @@ namespace BCRGARANTIAS.Negocios
                         _cmdGarantiaEliminada.CommandTimeout = 120;
 
                         /*ingresa los parámetro requeridos por el procedimiento almacenado*/
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@codigo_catalogo", ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString());
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@numero_tarjeta", _numeroTarjeta);
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@codigo_tipo_Garantia", _codigoGarantiaNuevo);
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@piCodigo_Catalogo", ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString());
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@pnNumero_Tarjeta", _numeroTarjeta);
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@piCodigo_Tipo_Garantia", _codigoGarantiaNuevo);
 
+                        
                         /*declara el sqlDataAdapter que realizará la consulta*/
                         SqlDataAdapter _daGarantiaEliminada = new SqlDataAdapter(_cmdGarantiaEliminada);
                         /*declara el DataTable que se utilizará para almacenar la información consultada*/

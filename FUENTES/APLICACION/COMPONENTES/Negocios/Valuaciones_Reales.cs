@@ -1206,8 +1206,8 @@ namespace BCRGARANTIAS.Negocios
             {
                 SqlParameter[] parametrosProcedimiento = new SqlParameter[] { 
                         new SqlParameter("@psCedula_Usuario", SqlDbType.VarChar, 30),
-                        new SqlParameter("@piIndicadorProceso", SqlDbType.TinyInt),
-                        new SqlParameter("psRespuesta", SqlDbType.VarChar,1000)
+                        new SqlParameter("@piIndicador_Proceso", SqlDbType.TinyInt),
+                        new SqlParameter("@psRespuesta", SqlDbType.VarChar,1000)
                     };
 
                 parametrosProcedimiento[0].Value = strUsuario;

@@ -60,9 +60,8 @@ BEGIN
 			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
 			<Fecha>08/12/2015</Fecha>
 			<Descripción>
-				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
-				crear el campo referente al porcentaje de aceptación, este campo reemplazará al camp oporcentaje de responsabilidad dentro de 
-				cualquier lógica existente. 
+				Se optimiza el proceso completo, donde se eliminan campos que no son necesarios, dentro de los cuales se encontraba el 
+				porcentaje de responsabilidad mismo que sería sustiuido por el porcentaje de aceptación. 
 			</Descripción>
 		</Cambio>
 		<Cambio>

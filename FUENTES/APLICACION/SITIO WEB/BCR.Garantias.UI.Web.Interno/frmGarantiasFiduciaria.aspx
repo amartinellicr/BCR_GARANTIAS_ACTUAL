@@ -13,32 +13,21 @@
         <div>
 		    <table style="WIDTH: 775px" cellSpacing="1" cellPadding="1" width="775" align="center"
 			    bgColor="window" border="0">
-			    
-			        
-			  <div id="contenedorDatosModificacion" runat="server" enableviewstate="true">
-			    <tr>
-                    <td  bgcolor="#e0e0df">
-                        <table>                         
-                                   <tr>
-                                <td align="left">
-                                    <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha"  Width="472px"></asp:Label></td>
-                                <td align="right">
-                                   <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="286px" ></asp:Label>
-                                    
-                                </td>                            
-                            </tr>
-                            <tr>
-                                <td>
-                                </td>
-                              <td align="right" >
-                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>                                                                     
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>     		    
-			    
-			           </div>  
+			    <tr style="border-color:#E0E0DF; border-width:0px;">
+                        <td>
+			                <div id="contenedorDatosModificacion" runat="server" enableviewstate="true" style="clear:both; width:880px; border-color:#E0E0DF; background-color:#E0E0DF; padding-left:7px; padding-right:7px;">
+                                <div style="text-align:left; width:540px; float:left; display:inline; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label>
+                                </div>
+                                <div style="text-align:right; width:320px; float:right; display:inline; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
+                                </div>
+                                <div style="text-align:right; float:right; display:block; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>
+                                </div>
+			                </div> 
+                        </td> 
+                </tr>
 			    <tr>
 				    <td style="HEIGHT: 43px" align="center">
 					    <!--TITULO PRINCIPAL-->
@@ -199,8 +188,8 @@
 										    </td>
 										    <td class="td_Texto" style="HEIGHT: 24px" width="25%">%&nbsp;Aceptación:</td>
 										    <td style="HEIGHT: 24px" width="25%">
-										        <asp:TextBox ID="txtPorcentajeResponsabilidad" tabIndex="15" Enabled="True" Text="0.00" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
-										                     ToolTip="Procentaje de Responsabilidad" Width="64px" />
+										        <asp:TextBox ID="txtPorcentajeAceptacion" tabIndex="15" Enabled="True" Text="0.00" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										                     ToolTip="Porcentaje de Aceptación" Width="64px" />
 										    </td>
 									    </tr>
 									    <tr>
@@ -282,6 +271,15 @@
 										    <td></td>
 										    <td colSpan="3"></td>
 									    </tr>
+                                        <tr>
+                                           <td class="td_Texto" style="HEIGHT: 24px" width="25%">%&nbsp;Responsabilidad:</td>
+										   <td>
+										        <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										                        ToolTip="Porcentaje de Responsabilidad" Enabled="False" tabIndex="20"/>
+                                                <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
+										    </td>
+                                            <td></td>
+                                        </tr>
 									    <tr>
 										    <td colSpan="2">
 										    </td>
@@ -307,7 +305,7 @@
 							            <asp:GridView ID="gdvGarantiasFiduciarias" runat="server" CellPadding="4" ForeColor="#333333" GridLines="Both" Width="730px" AllowPaging="True" AllowSorting="True"
                                          AutoGenerateColumns="False" DataKeyNames="tipo_persona, cedula_fiador, nombre_fiador, cod_tipo_fiador, cod_tipo_mitigador, cod_tipo_documento_legal, 
                                          monto_mitigador, porcentaje_responsabilidad, cod_operacion_especial, cod_tipo_acreedor, cedula_acreedor, cod_operacion, cod_garantia_fiduciaria, cod_estado,
-                                         Usuario_Modifico,Nombre_Usuario_Modifico,Fecha_Modifico,Fecha_Inserto,Fecha_Replica" 
+                                         Usuario_Modifico,Nombre_Usuario_Modifico,Fecha_Modifico,Fecha_Inserto,Fecha_Replica,Porcentaje_Aceptacion" 
                                          OnRowCommand="gdvGarantiasFiduciarias_RowCommand"     
                                          OnPageIndexChanging="gdvGarantiasFiduciarias_PageIndexChanging" OnDataBinding="gdvGarantiasFiduciarias_DataBinding" BorderColor="Black" CssClass="gridview">
                                          
@@ -335,6 +333,7 @@
                                             <asp:BoundField DataField="Fecha_Modifico" Visible="False"/>
                                             <asp:BoundField DataField="Fecha_Inserto" Visible="False"/>
                                             <asp:BoundField DataField="Fecha_Replica" Visible="False"/>
+                                            <asp:BoundField DataField="Porcentaje_Aceptacion" Visible="False"/>
                                        </Columns>
                                         
                                         <RowStyle BackColor="#EFF3FB" BorderColor="Black" BorderStyle="Solid"/>
@@ -361,5 +360,6 @@
         </div>
   </contenttemplate>
 </asp:UpdatePanel>
+<asp:HiddenField ID="hdnAplicaCalculoPA" runat="server" Value="0"></asp:HiddenField>
 </asp:Content>
 

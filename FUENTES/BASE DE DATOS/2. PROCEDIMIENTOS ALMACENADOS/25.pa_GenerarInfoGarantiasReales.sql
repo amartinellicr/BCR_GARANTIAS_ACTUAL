@@ -322,7 +322,7 @@ DECLARE
 			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado, 
 			--FIN RQ: RQ_MANT_2015062410418218_00090
-			GRO.Porcentaje_Aceptacion
+			GRO.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	dbo.GAR_OPERACION GO1 
 			INNER JOIN #TEMP_PRMOC MOC
 			ON MOC.cod_operacion = GO1.cod_operacion
@@ -2051,7 +2051,7 @@ DECLARE
 			'N' AS Indicador_Poliza,
 			NULL AS Indicador_Coberturas_Obligatorias,
 			--FIN RQ: RQ_MANT_2015062410418218_00090
-			GRO.Porcentaje_Aceptacion
+			GRO.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	dbo.GAR_OPERACION GO1 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
 			ON GO1.cod_operacion = GRO.cod_operacion 
@@ -2733,7 +2733,7 @@ DECLARE
 														WHEN CP1.Cantidad_Coberturas_Obligatorias = CP2.Cantidad_Coberturas_Obligatorias THEN 'SI'
 														ELSE 'NO'
 													END
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 		INNER JOIN #TEMP_COBERTURAS_POR_ASIGNAR CP1
 		ON CP1.Codigo_SAP = TGR.Codigo_SAP
 		LEFT OUTER JOIN #TEMP_COBERTURAS_ASIGNADAS CP2
@@ -2744,33 +2744,40 @@ DECLARE
 	--SE ASIGNA EL VALOR NULL A LOS CAMPOS DE LOS PORCENTAJES QUE SEAN IGULA A -1
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
 		AND TGR.Porcentaje_Aceptacion_Terreno = -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
 		AND TGR.Porcentaje_Aceptacion_No_Terreno = -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno_Calculado = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
 		AND TGR.Porcentaje_Aceptacion_Terreno_Calculado = -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
 		AND TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 
 	--FIN RQ: RQ_MANT_2015062410418218_00090
+
+	UPDATE	TGR
+	SET		TGR.porcentaje_responsabilidad = NULL
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
+	WHERE	TGR.cod_usuario = @psCedula_Usuario
+		AND TGR.cod_tipo_operacion IN (1, 3)
+		AND TGR.porcentaje_responsabilidad = -1
 
 	/***************************************************************************************************************************************************/
 
@@ -2792,7 +2799,7 @@ DECLARE
 		END AS INDICADOR_INSCRIPCION,		
 		CASE 
 			WHEN TMP.Porcentaje_Aceptacion IS NULL THEN GGR.Porcentaje_Aceptacion
-			ELSE TMP.Porcentaje_Aceptacion
+			ELSE TMP.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se cambian las referencias a este campo.
 		END AS PORCENTAJE_ACEPTACION,		
 		GGR.fecha_constitucion AS FECHA_CONSTITUCION,
 		GGR.cod_grado_gravamen AS GRADO_GRAVAMEN,
@@ -2833,8 +2840,9 @@ DECLARE
 		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno)), '') AS '%_ACEPTACION_NO_TERRENO',
 		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_Terreno_Calculado)), '') AS '%_ACEPTACION_TERRENO_CALCULADO',
 		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno_Calculado)), '') AS '%_ACEPTACION_NO_TERRENO_CALCULADO',
-		COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN		
+		COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN,			
 		--FIN RQ: RQ_MANT_2015062410418218_00090
+		COALESCE((CONVERT(VARCHAR(50),TMP.porcentaje_responsabilidad)), '') AS PORCENTAJE_RESPONSABILIDAD --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
 		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
 		ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
@@ -2907,6 +2915,6 @@ DECLARE
 		TMP.Porcentaje_Aceptacion_No_Terreno_Calculado,
 		TMP.Indicador_Coberturas_Obligatorias,
 		--FIN RQ: RQ_MANT_2015062410418218_00090
-		TMP.Porcentaje_Aceptacion
+		TMP.Porcentaje_Aceptacion  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	END
 END

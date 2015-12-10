@@ -231,6 +231,10 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo  = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_ULTIMO_SEGUIMIENTO_MAQUINARIA_EQUIPO";
         public const string _errorPorcAceptNoTerrenoCalcFechaValuacion                          = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_VALUACION";
 
+        public const string _errorInsertandoGarantia                                            = "ERROR_INSERTANDO_GARANTIA";
+        public const string _errorInsertandoGarantiaDetalle                                     = "ERROR_INSERTANDO_GARANTIA_DETALLE";
+
+
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>

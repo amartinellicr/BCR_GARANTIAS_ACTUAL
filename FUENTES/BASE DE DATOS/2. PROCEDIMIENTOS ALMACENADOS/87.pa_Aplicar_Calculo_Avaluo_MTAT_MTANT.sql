@@ -780,7 +780,7 @@ BEGIN
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
 			0 AS Indicador_Calcular_PANTC,
-			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real
@@ -856,7 +856,7 @@ BEGIN
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
 			0 AS Indicador_Calcular_PANTC,
-			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real
@@ -932,7 +932,7 @@ BEGIN
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
 			0 AS Indicador_Calcular_PANTC,
-			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real

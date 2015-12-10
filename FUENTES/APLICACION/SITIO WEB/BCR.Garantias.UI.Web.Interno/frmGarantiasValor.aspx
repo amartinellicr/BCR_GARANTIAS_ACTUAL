@@ -134,7 +134,7 @@
 											    <asp:dropdownlist id="cbGravamen" tabIndex="14" runat="server" BackColor="AliceBlue" Width="180px"></asp:dropdownlist></td>
 										    <td class="td_Texto">% Aceptación:</td>
 										    <td>
-										         <asp:TextBox ID="txtPorcentajeAceptacion" tabIndex="15" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										          <asp:TextBox ID="txtPorcentajeAceptacion" tabIndex="15" runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
 										                     ToolTip="Procentaje de Aceptación" />
 											</td>
 									    </tr>
@@ -310,6 +310,15 @@
                                                      
                                                 <ajaxToolkit:CalendarExtender ID="cleFechaPrescripcion" Format="dd/MM/yyyy" CssClass="calendario" runat="server" TargetControlID="txtFechaPrescripcion" PopupButtonID="igbCalendarioPrescripcion" />
 											</td>
+									    </tr>
+									    <tr>
+                                            <td class="td_Texto">% Responsabilidad:</td>
+                                            <td>
+										        <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										                        ToolTip="Porcentaje de Responsabilidad" Enabled= "False" tabIndex="20"/>
+                                                <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
+										    </td>
+                                            <td></td>
 									    </tr>
 									    <tr>
 										    <td class="td_Texto" colSpan="4"><br>

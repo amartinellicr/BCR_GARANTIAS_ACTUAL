@@ -222,6 +222,15 @@
 											    </td>
 									        </tr>
 									        <tr>
+                                                <td class="td_Texto">% Responsabilidad:</td>
+                                                <td>
+										            <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										                         ToolTip="Porcentaje de Responsabilidad" Enabled= "False" tabIndex="20"/>
+                                                    <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
+										        </td>
+                                                <td></td>
+									        </tr>
+									        <tr>
 										        <td class="td_Texto" colspan="4"><br>
 										        </td>
 									        </tr>

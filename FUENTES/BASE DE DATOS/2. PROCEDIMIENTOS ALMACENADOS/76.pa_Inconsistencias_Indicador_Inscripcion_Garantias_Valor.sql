@@ -115,7 +115,7 @@ BEGIN
 											ind_duplicidad					TINYINT			DEFAULT (1)	,
 											cod_usuario						VARCHAR (30)	COLLATE DATABASE_DEFAULT,
 											cod_clase_garantia				SMALLINT,
-											Porcentaje_Aceptacion			DECIMAL(5,2),
+											Porcentaje_Aceptacion			DECIMAL(5,2), --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 											cod_llave						BIGINT			IDENTITY(1,1)
 											PRIMARY KEY (cod_llave)
 										)
@@ -202,7 +202,7 @@ BEGIN
 				1 AS ind_duplicidad,
 				@psCedula_Usuario AS cod_usuario,
 				GGV.cod_clase_garantia,
-				GVO.Porcentaje_Aceptacion	
+				GVO.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.	
 		FROM	dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
 			INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
 			 ON VOV.cod_operacion = GVO.cod_operacion 
@@ -252,7 +252,7 @@ BEGIN
 				1 AS ind_duplicidad,
 				@psCedula_Usuario AS cod_usuario,
 				GGV.cod_clase_garantia,
-				GVO.Porcentaje_Aceptacion		
+				GVO.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.		
 		FROM	dbo.GARANTIAS_VALOR_X_OPERACION_VW VOV 
 			INNER JOIN dbo.GAR_GARANTIAS_VALOR_X_OPERACION GVO 
 			ON VOV.cod_operacion = GVO.cod_operacion 
@@ -663,7 +663,7 @@ BEGIN
 		AND fecha_constitucion > '19000101'
 		AND cod_inscripcion = 2
 		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 60, fecha_constitucion)
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0 --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 	--Se escoge la información de las garantías de valor asociadas a las operaciones 
@@ -696,7 +696,7 @@ BEGIN
 		AND fecha_constitucion > '19000101'
 		AND cod_inscripcion = 3 
 		AND @vdtFecha_Actual_Sin_Hora BETWEEN fecha_constitucion AND DATEADD(DAY, 30, fecha_constitucion) 
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0 --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 	--Se escoge la información de las garantías reales asociadas a las operaciones 
@@ -726,7 +726,7 @@ BEGIN
 	FROM	#TMP_GARANTIAS_VALOR
 	WHERE	cod_usuario	= @psCedula_Usuario
 		AND cod_inscripcion	= 0
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0 --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 
 
@@ -759,7 +759,7 @@ BEGIN
 	WHERE	cod_usuario = @psCedula_Usuario
 		AND cod_inscripcion = 1
 		AND @vdtFecha_Actual_Sin_Hora > DATEADD(DAY, 30, fecha_constitucion)
-		AND Porcentaje_Aceptacion <> 0
+		AND Porcentaje_Aceptacion <> 0 --RQ_MANT_2015111010495738_00610: Se ajusta este campo.
 
 /************************************************************************************************
  *                                                                                              * 

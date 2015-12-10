@@ -597,4 +597,10 @@
   <data name="ERROR_OBTENIENDO_COBERTURAS_POLIZAS_SAP_DETALLE" xml:space="preserve">
     <value>Se ha presentado un error al obtener la lista de coberturas asociadas a las pólizas. Detalle técnico: @1</value>
   </data>
+  <data name="ERROR_INSERTANDO_GARANTIA" xml:space="preserve">
+    <value>No se pudo insertar la información de la garantía @1.</value>
+  </data>
+  <data name="ERROR_INSERTANDO_GARANTIA_DETALLE" xml:space="preserve">
+    <value>No se pudo insertar la información de la garantía @1. Detalle: @2</value>
+  </data>
 </root>

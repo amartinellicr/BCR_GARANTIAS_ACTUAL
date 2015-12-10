@@ -180,24 +180,24 @@ namespace BCRGARANTIAS.Negocios
                                                     int nTipoFiador, string strNombreFiador, int nTipoMitigador, int nTipoDocumento,
                                                     decimal nMontoMitigador, decimal nPorcentajeResponsabilidad, int nOperacionEspecial,
                                                     int nTipoAcreedor, string strCedulaAcreedor, string strUsuario, string strIP,
-                                                    string strOperacionCrediticia)
+                                                    string strOperacionCrediticia, decimal porcentajeAceptacion)
         {
             Garantias_Fiduciarias oGarantia = new Garantias_Fiduciarias();
             oGarantia.Crear(nOperacion, nTipoGarantia, nClaseGarantia, strCedulaFiador, nTipoFiador,
                             strNombreFiador, nTipoMitigador, nTipoDocumento, nMontoMitigador, nPorcentajeResponsabilidad,
-                            nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia);
+                            nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia, porcentajeAceptacion);
         }
 
         public static void ModificarGarantiaFiduciaria(long nGarantiaFiduciaria, long nOperacion, string strCedulaFiador, int nTipoFiador,
                                                         string strNombreFiador, int nTipoMitigador, int nTipoDocumento, decimal nMontoMitigador,
                                                         decimal nPorcentajeResponsabilidad, int nOperacionEspecial, int nTipoAcreedor,
                                                         string strCedulaAcreedor, string strUsuario, string strIP,
-                                                        string strOperacionCrediticia)
+                                                        string strOperacionCrediticia, decimal porcentajeAceptacion)
         {
             Garantias_Fiduciarias oGarantia = new Garantias_Fiduciarias();
             oGarantia.Modificar(nGarantiaFiduciaria, nOperacion, strCedulaFiador, nTipoFiador,
                                 strNombreFiador, nTipoMitigador, nTipoDocumento, nMontoMitigador, nPorcentajeResponsabilidad,
-                                nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia);
+                                nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia, porcentajeAceptacion);
         }
 
         public static void EliminarGarantiaFiduciaria(long nGarantiaFiduciaria, long nOperacion, string strUsuario, string strIP,
@@ -220,7 +220,7 @@ namespace BCRGARANTIAS.Negocios
                                                         int nMoneda, int nOficinaRegistra,
                                                         string strUsuario, string strIP,
                                                         string strOperacionCrediticia,
-                                                        string strObservacion, int nCodigoCatalogo)
+                                                        string strObservacion, int nCodigoCatalogo, decimal porcentajeAceptacion)
         {
             Garantias_Fiduciarias_Tarjetas oGarantia = new Garantias_Fiduciarias_Tarjetas();
 
@@ -228,7 +228,7 @@ namespace BCRGARANTIAS.Negocios
                             strNombreFiador, nTipoMitigador, nTipoDocumento, nMontoMitigador, nPorcentajeResponsabilidad,
                             nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, dFechaExpiracion, nMontoCobertura,
                             strCedulaDeudor, nBIN, nCodigoInterno, nMoneda, nOficinaRegistra, strUsuario, strIP, strOperacionCrediticia,
-                            strObservacion, nCodigoCatalogo);
+                            strObservacion, nCodigoCatalogo, porcentajeAceptacion);
         }
 
         public static void ModificarGarantiaFiduciariaTarjeta(long nGarantiaFiduciaria, long nTarjeta, string strCedulaFiador, int nTipoFiador,
@@ -237,14 +237,14 @@ namespace BCRGARANTIAS.Negocios
                                                         string strCedulaAcreedor, DateTime dFechaExpiracion, decimal nMontoCobertura,
                                                         string strUsuario, string strIP,
                                                         string strOperacionCrediticia,
-                                                        string strObservacion)
+                                                        string strObservacion, decimal porcentajeAceptacion)
         {
             Garantias_Fiduciarias_Tarjetas oGarantia = new Garantias_Fiduciarias_Tarjetas();
 
             oGarantia.Modificar(nGarantiaFiduciaria, nTarjeta, strCedulaFiador, nTipoFiador,
                                 strNombreFiador, nTipoMitigador, nTipoDocumento, nMontoMitigador, nPorcentajeResponsabilidad,
                                 nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, dFechaExpiracion, nMontoCobertura,
-                                strUsuario, strIP, strOperacionCrediticia, strObservacion);
+                                strUsuario, strIP, strOperacionCrediticia, strObservacion, porcentajeAceptacion);
         }
 
         public static void EliminarGarantiaFiduciariaTarjeta(long nGarantiaFiduciaria, long nTarjeta, string strUsuario, string strIP,
@@ -274,14 +274,14 @@ namespace BCRGARANTIAS.Negocios
                                             DateTime dFechaConstitucion, DateTime dFechaVencimiento, int nTipoAcreedor,
                                             string strCedulaAcreedor, int nLiquidez, int nTenencia, int nMoneda,
                                             DateTime dFechaPrescripcion, string strUsuario, string strIP,
-                                            string strOperacionCrediticia, string strGarantia)
+                                            string strOperacionCrediticia, string strGarantia, decimal porcentajeAceptacion)
         {
             Garantias_Reales oGarantia = new Garantias_Reales();
             oGarantia.Crear(nOperacion, nTipoGarantia, nClaseGarantia, nTipoGarantiaReal, nPartido, strFinca, nGrado,
                             nCedulaFiduciaria, strClaseBien, strNumPlaca, nTipoBien, nTipoMitigador, nTipoDocumento,
                             nMontoMitigador, nInscripcion, dFechaPresentacion, nPorcentaje, nGradoGravamen, nOperacionEspecial,
                             dFechaConstitucion, dFechaVencimiento, nTipoAcreedor, strCedulaAcreedor, nLiquidez,
-                            nTenencia, nMoneda, dFechaPrescripcion, strUsuario, strIP, strOperacionCrediticia, strGarantia);
+                            nTenencia, nMoneda, dFechaPrescripcion, strUsuario, strIP, strOperacionCrediticia, strGarantia, porcentajeAceptacion);
         }
 
         public static void ModificarGarantiaReal(long nOperacion, long nGarantiaReal, int nTipoGarantia, int nClaseGarantia,
@@ -292,14 +292,14 @@ namespace BCRGARANTIAS.Negocios
                                                 DateTime dFechaConstitucion, DateTime dFechaVencimiento, int nTipoAcreedor,
                                                 string strCedulaAcreedor, int nLiquidez, int nTenencia, int nMoneda,
                                                 DateTime dFechaPrescripcion, string strUsuario, string strIP,
-                                                string strOperacionCrediticia, string strGarantia)
+                                                string strOperacionCrediticia, string strGarantia, decimal porcentajeAceptacion)
         {
             Garantias_Reales oGarantia = new Garantias_Reales();
             oGarantia.Modificar(nOperacion, nGarantiaReal, nTipoGarantia, nClaseGarantia, nTipoGarantiaReal, nPartido, strFinca, nGrado,
                                 nCedulaFiduciaria, strClaseBien, strNumPlaca, nTipoBien, nTipoMitigador, nTipoDocumento,
                                 nMontoMitigador, nInscripcion, dFechaPresentacion, nPorcentaje, nGradoGravamen, nOperacionEspecial,
                                 dFechaConstitucion, dFechaVencimiento, nTipoAcreedor, strCedulaAcreedor, nLiquidez,
-                                nTenencia, nMoneda, dFechaPrescripcion, strUsuario, strIP, strOperacionCrediticia, strGarantia);
+                                nTenencia, nMoneda, dFechaPrescripcion, strUsuario, strIP, strOperacionCrediticia, strGarantia, porcentajeAceptacion);
         }
 
         public static void ModificarGarantiaReal(clsGarantiaReal datosGarantiaReal, string strUsuario, string strIP,
@@ -386,7 +386,7 @@ namespace BCRGARANTIAS.Negocios
                                             decimal nPorcentaje, int nGradoGravamen, int nGradoPrioridades,
                                             decimal nMontoPrioridades, int nOperacionEspecial, int nTipoAcreedor,
                                             string strCedulaAcreedor, string strUsuario, string strIP,
-                                            string strOperacionCrediticia, string strDescripcionInstrumento)
+                                            string strOperacionCrediticia, string strDescripcionInstrumento, decimal porcentajeAceptacion)
         {
             Garantias_Valores oGarantia = new Garantias_Valores();
             oGarantia.Crear(nOperacion, nTipoGarantia, nClaseGarantia, strSeguridad, dFechaConstitucion, dFechaVencimiento,
@@ -395,7 +395,7 @@ namespace BCRGARANTIAS.Negocios
                             dFechaPrescripcion, nTipoMitigador, nTipoDocumento, nMontoMitigador, nInscripcion,
                 /*dFechaPresentacion,*/ nPorcentaje, nGradoGravamen, nGradoPrioridades, nMontoPrioridades,
                             nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia,
-                            strDescripcionInstrumento);
+                            strDescripcionInstrumento, porcentajeAceptacion);
         }
 
         public static void ModificarGarantiaValor(long nOperacion, long nGarantiaValor, int nTipoGarantia, int nClaseGarantia, string strSeguridad,
@@ -409,7 +409,7 @@ namespace BCRGARANTIAS.Negocios
                                                 decimal nMontoPrioridades, int nOperacionEspecial, int nTipoAcreedor,
                                                 string strCedulaAcreedor, string strUsuario, string strIP,
                                                 string strOperacionCrediticia, string strDescripcionInstrumento,
-                                                string strDescInstNuevo)
+                                                string strDescInstNuevo, decimal porcentajeAceptacion)
         {
             Garantias_Valores oGarantia = new Garantias_Valores();
             oGarantia.Modificar(nOperacion, nGarantiaValor, nTipoGarantia, nClaseGarantia, strSeguridad, dFechaConstitucion, dFechaVencimiento,
@@ -418,7 +418,7 @@ namespace BCRGARANTIAS.Negocios
                                 dFechaPrescripcion, nTipoMitigador, nTipoDocumento, nMontoMitigador, nInscripcion,
                 /*dFechaPresentacion,*/ nPorcentaje, nGradoGravamen, nGradoPrioridades, nMontoPrioridades,
                                 nOperacionEspecial, nTipoAcreedor, strCedulaAcreedor, strUsuario, strIP, strOperacionCrediticia,
-                                strDescripcionInstrumento, strDescInstNuevo);
+                                strDescripcionInstrumento, strDescInstNuevo, porcentajeAceptacion);
         }
 
         public static void EliminarGarantiaValor(long nOperacion, long nGarantia, string strUsuario, string strIP,

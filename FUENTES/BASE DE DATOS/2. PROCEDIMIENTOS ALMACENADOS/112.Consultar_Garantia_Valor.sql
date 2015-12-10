@@ -12,10 +12,10 @@ GO
 
 CREATE PROCEDURE [dbo].[Consultar_Garantia_Valor]
 		
-	@piOperacion	BIGINT,
-	@piGarantia		BIGINT,
-	@psIDUsuario	VARCHAR(30) ,
-	@psRespuesta	VARCHAR(1000) OUTPUT
+	@piConsecutivo_Operacion	BIGINT,
+	@piConsecutivo_Garantia		BIGINT,
+	@psCedula_Usuario			VARCHAR(30) ,
+	@psRespuesta				VARCHAR(1000) OUTPUT
 AS
 
 /******************************************************************
@@ -25,9 +25,9 @@ AS
 		Procedimiento almacenado que obtiene la información referente a las garantías de valor relacionadas a operaciones y giros activos.
 	</Descripción>
 	<Entradas>
-			@piOperacion	= Consecutivo asignado a la operación que respalda la garantía.
-			@piGarantia		= Consecutivo asignado a la garantía real que será modificada.
-			@psIDUsuario	= Identificación dle usuario que modifica la garantía.
+			@piConsecutivo_Operacion	= Consecutivo asignado a la operación que respalda la garantía.
+			@piConsecutivo_Garantia		= Consecutivo asignado a la garantía real que será modificada.
+			@psCedula_Usuario	= Identificación dle usuario que modifica la garantía.
 	</Entradas>
 	<Salidas>
 			@psRespuesta	= Respuesta que se retorna al aplicativo, según el estado de la transacción realizada  
@@ -73,7 +73,7 @@ BEGIN
 			COALESCE(GVP.monto_mitigador, 0) AS monto_mitigador,
 			COALESCE(GVP.fecha_presentacion_registro, '1900-01-01') AS fecha_presentacion,
 			COALESCE(GVP.cod_inscripcion, -1) AS cod_inscripcion,
-			COALESCE(GVP.porcentaje_responsabilidad, 0) AS porcentaje_responsabilidad,
+			COALESCE(GVP.porcentaje_responsabilidad, -1) AS porcentaje_responsabilidad,
 			COALESCE(GVA.fecha_constitucion, '1900-01-01') AS fecha_constitucion,
 			COALESCE(GVP.cod_grado_gravamen, -1) AS cod_grado_gravamen,
 			COALESCE(GVP.cod_grado_prioridades, -1) AS cod_grado_prioridades,
@@ -108,7 +108,7 @@ BEGIN
 			COALESCE(GVA.Fecha_Modifico,'1900-01-01') AS Fecha_Modifico,
 			COALESCE(GVA.Fecha_Inserto,'1900-01-01') AS Fecha_Inserto,
 			COALESCE(GVA.Fecha_Replica,'1900-01-01') AS Fecha_Replica,
-			COALESCE(GVP.Porcentaje_Aceptacion, -1) AS Porcentaje_Aceptacion
+			COALESCE(GVP.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	GAR_OPERACION GOP 
 		INNER JOIN GAR_GARANTIAS_VALOR_X_OPERACION  GVP 
 		ON GOP.cod_operacion = GVP.cod_operacion 
@@ -118,8 +118,8 @@ BEGIN
 			ON SGU.COD_USUARIO  = GVA.Usuario_Modifico COLLATE DATABASE_DEFAULT
 		INNER JOIN CAT_ELEMENTO CEL
 			ON CEL.cat_campo = GVA.cod_clase_garantia 
-	WHERE	GOP.cod_operacion = @piOperacion
-		AND GVA.cod_garantia_valor =  @piGarantia						
+	WHERE	GOP.cod_operacion = @piConsecutivo_Operacion
+		AND GVA.cod_garantia_valor =  @piConsecutivo_Garantia						
 		AND CEL.cat_catalogo= 7
 
 

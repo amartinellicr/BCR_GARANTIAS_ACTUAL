@@ -34,9 +34,11 @@ namespace BCRGARANTIAS.Negocios
 						decimal nPorcentaje, int nGradoGravamen, int nGradoPrioridades,
 						decimal nMontoPrioridades, int nOperacionEspecial, int nTipoAcreedor,
                         string strCedulaAcreedor, string strUsuario, string strIP,
-                        string strOperacionCrediticia, string strDescripcionInstrumento)
+                        string strOperacionCrediticia, string strDescripcionInstrumento, decimal porcentajeAceptacion)
 		{
-			try
+            string identifiacionGarantia = string.Format("Valor: {0}, relacionada a la operación/contrato: {1}", strSeguridad, strOperacionCrediticia);
+
+            try
 			{
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
@@ -48,85 +50,82 @@ namespace BCRGARANTIAS.Negocios
 					oComando.CommandType = CommandType.StoredProcedure;
 
 					//Agrega los parametros
-					oComando.Parameters.AddWithValue("@nTipoGarantia", nTipoGarantia);
-					oComando.Parameters.AddWithValue("@nClaseGarantia", nClaseGarantia);
-					oComando.Parameters.AddWithValue("@strNumeroSeguridad", strSeguridad);
+					oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
+					oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
+					oComando.Parameters.AddWithValue("@psNumero_Seguridad", strSeguridad);
 
-					oComando.Parameters.AddWithValue("@dFechaConstitucion", dFechaConstitucion);
-					oComando.Parameters.AddWithValue("@dFechaVencimiento", dFechaVencimiento);
+					oComando.Parameters.AddWithValue("@pdtFecha_Constitucion", dFechaConstitucion);
+					oComando.Parameters.AddWithValue("@pdtFecha_Vencimiento", dFechaVencimiento);
 
 					if (nClasificacion != -1)
-						oComando.Parameters.AddWithValue("@nClasificacion", nClasificacion);
+						oComando.Parameters.AddWithValue("@piClasificacion", nClasificacion);
 
 					if (strInstrumento != "")
-						oComando.Parameters.AddWithValue("@strInstrumento", strInstrumento);
+						oComando.Parameters.AddWithValue("@psInstrumento", strInstrumento);
 
 					if (strSerie != "")
-						oComando.Parameters.AddWithValue("@strSerie", strSerie);
+						oComando.Parameters.AddWithValue("@psSerie", strSerie);
 
 					if (nTipoEmisor != -1)
-						oComando.Parameters.AddWithValue("@nTipoEmisor", nTipoEmisor);
+						oComando.Parameters.AddWithValue("@piTipo_Emisor", nTipoEmisor);
 
 					if (strEmisor != "")
-						oComando.Parameters.AddWithValue("@strCedulaEmisor", strEmisor);
+						oComando.Parameters.AddWithValue("@psCedula_Emisor", strEmisor);
 
-					oComando.Parameters.AddWithValue("@nPremio", nPremio);
+					oComando.Parameters.AddWithValue("@pdPremio", nPremio);
 
 					if (strISIN != "")
-						oComando.Parameters.AddWithValue("@strISIN", strISIN);
+						oComando.Parameters.AddWithValue("@psISIN", strISIN);
 
 					if (nValorFacial != 0)
-						oComando.Parameters.AddWithValue("@nValorFacial", nValorFacial);
-
-					if (nMonedaValorFacial != -1)
-						oComando.Parameters.AddWithValue("@nMonedaValorFacial", nMonedaValorFacial);
+						oComando.Parameters.AddWithValue("@pdValor_Facial", nValorFacial);
+                                        
+                    if (nMonedaValorFacial != -1)
+						oComando.Parameters.AddWithValue("@piMoneda_Valor_Facial", nMonedaValorFacial);
 
 					if (nValorMercado != 0)
-						oComando.Parameters.AddWithValue("@nValorMercado", nValorMercado);
+						oComando.Parameters.AddWithValue("@pdValor_Mercado", nValorMercado);
 
 					if (nMonedaValorMercado != -1)
-						oComando.Parameters.AddWithValue("@nMonedaValorMercado", nMonedaValorMercado);
+						oComando.Parameters.AddWithValue("@pdMoneda_Valor_Mercado", nMonedaValorMercado);
 
 					if (nTenencia != -1)
-						oComando.Parameters.AddWithValue("@nTenencia", nTenencia);
+						oComando.Parameters.AddWithValue("@piTenencia", nTenencia);
 
-					oComando.Parameters.AddWithValue("@dFechaPrescripcion", dFechaPrescripcion);
-					oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
+					oComando.Parameters.AddWithValue("@pdtFecha_Prescripcion", dFechaPrescripcion);
+					oComando.Parameters.AddWithValue("@pbConsecutivo_Operacion", nOperacion);
 
 					if (nTipoMitigador != -1)
-						oComando.Parameters.AddWithValue("@nTipoMitigador", nTipoMitigador);
+						oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
 
 					if (nTipoDocumento != -1)
-						oComando.Parameters.AddWithValue("@nTipoDocumentoLegal", nTipoDocumento);
+						oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
 
-					oComando.Parameters.AddWithValue("@nMontoMitigador", nMontoMitigador);
+					oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
 
-					if (nInscripcion != -1)
-						oComando.Parameters.AddWithValue("@nInscripcion", nInscripcion);
+                    if (nInscripcion != -1)
+						oComando.Parameters.AddWithValue("@piInscripcion", nInscripcion);
 
-					//				oComando.Parameters.AddWithValue("@dFechaPresentacion",dFechaPresentacion);
-					oComando.Parameters.AddWithValue("@nPorcentaje", nPorcentaje);
-					oComando.Parameters.AddWithValue("@nGradoGravamen", nGradoGravamen);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentaje);
+					oComando.Parameters.AddWithValue("@piGrado_Gravamen", nGradoGravamen);
 
 					if (nGradoPrioridades != -1)
-						oComando.Parameters.AddWithValue("@nGradoPrioridades", nGradoPrioridades);
+						oComando.Parameters.AddWithValue("@piGrado_Prioridades", nGradoPrioridades);
 
 					if (nMontoPrioridades != 0)
-						oComando.Parameters.AddWithValue("@nMontoPrioridades", nMontoPrioridades);
+						oComando.Parameters.AddWithValue("@pdMonto_Prioridades", nMontoPrioridades);
 
 					if (nOperacionEspecial != -1)
-						oComando.Parameters.AddWithValue("@nOperacionEspecial", nOperacionEspecial);
+						oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
 
 					if (nTipoAcreedor != -1)
-						oComando.Parameters.AddWithValue("@nTipoAcreedor", nTipoAcreedor);
+						oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
 
 					if (strCedulaAcreedor != "")
-						oComando.Parameters.AddWithValue("@strCedulaAcreedor", strCedulaAcreedor);
+						oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
 
-					oComando.Parameters.AddWithValue("@strUsuario", strUsuario);
-					oComando.Parameters.AddWithValue("@strIP", strIP);
-					//oComando.Parameters.AddWithValue("@nOficina",nOficina);	
-
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
+					
 					//Obtener la información sobre la Garantía Valor, esto por si se debe insertar
 					DataSet dsGarantiaValor = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_valor.COD_GARANTIA_VALOR +
 							" from " + ContenedorGarantia_valor.NOMBRE_ENTIDAD +
@@ -293,11 +292,11 @@ namespace BCRGARANTIAS.Negocios
 							string strInsertarGarValorXOperacion = "INSERT INTO GAR_GARANTIAS_VALOR_X_OPERACION (cod_operacion,cod_garantia_valor,cod_tipo_mitigador," +
 								"cod_tipo_documento_legal,monto_mitigador,cod_inscripcion," +
 								"porcentaje_responsabilidad,cod_grado_gravamen,cod_grado_prioridades,monto_prioridades," +
-								"cod_operacion_especial,cod_tipo_acreedor,cedula_acreedor) VALUES(" + nOperacion.ToString() + "," +
+								"cod_operacion_especial,cod_tipo_acreedor,cedula_acreedor, Porcentaje_Aceptacion) VALUES(" + nOperacion.ToString() + "," +
 								strCodigoGarantiaValor + "," + nTipoMitigador.ToString() + "," + nTipoDocumento.ToString() + "," +
 								nMontoMitigador.ToString() + "," + nInscripcion.ToString() + "," + nPorcentaje.ToString() + "," +
 								nGradoGravamen.ToString() + "," + nGradoPrioridades.ToString() + "," + nMontoPrioridades.ToString() + "," +
-								nOperacionEspecial.ToString() + "," + nTipoAcreedor.ToString() + "," + strCedulaAcreedor + ")";
+								nOperacionEspecial.ToString() + "," + nTipoAcreedor.ToString() + "," + strCedulaAcreedor + "," + porcentajeAceptacion.ToString() + ")";
 
 
 							oBitacora.InsertarBitacora("GAR_GARANTIAS_VALOR_X_OPERACION", strUsuario, strIP, null,
@@ -376,18 +375,31 @@ namespace BCRGARANTIAS.Negocios
 								string.Empty,
 								strCedulaAcreedor);
 
-							#endregion
-						}
+                            oBitacora.InsertarBitacora("GAR_GARANTIAS_VALOR_X_OPERACION", strUsuario, strIP, null,
+                                1, nTipoGarantia, mstrGarantia, mstrOperacionCrediticia, strInsertarGarValorXOperacion, string.Empty,
+                                "Porcentaje_Aceptacion",
+                                string.Empty,
+                                porcentajeAceptacion.ToString());
+
+                            #endregion
+                        }
 
 						#endregion
 					}
 				}
 			}
-			catch
-			{
-				throw;
-			}
-		}
+            catch (SqlException ex)
+            {
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+        }
 
 		public void Modificar(long nOperacion, long nGarantiaValor, int nTipoGarantia, 
 							int nClaseGarantia, string strSeguridad, 
@@ -400,10 +412,12 @@ namespace BCRGARANTIAS.Negocios
 							decimal nPorcentaje, int nGradoGravamen, int nGradoPrioridades,
 							decimal nMontoPrioridades, int nOperacionEspecial, int nTipoAcreedor,
                             string strCedulaAcreedor, string strUsuario, string strIP,
-                            string strOperacionCrediticia, string strDescripcionInstrumento, string strDescInstNuevo)
+                            string strOperacionCrediticia, string strDescripcionInstrumento, string strDescInstNuevo, decimal porcentajeAceptacion)
 		{
-			try
-			{
+            string identifiacionGarantia = string.Format("Valor: {0}, relacionada a la operación/contrato: {1}", strSeguridad, strOperacionCrediticia);
+
+            try
+            {
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
 					SqlCommand oComando = new SqlCommand("pa_ModificarGarantiaValor", oConexion);
@@ -414,90 +428,87 @@ namespace BCRGARANTIAS.Negocios
 					oComando.CommandType = CommandType.StoredProcedure;
 
 					//Agrega los parametros
-					oComando.Parameters.AddWithValue("@nGarantiaValor", nGarantiaValor);
-					oComando.Parameters.AddWithValue("@nTipoGarantia", nTipoGarantia);
-					oComando.Parameters.AddWithValue("@nClaseGarantia", nClaseGarantia);
-					oComando.Parameters.AddWithValue("@strNumeroSeguridad", strSeguridad);
+					oComando.Parameters.AddWithValue("@piConsecutivo_Garantia_Valor", nGarantiaValor);
+					oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
+					oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
+					oComando.Parameters.AddWithValue("@psNumero_Seguridad", strSeguridad);
 
-					oComando.Parameters.AddWithValue("@dFechaConstitucion", dFechaConstitucion);
-					oComando.Parameters.AddWithValue("@dFechaVencimiento", dFechaVencimiento);
+					oComando.Parameters.AddWithValue("@pdtFecha_Constitucion", dFechaConstitucion);
+					oComando.Parameters.AddWithValue("@pdtFecha_Vencimiento", dFechaVencimiento);
 
 					if (nClasificacion != -1)
-						oComando.Parameters.AddWithValue("@nClasificacion", nClasificacion);
+						oComando.Parameters.AddWithValue("@piCodigo_Clasificacion", nClasificacion);
 
 					if (strInstrumento != "")
-						oComando.Parameters.AddWithValue("@strInstrumento", strInstrumento);
+						oComando.Parameters.AddWithValue("@psCodigo_Instrumento", strInstrumento);
 
 					if (strSerie != "")
-						oComando.Parameters.AddWithValue("@strSerie", strSerie);
+						oComando.Parameters.AddWithValue("@psNumero_Serie", strSerie);
 
 					if (nTipoEmisor != -1)
-						oComando.Parameters.AddWithValue("@nTipoEmisor", nTipoEmisor);
+						oComando.Parameters.AddWithValue("@piTipo_Emisor", nTipoEmisor);
 
 					if (strEmisor != "")
-						oComando.Parameters.AddWithValue("@strCedulaEmisor", strEmisor);
+						oComando.Parameters.AddWithValue("@psCedula_Emisor", strEmisor);
 
-					oComando.Parameters.AddWithValue("@nPremio", nPremio);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Premio", nPremio);
 
 					if (strISIN != "")
-						oComando.Parameters.AddWithValue("@strISIN", strISIN);
+						oComando.Parameters.AddWithValue("@psCodigo_ISIN", strISIN);
 
-					if (nValorFacial != 0)
-						oComando.Parameters.AddWithValue("@nValorFacial", nValorFacial);
+                    if (nValorFacial != 0)
+						oComando.Parameters.AddWithValue("@pdValor_Facial", nValorFacial);
 
 					if (nMonedaValorFacial != -1)
-						oComando.Parameters.AddWithValue("@nMonedaValorFacial", nMonedaValorFacial);
+						oComando.Parameters.AddWithValue("@piMoneda_Valor_Facial", nMonedaValorFacial);
 
 					if (nValorMercado != 0)
-						oComando.Parameters.AddWithValue("@nValorMercado", nValorMercado);
+						oComando.Parameters.AddWithValue("@pdValor_Mercado", nValorMercado);
 
 					if (nMonedaValorMercado != -1)
-						oComando.Parameters.AddWithValue("@nMonedaValorMercado", nMonedaValorMercado);
+						oComando.Parameters.AddWithValue("@piMoneda_Valor_Mercado", nMonedaValorMercado);
 
 					if (nTenencia != -1)
-						oComando.Parameters.AddWithValue("@nTenencia", nTenencia);
+						oComando.Parameters.AddWithValue("@piCodigo_Tenencia", nTenencia);
 
-					oComando.Parameters.AddWithValue("@dFechaPrescripcion", dFechaPrescripcion);
-					oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
+					oComando.Parameters.AddWithValue("@pdtFecha_Prescripcion", dFechaPrescripcion);
+					oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", nOperacion);
 
 					if (nTipoMitigador != -1)
-						oComando.Parameters.AddWithValue("@nTipoMitigador", nTipoMitigador);
+						oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
 
 					if (nTipoDocumento != -1)
-						oComando.Parameters.AddWithValue("@nTipoDocumentoLegal", nTipoDocumento);
+						oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
 
-					oComando.Parameters.AddWithValue("@nMontoMitigador", nMontoMitigador);
+					oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
 
 					if (nInscripcion != -1)
-						oComando.Parameters.AddWithValue("@nInscripcion", nInscripcion);
+						oComando.Parameters.AddWithValue("@piCodigo_Inscripcion", nInscripcion);
 
-					//				oComando.Parameters.AddWithValue("@dFechaPresentacion",dFechaPresentacion);
-					oComando.Parameters.AddWithValue("@nPorcentaje", nPorcentaje);
-					oComando.Parameters.AddWithValue("@nGradoGravamen", nGradoGravamen);
+					oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentaje);
+					oComando.Parameters.AddWithValue("@piGrado_Gravamen", nGradoGravamen);
 
 					if (nGradoPrioridades != -1)
-						oComando.Parameters.AddWithValue("@nGradoPrioridades", nGradoPrioridades);
+						oComando.Parameters.AddWithValue("@piGrado_Prioridades", nGradoPrioridades);
 
 					if (nMontoPrioridades != 0)
-						oComando.Parameters.AddWithValue("@nMontoPrioridades", nMontoPrioridades);
+						oComando.Parameters.AddWithValue("@pdMonto_Prioridades", nMontoPrioridades);
 
 					if (nOperacionEspecial != -1)
-						oComando.Parameters.AddWithValue("@nOperacionEspecial", nOperacionEspecial);
+						oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
 
 					if (nTipoAcreedor != -1)
-						oComando.Parameters.AddWithValue("@nTipoAcreedor", nTipoAcreedor);
+						oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
 
 					if (strCedulaAcreedor != "")
-						oComando.Parameters.AddWithValue("@strCedulaAcreedor", strCedulaAcreedor);
+						oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
 
-					oComando.Parameters.AddWithValue("@strUsuario", strUsuario);
-					oComando.Parameters.AddWithValue("@strIP", strIP);
-					//oComando.Parameters.AddWithValue("@nOficina",nOficina);	
+					oComando.Parameters.AddWithValue("@psCedula_Usuario", strUsuario);
+                    oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
 
+                    #region Obtener los datos que podrían cambiar antes de que se actualicen
 
-					#region Obtener los datos que podrían cambiar antes de que se actualicen
-
-					DataSet dsGarantiaValor = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_valor.FECHA_CONSTITUCION + "," +
+                    DataSet dsGarantiaValor = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_valor.FECHA_CONSTITUCION + "," +
 						   ContenedorGarantia_valor.FECHA_VENCIMIENTO_INSTRUMENTO + "," + ContenedorGarantia_valor.COD_CLASIFICACION_INSTRUMENTO + "," +
 						   ContenedorGarantia_valor.DES_INSTRUMENTO + "," + ContenedorGarantia_valor.DES_SERIE_INSTRUMENTO + "," +
 						   ContenedorGarantia_valor.COD_TIPO_EMISOR + "," + ContenedorGarantia_valor.CEDULA_EMISOR + "," +
@@ -513,8 +524,9 @@ namespace BCRGARANTIAS.Negocios
 						   ContenedorGarantias_valor_x_operacion.COD_INSCRIPCION + "," + ContenedorGarantias_valor_x_operacion.PORCENTAJE_RESPONSABILIDAD + "," +
 						   ContenedorGarantias_valor_x_operacion.COD_GRADO_GRAVAMEN + "," + ContenedorGarantias_valor_x_operacion.COD_GRADO_PRIORIDADES + "," +
 						   ContenedorGarantias_valor_x_operacion.MONTO_PRIORIDADES + "," + ContenedorGarantias_valor_x_operacion.COD_OPERACION_ESPECIAL + "," +
-						   ContenedorGarantias_valor_x_operacion.COD_TIPO_ACREEDOR + "," + ContenedorGarantias_valor_x_operacion.CEDULA_ACREEDOR +
-						   " from " + ContenedorGarantias_valor_x_operacion.NOMBRE_ENTIDAD +
+						   ContenedorGarantias_valor_x_operacion.COD_TIPO_ACREEDOR + "," + ContenedorGarantias_valor_x_operacion.CEDULA_ACREEDOR + ","+
+                           "Porcentaje_Aceptacion" +
+                           " from " + ContenedorGarantias_valor_x_operacion.NOMBRE_ENTIDAD +
 						   " where " + ContenedorGarantias_valor_x_operacion.COD_OPERACION + " = " + nOperacion.ToString() +
 						   " and " + ContenedorGarantias_valor_x_operacion.COD_GARANTIA_VALOR + " = " + nGarantiaValor.ToString());
 
@@ -959,7 +971,8 @@ namespace BCRGARANTIAS.Negocios
 								",cod_operacion_especial = " + nOperacionEspecial.ToString() +
 								",cod_tipo_acreedor = " + nTipoAcreedor.ToString() +
 								",cedula_acreedor = " + strCedulaAcreedor +
-								" WHERE cod_operacion = " + nOperacion.ToString() +
+                                ",Porcentaje_Aceptacion = " + porcentajeAceptacion.ToString() +
+                                " WHERE cod_operacion = " + nOperacion.ToString() +
 								" AND cod_garantia_valor = " + nGarantiaValor.ToString();
 
 							if (!dsGarantiaValorXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_valor_x_operacion.COD_TIPO_MITIGADOR))
@@ -1220,7 +1233,29 @@ namespace BCRGARANTIAS.Negocios
 											strCedulaAcreedor);
 								}
 							}
-						}
+
+                            if (!dsGarantiaValorXOperacion.Tables[0].Rows[0].IsNull("Porcentaje_Aceptacion"))
+                            {
+                                decimal porcentajeAceptacionObt = Convert.ToDecimal(dsGarantiaValorXOperacion.Tables[0].Rows[0]["Porcentaje_Aceptacion"].ToString());
+
+                                if (porcentajeAceptacionObt != porcentajeAceptacion)
+                                {
+                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_VALOR_X_OPERACION", strUsuario, strIP, null,
+                                        2, nTipoGarantia, mstrGarantia, mstrOperacionCrediticia, strModificarGarValorXOperacion, string.Empty,
+                                        "Porcentaje_Aceptacion",
+                                        porcentajeAceptacionObt.ToString(),
+                                        porcentajeAceptacion.ToString());
+                                }
+                            }
+                            else
+                            {
+                                oBitacora.InsertarBitacora("GAR_GARANTIAS_VALOR_X_OPERACION", strUsuario, strIP, null,
+                                        2, nTipoGarantia, mstrGarantia, mstrOperacionCrediticia, strModificarGarValorXOperacion, string.Empty,
+                                        "Porcentaje_Aceptacion",
+                                        string.Empty,
+                                        porcentajeAceptacion.ToString());
+                            }
+                        }
 
 						#endregion
 
@@ -1228,11 +1263,18 @@ namespace BCRGARANTIAS.Negocios
 					}
 				}
 			}
-			catch
-			{
-				throw;
-			}
-		}
+            catch (SqlException ex)
+            {
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+        }
 
         public void Eliminar(long nOperacion, long nGarantia, string strUsuario, string strIP,
                              string strOperacionCrediticia)
@@ -1515,9 +1557,9 @@ namespace BCRGARANTIAS.Negocios
             try
             {              
                 SqlParameter[] parameters = new SqlParameter[] { 
-                            new SqlParameter("piOperacion", SqlDbType.BigInt),                            
-                            new SqlParameter("piGarantia", SqlDbType.BigInt) ,
-                            new SqlParameter("psIDUsuario", SqlDbType.VarChar,30),
+                            new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),                            
+                            new SqlParameter("piConsecutivo_Garantia", SqlDbType.BigInt) ,
+                            new SqlParameter("psCedula_Usuario", SqlDbType.VarChar,30),
                             new SqlParameter("psRespuesta", SqlDbType.VarChar,100)   
                         };
 
@@ -1527,15 +1569,11 @@ namespace BCRGARANTIAS.Negocios
                 parameters[3].Value = null;
                 parameters[3].Direction = ParameterDirection.Output;
 
-                // SqlParameter[] parametrosSalida = new SqlParameter[] { };
-
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
                     oConexion.Open();
                     dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Garantia_Valor", parameters);
                 }
-               
-
             }
             catch (Exception ex)
             {
@@ -1546,6 +1584,7 @@ namespace BCRGARANTIAS.Negocios
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS_DETALLE, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
             }
+
             return dsDatos;
         }
 

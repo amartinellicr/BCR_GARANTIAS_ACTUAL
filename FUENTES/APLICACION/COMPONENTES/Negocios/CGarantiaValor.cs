@@ -62,6 +62,8 @@ namespace BCRGARANTIAS.Negocios
         private DateTime _fechaInserto;
         private DateTime _fechaReplica;
 
+        private decimal _porcentajeAceptacion;
+
 		#endregion
 
 		#region Propiedades
@@ -334,14 +336,20 @@ namespace BCRGARANTIAS.Negocios
             set { _fechaReplica = value; }
         }
 
+        public decimal PorcentajeAceptacion
+        {
+            get { return _porcentajeAceptacion; }
+            set { _porcentajeAceptacion = value; }
+        }
+
         #endregion
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Constructor de la clase
-		/// </summary>
-		public CGarantiaValor()
+        /// <summary>
+        /// Constructor de la clase
+        /// </summary>
+        public CGarantiaValor()
 		{
 			ClaseGarantia = -1;
 			TipoMitigador = -1;

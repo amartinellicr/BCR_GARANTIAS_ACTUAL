@@ -100,7 +100,7 @@ BEGIN
 														cod_garantia_real			BIGINT,
 														cod_tipo_garantia_real		TINYINT,
 														cod_tipo_operacion			TINYINT,
-														Porcentaje_Aceptacion		DECIMAL (5,2),
+														Porcentaje_Aceptacion		DECIMAL (5,2), --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 														monto_mitigador				DECIMAL (18,2),
 														cod_bien					VARCHAR (25)	COLLATE DATABASE_DEFAULT,
 														fecha_constitucion			VARCHAR (10)	COLLATE DATABASE_DEFAULT,
@@ -184,7 +184,7 @@ BEGIN
 			GGR.cod_garantia_real,
 			GGR.cod_tipo_garantia_real,
 			TGR.Codigo_Tipo_Operacion,
-			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			COALESCE(GRO.monto_mitigador, 0) AS monto_mitigador,
 			CASE 
 				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
@@ -228,7 +228,7 @@ BEGIN
 			GGR.cod_garantia_real,
 			GGR.cod_tipo_garantia_real,
 			TGR.Codigo_Tipo_Operacion,
-			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			COALESCE(GRO.monto_mitigador, 0) AS monto_mitigador,
 			CASE 
 				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + '-' + COALESCE(GGR.numero_finca,'')  
@@ -368,7 +368,7 @@ BEGIN
 				GRO.contrato AS Contrato,		
 				GRO.cod_bien AS Codigo_Garantia,
 				GRO.monto_mitigador,
-				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion_Calculado,		
 				CASE 
 					WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -426,7 +426,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -478,7 +478,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -532,7 +532,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					0 AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -595,7 +595,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -632,7 +632,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -691,7 +691,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -745,7 +745,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -781,7 +781,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -820,7 +820,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -880,7 +880,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					0 AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -932,7 +932,7 @@ BEGIN
 				GRO.contrato AS Contrato,		
 				GRO.cod_bien AS Codigo_Garantia,
 				GRO.monto_mitigador,
-				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion_Calculado,		
 				CASE 
 					WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1052,7 +1052,7 @@ BEGIN
 				GRO.contrato AS Contrato,		
 				GRO.cod_bien AS Codigo_Garantia,
 				GRO.monto_mitigador,
-				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				0 AS Porcentaje_Aceptacion_Calculado,		
 				CASE 
 					WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1107,7 +1107,7 @@ BEGIN
 				GRO.contrato AS Contrato,		
 				GRO.cod_bien AS Codigo_Garantia,
 				GRO.monto_mitigador,
-				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 				CASE 
 					WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1181,7 +1181,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1245,7 +1245,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1296,7 +1296,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1350,7 +1350,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1385,7 +1385,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1424,7 +1424,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					(CPA.Porcentaje_Aceptacion/2) AS Porcentaje_Aceptacion_Calculado,		
 					CASE 
 						WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1487,7 +1487,7 @@ BEGIN
 				GRO.contrato AS Contrato,		
 				GRO.cod_bien AS Codigo_Garantia,
 				GRO.monto_mitigador,
-				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+				GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				0 AS Porcentaje_Aceptacion_Calculado,		
 				CASE 
 					WHEN CPA.Indicador_Sin_Calificacion = 0 THEN  'No Aplica Calificación '
@@ -1546,7 +1546,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					NULL AS Porcentaje_Aceptacion_Calculado,		
 					NULL AS Condicion,
 					'Error Sin Datos',
@@ -1572,7 +1572,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					NULL AS Porcentaje_Aceptacion_Calculado,		
 					NULL AS Condicion,
 					'Error Sin Datos',
@@ -1599,7 +1599,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					NULL AS Porcentaje_Aceptacion_Calculado,		
 					NULL AS Condicion,
 					'Error Sin Datos',
@@ -1611,7 +1611,7 @@ BEGIN
 				AND GVR.Indicador_Tipo_Registro = 1	--
 				AND ((GRO.cod_tipo_bien >= 1) AND (GRO.cod_tipo_bien <= 4))
 				AND GRO.cod_tipo_mitigador > 1	
-				AND GRO.Porcentaje_Aceptacion = 0
+				AND GRO.Porcentaje_Aceptacion = 0 --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 							
 	-----------------------------------------------------------------------------------------------------------------
 	--NO PRESENTE PORCENTAJE DE ACEPTACION CALCULADO, 0 , NO ESTÉ RELACIONADO EN EL CATALOGO 
@@ -1627,7 +1627,7 @@ BEGIN
 					GRO.contrato AS Contrato,		
 					GRO.cod_bien AS Codigo_Garantia,
 					GRO.monto_mitigador,
-					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  --ISNULL
+					GRO.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,   --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 					NULL AS Porcentaje_Aceptacion_Calculado,		
 					NULL AS Condicion,
 					'Error Sin Datos',
@@ -1643,7 +1643,7 @@ BEGIN
 				AND ((GRO.cod_tipo_bien >= 1) AND (GRO.cod_tipo_bien <= 4))
 				AND GRO.cod_tipo_mitigador > -1	
 				AND GRO.Porcentaje_Aceptacion > 0	 
-				AND COALESCE(CPA.Porcentaje_Aceptacion,0) = 0 
+				AND COALESCE(CPA.Porcentaje_Aceptacion,0) = 0  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	
 --tipo bien : -1 o NULL, SON REGISTROS NUEVOS					
 
@@ -1920,7 +1920,7 @@ BEGIN
                  COALESCE(CONVERT(VARCHAR(20), Contrato),'') + CHAR(9) +   
                  COALESCE(CONVERT(VARCHAR(50),Codigo_Garantia),'')+ CHAR(9) + 
                  COALESCE(CONVERT(VARCHAR(50), Monto_Mitigador),'') + CHAR(9) + 
-                 COALESCE(CONVERT(VARCHAR(50), Porcentaje_Aceptacion),'') + CHAR(9) + 
+                 COALESCE(CONVERT(VARCHAR(50), Porcentaje_Aceptacion),'') + CHAR(9) +  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
                  COALESCE(CONVERT(VARCHAR(50), Porcentaje_Aceptacion_Calculado),'') + CHAR(9) + 
                  COALESCE(Condicion,'') + CHAR(9) + 
                  COALESCE(Tipo_Inconsistencia,'')            

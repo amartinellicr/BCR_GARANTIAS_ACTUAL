@@ -110,7 +110,7 @@ BEGIN
 		GGR.cod_tipo_garantia,
 		1 AS Codigo_Tipo_Operacion,
 		1 AS Indicador_Duplicidad,
-		COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+		COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 		COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -128,7 +128,7 @@ BEGIN
 		COALESCE(GGR.numero_finca,'') AS Numero_Finca,
 		COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario,
-		COALESCE(GRO.Porcentaje_Aceptacion, -1) AS Porcentaje_Aceptacion
+		COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV 
 		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion = GRO.cod_operacion 
@@ -173,7 +173,7 @@ BEGIN
 		GGR.cod_tipo_garantia,
 		2 AS Codigo_Tipo_Operacion,
 		1 AS Indicador_Duplicidad,
-		COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+		COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 		COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 		COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 		COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -191,7 +191,7 @@ BEGIN
 		COALESCE(GGR.numero_finca,'') AS Numero_Finca,
 		COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 		@psCedula_Usuario AS Codigo_Usuario,
-		COALESCE(GRO.Porcentaje_Aceptacion, -1) AS Porcentaje_Aceptacion
+		COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	dbo.GARANTIAS_REALES_X_OPERACION_VW ROV  
 		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO  
 		ON ROV.cod_operacion = GRO.cod_operacion 
@@ -323,7 +323,7 @@ BEGIN
 			COALESCE(GGR.cod_partido, 0) AS Codigo_Partido,
 			GGR.cod_tipo_garantia,
 			TGR.Codigo_Tipo_Operacion,
-			COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+			COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 			COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -341,7 +341,7 @@ BEGIN
 			COALESCE(GGR.numero_finca,'') AS Numero_Finca,
 			COALESCE(GGR.num_placa_bien,'') AS Numero_Placa_Bien,
 			TGR.Codigo_Usuario,
-			COALESCE(TGR.Porcentaje_Aceptacion, -1 ) AS Porcentaje_Aceptacion
+			COALESCE(TGR.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
 		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GRO.cod_operacion = TGR.Codigo_Operacion

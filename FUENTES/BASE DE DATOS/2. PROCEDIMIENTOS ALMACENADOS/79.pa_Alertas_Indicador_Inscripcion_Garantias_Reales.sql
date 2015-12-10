@@ -100,7 +100,7 @@ BEGIN
 								Codigo_Bien					VARCHAR(30)		COLLATE database_default ,
 								Descripcion_Tipo_Garantia	VARCHAR(15)		COLLATE database_default ,
 								Monto_Mitigador				DECIMAL(18,2)	,
-								Porcentaje_Aceptacion		DECIMAL(5,2)	,
+								Porcentaje_Aceptacion		DECIMAL(5,2)	, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 								Indicador_Inscripcion		SMALLINT		,
 								Des_Indicador_Inscripcion	VARCHAR(160)	COLLATE database_default ,
 								Fecha_Constitucion			VARCHAR(10)		COLLATE database_default ,
@@ -134,7 +134,7 @@ BEGIN
 														num_placa_bien				VARCHAR (25)	COLLATE database_default,
 														cod_clase_bien				VARCHAR (3)		COLLATE database_default,
 														cod_usuario					VARCHAR (30)	COLLATE database_default,
-														Porcentaje_Aceptacion		DECIMAL(5,2),
+														Porcentaje_Aceptacion		DECIMAL(5,2), --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 														cod_clase_garantia			SMALLINT,
 														cod_partido					SMALLINT
 														PRIMARY KEY (cod_llave)
@@ -168,7 +168,7 @@ BEGIN
 														cod_usuario					VARCHAR (30)	COLLATE database_default,
 														cod_inscripcion				SMALLINT,
 														fecha_presentacion			VARCHAR (10)	COLLATE database_default,
-														Porcentaje_Aceptacion		DECIMAL(5,2)
+														Porcentaje_Aceptacion		DECIMAL(5,2) --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 														PRIMARY KEY (cod_llave)
 													)
 	
@@ -267,7 +267,7 @@ BEGIN
 			COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
 			COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
 			@psCedula_Usuario AS cod_usuario,
-			GRO.Porcentaje_Aceptacion,
+			GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			GGR.cod_clase_garantia,
 			GGR.cod_partido 
 	FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -334,7 +334,7 @@ BEGIN
 			COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
 			COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
 			@psCedula_Usuario AS cod_usuario,
-			GRO.Porcentaje_Aceptacion,
+			GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			GGR.cod_clase_garantia,
 			GGR.cod_partido 
 	FROM	dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -354,7 +354,6 @@ BEGIN
 										WHEN GGR.cod_clase_garantia BETWEEN 30 AND 69 THEN MGT.prmgt_pnu_part
 										ELSE GGR.cod_partido
 									END
-
 	ORDER BY
 		ROV.cod_operacion,
 		GGR.numero_finca,
@@ -479,7 +478,7 @@ BEGIN
 			TGR.cod_usuario,
 			COALESCE(GRO.cod_inscripcion, -1) AS cod_inscripcion, 
 			CONVERT(VARCHAR(10), (CONVERT(DATETIME, CAST((COALESCE(GRO.fecha_presentacion, '1900-01-01')) AS VARCHAR(11)), 101)), 112) AS fecha_presentacion,
-			TGR.Porcentaje_Aceptacion
+			TGR.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 	FROM	#TMP_GARANTIAS_REALES_OPERACIONES TGR
 		INNER JOIN GAR_GARANTIAS_REALES_X_OPERACION GRO
 		ON GRO.cod_operacion = TGR.cod_operacion
@@ -522,7 +521,7 @@ BEGIN
 			TMP.cod_bien AS Codigo_Bien, 
 			'Real',
 			TMP.monto_mitigador,
-			TMP.Porcentaje_Aceptacion,
+			TMP.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			TMP.cod_inscripcion,
 			CE1.cat_descripcion AS Des_Indicador_Inscripcion,
 			TMP.fecha_constitucion,
@@ -551,7 +550,7 @@ BEGIN
 			TMP.cod_bien AS Codigo_Bien, 
 			'Real',
 			TMP.monto_mitigador,
-			TMP.Porcentaje_Aceptacion,
+			TMP.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 			TMP.cod_inscripcion,
 			CE1.cat_descripcion AS Des_Indicador_Inscripcion,
 			TMP.fecha_constitucion,
@@ -621,7 +620,7 @@ BEGIN
                  (CASE WHEN  Tipo_Mitigador = -1 THEN '' ELSE CONVERT(VARCHAR(5), Tipo_Mitigador) END) + CHAR(9) + 
                  (CASE WHEN  Tipo_Documento_Legal = -1 THEN '' ELSE CONVERT(VARCHAR(5), Tipo_Documento_Legal) END) + CHAR(9) +
 				 COALESCE(CONVERT(VARCHAR(100), Monto_Mitigador), '') + CHAR(9) + 
-				 COALESCE(CONVERT(VARCHAR(20), Porcentaje_Aceptacion), '') + CHAR(9) + 
+				 COALESCE(CONVERT(VARCHAR(20), Porcentaje_Aceptacion), '') + CHAR(9) +  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 				 CONVERT(VARCHAR(5), Tipo_Garantia) + CHAR(9) + 
 				 Descripcion_Tipo_Garantia + CHAR(9) +
 				 COALESCE(Des_Indicador_Inscripcion, '') + CHAR(9) + 
