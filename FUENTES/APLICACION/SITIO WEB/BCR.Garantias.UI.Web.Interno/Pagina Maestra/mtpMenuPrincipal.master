@@ -112,8 +112,9 @@
             var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido;
             var $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido;
             var $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado;
-                      
-            
+
+            var $MostrarMensajesPorAceptAvaluo;
+
             PageInit();
 
             MostrarAvaluoReal(false);
@@ -309,11 +310,13 @@
                 }
 
                 if ((bSeFormatea) && (bValidarPorAcept) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
                     ValidarPorcentajeAceptacionCalculado();
                     ValidarPorcentajeAceptacion();
                 }
 
                 if ((bSeFormatea) && (bValidarPorAceptAvaluo) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
                     ValidarPorcentajeAceptacionCalculado();
                 }
 

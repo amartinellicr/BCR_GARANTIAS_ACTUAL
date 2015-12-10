@@ -78,6 +78,14 @@ AS
 		</Cambio>
 		<Cambio>
 			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015112410502005 Reglas de negocio que afectan la estimación</Requerimiento>
+			<Fecha>24/11/2015</Fecha>
+			<Descripción>
+				Se ajusta la validación del calculo del Porcentaje_Aceptacion_Terreno_Calculado referente a la fecha de último seguimiento.
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
 			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
 			<Fecha>04/12/2015</Fecha>
 			<Descripción>
@@ -2052,21 +2060,31 @@ BEGIN
 		--Se aplican las validaciones que reducen a la mitad el porcentaje de aceptación parametrizado, al porcentaje de aceptación del terreno calculado
 		
 		--Castigo por inconsistencia en la fecha de último seguimiento, se excluyen las prendas
+		--INICIO RQ_MANT_2015112410502005: Se ajusta la validación.
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
 		SET	    Porcentaje_Aceptacion_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
-			AND Cod_Tipo_Garantia_real <> 3
-			AND Tipo_Bien <> 3
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
+			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
 			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		
-		
+		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
+		SET	    Porcentaje_Aceptacion_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
+		WHERE	Cod_Usuario = @psCedula_Usuario
+			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
+			AND Tipo_Bien = 2
+			AND Indicador_Deudor_Habita_Vivienda = 0 
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+		--FIN RQ_MANT_2015112410502005: Se ajusta la validación.
+
 		--Castigo por inconsistencia en la fecha de valuación, se excluyen las prendas
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
 		SET	    Porcentaje_Aceptacion_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
-			AND Cod_Tipo_Garantia_real <> 3
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
 			AND @vdtFecha_Actual	> DATEADD(YEAR, 5, Fecha_Valuacion)
 		
@@ -2460,9 +2478,8 @@ BEGIN
 		SET	    Porcentaje_Aceptacion_No_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
-			AND Cod_Tipo_Garantia_real <> 3
-			AND Tipo_Bien <> 2
-			AND Tipo_Bien <> 3
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
+			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
 			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 			
 		--Castigo por inconsistencia en la fecha de último seguimiento, para el tipo de bien 2, se excluyen las prendas
@@ -2470,7 +2487,7 @@ BEGIN
 		SET	    Porcentaje_Aceptacion_No_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
-			AND Cod_Tipo_Garantia_real <> 3
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien = 2
 			AND Indicador_Deudor_Habita_Vivienda = 0
 			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
@@ -2490,7 +2507,7 @@ BEGIN
 		SET	    Porcentaje_Aceptacion_No_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
-			AND Cod_Tipo_Garantia_real <> 3
+			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
 			AND @vdtFecha_Actual	> DATEADD(YEAR, 5, Fecha_Valuacion)
 		
