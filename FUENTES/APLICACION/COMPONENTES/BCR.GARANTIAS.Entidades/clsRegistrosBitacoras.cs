@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
 using System.Diagnostics;
 using System.Xml;
 using System.Data;
@@ -100,7 +99,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsRegistrosBitacoras()
         {
-            this.tramaDatosCambioGarantia = string.Empty;
+            tramaDatosCambioGarantia = string.Empty;
         }
 
         /// <summary>
@@ -109,7 +108,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaListaCambiosGarantias">Trama que posee los datos de las garantías obtenidas de la Base de Datos</param>
         public clsRegistrosBitacoras(string tramaListaCambiosGarantias)
         {
-            this.tramaDatosCambioGarantia = string.Empty;
+            tramaDatosCambioGarantia = string.Empty;
 
             if (tramaListaCambiosGarantias.Length > 0)
             {
@@ -133,7 +132,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlCambioGarantias != null)
                 {
-                    this.tramaDatosCambioGarantia = tramaListaCambiosGarantias;
+                    tramaDatosCambioGarantia = tramaListaCambiosGarantias;
 
                     if (xmlCambioGarantias.HasChildNodes)
                     {
@@ -147,13 +146,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadBitacora.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadBitacora.ErrorDatos;
-                                    this.descripcionError = entidadBitacora.DescripcionError;
+                                    errorDatos = entidadBitacora.ErrorDatos;
+                                    descripcionError = entidadBitacora.DescripcionError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadBitacora);
+                                    Agregar(entidadBitacora);
                                 }
                             }
                         }
@@ -162,9 +161,6 @@ namespace BCR.GARANTIAS.Entidades
             }
         }
         #endregion Constructores
-
-
-
 
         #region Métodos Públicos
 
@@ -265,7 +261,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtBitacora.NewRow();
 
-                foreach (clsBitacora bitacora in this.InnerList)
+                foreach (clsBitacora bitacora in InnerList)
                 {
                     drFila[_desCampoAfectado] = bitacora.NombreCampoAfectado;
                     drFila[_estAnteriorCampoAfectado] = bitacora.ValorAnterior;

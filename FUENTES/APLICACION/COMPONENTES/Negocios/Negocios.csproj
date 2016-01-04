@@ -64,7 +64,6 @@
     <Compile Include="Archivos.cs" />
     <Compile Include="Bin_Tarjeta.cs" />
     <Compile Include="Bitacora.cs" />
-    <Compile Include="Calificaciones.cs" />
     <Compile Include="Capacidad_Pago.cs" />
     <Compile Include="Catalogos.cs" />
     <Compile Include="CGarantiaFiduciaria.cs" />

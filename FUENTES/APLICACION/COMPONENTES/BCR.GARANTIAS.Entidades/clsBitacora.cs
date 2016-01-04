@@ -1,15 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
 using System.Collections.Specialized;
-using System.Reflection;
-using System.Configuration;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
-using System.Globalization;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -520,72 +516,72 @@ namespace BCR.GARANTIAS.Entidades
 
             //Crea el nodo del nombre de la tabla
             objEscritor.WriteStartElement(_desTabla);
-            objEscritor.WriteString(this.desTabla);
+            objEscritor.WriteString(desTabla);
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la identificación del usuario que realiza la acción
             objEscritor.WriteStartElement(_codUsuario);
-            objEscritor.WriteString(this.codUsuario);
+            objEscritor.WriteString(codUsuario);
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la dirección ip desde donde se realiza la acción
             objEscritor.WriteStartElement(_codIP);
-            objEscritor.WriteString(this.codIP);
+            objEscritor.WriteString(codIP);
             objEscritor.WriteEndElement();
 
             //Crea el nodo del código de la oficina desde donde se realiza la acción
             objEscritor.WriteStartElement(_codOficina);
-            objEscritor.WriteString((this.codOficina != -1) ? this.codOficina.ToString() : "NULL");
+            objEscritor.WriteString((codOficina != -1) ? codOficina.ToString() : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del código del tipo de la operación realizada
             objEscritor.WriteStartElement(_codOperacion);
-            objEscritor.WriteString((this.codTipoOperacion != Enumeradores.Tipos_Accion.Ninguna) ? ((int) this.codTipoOperacion).ToString() : "NULL");
+            objEscritor.WriteString((codTipoOperacion != Enumeradores.Tipos_Accion.Ninguna) ? ((int)codTipoOperacion).ToString() : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del código de la fecha y hora en que se realiza la acción
             objEscritor.WriteStartElement(_fechaHora);
-            objEscritor.WriteString((this.fechaHora != DateTime.MinValue) ? this.fechaHora.ToString("yyyyMMdd") : "NULL");
+            objEscritor.WriteString((fechaHora != DateTime.MinValue) ? fechaHora.ToString("yyyyMMdd") : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del query sql de la acción
             objEscritor.WriteStartElement(_codConsulta);
-            objEscritor.WriteString((this.codConsulta.Length > 0) ? this.codConsulta : "NULL");
+            objEscritor.WriteString((codConsulta.Length > 0) ? codConsulta : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del código del tipo de la garantía
             objEscritor.WriteStartElement(_codTipoGarantia);
-            objEscritor.WriteString((this.codTipoGarantia != -1) ? this.codTipoGarantia.ToString() : "NULL");
+            objEscritor.WriteString((codTipoGarantia != -1) ? codTipoGarantia.ToString() : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del número de la garantía
             objEscritor.WriteStartElement(_codGarantia);
-            objEscritor.WriteString((this.codGarantia.Length > 0) ? this.codGarantia : "NULL");
+            objEscritor.WriteString((codGarantia.Length > 0) ? codGarantia : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del número de la operación crediticia
             objEscritor.WriteStartElement(_codOperacionCrediticia);
-            objEscritor.WriteString((this.codOperacionCrediticia.Length > 0) ? this.codOperacionCrediticia : "NULL");
+            objEscritor.WriteString((codOperacionCrediticia.Length > 0) ? codOperacionCrediticia : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del query sql de la segunda acción
             objEscritor.WriteStartElement(_codConsulta2);
-            objEscritor.WriteString((this.codConsulta2.Length > 0) ? this.codConsulta2 : "NULL");
+            objEscritor.WriteString((codConsulta2.Length > 0) ? codConsulta2 : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del nombre del campo afectado
             objEscritor.WriteStartElement(_desCampoAfectado);
-            objEscritor.WriteString((this.desCampoAfectado.Length > 0) ? this.desCampoAfectado : "NULL");
+            objEscritor.WriteString((desCampoAfectado.Length > 0) ? desCampoAfectado : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del valor anterior del campo afectado
             objEscritor.WriteStartElement(_estAnteriorCampoAfectado);
-            objEscritor.WriteString((this.estAnteriorCampoAfectado.Length > 0) ? this.estAnteriorCampoAfectado : "NULL");
+            objEscritor.WriteString((estAnteriorCampoAfectado.Length > 0) ? estAnteriorCampoAfectado : "NULL");
             objEscritor.WriteEndElement();
 
             //Crea el nodo del valor anterior del campo afectado
             objEscritor.WriteStartElement(_estActualCampoAfectado);
-            objEscritor.WriteString((this.estActualCampoAfectado.Length > 0) ? this.estActualCampoAfectado : "NULL");
+            objEscritor.WriteString((estActualCampoAfectado.Length > 0) ? estActualCampoAfectado : "NULL");
             objEscritor.WriteEndElement();
 
             //Final del taga BITACORA
@@ -631,77 +627,77 @@ namespace BCR.GARANTIAS.Entidades
             objEscritor.WriteStartElement(_tagBitacora);
 
             //Crea el nodo del nombre de la tabla
-            objEscritor.WriteAttributeString(_desTabla, this.desTabla);
+            objEscritor.WriteAttributeString(_desTabla, desTabla);
 
             //Crea el nodo de la identificación del usuario que realiza la acción
-            objEscritor.WriteAttributeString(_codUsuario, this.codUsuario);
+            objEscritor.WriteAttributeString(_codUsuario, codUsuario);
 
             //Crea el nodo de la dirección ip desde donde se realiza la acción
-            objEscritor.WriteAttributeString(_codIP, this.codIP);
+            objEscritor.WriteAttributeString(_codIP, codIP);
 
             //Crea el nodo del código de la oficina desde donde se realiza la acción
-            if (this.codOficina != -1)
+            if (codOficina != -1)
             {
-                objEscritor.WriteAttributeString(_codOficina, this.codOficina.ToString());
+                objEscritor.WriteAttributeString(_codOficina, codOficina.ToString());
             }
 
             //Crea el nodo del código del tipo de la operación realizada}
-            if (this.codTipoOperacion != Enumeradores.Tipos_Accion.Ninguna)
+            if (codTipoOperacion != Enumeradores.Tipos_Accion.Ninguna)
             {
-                objEscritor.WriteAttributeString(_codOperacion, ((int)this.codTipoOperacion).ToString());
+                objEscritor.WriteAttributeString(_codOperacion, ((int)codTipoOperacion).ToString());
             }
 
             //Crea el nodo del código de la fecha y hora en que se realiza la acción
-            if (this.fechaHora != DateTime.MinValue)
+            if (fechaHora != DateTime.MinValue)
             {
-                objEscritor.WriteAttributeString(_fechaHora, this.fechaHora.ToString("yyyyMMdd hh:mm:ss tt"));
+                objEscritor.WriteAttributeString(_fechaHora, fechaHora.ToString("yyyyMMdd hh:mm:ss tt"));
             }
             //Crea el nodo del query sql de la acción
-            if (this.codConsulta.Length > 0)
+            if (codConsulta.Length > 0)
             {
-                objEscritor.WriteAttributeString(_codConsulta, this.codConsulta);
+                objEscritor.WriteAttributeString(_codConsulta, codConsulta);
             }
 
             //Crea el nodo del código del tipo de la garantía
-            if (this.codTipoGarantia != -1)
+            if (codTipoGarantia != -1)
             {
-                objEscritor.WriteAttributeString(_codTipoGarantia, this.codTipoGarantia.ToString());
+                objEscritor.WriteAttributeString(_codTipoGarantia, codTipoGarantia.ToString());
             }
 
             //Crea el nodo del número de la garantía
-            if (this.codGarantia.Length > 0)
+            if (codGarantia.Length > 0)
             {
-                objEscritor.WriteAttributeString(_codGarantia, this.codGarantia);
+                objEscritor.WriteAttributeString(_codGarantia, codGarantia);
             }
 
             //Crea el nodo del número de la operación crediticia
-            if (this.codOperacionCrediticia.Length > 0)
+            if (codOperacionCrediticia.Length > 0)
             {
-                objEscritor.WriteAttributeString(_codOperacionCrediticia, this.codOperacionCrediticia);
+                objEscritor.WriteAttributeString(_codOperacionCrediticia, codOperacionCrediticia);
             }
 
             //Crea el nodo del query sql de la segunda acción
-            if (this.codConsulta2.Length > 0)
+            if (codConsulta2.Length > 0)
             {
-                objEscritor.WriteAttributeString(_codConsulta2, this.codConsulta2);
+                objEscritor.WriteAttributeString(_codConsulta2, codConsulta2);
             }
 
             //Crea el nodo del nombre del campo afectado
-            if (this.desCampoAfectado.Length > 0)
+            if (desCampoAfectado.Length > 0)
             {
-                objEscritor.WriteAttributeString(_desCampoAfectado, this.desCampoAfectado);
+                objEscritor.WriteAttributeString(_desCampoAfectado, desCampoAfectado);
             }
 
             //Crea el nodo del valor anterior del campo afectado
-            if (this.estAnteriorCampoAfectado.Length > 0)
+            if (estAnteriorCampoAfectado.Length > 0)
             {
-                objEscritor.WriteAttributeString(_estAnteriorCampoAfectado, this.estAnteriorCampoAfectado);
+                objEscritor.WriteAttributeString(_estAnteriorCampoAfectado, estAnteriorCampoAfectado);
             }
 
             //Crea el nodo del valor anterior del campo afectado
-            if (this.estActualCampoAfectado.Length > 0)
+            if (estActualCampoAfectado.Length > 0)
             {
-                objEscritor.WriteAttributeString(_estActualCampoAfectado, this.estActualCampoAfectado);
+                objEscritor.WriteAttributeString(_estActualCampoAfectado, estActualCampoAfectado);
             }
 
             //Final del taga BITACORA
@@ -735,70 +731,70 @@ namespace BCR.GARANTIAS.Entidades
 
         private bool ValidarDatos()
         {
-            this.entidadValida = true;
+            entidadValida = true;
 
-            if (this.desTabla.Length == 0)
+            if (desTabla.Length == 0)
             {
-                this.entidadValida = false;
-                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, this.codGarantia, this.codOperacionCrediticia, Mensajes.ASSEMBLY);
+                entidadValida = false;
+                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, codGarantia, codOperacionCrediticia, Mensajes.ASSEMBLY);
 
                 StringCollection parametros = new StringCollection();
-                parametros.Add(this.codGarantia);
-                parametros.Add(this.codOperacionCrediticia);
+                parametros.Add(codGarantia);
+                parametros.Add(codOperacionCrediticia);
                 parametros.Add("El nombre de la tabla no fue suministrada");
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA_DETALLE, parametros, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
             }
-            else if ((this.entidadValida) && (this.codIP.Length == 0))
+            else if ((entidadValida) && (codIP.Length == 0))
             {
-                this.entidadValida = false;
-                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, this.codGarantia, this.codOperacionCrediticia, Mensajes.ASSEMBLY);
+                entidadValida = false;
+                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, codGarantia, codOperacionCrediticia, Mensajes.ASSEMBLY);
 
                 StringCollection parametros = new StringCollection();
-                parametros.Add(this.codGarantia);
-                parametros.Add(this.codOperacionCrediticia);
+                parametros.Add(codGarantia);
+                parametros.Add(codOperacionCrediticia);
                 parametros.Add("La dirección IP no fue suministrada");
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA_DETALLE, parametros, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
             }
-            else if ((this.entidadValida) && (this.codUsuario.Length == 0))
+            else if ((entidadValida) && (codUsuario.Length == 0))
             {
-                this.entidadValida = false;
-                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, this.codGarantia, this.codOperacionCrediticia, Mensajes.ASSEMBLY);
+                entidadValida = false;
+                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, codGarantia, codOperacionCrediticia, Mensajes.ASSEMBLY);
 
                 StringCollection parametros = new StringCollection();
-                parametros.Add(this.codGarantia);
-                parametros.Add(this.codOperacionCrediticia);
+                parametros.Add(codGarantia);
+                parametros.Add(codOperacionCrediticia);
                 parametros.Add("La identificación dle usuario no fue suministrada");
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA_DETALLE, parametros, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
             }
-            else if ((this.entidadValida) && (this.codTipoOperacion == Enumeradores.Tipos_Accion.Ninguna))
+            else if ((entidadValida) && (codTipoOperacion == Enumeradores.Tipos_Accion.Ninguna))
             {
-                this.entidadValida = false;
-                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, this.codGarantia, this.codOperacionCrediticia, Mensajes.ASSEMBLY);
+                entidadValida = false;
+                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, codGarantia, codOperacionCrediticia, Mensajes.ASSEMBLY);
 
                 StringCollection parametros = new StringCollection();
-                parametros.Add(this.codGarantia);
-                parametros.Add(this.codOperacionCrediticia);
+                parametros.Add(codGarantia);
+                parametros.Add(codOperacionCrediticia);
                 parametros.Add("El tipo de operación no fue suministrado");
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA_DETALLE, parametros, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
             }
-            else if ((this.entidadValida) && (this.fechaHora == DateTime.MinValue))
+            else if ((entidadValida) && (fechaHora == DateTime.MinValue))
             {
-                this.entidadValida = false;
-                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, this.codGarantia, this.codOperacionCrediticia, Mensajes.ASSEMBLY);
+                entidadValida = false;
+                desError = Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA, codGarantia, codOperacionCrediticia, Mensajes.ASSEMBLY);
 
                 StringCollection parametros = new StringCollection();
-                parametros.Add(this.codGarantia);
-                parametros.Add(this.codOperacionCrediticia);
+                parametros.Add(codGarantia);
+                parametros.Add(codOperacionCrediticia);
                 parametros.Add("La fecha actual no fue suministrada");
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ALMACENANDO_BITACORA_DETALLE, parametros, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
             }
 
-            return this.entidadValida;
+            return entidadValida;
         }
 
 
@@ -833,32 +829,32 @@ namespace BCR.GARANTIAS.Entidades
 
                 //Crea el nodo de la descripcion del campo afectado
                 objEscritor.WriteStartElement(_desCampoAfectado);
-                objEscritor.WriteString(this.desCampoAfectado.ToString());
+                objEscritor.WriteString(desCampoAfectado.ToString());
                 objEscritor.WriteEndElement();
 
                 //Crea el nodo de la estado anterior del campo afectado
                 objEscritor.WriteStartElement(_estAnteriorCampoAfectado);
-                objEscritor.WriteString(this.estAnteriorCampoAfectado.ToString());
+                objEscritor.WriteString(estAnteriorCampoAfectado.ToString());
                 objEscritor.WriteEndElement();
 
                 //Crea el nodo de la estado actual del campo afectado
                 objEscritor.WriteStartElement(_estActualCampoAfectado);
-                objEscritor.WriteString(this.estActualCampoAfectado.ToString());
+                objEscritor.WriteString(estActualCampoAfectado.ToString());
                 objEscritor.WriteEndElement();
 
                 //Crea el nodo de la fecha de modificacion 
                 objEscritor.WriteStartElement(_fechaHora);
-                objEscritor.WriteString(this.fechaHora.ToString("yyyyMMdd"));
+                objEscritor.WriteString(fechaHora.ToString("yyyyMMdd"));
                 objEscritor.WriteEndElement();
 
                 //Crea el nodo de la cedula del usuario que modifico 
                 objEscritor.WriteStartElement(_codUsuario);
-                objEscritor.WriteString(this.codUsuario.ToString());
+                objEscritor.WriteString(codUsuario.ToString());
                 objEscritor.WriteEndElement();
 
                 //Crea el nodo del nombre del usuario que modifico 
                 objEscritor.WriteStartElement(_nombreUsuarioModifico);
-                objEscritor.WriteString(this.nombreUsuarioModifico.ToString());
+                objEscritor.WriteString(nombreUsuarioModifico.ToString());
                 objEscritor.WriteEndElement();
                 #endregion
 

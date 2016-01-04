@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Text;
 using System.Collections.Specialized;
 using System.Collections.Generic;
+using System.Globalization;
 
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
 
@@ -21,6 +21,10 @@ namespace BCRGARANTIAS.Negocios
         #region Variables
 
         bool procesoNormalizacion = false;
+        int nFilasAfectadas = 0;
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        DateTime fechaBase = new DateTime(1900, 01, 01);
 
         #endregion Variables
 
@@ -36,1372 +40,412 @@ namespace BCRGARANTIAS.Negocios
                           DateTime dFechaPrescripcion, string strUsuario, string strIP,
                           string strOperacionCrediticia, string strGarantia, decimal porcentajeAceptacion)
         {
+            string identifiacionGarantia = string.Format("Real: {0}, relacionada a la operación/contrato: {1}", strGarantia, strOperacionCrediticia);
+            DataSet dsData = new DataSet();
+            DataSet dsGarantiaReal = new DataSet();
+            string strConsultaGarantiasReales = string.Empty;
+
+
             try
             {
+                //Se obtiene la información sobre la Garantía Real, esto por si se debe insertar
+                #region Armar Consulta de la Garanta Real
+
+                listaCampos = new string[] { clsGarantiaReal._codGarantiaReal,
+                                             clsGarantiaReal._entidadGarantiaReal,
+                                             clsGarantiaReal._codClaseGarantia, nClaseGarantia.ToString(),
+                                             clsGarantiaReal._codTipoGarantiaReal, nTipoGarantiaReal.ToString()};
+
+                string consultaBaseGarantiasReales = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3} AND {4} = {5}", listaCampos);
+
+                switch (nTipoGarantiaReal)
+                {
+                    case ((int)Enumeradores.Tipos_Garantia_Real.Hipoteca):
+
+                        listaCampos = new string[] { consultaBaseGarantiasReales,
+                                                     clsGarantiaReal._codPartido, ((nPartido != -1) ? nPartido.ToString() : clsGarantiaReal._codPartido),
+                                                     clsGarantiaReal._numeroFinca, ((strFinca.Trim().Length > 0) ? strFinca : clsGarantiaReal._numeroFinca)};
+
+                        strConsultaGarantiasReales = string.Format("{0} AND {1} = {2} AND {3} = '{4}'", listaCampos);
+
+                        break;
+
+                    case ((int)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria):
+
+                        listaCampos = new string[] { consultaBaseGarantiasReales,
+                                                     clsGarantiaReal._codPartido, ((nPartido != -1) ? nPartido.ToString() : clsGarantiaReal._codPartido),
+                                                     clsGarantiaReal._numeroFinca, ((strFinca.Trim().Length > 0) ? strFinca : clsGarantiaReal._numeroFinca),
+                                                     clsGarantiaReal._codGrado, ((nGrado != -1) ? nGrado.ToString() : clsGarantiaReal._codGrado),
+                                                     clsGarantiaReal._cedulaHipotecaria, ((nCedulaFiduciaria != -1) ? nCedulaFiduciaria.ToString() : clsGarantiaReal._cedulaHipotecaria)};
+
+                        strConsultaGarantiasReales = string.Format("{0} AND {1} = {2} AND {3} = '{4}' AND {5} = {6} AND {7} = {8}", listaCampos);
+
+                        break;
+
+                    case ((int)Enumeradores.Tipos_Garantia_Real.Prenda):
+
+                        listaCampos = new string[] { consultaBaseGarantiasReales,
+                                                     clsGarantiaReal._codClaseBien, ((strClaseBien.Trim().Length > 0) ? strClaseBien : clsGarantiaReal._codClaseBien),
+                                                     clsGarantiaReal._numPlacaBien, ((strNumPlaca.Trim().Length > 0) ? strNumPlaca : clsGarantiaReal._numPlacaBien)};
+
+                        strConsultaGarantiasReales = string.Format("{0} AND {1} = {2} AND {3} = '{4}'", listaCampos);
+
+                        break;
+                    default:
+                        strConsultaGarantiasReales = string.Empty;
+                        break;
+                }
+
+                #endregion
+                if (strConsultaGarantiasReales.Length > 0)
+                {
+                    dsGarantiaReal = AccesoBD.ejecutarConsulta(strConsultaGarantiasReales);
+                }
+
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
-                    SqlCommand oComando = new SqlCommand("pa_InsertarGarantiaReal", oConexion);
-                    DataSet dsData = new DataSet();
-                    SqlParameter oParam = new SqlParameter();
-
-                    //Declara las propiedades del comando
-                    oComando.CommandType = CommandType.StoredProcedure;
-
-                    //Agrega los parámetros
-                    oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
-                    oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
-                    oComando.Parameters.AddWithValue("@nTipoGarantiaReal", nTipoGarantiaReal);
-
-                    if (nPartido != -1)
-                        oComando.Parameters.AddWithValue("@piPartido", nPartido);
-
-                    if (strFinca != "")
-                        oComando.Parameters.AddWithValue("@psNumero_Finca", strFinca);
-
-                    if (nGrado != -1)
-                        oComando.Parameters.AddWithValue("@piGrado", nGrado);
-
-                    if (nCedulaFiduciaria != -1)
-                        oComando.Parameters.AddWithValue("@piCedula_Hipotecaria", nCedulaFiduciaria);
-
-                    if (strClaseBien != "")
-                        oComando.Parameters.AddWithValue("@psClase_Bien", strClaseBien);
-
-                    if (strNumPlaca != "")
-                        oComando.Parameters.AddWithValue("@psNumero_Placa", strNumPlaca);
-
-                    if (nTipoBien != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Bien", nTipoBien);
-
-                    oComando.Parameters.AddWithValue("@pbConsecutivo_Operacion", nOperacion);
-
-                    if (nTipoMitigador != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
-
-                    if (nTipoDocumento != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
-
-                    oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
-
-                    if (nInscripcion != -1)
-                        oComando.Parameters.AddWithValue("@piInscripcion", nInscripcion);
-
-                    oComando.Parameters.AddWithValue("@pdtFecha_Presentacion", dFechaPresentacion);
-                    oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentaje);
-                    oComando.Parameters.AddWithValue("@piGrado_Gravamen", nGradoGravamen);
-
-                    if (nOperacionEspecial != -1)
-                        oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
-
-                    oComando.Parameters.AddWithValue("@pdtFecha_Constitucion", dFechaConstitucion);
-                    oComando.Parameters.AddWithValue("@pdtFecha_Vencimiento", dFechaVencimiento);
-
-                    if (nTipoAcreedor != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
-
-                    if (strCedulaAcreedor != "")
-                        oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
-
-                    oComando.Parameters.AddWithValue("@piLiquidez", nLiquidez);
-                    oComando.Parameters.AddWithValue("@piTenencia", nTenencia);
-                    oComando.Parameters.AddWithValue("@pdtFecha_Prescripcion", dFechaPrescripcion);
-                    oComando.Parameters.AddWithValue("@piMoneda", nMoneda);
-                    oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
- 
-                    //Abre la conexión
-                    oConexion.Open();
-
-                    //Se obtiene la información sobre la Garantía Real, esto por si se debe insertar
-                    #region Armar Consulta de la Garanta Real
-
-                    string strConsultaGarantiasReales = "select " + ContenedorGarantia_real.COD_GARANTIA_REAL +
-                        " from " + ContenedorGarantia_real.NOMBRE_ENTIDAD +
-                        " where " + ContenedorGarantia_real.COD_CLASE_GARANTIA + " = " + nClaseGarantia.ToString() +
-                        " and " + ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL + " = " + nTipoGarantiaReal.ToString();
-
-                    if (nPartido != -1)
+                    using (SqlCommand oComando = new SqlCommand("pa_InsertarGarantiaReal", oConexion))
                     {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.COD_PARTIDO + " = " + nPartido.ToString();
-                    }
-
-                    if (strFinca != string.Empty)
-                    {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.NUMERO_FINCA + " = '" + strFinca + "'";
-                    }
-
-                    if (nGrado != -1)
-                    {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.COD_GRADO + " = " + nGrado.ToString();
-                    }
-
-                    if (nCedulaFiduciaria != -1)
-                    {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.CEDULA_HIPOTECARIA + " = " + nCedulaFiduciaria.ToString();
-                    }
-
-                    if (strClaseBien != string.Empty)
-                    {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.COD_CLASE_BIEN + " = " + strClaseBien;
-                    }
-
-                    if (strNumPlaca != string.Empty)
-                    {
-                        strConsultaGarantiasReales += " and " + ContenedorGarantia_real.NUM_PLACA_BIEN + " = '" + strNumPlaca + "'";
-                    }
-
-                    #endregion
-
-                    DataSet dsGarantiaReal = AccesoBD.ejecutarConsulta(strConsultaGarantiasReales);
-
-                    //Ejecuta el comando
-                    int nFilasAfectadas = oComando.ExecuteNonQuery();
-
-                    //Inserta en bitácora
-                    if (nFilasAfectadas > 0)
-                    {
-                        #region Inserción en Bitácora
-
-                        Bitacora oBitacora = new Bitacora();
-
-                        TraductordeCodigos oTraductor = new TraductordeCodigos();
-
-
-                        if ((dsGarantiaReal == null) || (dsGarantiaReal.Tables.Count == 0) || (dsGarantiaReal.Tables[0].Rows.Count == 0))
-                        {
-                            #region Inserción de Garantía Real
-
-                            #region Armar String de Inserción de la Garantía Real
-
-                            string strInsertaGarantiaReal = "INSERT INTO GAR_GARANTIA_REAL(cod_tipo_garantia,cod_clase_garantia," +
-                                "cod_tipo_garantia_real,cod_partido,numero_finca,cod_grado,cedula_hipotecaria," +
-                                "cod_clase_bien,num_placa_bien,cod_tipo_bien) VALUES(" + nTipoGarantia.ToString() + "," +
-                                nClaseGarantia.ToString() + "," + nTipoGarantiaReal.ToString() + "," +
-                                nPartido.ToString() + ",";
-
-                            if (strFinca == null)
-                            {
-                                strInsertaGarantiaReal += "'',";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += strFinca + ",";
-                            }
-
-                            if (nGrado == 0)
-                            {
-                                strInsertaGarantiaReal += "-1,";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += nGrado.ToString() + ",";
-                            }
-
-                            if (nCedulaFiduciaria == 0)
-                            {
-                                strInsertaGarantiaReal += "-1,";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += nCedulaFiduciaria.ToString() + ",";
-                            }
-
-                            if (strClaseBien == null)
-                            {
-                                strInsertaGarantiaReal += "'',";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += strClaseBien + ",";
-                            }
-
-                            if (strNumPlaca == null)
-                            {
-                                strInsertaGarantiaReal += "'',";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += strNumPlaca + ",";
-                            }
-
-                            if (nTipoBien == 0)
-                            {
-                                strInsertaGarantiaReal += "'',";
-                            }
-                            else
-                            {
-                                strInsertaGarantiaReal += nTipoBien.ToString() + ",";
-                            }
-
-                            #endregion
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_TIPO_GARANTIA,
-                                string.Empty,
-                                oTraductor.TraducirTipoGarantia(nTipoGarantia));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_CLASE_GARANTIA,
-                                string.Empty,
-                                oTraductor.TraducirClaseGarantia(nClaseGarantia));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL,
-                                string.Empty,
-                                oTraductor.TraducirTipoGarantiaReal(nTipoGarantiaReal));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_PARTIDO,
-                                string.Empty,
-                                nPartido.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.NUMERO_FINCA,
-                                string.Empty,
-                                strFinca);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_GRADO,
-                                string.Empty,
-                                nGrado.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.CEDULA_HIPOTECARIA,
-                                string.Empty,
-                                nCedulaFiduciaria.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_CLASE_BIEN,
-                                string.Empty,
-                                strClaseBien);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.NUM_PLACA_BIEN,
-                                string.Empty,
-                                strNumPlaca);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
-                                ContenedorGarantia_real.COD_TIPO_BIEN,
-                                string.Empty,
-                                oTraductor.TraducirTipoBien(nTipoBien));
-
-                            dsGarantiaReal = AccesoBD.ejecutarConsulta(strConsultaGarantiasReales);
-
-                            #endregion
-                        }
-
-                        if ((dsGarantiaReal != null) && (dsGarantiaReal.Tables.Count > 0) && (dsGarantiaReal.Tables[0].Rows.Count > 0))
-                        {
-                            #region Inserción de Garantías Reales por Operación
-
-                            string strCodigoGarantiaReal = dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_GARANTIA_REAL].ToString();
-
-                            #region Armar String de Inserción de la Garantía por Operación
-
-                            string strInsertaGarRealXOperacion = "INSERT INTO GAR_GARANTIAS_REALES_X_OPERACION (cod_operacion,cod_garantia_real,cod_tipo_mitigador," +
-                                                 "cod_tipo_documento_legal,monto_mitigador,cod_inscripcion,fecha_presentacion,porcentaje_responsabilidad," +
-                                                 "cod_grado_gravamen,cod_operacion_especial,fecha_constitucion,fecha_vencimiento,cod_tipo_acreedor," +
-                                                 "cedula_acreedor,cod_liquidez,cod_tenencia,fecha_prescripcion,cod_moneda,Porcentaje_Aceptacion) VALUES(" +
-                                                 nOperacion.ToString() + "," + strCodigoGarantiaReal + "," + nTipoMitigador.ToString() + "," +
-                                                 nTipoDocumento.ToString() + "," + nMontoMitigador.ToString() + ",";
-
-                            if (nInscripcion == 0)
-                            {
-                                strInsertaGarRealXOperacion += "-1,";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += nInscripcion.ToString() + ",";
-                            }
-
-                            if (dFechaPresentacion != null)
-                            {
-                                strInsertaGarRealXOperacion += dFechaPresentacion.ToShortDateString() + ",";
-                            }
-
-                            if (nPorcentaje == 0)
-                            {
-                                strInsertaGarRealXOperacion += "0,";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += nPorcentaje.ToString() + ",";
-                            }
-
-                            strInsertaGarRealXOperacion += nGradoGravamen.ToString() + ",";
-
-                            if (nOperacionEspecial == 0)
-                            {
-                                strInsertaGarRealXOperacion += "-1,";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += nOperacionEspecial.ToString() + ",";
-                            }
-
-                            if (dFechaConstitucion != null)
-                            {
-                                strInsertaGarRealXOperacion += dFechaConstitucion.ToShortDateString() + ",";
-                            }
-
-                            if (dFechaVencimiento != null)
-                            {
-                                strInsertaGarRealXOperacion += dFechaVencimiento.ToShortDateString() + ",";
-                            }
-
-                            if (nTipoAcreedor == 0)
-                            {
-                                strInsertaGarRealXOperacion += "-1,";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += nTipoAcreedor.ToString() + ",";
-                            }
-
-                            if (strCedulaAcreedor == null)
-                            {
-                                strInsertaGarRealXOperacion += "'',";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += strCedulaAcreedor + ",";
-                            }
-
-                            strInsertaGarRealXOperacion += nLiquidez.ToString() + "," + nTenencia.ToString() + ",";
-
-                            if (dFechaPrescripcion != null)
-                            {
-                                strInsertaGarRealXOperacion += dFechaPrescripcion.ToShortDateString() + ",";
-                            }
-
-                            strInsertaGarRealXOperacion += nMoneda.ToString();
-
-                            if (porcentajeAceptacion == 0)
-                            {
-                                strInsertaGarRealXOperacion += "0)";
-                            }
-                            else
-                            {
-                                strInsertaGarRealXOperacion += porcentajeAceptacion.ToString() + ")";
-                            }
-
-                            #endregion
-
-                            #region Garantía Real por Operación
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_OPERACION,
-                                string.Empty,
-                                strOperacionCrediticia);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL,
-                                string.Empty,
-                                strGarantia);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR,
-                                string.Empty,
-                                oTraductor.TraducirTipoMitigador(nTipoMitigador));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL,
-                                string.Empty,
-                                oTraductor.TraducirTipoDocumento(nTipoDocumento));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR,
-                                string.Empty,
-                                nMontoMitigador.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION, DBNull.Value.ToString(), nInscripcion.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION,
-                                string.Empty,
-                                dFechaPresentacion.ToShortDateString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD,
-                                string.Empty,
-                                nPorcentaje.ToString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN,
-                                string.Empty,
-                                oTraductor.TraducirGradoGravamen(nGradoGravamen));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL,
-                                string.Empty,
-                                oTraductor.TraducirTipoOperacionEspecial(nOperacionEspecial));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION, string.Empty, dFechaConstitucion.ToShortDateString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO,
-                                string.Empty,
-                                dFechaVencimiento.ToShortDateString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR,
-                                string.Empty,
-                                oTraductor.TraducirTipoPersona(nTipoAcreedor));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR,
-                                string.Empty,
-                                strCedulaAcreedor);
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ,
-                                string.Empty,
-                                oTraductor.TraducirTipoLiquidez(nLiquidez));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_TENENCIA,
-                                string.Empty,
-                                oTraductor.TraducirTipoTenencia(nTenencia));
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION,
-                                string.Empty,
-                                dFechaPrescripcion.ToShortDateString());
-
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                                ContenedorGarantias_reales_x_operacion.COD_MONEDA,
-                                string.Empty,
-                                oTraductor.TraducirTipoMoneda(nMoneda));
-
-                            #endregion
-
-                            #endregion
-                        }
-
-
-                        #endregion
+                        SqlParameter oParam = new SqlParameter();
+
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.StoredProcedure;
+
+                        //Agrega los parámetros
+                        oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
+                        oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
+                        oComando.Parameters.AddWithValue("@nTipoGarantiaReal", nTipoGarantiaReal);
+
+                        if (nPartido != -1)
+                            oComando.Parameters.AddWithValue("@piPartido", nPartido);
+
+                        if (strFinca != "")
+                            oComando.Parameters.AddWithValue("@psNumero_Finca", strFinca);
+
+                        if (nGrado != -1)
+                            oComando.Parameters.AddWithValue("@piGrado", nGrado);
+
+                        if (nCedulaFiduciaria != -1)
+                            oComando.Parameters.AddWithValue("@piCedula_Hipotecaria", nCedulaFiduciaria);
+
+                        if (strClaseBien != "")
+                            oComando.Parameters.AddWithValue("@psClase_Bien", strClaseBien);
+
+                        if (strNumPlaca != "")
+                            oComando.Parameters.AddWithValue("@psNumero_Placa", strNumPlaca);
+
+                        if (nTipoBien != -1)
+                            oComando.Parameters.AddWithValue("@piTipo_Bien", nTipoBien);
+
+                        oComando.Parameters.AddWithValue("@pbConsecutivo_Operacion", nOperacion);
+
+                        if (nTipoMitigador != -1)
+                            oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
+
+                        if (nTipoDocumento != -1)
+                            oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
+
+                        oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
+
+                        if (nInscripcion != -1)
+                            oComando.Parameters.AddWithValue("@piInscripcion", nInscripcion);
+
+                        oComando.Parameters.AddWithValue("@pdtFecha_Presentacion", dFechaPresentacion);
+                        oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentaje);
+                        oComando.Parameters.AddWithValue("@piGrado_Gravamen", nGradoGravamen);
+
+                        if (nOperacionEspecial != -1)
+                            oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
+
+                        oComando.Parameters.AddWithValue("@pdtFecha_Constitucion", dFechaConstitucion);
+                        oComando.Parameters.AddWithValue("@pdtFecha_Vencimiento", dFechaVencimiento);
+
+                        if (nTipoAcreedor != -1)
+                            oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
+
+                        if (strCedulaAcreedor != "")
+                            oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
+
+                        oComando.Parameters.AddWithValue("@piLiquidez", nLiquidez);
+                        oComando.Parameters.AddWithValue("@piTenencia", nTenencia);
+                        oComando.Parameters.AddWithValue("@pdtFecha_Prescripcion", dFechaPrescripcion);
+                        oComando.Parameters.AddWithValue("@piMoneda", nMoneda);
+                        oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
+
+                        //Abre la conexión
+                        oComando.Connection.Open();
+
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
+
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
                     }
                 }
-            }
-            catch
-            {
-                throw;
-            }
-        }
 
-        public void Modificar(long nOperacion, long nGarantiaReal, int nTipoGarantia, int nClaseGarantia,
-                            int nTipoGarantiaReal, int nPartido, string strFinca, int nGrado, int nCedulaFiduciaria,
-                            string strClaseBien, string strNumPlaca, int nTipoBien,
-                            int nTipoMitigador, int nTipoDocumento, decimal nMontoMitigador, int nInscripcion,
-                            DateTime dFechaPresentacion, decimal nPorcentaje, int nGradoGravamen, int nOperacionEspecial,
-                            DateTime dFechaConstitucion, DateTime dFechaVencimiento, int nTipoAcreedor,
-                            string strCedulaAcreedor, int nLiquidez, int nTenencia, int nMoneda,
-                            DateTime dFechaPrescripcion, string strUsuario, string strIP,
-                            string strOperacionCrediticia, string strGarantia, decimal porcentajeAceptacion)
-        {
-            try
-            {
-                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                //Inserta en bitácora
+                if (nFilasAfectadas > 0)
                 {
-                    SqlCommand oComando = new SqlCommand("pa_ModificarGarantiaReal", oConexion);
-                    DataSet dsData = new DataSet();
-                    SqlParameter oParam = new SqlParameter();
+                    #region Inserción en Bitácora
 
-                    //Declara las propiedades del comando
-                    oComando.CommandType = CommandType.StoredProcedure;
+                    Bitacora oBitacora = new Bitacora();
 
-                    //Agrega los parámetros
-                    oComando.Parameters.AddWithValue("@pbConsecutivo_Garantia_Real", nGarantiaReal);
-                    oComando.Parameters.AddWithValue("@piTipo_Garantia", nTipoGarantia);
-                    oComando.Parameters.AddWithValue("@piClase_Garantia", nClaseGarantia);
-                    oComando.Parameters.AddWithValue("@piTipo_Garantia_Real", nTipoGarantiaReal);
-
-                    if (nPartido != -1)
-                        oComando.Parameters.AddWithValue("@piPartido", nPartido);
-
-                    if (strFinca != "")
-                        oComando.Parameters.AddWithValue("@psNumero_Finca", strFinca);
-
-                    if (nGrado != -1)
-                        oComando.Parameters.AddWithValue("@piGrado", nGrado);
-
-                    if (nCedulaFiduciaria != -1)
-                        oComando.Parameters.AddWithValue("@piCedula_Hipotecaria", nCedulaFiduciaria);
-
-                    if (strClaseBien != "")
-                        oComando.Parameters.AddWithValue("@psClase_Bien", strClaseBien);
-
-                    if (strNumPlaca != "")
-                        oComando.Parameters.AddWithValue("@psNumero_Placa", strNumPlaca);
-
-                    if (nTipoBien != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Bien", nTipoBien);
-
-                    oComando.Parameters.AddWithValue("@pbConsecutivo_Operacion", nOperacion);
-
-                    if (nTipoMitigador != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Mitigador", nTipoMitigador);
-
-                    if (nTipoDocumento != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Documento_Legal", nTipoDocumento);
-
-                    oComando.Parameters.AddWithValue("@pdMonto_Mitigador", nMontoMitigador);
-
-                    if (nInscripcion != -1)
-                        oComando.Parameters.AddWithValue("@piInscripcion", nInscripcion);
-
-                    oComando.Parameters.AddWithValue("@pdtFecha_Presentacion", dFechaPresentacion);
-                    oComando.Parameters.AddWithValue("@pdPorcentaje_Responsabilidad", nPorcentaje);
-                    oComando.Parameters.AddWithValue("@piGrado_Gravamen", nGradoGravamen);
-
-                    if (nOperacionEspecial != -1)
-                        oComando.Parameters.AddWithValue("@piOperacion_Especial", nOperacionEspecial);
-
-                    oComando.Parameters.AddWithValue("@pdtFecha_Constitucion", dFechaConstitucion);
-                    oComando.Parameters.AddWithValue("@pdtFecha_Vencimiento", dFechaVencimiento);
-
-                    if (nTipoAcreedor != -1)
-                        oComando.Parameters.AddWithValue("@piTipo_Acreedor", nTipoAcreedor);
-
-                    if (strCedulaAcreedor != "")
-                        oComando.Parameters.AddWithValue("@psCedula_Acreedor", strCedulaAcreedor);
-
-                    oComando.Parameters.AddWithValue("@piLiquidez", nLiquidez);
-                    oComando.Parameters.AddWithValue("@piTenencia", nTenencia);
-                    oComando.Parameters.AddWithValue("@pdtFecha_Prescripcion", dFechaPrescripcion);
-                    oComando.Parameters.AddWithValue("@piMoneda", nMoneda);
-                    oComando.Parameters.AddWithValue("@@psCedula_Usuario", strUsuario);
-                    oComando.Parameters.AddWithValue("@pdPorcentaje_Aceptacion", porcentajeAceptacion);
- 
-                    #region Obtener Datos previos a actualización
+                    TraductordeCodigos oTraductor = new TraductordeCodigos();
 
 
-                    DataSet dsGarantiaReal = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL + "," +
-                        ContenedorGarantia_real.COD_PARTIDO + "," + ContenedorGarantia_real.NUMERO_FINCA + "," +
-                        ContenedorGarantia_real.COD_GRADO + "," + ContenedorGarantia_real.CEDULA_HIPOTECARIA + "," +
-                        ContenedorGarantia_real.COD_CLASE_BIEN + "," + ContenedorGarantia_real.NUM_PLACA_BIEN + "," +
-                        ContenedorGarantia_real.COD_TIPO_BIEN +
-                        " from " + ContenedorGarantia_real.NOMBRE_ENTIDAD +
-                        " where " + ContenedorGarantia_real.COD_GARANTIA_REAL + " = " + nGarantiaReal.ToString());
-
-
-                    DataSet dsGarantiaRealXOperacion = AccesoBD.ejecutarConsulta("select " + ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL + "," + ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION + "," + ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION + "," +
-                        ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD + "," + ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL + "," + ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION + "," +
-                        ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO + "," + ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR + "," +
-                        ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR + "," + ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_TENENCIA + "," + ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_MONEDA + "," +
-                        "Porcentaje_Aceptacion" +
-                        " from " + ContenedorGarantias_reales_x_operacion.NOMBRE_ENTIDAD +
-                        " where " + ContenedorGarantias_reales_x_operacion.COD_OPERACION + " = " + nOperacion.ToString() +
-                        " and " + ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL + " = " + nGarantiaReal.ToString());
-
-                    #endregion
-
-                    //Abre la conexión
-                    oConexion.Open();
-
-                    //Ejecuta el comando
-                    int nFilasAfectadas = oComando.ExecuteNonQuery();
-
-
-
-                    if (nFilasAfectadas > 0)
+                    if ((dsGarantiaReal == null) || (dsGarantiaReal.Tables.Count == 0) || (dsGarantiaReal.Tables[0].Rows.Count == 0))
                     {
-                        #region Inserción en Bitácora
-
-                        Bitacora oBitacora = new Bitacora();
-
-                        TraductordeCodigos oTraductor = new TraductordeCodigos();
-
-                        if ((dsGarantiaReal != null) && (dsGarantiaReal.Tables.Count > 0) && (dsGarantiaReal.Tables[0].Rows.Count > 0))
-                        {
-                            #region Armar String de Modificación de la Garantía Real
-
-                            string strModificarGarantiaReal = "UPDATE GAR_GARANTIA_REAL SET cod_tipo_garantia_real = ";
-
-                            if (nTipoGarantiaReal != -1)
-                            {
-                                strModificarGarantiaReal += nTipoGarantiaReal.ToString() + ",";
-                            }
-
-                            if (nPartido != -1)
-                            {
-                                strModificarGarantiaReal += "cod_partido = " + nPartido.ToString() + ",";
-                            }
-
-                            if (strFinca != string.Empty)
-                            {
-                                strModificarGarantiaReal += "numero_finca = " + strFinca + ",";
-                            }
-
-                            if (nGrado != -1)
-                            {
-                                strModificarGarantiaReal += "cod_grado = " + nGrado.ToString() + ",";
-                            }
-
-                            if (nCedulaFiduciaria != -1)
-                            {
-                                strModificarGarantiaReal += "cedula_hipotecaria = " + nCedulaFiduciaria.ToString() + ",";
-                            }
-
-                            if (strClaseBien != string.Empty)
-                            {
-                                strModificarGarantiaReal += "cod_clase_bien = " + strClaseBien + ",";
-                            }
-
-                            if (strNumPlaca != string.Empty)
-                            {
-                                strModificarGarantiaReal += "num_placa_bien = " + strNumPlaca + ",";
-                            }
-
-                            if (nTipoBien != -1)
-                            {
-                                strModificarGarantiaReal += "cod_tipo_bien = " + nTipoBien.ToString();
-                            }
-
-                            strModificarGarantiaReal += "WHERE cod_garantia_real = ";
-
-                            if (nGarantiaReal != -1)
-                            {
-                                strModificarGarantiaReal += nGarantiaReal.ToString();
-                            }
-
-                            #endregion
-
-                            #region Garantía Real
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL))
-                            {
-                                int nCodigoTipoGarantiaRealObt = Convert.ToInt32(dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL].ToString());
-
-                                if ((nTipoGarantiaReal != -1) && (nCodigoTipoGarantiaRealObt != nTipoGarantiaReal))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL,
-                                        oTraductor.TraducirTipoGarantiaReal(nCodigoTipoGarantiaRealObt),
-                                        oTraductor.TraducirTipoGarantiaReal(nTipoGarantiaReal));
-                                }
-                            }
-                            else
-                            {
-                                if (nTipoGarantiaReal != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoGarantiaReal(nTipoGarantiaReal));
-                                }
-                            }
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.COD_PARTIDO))
-                            {
-                                int nCodigoPartidoObt = Convert.ToInt32(dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_PARTIDO].ToString());
-
-                                if ((nPartido != -1) && (nCodigoPartidoObt != nPartido))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.COD_PARTIDO,
-                                        nCodigoPartidoObt.ToString(),
-                                        nPartido.ToString());
-                                }
-                            }
-                            else
-                            {
-                                if (nPartido != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.COD_PARTIDO,
-                                            string.Empty,
-                                            nPartido.ToString());
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.COD_GRADO))
-                            {
-
-                                int nCodigoGradoObt = Convert.ToInt32(dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_GRADO].ToString());
-
-                                if ((nGrado != -1) && (nCodigoGradoObt != nGrado))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.COD_GRADO,
-                                        nCodigoGradoObt.ToString(),
-                                        nGrado.ToString());
-                                }
-                            }
-                            else
-                            {
-                                if (nGrado != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.COD_GRADO,
-                                            string.Empty,
-                                            nGrado.ToString());
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.CEDULA_HIPOTECARIA))
-                            {
-                                int nCedulaHipotecariaObt = Convert.ToInt32(dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.CEDULA_HIPOTECARIA].ToString());
-
-                                if ((nCedulaFiduciaria != -1) && (nCedulaHipotecariaObt != nCedulaFiduciaria))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.CEDULA_HIPOTECARIA,
-                                        nCedulaHipotecariaObt.ToString(),
-                                        nCedulaFiduciaria.ToString());
-                                }
-                            }
-                            else
-                            {
-                                if (nCedulaFiduciaria != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.CEDULA_HIPOTECARIA,
-                                            string.Empty,
-                                            nCedulaFiduciaria.ToString());
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.COD_TIPO_BIEN))
-                            {
-                                int nTipoBienObt = Convert.ToInt32(dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_TIPO_BIEN].ToString());
-
-                                if ((nTipoBien != -1) && (nTipoBienObt != nTipoBien))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.COD_TIPO_BIEN,
-                                        oTraductor.TraducirTipoBien(nTipoBienObt),
-                                        oTraductor.TraducirTipoBien(nTipoBien));
-                                }
-                            }
-                            else
-                            {
-                                if (nTipoBien != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.COD_TIPO_BIEN,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoBien(nTipoBien));
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.NUM_PLACA_BIEN))
-                            {
-                                string strNumeroPlacaObt = dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.NUM_PLACA_BIEN].ToString();
-
-                                if ((strNumPlaca != string.Empty) && (strNumeroPlacaObt.CompareTo(strNumPlaca) != 0))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.NUM_PLACA_BIEN,
-                                        strNumeroPlacaObt,
-                                        strNumPlaca);
-                                }
-                            }
-                            else
-                            {
-                                if (strNumPlaca != string.Empty)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.NUM_PLACA_BIEN,
-                                            string.Empty,
-                                            strNumPlaca);
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.COD_CLASE_BIEN))
-                            {
-                                string strCodigoClaseBienObt = dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.COD_CLASE_BIEN].ToString();
-
-                                if ((strClaseBien != string.Empty) && (strCodigoClaseBienObt.CompareTo(strClaseBien) != 0))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.COD_CLASE_BIEN,
-                                        strCodigoClaseBienObt,
-                                        strClaseBien);
-                                }
-                            }
-                            else
-                            {
-                                if (strClaseBien != string.Empty)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.COD_CLASE_BIEN,
-                                            string.Empty,
-                                            strClaseBien);
-                                }
-                            }
-
-                            if (!dsGarantiaReal.Tables[0].Rows[0].IsNull(ContenedorGarantia_real.NUMERO_FINCA))
-                            {
-                                string strNumeroFincaObt = dsGarantiaReal.Tables[0].Rows[0][ContenedorGarantia_real.NUMERO_FINCA].ToString();
-
-                                if ((strFinca != string.Empty) && (strNumeroFincaObt.CompareTo(strFinca) != 0))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                        ContenedorGarantia_real.NUMERO_FINCA,
-                                        strNumeroFincaObt,
-                                        strFinca);
-                                }
-                            }
-                            else
-                            {
-                                if (strFinca != string.Empty)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificarGarantiaReal, string.Empty,
-                                            ContenedorGarantia_real.NUMERO_FINCA,
-                                            string.Empty,
-                                            strFinca);
-                                }
-                            }
-
-                            #endregion
-                        }
-
-                        #region Inserta en Bitácora las actualizaciones de las garantías reales por operación
-
-                        if ((dsGarantiaRealXOperacion != null) && (dsGarantiaRealXOperacion.Tables.Count > 0) && (dsGarantiaRealXOperacion.Tables[0].Rows.Count > 0))
-                        {
-                            #region Armado del String de Modificación de la Garantía Real por Operación
-
-                            string strModificaGarRealXOperacion = "UPDATE GAR_GARANTIAS_REALES_X_OPERACION SET cod_tipo_mitigador = ";
-
-                            if (nTipoMitigador != -1)
-                            {
-                                strModificaGarRealXOperacion += nTipoMitigador.ToString() + ",";
-                            }
-
-                            if (nTipoDocumento != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_tipo_documento_legal = " + nTipoMitigador.ToString() + ",";
-                            }
-
-                            strModificaGarRealXOperacion += "monto_mitigador = " + nMontoMitigador.ToString() + ",";
-
-                            if (nInscripcion != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_inscripcion = " + nInscripcion.ToString() + ",";
-                            }
-
-                            strModificaGarRealXOperacion += "fecha_presentacion =" + dFechaPresentacion.ToShortDateString() + ",";
-                            strModificaGarRealXOperacion += "porcentaje_responsabilidad = " + nPorcentaje.ToString() + ",";
-                            strModificaGarRealXOperacion += "cod_grado_gravamen = " + nGradoGravamen.ToString() + ",";
-
-                            if (nOperacionEspecial != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_operacion_especial = " + nOperacionEspecial.ToString() + ",";
-                            }
-
-                            strModificaGarRealXOperacion += "fecha_constitucion =" + dFechaConstitucion.ToShortDateString() + ",";
-                            strModificaGarRealXOperacion += "fecha_vencimiento = " + dFechaVencimiento.ToShortDateString() + ",";
-
-                            if (nTipoAcreedor != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_tipo_acreedor = " + nTipoAcreedor.ToString() + ",";
-                            }
-
-                            if (strCedulaAcreedor != string.Empty)
-                            {
-                                strModificaGarRealXOperacion += "cedula_acreedor = " + strCedulaAcreedor + ",";
-                            }
-
-                            if (nLiquidez != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_liquidez =  = " + nLiquidez.ToString() + ",";
-                            }
-
-                            if (nTenencia != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_tenencia = " + nTenencia.ToString() + ",";
-                            }
-
-                            strModificaGarRealXOperacion += "fecha_prescripcion = " + dFechaPrescripcion.ToShortDateString() + ",";
-
-                            if (nMoneda != -1)
-                            {
-                                strModificaGarRealXOperacion += "cod_moneda = " + nMoneda.ToString() + ",";
-                            }
-
-                            strModificaGarRealXOperacion += "Porcentaje_Aceptacion = " + porcentajeAceptacion.ToString() ;
-
-                            strModificaGarRealXOperacion += "WHERE cod_operacion = ";
-                            strModificaGarRealXOperacion += nOperacion.ToString();
-                            strModificaGarRealXOperacion += "AND cod_garantia_real = ";
-                            strModificaGarRealXOperacion += nGarantiaReal.ToString();
-
-                            #endregion
-
-                            #region Garantía Real por Operación
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR))
-                            {
-                                int nCodigoTipoMitigadorObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR].ToString());
-
-                                if ((nTipoMitigador != -1) && (nCodigoTipoMitigadorObt != nTipoMitigador))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR,
-                                        oTraductor.TraducirTipoMitigador(nCodigoTipoMitigadorObt),
-                                        oTraductor.TraducirTipoMitigador(nTipoMitigador));
-                                }
-                            }
-                            else
-                            {
-                                if (nTipoMitigador != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoMitigador(nTipoMitigador));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL))
-                            {
-                                int nCodigoTipoDocumentoLegalObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL].ToString());
-
-                                if ((nTipoDocumento != -1) && (nCodigoTipoDocumentoLegalObt != nTipoDocumento))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL,
-                                        oTraductor.TraducirTipoDocumento(nCodigoTipoDocumentoLegalObt),
-                                        oTraductor.TraducirTipoDocumento(nTipoDocumento));
-                                }
-                            }
-                            else
-                            {
-                                if (nTipoDocumento != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoDocumento(nTipoDocumento));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR))
-                            {
-                                decimal nMontoMitigadorObt = Convert.ToDecimal(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR].ToString());
-
-                                if (nMontoMitigadorObt != nMontoMitigador)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR,
-                                        nMontoMitigadorObt.ToString(),
-                                        nMontoMitigador.ToString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR,
-                                        string.Empty,
-                                        nMontoMitigador.ToString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION))
-                            {
-                                int nCodigoInscripcionObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION].ToString());
-
-                                if ((nInscripcion != -1) && (nCodigoInscripcionObt != nInscripcion))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION,
-                                        oTraductor.TraducirTipoInscripcion(nCodigoInscripcionObt),
-                                        oTraductor.TraducirTipoInscripcion(nInscripcion));
-                                }
-                            }
-                            else
-                            {
-                                if (nInscripcion != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoInscripcion(nInscripcion));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION))
-                            {
-                                DateTime dFechaPresentacionObt = Convert.ToDateTime(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION].ToString());
-
-                                if (dFechaPresentacionObt != dFechaPresentacion)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION,
-                                        dFechaPresentacionObt.ToShortDateString(),
-                                        dFechaPresentacion.ToShortDateString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION,
-                                        string.Empty,
-                                        dFechaPresentacion.ToShortDateString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD))
-                            {
-                                decimal nPorcentajeResponsabilidadObt = Convert.ToDecimal(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD].ToString());
-
-                                if (nPorcentajeResponsabilidadObt != nPorcentaje)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD,
-                                        nPorcentajeResponsabilidadObt.ToString(),
-                                        nPorcentaje.ToString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                       ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD,
-                                       string.Empty,
-                                       nPorcentaje.ToString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN))
-                            {
-                                int nCodigoGradoGravamenObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN].ToString());
-
-                                if (nCodigoGradoGravamenObt != nGradoGravamen)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN,
-                                        oTraductor.TraducirGradoGravamen(nCodigoGradoGravamenObt),
-                                        oTraductor.TraducirGradoGravamen(nGradoGravamen));
-                                }
-                            }
-                            else
-                            {
-                                if (nGradoGravamen != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN,
-                                            string.Empty,
-                                            oTraductor.TraducirGradoGravamen(nGradoGravamen));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL))
-                            {
-                                int nCodigoOperacionEspecialObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL].ToString());
-
-                                if ((nOperacionEspecial != -1) && (nCodigoOperacionEspecialObt != nOperacionEspecial))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL,
-                                        oTraductor.TraducirTipoOperacionEspecial(nCodigoOperacionEspecialObt),
-                                        oTraductor.TraducirTipoOperacionEspecial(nOperacionEspecial));
-                                }
-                            }
-                            else
-                            {
-                                if (nOperacionEspecial != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoOperacionEspecial(nOperacionEspecial));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION))
-                            {
-                                DateTime dFechaConstitucionObt = Convert.ToDateTime(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION].ToString());
-
-                                if (dFechaConstitucionObt != dFechaConstitucion)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION,
-                                        dFechaConstitucionObt.ToShortDateString(),
-                                        dFechaConstitucion.ToShortDateString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION,
-                                        string.Empty,
-                                        dFechaConstitucion.ToShortDateString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO))
-                            {
-                                DateTime dFechaVencimientoObt = Convert.ToDateTime(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO].ToString());
-
-                                if (dFechaVencimientoObt != dFechaVencimiento)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO,
-                                        dFechaVencimientoObt.ToShortDateString(),
-                                        dFechaVencimiento.ToShortDateString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO,
-                                        string.Empty,
-                                        dFechaVencimiento.ToShortDateString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR))
-                            {
-                                int nCodigoTipoAcreedorObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR].ToString());
-
-                                if ((nTipoAcreedor != -1) && (nCodigoTipoAcreedorObt != nTipoAcreedor))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR,
-                                        oTraductor.TraducirTipoPersona(nCodigoTipoAcreedorObt),
-                                        oTraductor.TraducirTipoPersona(nTipoAcreedor));
-                                }
-                            }
-                            else
-                            {
-                                if (nTipoAcreedor != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoPersona(nTipoAcreedor));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR))
-                            {
-                                string strCedulaAcreedorObt = dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR].ToString();
-
-                                if ((strCedulaAcreedor != string.Empty) && (strCedulaAcreedorObt.CompareTo(strCedulaAcreedor) != 0))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR,
-                                        strCedulaAcreedorObt,
-                                        strCedulaAcreedor);
-                                }
-                            }
-                            else
-                            {
-                                if (strCedulaAcreedor != string.Empty)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR,
-                                            string.Empty,
-                                            strCedulaAcreedor);
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ))
-                            {
-                                int nCodigoLiquidezObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ].ToString());
-
-                                if ((nLiquidez != -1) && (nCodigoLiquidezObt != nLiquidez))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ,
-                                        oTraductor.TraducirTipoLiquidez(nCodigoLiquidezObt),
-                                        oTraductor.TraducirTipoLiquidez(nLiquidez));
-                                }
-                            }
-                            else
-                            {
-                                if (nLiquidez != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoLiquidez(nLiquidez));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_TENENCIA))
-                            {
-                                int nCodigoTeneciaObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_TENENCIA].ToString());
-
-                                if ((nTenencia != -1) && (nCodigoTeneciaObt != nTenencia))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_TENENCIA,
-                                        oTraductor.TraducirTipoTenencia(nCodigoTeneciaObt),
-                                        oTraductor.TraducirTipoTenencia(nTenencia));
-                                }
-                            }
-                            else
-                            {
-                                if (nTenencia != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_TENENCIA,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoTenencia(nTenencia));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION))
-                            {
-                                DateTime dFechaPrescripcionObt = Convert.ToDateTime(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION].ToString());
-
-                                if (dFechaPrescripcionObt != dFechaPrescripcion)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION,
-                                        dFechaPrescripcionObt.ToShortDateString(),
-                                        dFechaPrescripcion.ToShortDateString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION,
-                                        string.Empty,
-                                        dFechaPrescripcion.ToShortDateString());
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull(ContenedorGarantias_reales_x_operacion.COD_MONEDA))
-                            {
-                                int nCodigoMonedaObt = Convert.ToInt32(dsGarantiaRealXOperacion.Tables[0].Rows[0][ContenedorGarantias_reales_x_operacion.COD_MONEDA].ToString());
-
-                                if ((nMoneda != -1) && (nCodigoMonedaObt != nMoneda))
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        ContenedorGarantias_reales_x_operacion.COD_MONEDA,
-                                        oTraductor.TraducirTipoMoneda(nCodigoMonedaObt),
-                                        oTraductor.TraducirTipoMoneda(nMoneda));
-                                }
-                            }
-                            else
-                            {
-                                if (nMoneda != -1)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                            2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                            ContenedorGarantias_reales_x_operacion.COD_MONEDA,
-                                            string.Empty,
-                                            oTraductor.TraducirTipoMoneda(nMoneda));
-                                }
-                            }
-
-                            if (!dsGarantiaRealXOperacion.Tables[0].Rows[0].IsNull("Porcentaje_Aceptacion"))
-                            {
-                                decimal porcentajeAceptacionObt = Convert.ToDecimal(dsGarantiaRealXOperacion.Tables[0].Rows[0]["Porcentaje_Aceptacion"].ToString());
-
-                                if (porcentajeAceptacionObt != porcentajeAceptacion)
-                                {
-                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                        2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                        "Porcentaje_Aceptacion",
-                                        porcentajeAceptacionObt.ToString(),
-                                        porcentajeAceptacion.ToString());
-                                }
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strModificaGarRealXOperacion, string.Empty,
-                                       "Porcentaje_Aceptacion",
-                                       string.Empty,
-                                       porcentajeAceptacion.ToString());
-                            }
-
-                            #endregion
-                        }
-
+                        #region Inserción de Garantía Real
+
+                        #region Armar String de Inserción de la Garantía Real
+
+                        listaCampos = new string[] { clsGarantiaReal._entidadGarantiaReal,
+                                                     clsGarantiaReal._codTipoGarantia, clsGarantiaReal._codClaseGarantia, clsGarantiaReal._codTipoGarantiaReal, clsGarantiaReal._codPartido,
+                                                     clsGarantiaReal._numeroFinca, clsGarantiaReal._codGrado, clsGarantiaReal._cedulaHipotecaria, clsGarantiaReal._codClaseBien,
+                                                     clsGarantiaReal._numPlacaBien, clsGarantiaReal._codTipoBien,
+                                                     nTipoGarantia.ToString(), nClaseGarantia.ToString(),  nTipoGarantiaReal.ToString(), nPartido.ToString(),
+                                                     (((strFinca != null) && (strFinca.Length > 0)) ? strFinca : "''"),
+                                                     ((nGrado > 0) ? nGrado.ToString() : "-1"),
+                                                     ((nCedulaFiduciaria > 0) ? nCedulaFiduciaria.ToString() : "-1"),
+                                                     (((strClaseBien != null) && (strClaseBien.Length > 0)) ? strClaseBien : "''"),
+                                                     (((strNumPlaca != null) && (strNumPlaca.Length > 0)) ? strNumPlaca : "''"),
+                                                     ((nTipoBien > 0) ? nTipoBien.ToString() : "-1")};
+
+                        string strInsertaGarantiaReal = string.Format("INSERT INTO {0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}) VALUES ({11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20})", listaCampos);
+
+                        #endregion
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codTipoGarantia,
+                            string.Empty,
+                            oTraductor.TraducirTipoGarantia(nTipoGarantia));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codClaseGarantia,
+                            string.Empty,
+                            oTraductor.TraducirClaseGarantia(nClaseGarantia));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codTipoGarantiaReal,
+                            string.Empty,
+                            oTraductor.TraducirTipoGarantiaReal(nTipoGarantiaReal));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codPartido,
+                            string.Empty,
+                            nPartido.ToString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._numeroFinca,
+                            string.Empty,
+                            strFinca);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codGrado,
+                            string.Empty,
+                            nGrado.ToString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._cedulaHipotecaria,
+                            string.Empty,
+                            nCedulaFiduciaria.ToString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codClaseBien,
+                            string.Empty,
+                            strClaseBien);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._numPlacaBien,
+                            string.Empty,
+                            strNumPlaca);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarantiaReal, string.Empty,
+                            clsGarantiaReal._codTipoBien,
+                            string.Empty,
+                            oTraductor.TraducirTipoBien(nTipoBien));
+
+                        dsGarantiaReal = AccesoBD.ejecutarConsulta(strConsultaGarantiasReales);
+
+                        #endregion
+                    }
+
+                    if ((dsGarantiaReal != null) && (dsGarantiaReal.Tables.Count > 0) && (dsGarantiaReal.Tables[0].Rows.Count > 0))
+                    {
+                        #region Inserción de Garantías Reales por Operación
+
+                        string strCodigoGarantiaReal = dsGarantiaReal.Tables[0].Rows[0][clsGarantiaReal._codGarantiaReal].ToString();
+
+                        #region Armar String de Inserción de la Garantía por Operación
+
+                        listaCampos = new string[] { clsGarantiaReal._entidadGarantiaRealXOperacion,
+                                                     clsGarantiaReal._codOperacion, clsGarantiaReal._codGarantiaReal, clsGarantiaReal._codTipoMitigador, clsGarantiaReal._codTipoDocumentoLegal,
+                                                     clsGarantiaReal._montoMitigador, clsGarantiaReal._codInscripcion, clsGarantiaReal._fechaPresentacion, clsGarantiaReal._porcentajeResponsabilidad,
+                                                     clsGarantiaReal._codGradoGravamen, clsGarantiaReal._codOperacionEspecial, clsGarantiaReal._fechaConstitucion, clsGarantiaReal._fechaVencimiento,
+                                                     clsGarantiaReal._codTipoAcreedor, clsGarantiaReal._cedAcreedor, clsGarantiaReal._codLiquidez, clsGarantiaReal._codTenencia, clsGarantiaReal._fechaPrescripcion,
+                                                     clsGarantiaReal._codMoneda, clsGarantiaReal._porcentajeAceptacion,
+                                                     nOperacion.ToString(), strCodigoGarantiaReal,  nTipoMitigador.ToString(), nTipoDocumento.ToString(), nMontoMitigador.ToString(),
+                                                     ((nInscripcion > 0) ? nInscripcion.ToString() : "-1"),
+                                                     (((dFechaPresentacion != null) && (dFechaPresentacion != fechaBase) && (dFechaPresentacion != DateTime.MinValue)) ? dFechaPresentacion.ToShortDateString() : "''"),
+                                                     ((nPorcentaje > 0) ? nPorcentaje.ToString() : "-1"),
+                                                     nGradoGravamen.ToString(),
+                                                     ((nOperacionEspecial > 0) ? nOperacionEspecial.ToString() : "-1"),
+                                                     (((dFechaConstitucion != null) && (dFechaConstitucion != fechaBase) && (dFechaConstitucion != DateTime.MinValue)) ? dFechaConstitucion.ToShortDateString() : "''"),
+                                                     (((dFechaVencimiento != null) && (dFechaVencimiento != fechaBase) && (dFechaVencimiento != DateTime.MinValue)) ? dFechaVencimiento.ToShortDateString() : "''"),
+                                                     ((nTipoAcreedor > 0) ? nTipoAcreedor.ToString() : "-1"),
+                                                     (((strCedulaAcreedor != null) && (strCedulaAcreedor.Length > 0)) ? strCedulaAcreedor : "''"),
+                                                     nLiquidez.ToString(),
+                                                     nTenencia.ToString(),
+                                                     (((dFechaPrescripcion != null) && (dFechaPrescripcion != fechaBase) && (dFechaPrescripcion != DateTime.MinValue)) ? dFechaPrescripcion.ToShortDateString() : "''"),
+                                                     nMoneda.ToString(),
+                                                     ((porcentajeAceptacion > 0) ? porcentajeAceptacion.ToString() : "0")};
+
+                        string strInsertaGarRealXOperacion = string.Format("INSERT INTO {0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}) VALUES ({20}, {21}, {22}, {23}, {24}, {25}, {26}, {27}, {28}, {29}, {30}, {31}, {32}, {33}, {34}, {35}, {36}, {37}, {38})", listaCampos);
+
+                        #endregion
+
+                        #region Garantía Real por Operación
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codOperacion,
+                            string.Empty,
+                            strOperacionCrediticia);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codGarantiaReal,
+                            string.Empty,
+                            strGarantia);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codTipoMitigador,
+                            string.Empty,
+                            oTraductor.TraducirTipoMitigador(nTipoMitigador));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codTipoDocumentoLegal,
+                            string.Empty,
+                            oTraductor.TraducirTipoDocumento(nTipoDocumento));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._montoMitigador,
+                            string.Empty,
+                            nMontoMitigador.ToString("N2"));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codInscripcion, DBNull.Value.ToString(), nInscripcion.ToString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._fechaPresentacion,
+                            string.Empty,
+                            dFechaPresentacion.ToShortDateString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._porcentajeResponsabilidad,
+                            string.Empty,
+                            nPorcentaje.ToString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codGradoGravamen,
+                            string.Empty,
+                            oTraductor.TraducirGradoGravamen(nGradoGravamen));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codOperacionEspecial,
+                            string.Empty,
+                            oTraductor.TraducirTipoOperacionEspecial(nOperacionEspecial));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._fechaConstitucion, string.Empty, dFechaConstitucion.ToShortDateString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._fechaVencimiento,
+                            string.Empty,
+                            dFechaVencimiento.ToShortDateString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codTipoAcreedor,
+                            string.Empty,
+                            oTraductor.TraducirTipoPersona(nTipoAcreedor));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._cedAcreedor,
+                            string.Empty,
+                            strCedulaAcreedor);
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codLiquidez,
+                            string.Empty,
+                            oTraductor.TraducirTipoLiquidez(nLiquidez));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codTenencia,
+                            string.Empty,
+                            oTraductor.TraducirTipoTenencia(nTenencia));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._fechaPrescripcion,
+                            string.Empty,
+                            dFechaPrescripcion.ToShortDateString());
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._codMoneda,
+                            string.Empty,
+                            oTraductor.TraducirTipoMoneda(nMoneda));
+
+                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                            1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
+                            clsGarantiaReal._porcentajeAceptacion,
+                            string.Empty,
+                            porcentajeAceptacion.ToString());
                         #endregion
 
                         #endregion
                     }
+
+
+                    #endregion
                 }
             }
-            catch
+            catch (SqlException ex)
             {
-                throw;
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoGarantiaDetalle, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
             }
         }
-
-        //AGREGAR PARAMETRO DE USUARIO EN EL SP
-        //AGREGAR TAMBIEN LAS OTRAS TABLAS 
 
         public void Modificar(clsGarantiaReal datosGarantiaReal, string strUsuario, string strIP,
                               string strOperacionCrediticia, string strGarantia)
@@ -1454,6 +498,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "pa_ModificarGarantiaRealXML", parameters);
 
                         respuestaObtenida = parameters[4].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -1492,553 +539,1087 @@ namespace BCRGARANTIAS.Negocios
         public void Eliminar(long nOperacion, long nGarantia, string strUsuario, string strIP,
                              string strOperacionCrediticia, string strGarantia)
         {
+            string identifiacionGarantia = string.Format("Real: {0}, relacionada a la operación/contrato: {1}", strGarantia, strOperacionCrediticia);
+            DataSet dsGarantiaReal = new DataSet();
+            DataSet dsGarantiaRealXOperacion = new DataSet();
+            DataSet dsValuacionesReales = new DataSet();
+            DataSet dsPolizasRelacionadas = new DataSet();
+            string sentenciaSqlGarantiasXOperacion = string.Empty;
+
             try
             {
+                //Se obtienen los datos antes de ser borrados, con el fin de poderlos insertar en la bitácora
+                #region Obtener Datos previos a actualización
+
+                listaCampos = new string[] { clsGarantiaReal._cedulaHipotecaria, clsGarantiaReal._codClaseBien, clsGarantiaReal._codClaseGarantia, clsGarantiaReal._codGarantiaReal,
+                                             clsGarantiaReal._codGrado, clsGarantiaReal._codPartido, clsGarantiaReal._codTipoBien, clsGarantiaReal._codTipoGarantia,
+                                             clsGarantiaReal._codTipoGarantiaReal, clsGarantiaReal._numPlacaBien, clsGarantiaReal._numeroFinca, clsGarantiaReal._identificacionSicc,
+                                             clsGarantiaReal._identificacionAlfanumericaSicc, clsGarantiaReal._indicadorViviendaHabitadaDeudor, clsGarantiaReal._usuarioModifico,
+                                             clsGarantiaReal._fechaModifico, clsGarantiaReal._fechaInserto, clsGarantiaReal._fechaReplica,
+                                             clsGarantiaReal._entidadGarantiaReal,
+                                             clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17} FROM dbo.{18} WHERE {19} = {20}", listaCampos);
+
+                dsGarantiaReal = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+
+                listaCampos = new string[] {clsGarantiaReal._cedAcreedor, clsGarantiaReal._codEstado,  clsGarantiaReal._codGarantiaReal, clsGarantiaReal._codGradoGravamen,  clsGarantiaReal._codInscripcion,
+                                            clsGarantiaReal._codLiquidez,  clsGarantiaReal._codMoneda, clsGarantiaReal._codOperacion,  clsGarantiaReal._codOperacionEspecial,
+                                            clsGarantiaReal._codTenencia,  clsGarantiaReal._codTipoAcreedor, clsGarantiaReal._codTipoDocumentoLegal,  clsGarantiaReal._codTipoMitigador,
+                                            clsGarantiaReal._fechaConstitucion,  clsGarantiaReal._fechaPrescripcion, clsGarantiaReal._fechaPresentacion,  clsGarantiaReal._fechaVencimiento,
+                                            clsGarantiaReal._montoMitigador,  clsGarantiaReal._porcentajeResponsabilidad, clsGarantiaReal._fechaValuacionSicc,  clsGarantiaReal._usuarioModifico,
+                                            clsGarantiaReal._fechaModifico,  clsGarantiaReal._fechaInserto, clsGarantiaReal._fechaReplica,  clsGarantiaReal._porcentajeAceptacion,
+                                            clsGarantiaReal._entidadGarantiaRealXOperacion,
+                                            clsGarantiaReal._codOperacion, nOperacion.ToString(),
+                                            clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                sentenciaSqlGarantiasXOperacion = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23}, {24} FROM dbo.{25} WHERE {26} = {27} AND {28} = {29}", listaCampos);
+             
+                dsGarantiaRealXOperacion = AccesoBD.ejecutarConsulta(sentenciaSqlGarantiasXOperacion);
+
+
+                listaCampos = new string[] {clsValuacionReal._cedulaEmpresa, clsValuacionReal._cedulaPerito,  clsValuacionReal._codGarantiaReal, clsValuacionReal._codInspeccionMenorTresMeses,
+                                            clsValuacionReal._codRecomendacionPerito, clsValuacionReal._fechaConstruccion,  clsValuacionReal._fechaUltimoSeguimiento, clsValuacionReal._fechaValuacion,
+                                            clsValuacionReal._montoTasacionActualizadaNoTerreno, clsValuacionReal._montoTasacionActualizadaTerreno,  clsValuacionReal._montoTotalAvaluo,
+                                            clsValuacionReal._montoUltimaTasacionNoTerreno,  clsValuacionReal._montoUltimaTasacionTerreno, clsValuacionReal._indicadorTipoRegistro,
+                                            clsValuacionReal._indicadorAvaluoActualizado, clsValuacionReal._fechaSemestreActualizado,  clsValuacionReal._usuarioModifico,
+                                            clsValuacionReal._fechaModifico,  clsValuacionReal._fechaInserto, clsValuacionReal._fechaReplica,  clsValuacionReal._porcentajeAceptacionTerreno,
+                                            clsValuacionReal._porcentajeAceptacionNoTerreno,  clsValuacionReal._porcentajeAceptacionTerrenoCalculado, clsValuacionReal._porcentajeAceptacionNoTerrenoCalculado,
+                                            clsValuacionReal._entidadValuacionesReales,
+                                            clsValuacionReal._codGarantiaReal, nGarantia.ToString()};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22}, {23} FROM dbo.{24} WHERE {25} = {26}", listaCampos);
+
+                dsValuacionesReales = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+
+                listaCampos = new string[] {clsGarantiaReal._codigoSap, clsGarantiaReal._codOperacion, clsGarantiaReal._codGarantiaReal, clsPolizaSap._codigoEstadoRegistro, clsGarantiaReal._montoAcreencia,
+                                            clsGarantiaReal._fechaInserto,  clsGarantiaReal._usuarioModifico, clsGarantiaReal._fechaModifico,  clsGarantiaReal._usuarioInserto,
+                                            clsGarantiaReal._entidadPolizasRelaciondas +
+                                            clsGarantiaReal._codOperacion, nOperacion.ToString(),
+                                            clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8} FROM dbo.{9} WHERE {10} = {11} AND {12} = {13}", listaCampos);
+
+                dsPolizasRelacionadas = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+
+                #endregion
+
+                SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("pbConsecutivo_Garantia_Real", SqlDbType.BigInt),
+                        new SqlParameter("pbConsecutivo_Operacion", SqlDbType.BigInt)
+                    };
+
+                parameters[0].Value = nGarantia;
+                parameters[1].Value = nOperacion;
+
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
-                    SqlCommand oComando = new SqlCommand("pa_EliminarGarantiaReal", oConexion);
-                    DataSet dsData = new DataSet();
-                    SqlParameter oParam = new SqlParameter();
-
-                    //Se obtienen los datos antes de ser borrados, con el fin de poderlos insertar en la bitácora
-                    #region Obtener Datos previos a actualización
-
-                    DataSet dsGarantiaReal = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_real.CEDULA_HIPOTECARIA + "," +
-                        ContenedorGarantia_real.COD_CLASE_BIEN + "," + ContenedorGarantia_real.COD_CLASE_GARANTIA + "," +
-                        ContenedorGarantia_real.COD_GARANTIA_REAL + "," + ContenedorGarantia_real.COD_GRADO + "," +
-                        ContenedorGarantia_real.COD_PARTIDO + "," + ContenedorGarantia_real.COD_TIPO_BIEN + "," +
-                        ContenedorGarantia_real.COD_TIPO_GARANTIA + "," + ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL + "," +
-                        ContenedorGarantia_real.NUM_PLACA_BIEN + "," + ContenedorGarantia_real.NUMERO_FINCA +
-                        " from " + ContenedorGarantia_real.NOMBRE_ENTIDAD +
-                        " where " + ContenedorGarantia_real.COD_GARANTIA_REAL + " = " + nGarantia.ToString());
-
-
-                    DataSet dsGarantiaRealXOperacion = AccesoBD.ejecutarConsulta("select " + ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_ESTADO + "," + ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN + "," + ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ + "," + ContenedorGarantias_reales_x_operacion.COD_MONEDA + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_OPERACION + "," + ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_TENENCIA + "," + ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR + "," +
-                        ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL + "," + ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR + "," +
-                        ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION + "," + ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION + "," +
-                        ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION + "," + ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO + "," +
-                        ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR + "," + ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD +
-                        " from " + ContenedorGarantias_reales_x_operacion.NOMBRE_ENTIDAD +
-                        " where " + ContenedorGarantias_reales_x_operacion.COD_OPERACION + " = " + nOperacion.ToString() +
-                        " and " + ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL + " = " + nGarantia.ToString());
-
-                    DataSet dsValuacionesReales = AccesoBD.ejecutarConsulta("select " + ContenedorValuaciones_reales.CEDULA_EMPRESA + "," +
-                        ContenedorValuaciones_reales.CEDULA_PERITO + "," + ContenedorValuaciones_reales.COD_GARANTIA_REAL + "," +
-                        ContenedorValuaciones_reales.COD_INSPECCION_MENOR_TRES_MESES + "," + ContenedorValuaciones_reales.COD_RECOMENDACION_PERITO + "," +
-                        ContenedorValuaciones_reales.FECHA_CONSTRUCCION + "," + ContenedorValuaciones_reales.FECHA_ULTIMO_SEGUIMIENTO + "," +
-                        ContenedorValuaciones_reales.FECHA_VALUACION + "," + ContenedorValuaciones_reales.MONTO_TASACION_ACTUALIZADA_NO_TERRENO + "," +
-                        ContenedorValuaciones_reales.MONTO_TASACION_ACTUALIZADA_TERRENO + "," + ContenedorValuaciones_reales.MONTO_TOTAL_AVALUO + "," +
-                        ContenedorValuaciones_reales.MONTO_ULTIMA_TASACION_NO_TERRENO + "," + ContenedorValuaciones_reales.MONTO_ULTIMA_TASACION_TERRENO +
-                        " from " + ContenedorValuaciones_reales.NOMBRE_ENTIDAD +
-                        " where " + ContenedorValuaciones_reales.COD_GARANTIA_REAL + " = " + nGarantia.ToString());
-
-                    #endregion
-
-                    //Declara las propiedades del comando
-                    oComando.CommandType = CommandType.StoredProcedure;
-
-                    //Agrega los parámetros
-                    oComando.Parameters.AddWithValue("@nGarantiaReal", nGarantia);
-                    oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
-                    oComando.Parameters.AddWithValue("@strUsuario", strUsuario);
-                    oComando.Parameters.AddWithValue("@strIP", strIP);
-                    //oComando.Parameters.AddWithValue("@nOficina",nOficina);	
-
-                    //Abre la conexión
                     oConexion.Open();
 
-                    //Ejecuta el comando
-                    int nFilasAfectadas = oComando.ExecuteNonQuery();
+                    AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "pa_EliminarGarantiaReal", parameters);
 
+                    oConexion.Close();
+                    oConexion.Dispose();
+                }
 
-                    if (nFilasAfectadas > 0)
+                #region Inserción en Bitácora
+
+                Bitacora oBitacora = new Bitacora();
+
+                TraductordeCodigos oTraductor = new TraductordeCodigos();
+
+                listaCampos = new string[] {clsGarantiaReal._entidadGarantiaRealXOperacion,
+                                            clsGarantiaReal._codOperacion, nOperacion.ToString(),
+                                            clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                string strElimimarGarRealXOperacion = string.Format("DELETE FROM {0} WHERE {1} = {2} AND {3} = {4}", listaCampos);
+
+                if ((dsGarantiaRealXOperacion != null) && (dsGarantiaRealXOperacion.Tables.Count > 0) && (dsGarantiaRealXOperacion.Tables[0].Rows.Count > 0))
+                {
+                    #region Garantía Real por Operación
+
+                    foreach (DataRow drGarRealXOP in dsGarantiaRealXOperacion.Tables[0].Rows)
                     {
-                        #region Inserción en Bitácora
-
-                        Bitacora oBitacora = new Bitacora();
-
-                        TraductordeCodigos oTraductor = new TraductordeCodigos();
-
-                        string strElimimarGarRealXOperacion = "DELETE GAR_GARANTIAS_REALES_X_OPERACION WHERE cod_operacion = " +
-                            nOperacion.ToString() + " AND cod_garantia_real = " + nGarantia.ToString();
-
-                        if ((dsGarantiaRealXOperacion != null) && (dsGarantiaRealXOperacion.Tables.Count > 0) && (dsGarantiaRealXOperacion.Tables[0].Rows.Count > 0))
+                        for (int nIndice = 0; nIndice < drGarRealXOP.Table.Columns.Count; nIndice++)
                         {
-                            #region Garantía Real por Operación
-
-                            foreach (DataRow drGarRealXOP in dsGarantiaRealXOperacion.Tables[0].Rows)
+                            switch (drGarRealXOP.Table.Columns[nIndice].ColumnName)
                             {
-                                for (int nIndice = 0; nIndice < drGarRealXOP.Table.Columns.Count; nIndice++)
-                                {
-                                    switch (drGarRealXOP.Table.Columns[nIndice].ColumnName)
+                                case clsGarantiaReal._codEstado:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                     {
-                                        case ContenedorGarantias_reales_x_operacion.COD_ESTADO:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                       oTraductor.TraducirTipoEstado(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                       string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                       string.Empty,
-                                                       string.Empty);
-                                            }
-                                            break;
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                               oTraductor.TraducirTipoEstado(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                               string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                               string.Empty,
+                                               string.Empty);
+                                    }
+                                    break;
 
-                                        case ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL: oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                                                                       strGarantia,
-                                                                                                       string.Empty);
-                                            break;
+                                case clsGarantiaReal._codGarantiaReal:
+                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                            3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                            drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                            strGarantia,
+                                                            string.Empty);
+                                    break;
 
-                                        case ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                case clsGarantiaReal._codGradoGravamen:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                              drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              oTraductor.TraducirGradoGravamen(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                              drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._codInscripcion:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                  drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                  oTraductor.TraducirTipoInscripcion(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                  string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                  drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                  string.Empty,
+                                                  string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._codLiquidez:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                oTraductor.TraducirTipoLiquidez(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                               string.Empty,
+                                               string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._codMoneda:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                  drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                  oTraductor.TraducirTipoMoneda(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                  string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                  drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                  string.Empty,
+                                                  string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._codOperacion:
+                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                               strOperacionCrediticia,
+                                                               string.Empty);
+                                    break;
+
+                                case clsGarantiaReal._codOperacionEspecial:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   oTraductor.TraducirTipoOperacionEspecial(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                   string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   string.Empty,
+                                                   string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._codTenencia:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                      oTraductor.TraducirGradoGravamen(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                      oTraductor.TraducirTipoTenencia(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
                                                       string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
                                                       string.Empty,
                                                       string.Empty);
-                                            }
-                                            break;
+                                    }
+                                    break;
 
-                                        case ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                          drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                          oTraductor.TraducirTipoInscripcion(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                          string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                          drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                          string.Empty,
-                                                          string.Empty);
-                                            }
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                        3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                        drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                        oTraductor.TraducirTipoLiquidez(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                        string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                       string.Empty,
-                                                       string.Empty);
-                                            }
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_MONEDA:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                          drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                          oTraductor.TraducirTipoMoneda(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                          string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                          drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                          string.Empty,
-                                                          string.Empty);
-                                            }
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_OPERACION: oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                                                                       strOperacionCrediticia,
-                                                                                                       string.Empty);
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                case clsGarantiaReal._codTipoAcreedor:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                                                            3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
                                                            drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                           oTraductor.TraducirTipoOperacionEspecial(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                           oTraductor.TraducirTipoPersona(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
                                                            string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                                                            3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
                                                            drGarRealXOP.Table.Columns[nIndice].ColumnName,
                                                            string.Empty,
                                                            string.Empty);
-                                            }
-                                            break;
+                                    }
+                                    break;
 
-                                        case ContenedorGarantias_reales_x_operacion.COD_TENENCIA:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                              drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                              oTraductor.TraducirTipoTenencia(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                              string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                              drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                              string.Empty,
-                                                              string.Empty);
-                                            }
-                                            break;
+                                case clsGarantiaReal._codTipoDocumentoLegal:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                               oTraductor.TraducirTipoDocumento(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                               string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                               3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                               drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                               string.Empty,
+                                               string.Empty);
+                                    }
+                                    break;
 
-                                        case ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                                   oTraductor.TraducirTipoPersona(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                                   string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                                   string.Empty,
-                                                                   string.Empty);
-                                            }
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                       oTraductor.TraducirTipoDocumento(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                       string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                       3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                       drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                       string.Empty,
-                                                       string.Empty);
-                                            }
-                                            break;
-
-                                        case ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR:
-                                            if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                           3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                           drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                           oTraductor.TraducirTipoMitigador(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
-                                                           string.Empty);
-                                            }
-                                            else
-                                            {
-                                                oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                           3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                           drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                           string.Empty,
-                                                           string.Empty);
-                                            }
-
-                                            break;
-
-                                        default: oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                                  3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                                  drGarRealXOP.Table.Columns[nIndice].ColumnName,
-                                                  drGarRealXOP[nIndice, DataRowVersion.Current].ToString(),
-                                                  string.Empty);
-                                            break;
+                                case clsGarantiaReal._codTipoMitigador:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   oTraductor.TraducirTipoMitigador(Convert.ToInt32(drGarRealXOP[nIndice, DataRowVersion.Current].ToString())),
+                                                   string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   string.Empty,
+                                                   string.Empty);
                                     }
 
+                                    break;
 
-                                }
+                                case clsGarantiaReal._montoMitigador:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        decimal montoMitigador = ((decimal.TryParse(drGarRealXOP[nIndice, DataRowVersion.Current].ToString(), out montoMitigador)) ? montoMitigador : 0);
+
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   montoMitigador.ToString("N2"),
+                                                   string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   string.Empty,
+                                                   string.Empty);
+                                    }
+
+                                    break;
+
+
+                                case clsGarantiaReal._porcentajeAceptacion:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        decimal porcentajeAceptacion = ((decimal.TryParse(drGarRealXOP[nIndice, DataRowVersion.Current].ToString(), out porcentajeAceptacion)) ? ((porcentajeAceptacion >= 0) ? porcentajeAceptacion : 0) : 0);
+
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   porcentajeAceptacion.ToString("N2"),
+                                                   string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   string.Empty,
+                                                   string.Empty);
+                                    }
+
+                                    break;
+
+                                case clsGarantiaReal._porcentajeResponsabilidad:
+                                    if (drGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        decimal porcentajeRespons = ((decimal.TryParse(drGarRealXOP[nIndice, DataRowVersion.Current].ToString(), out porcentajeRespons)) ? ((porcentajeRespons >= 0) ? porcentajeRespons : 0) : 0);
+
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   porcentajeRespons.ToString("N2"),
+                                                   string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                                   3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                                   drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                                   string.Empty,
+                                                   string.Empty);
+                                    }
+
+                                    break;
+
+                                default:
+                                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                                     3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                                     drGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                     drGarRealXOP[nIndice, DataRowVersion.Current].ToString(),
+                                     string.Empty);
+                                    break;
                             }
 
-                            #endregion
+
                         }
-                        else
+                    }
+
+                    #endregion
+                }
+                else
+                {
+                    oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
+                        3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
+                        string.Empty,
+                        string.Empty,
+                        string.Empty);
+                }
+
+                #region Pólizas Relacionadas
+
+                listaCampos = new string[] {clsGarantiaReal._entidadPolizasRelaciondas,
+                                            clsGarantiaReal._codOperacion, nOperacion.ToString(),
+                                            clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                string strElimimarPolizasXGarRealXOperacion = string.Format("DELETE FROM {0} WHERE {1} = {2} AND {3} = {4}", listaCampos);
+
+                if ((dsPolizasRelacionadas != null) && (dsPolizasRelacionadas.Tables.Count > 0) && (dsPolizasRelacionadas.Tables[0].Rows.Count > 0))
+                {
+                    string[] formatosFecha = { "yyyyMMdd", "dd/MM/yyyy" };
+
+                    #region Pólizas Relacionadas a Garantía Real por Operación
+
+                    foreach (DataRow drPolGarRealXOP in dsPolizasRelacionadas.Tables[0].Rows)
+                    {
+                        for (int nIndice = 0; nIndice < drPolGarRealXOP.Table.Columns.Count; nIndice++)
                         {
-                            oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
-                                3, 2, strGarantia, strOperacionCrediticia, strElimimarGarRealXOperacion, string.Empty,
-                                string.Empty,
-                                string.Empty,
-                                string.Empty);
-                        }
-
-                        #region Volver a obtener los datos referentes a la garantía real por operación
-
-                        dsGarantiaRealXOperacion = AccesoBD.ejecutarConsulta("select " + ContenedorGarantias_reales_x_operacion.CEDULA_ACREEDOR + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_ESTADO + "," + ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_GRADO_GRAVAMEN + "," + ContenedorGarantias_reales_x_operacion.COD_INSCRIPCION + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_LIQUIDEZ + "," + ContenedorGarantias_reales_x_operacion.COD_MONEDA + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_OPERACION + "," + ContenedorGarantias_reales_x_operacion.COD_OPERACION_ESPECIAL + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_TENENCIA + "," + ContenedorGarantias_reales_x_operacion.COD_TIPO_ACREEDOR + "," +
-                            ContenedorGarantias_reales_x_operacion.COD_TIPO_DOCUMENTO_LEGAL + "," + ContenedorGarantias_reales_x_operacion.COD_TIPO_MITIGADOR + "," +
-                            ContenedorGarantias_reales_x_operacion.FECHA_CONSTITUCION + "," + ContenedorGarantias_reales_x_operacion.FECHA_PRESCRIPCION + "," +
-                            ContenedorGarantias_reales_x_operacion.FECHA_PRESENTACION + "," + ContenedorGarantias_reales_x_operacion.FECHA_VENCIMIENTO + "," +
-                            ContenedorGarantias_reales_x_operacion.MONTO_MITIGADOR + "," + ContenedorGarantias_reales_x_operacion.PORCENTAJE_RESPONSABILIDAD +
-                            " from " + ContenedorGarantias_reales_x_operacion.NOMBRE_ENTIDAD +
-                            " where " + ContenedorGarantias_reales_x_operacion.COD_OPERACION + " = " + nOperacion.ToString() +
-                            " and " + ContenedorGarantias_reales_x_operacion.COD_GARANTIA_REAL + " = " + nGarantia.ToString());
-
-                        #endregion
-
-                        //Si la garantía real por operación ha sido borrada se procede a borrar la garantía real en las tablas 
-                        //GAR_VALUACIONES_REALES y GAR_GARANTIA_REAL.
-                        if ((dsGarantiaRealXOperacion == null) || (dsGarantiaRealXOperacion.Tables.Count == 0) || (dsGarantiaRealXOperacion.Tables[0].Rows.Count == 0))
-                        {
-                            string strEliminarValuacionReal = "DELETE GAR_VALUACIONES_REALES WHERE cod_garantia_real = " + nGarantia.ToString();
-
-                            string strEliminarGarantiaReal = "DELETE GAR_GARANTIA_REAL WHERE cod_garantia_real = " + nGarantia.ToString();
-
-                            if ((dsValuacionesReales != null) && (dsValuacionesReales.Tables.Count > 0) && (dsValuacionesReales.Tables[0].Rows.Count > 0))
+                            switch (drPolGarRealXOP.Table.Columns[nIndice].ColumnName)
                             {
-                                #region Garantía Valuación Real
+                                case clsGarantiaReal._codigoSap:
+                                    oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                    3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                    drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                    drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(),
+                                    string.Empty);
 
-                                foreach (DataRow drValReal in dsValuacionesReales.Tables[0].Rows)
-                                {
-                                    for (int nIndice = 0; nIndice < drValReal.Table.Columns.Count; nIndice++)
+                                    break;
+
+                                case clsGarantiaReal._codOperacion:
+                                    oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                    3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                    drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                    strOperacionCrediticia,
+                                    string.Empty);
+
+                                    break;
+
+                                case clsGarantiaReal._codGarantiaReal:
+                                    oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                    3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                    drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                    strGarantia,
+                                    string.Empty);
+
+                                    break;
+
+                                case clsPolizaSap._codigoEstadoRegistro:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                     {
-                                        switch (drValReal.Table.Columns[nIndice].ColumnName)
+                                        bool estadoAlmacenado;
+                                        string estado = ((bool.TryParse(drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(), out estadoAlmacenado)) ? ((estadoAlmacenado) ? "Activo" : "Inactivo") : "Inactivo");
+
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              estado,
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._montoAcreencia:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+
+                                        decimal montoAcreencia = ((decimal.TryParse(drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(), out montoAcreencia)) ? montoAcreencia : 0);
+
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              montoAcreencia.ToString("N2"),
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._fechaInserto:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        DateTime fechaConver;
+                                        string fecha = DateTime.TryParseExact(drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaConver) ? fechaConver.ToString("dd/MM/yyyy") : string.Empty;
+
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              fecha,
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._usuarioModifico:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(),
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._fechaModifico:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        DateTime fechaConver;
+                                        string fecha = DateTime.TryParseExact(drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaConver) ? fechaConver.ToString("dd/MM/yyyy") : string.Empty;
+
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              fecha,
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                case clsGarantiaReal._usuarioInserto:
+                                    if (drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              drPolGarRealXOP[nIndice, DataRowVersion.Current].ToString(),
+                                              string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                                              3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                                              drPolGarRealXOP.Table.Columns[nIndice].ColumnName,
+                                              string.Empty,
+                                              string.Empty);
+                                    }
+                                    break;
+
+                                default:
+
+                                    break;
+                            }
+
+
+                        }
+                    }
+
+                    #endregion
+                }
+                else
+                {
+                    oBitacora.InsertarBitacora("GAR_POLIZAS_RELACIONADAS", strUsuario, strIP, null,
+                        3, 2, strGarantia, strOperacionCrediticia, strElimimarPolizasXGarRealXOperacion, string.Empty,
+                        string.Empty,
+                        string.Empty,
+                        string.Empty);
+                }
+
+
+                #endregion Pólizas Relacionadas
+
+
+                #region Volver a obtener los datos referentes a la garantía real por operación
+
+                dsGarantiaRealXOperacion = ((sentenciaSqlGarantiasXOperacion.Length > 0) ? AccesoBD.ejecutarConsulta(sentenciaSqlGarantiasXOperacion) : null);
+
+                #endregion
+
+                //Si la garantía real por operación ha sido borrada se procede a borrar la garantía real en las tablas 
+                //GAR_VALUACIONES_REALES y GAR_GARANTIA_REAL.
+                if ((dsGarantiaRealXOperacion == null) || (dsGarantiaRealXOperacion.Tables.Count == 0) || (dsGarantiaRealXOperacion.Tables[0].Rows.Count == 0))
+                {
+                    listaCampos = new string[] {clsGarantiaReal._entidadValuacionesReales,
+                                                clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                    string strEliminarValuacionReal = string.Format("DELETE FROM {0} WHERE {1} = {2}", listaCampos);
+
+                    listaCampos = new string[] {clsGarantiaReal._entidadGarantiaReal,
+                                                clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
+
+                    string strEliminarGarantiaReal = string.Format("DELETE FROM {0} WHERE {1} = {2}", listaCampos);
+
+                    if ((dsValuacionesReales != null) && (dsValuacionesReales.Tables.Count > 0) && (dsValuacionesReales.Tables[0].Rows.Count > 0))
+                    {
+                        #region Garantía Valuación Real
+
+                        foreach (DataRow drValReal in dsValuacionesReales.Tables[0].Rows)
+                        {
+                            for (int nIndice = 0; nIndice < drValReal.Table.Columns.Count; nIndice++)
+                            {
+                                switch (drValReal.Table.Columns[nIndice].ColumnName)
+                                {
+
+                                    case clsValuacionReal._codGarantiaReal:
+                                        oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                               3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                               drValReal.Table.Columns[nIndice].ColumnName,
+                                                               strGarantia,
+                                                               string.Empty);
+                                        break;
+
+                                    case clsValuacionReal._codInspeccionMenorTresMeses:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                         {
-
-                                            case ContenedorValuaciones_reales.COD_GARANTIA_REAL: oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                                                                                           3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                                                                                           drValReal.Table.Columns[nIndice].ColumnName,
-                                                                                                           strGarantia,
-                                                                                                           string.Empty);
-                                                break;
-
-                                            case ContenedorValuaciones_reales.COD_INSPECCION_MENOR_TRES_MESES:
-                                                if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                                              3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                                              drValReal.Table.Columns[nIndice].ColumnName,
-                                                              oTraductor.TraducirTipoInspeccion3Meses(Convert.ToInt32(drValReal[nIndice, DataRowVersion.Current].ToString())),
-                                                              string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                                              3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                                              drValReal.Table.Columns[nIndice].ColumnName,
-                                                              string.Empty,
-                                                              string.Empty);
-                                                }
-                                                break;
-
-                                            case ContenedorValuaciones_reales.COD_RECOMENDACION_PERITO:
-                                                if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                                                 3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                                                 drValReal.Table.Columns[nIndice].ColumnName,
-                                                                 oTraductor.TraducirTipoRecomendacionPerito(Convert.ToInt32(drValReal[nIndice, DataRowVersion.Current].ToString())),
-                                                                 string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                                                 3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                                                 drValReal.Table.Columns[nIndice].ColumnName,
-                                                                 string.Empty,
-                                                                 string.Empty);
-                                                }
-                                                break;
-
-
-
-                                            default: oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
                                                       drValReal.Table.Columns[nIndice].ColumnName,
-                                                      drValReal[nIndice, DataRowVersion.Current].ToString(),
+                                                      oTraductor.TraducirTipoInspeccion3Meses(Convert.ToInt32(drValReal[nIndice, DataRowVersion.Current].ToString())),
                                                       string.Empty);
-                                                break;
                                         }
-
-
-                                    }
-                                }
-
-                                #endregion
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
-                                    3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
-                                    string.Empty,
-                                    string.Empty,
-                                    string.Empty);
-                            }
-
-                            if ((dsGarantiaReal != null) && (dsGarantiaReal.Tables.Count > 0) && (dsGarantiaReal.Tables[0].Rows.Count > 0))
-                            {
-                                #region Garantía Real
-
-                                foreach (DataRow drGarReal in dsGarantiaReal.Tables[0].Rows)
-                                {
-                                    for (int nIndice = 0; nIndice < drGarReal.Table.Columns.Count; nIndice++)
-                                    {
-                                        switch (drGarReal.Table.Columns[nIndice].ColumnName)
+                                        else
                                         {
-
-                                            case ContenedorGarantia_real.COD_CLASE_GARANTIA:
-                                                if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                          drGarReal.Table.Columns[nIndice].ColumnName,
-                                                          oTraductor.TraducirClaseGarantia(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
-                                                          string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                          drGarReal.Table.Columns[nIndice].ColumnName,
-                                                          string.Empty,
-                                                          string.Empty);
-                                                }
-                                                break;
-
-                                            case ContenedorGarantia_real.COD_GARANTIA_REAL:
-                                                oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                          3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                          drGarReal.Table.Columns[nIndice].ColumnName,
-                                                          strGarantia,
-                                                          string.Empty);
-                                                break;
-
-                                            case ContenedorGarantia_real.COD_TIPO_BIEN:
-                                                if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                               3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                               drGarReal.Table.Columns[nIndice].ColumnName,
-                                                               oTraductor.TraducirTipoBien(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
-                                                               string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                               3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                               drGarReal.Table.Columns[nIndice].ColumnName,
-                                                               string.Empty,
-                                                               string.Empty);
-                                                }
-                                                break;
-
-                                            case ContenedorGarantia_real.COD_TIPO_GARANTIA:
-                                                if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                             3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                             drGarReal.Table.Columns[nIndice].ColumnName,
-                                                             oTraductor.TraducirTipoGarantia(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
-                                                             string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                             3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                             drGarReal.Table.Columns[nIndice].ColumnName,
-                                                             string.Empty,
-                                                             string.Empty);
-                                                }
-                                                break;
-
-
-                                            case ContenedorGarantia_real.COD_TIPO_GARANTIA_REAL:
-                                                if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                            3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                            drGarReal.Table.Columns[nIndice].ColumnName,
-                                                            oTraductor.TraducirTipoGarantiaReal(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
-                                                            string.Empty);
-                                                }
-                                                else
-                                                {
-                                                    oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                            3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                            drGarReal.Table.Columns[nIndice].ColumnName,
-                                                            string.Empty,
-                                                            string.Empty);
-                                                }
-                                                break;
-
-
-                                            default: oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                                      3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                                      drGarReal.Table.Columns[nIndice].ColumnName,
-                                                      drGarReal[nIndice, DataRowVersion.Current].ToString(),
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                      3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                      drValReal.Table.Columns[nIndice].ColumnName,
+                                                      string.Empty,
                                                       string.Empty);
-                                                break;
                                         }
-                                    }
+                                        break;
+
+                                    case clsValuacionReal._codRecomendacionPerito:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                         3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                         drValReal.Table.Columns[nIndice].ColumnName,
+                                                         oTraductor.TraducirTipoRecomendacionPerito(Convert.ToInt32(drValReal[nIndice, DataRowVersion.Current].ToString())),
+                                                         string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                         3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                         drValReal.Table.Columns[nIndice].ColumnName,
+                                                         string.Empty,
+                                                         string.Empty);
+                                        }
+                                        break;
+
+                                    case clsValuacionReal._montoUltimaTasacionTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal montoUTT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out montoUTT)) ? montoUTT : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       montoUTT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._montoUltimaTasacionNoTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal montoUTNT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out montoUTNT)) ? montoUTNT : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       montoUTNT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._montoTasacionActualizadaTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal montoTAT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out montoTAT)) ? montoTAT : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       montoTAT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._montoTasacionActualizadaNoTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal montoTANT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out montoTANT)) ? montoTANT : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       montoTANT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._montoTotalAvaluo:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal montoTotalAvaluo = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out montoTotalAvaluo)) ? montoTotalAvaluo : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       montoTotalAvaluo.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+
+                                    case clsValuacionReal._indicadorAvaluoActualizado:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            bool estadoAlmacenado;
+                                            string estado = ((bool.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out estadoAlmacenado)) ? ((estadoAlmacenado) ? "Sí" : "No") : "No");
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       estado,
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._porcentajeAceptacionTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal porcentajeAT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out porcentajeAT)) ? ((porcentajeAT >= 0) ? porcentajeAT : 0) : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       porcentajeAT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._porcentajeAceptacionNoTerreno:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal porcentajeANT = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out porcentajeANT)) ? ((porcentajeANT >= 0) ? porcentajeANT : 0) : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       porcentajeANT.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._porcentajeAceptacionTerrenoCalculado:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal porcentajeATC = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out porcentajeATC)) ? ((porcentajeATC >= 0) ? porcentajeATC : 0) : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       porcentajeATC.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    case clsValuacionReal._porcentajeAceptacionNoTerrenoCalculado:
+                                        if (drValReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            decimal porcentajeANTC = ((decimal.TryParse(drValReal[nIndice, DataRowVersion.Current].ToString(), out porcentajeANTC)) ? ((porcentajeANTC >= 0) ? porcentajeANTC : 0) : 0);
+
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       porcentajeANTC.ToString("N2"),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                                       drValReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    default:
+                                        oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                                         3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                                         drValReal.Table.Columns[nIndice].ColumnName,
+                                         drValReal[nIndice, DataRowVersion.Current].ToString(),
+                                         string.Empty);
+                                        break;
                                 }
 
-                                #endregion
-                            }
-                            else
-                            {
-                                oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
-                                    3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
-                                    string.Empty,
-                                    string.Empty,
-                                    string.Empty);
-                            }
 
+                            }
                         }
 
                         #endregion
                     }
+                    else
+                    {
+                        oBitacora.InsertarBitacora("GAR_VALUACIONES_REALES", strUsuario, strIP, null,
+                            3, 2, strGarantia, strOperacionCrediticia, strEliminarValuacionReal, string.Empty,
+                            string.Empty,
+                            string.Empty,
+                            string.Empty);
+                    }
+
+                    if ((dsGarantiaReal != null) && (dsGarantiaReal.Tables.Count > 0) && (dsGarantiaReal.Tables[0].Rows.Count > 0))
+                    {
+                        #region Garantía Real
+
+                        foreach (DataRow drGarReal in dsGarantiaReal.Tables[0].Rows)
+                        {
+                            for (int nIndice = 0; nIndice < drGarReal.Table.Columns.Count; nIndice++)
+                            {
+                                switch (drGarReal.Table.Columns[nIndice].ColumnName)
+                                {
+
+                                    case clsGarantiaReal._codClaseGarantia:
+                                        if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                  drGarReal.Table.Columns[nIndice].ColumnName,
+                                                  oTraductor.TraducirClaseGarantia(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
+                                                  string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                  drGarReal.Table.Columns[nIndice].ColumnName,
+                                                  string.Empty,
+                                                  string.Empty);
+                                        }
+                                        break;
+
+                                    case clsGarantiaReal._codGarantiaReal:
+                                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                  3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                  drGarReal.Table.Columns[nIndice].ColumnName,
+                                                  strGarantia,
+                                                  string.Empty);
+                                        break;
+
+                                    case clsGarantiaReal._codTipoBien:
+                                        if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                       drGarReal.Table.Columns[nIndice].ColumnName,
+                                                       oTraductor.TraducirTipoBien(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                       drGarReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+                                        break;
+
+                                    case clsGarantiaReal._codTipoGarantia:
+                                        if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                     3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                     drGarReal.Table.Columns[nIndice].ColumnName,
+                                                     oTraductor.TraducirTipoGarantia(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
+                                                     string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                     3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                     drGarReal.Table.Columns[nIndice].ColumnName,
+                                                     string.Empty,
+                                                     string.Empty);
+                                        }
+                                        break;
+
+
+                                    case clsGarantiaReal._codTipoGarantiaReal:
+                                        if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                    3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                    drGarReal.Table.Columns[nIndice].ColumnName,
+                                                    oTraductor.TraducirTipoGarantiaReal(Convert.ToInt32(drGarReal[nIndice, DataRowVersion.Current].ToString())),
+                                                    string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                    3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                    drGarReal.Table.Columns[nIndice].ColumnName,
+                                                    string.Empty,
+                                                    string.Empty);
+                                        }
+                                        break;
+
+                                    case clsGarantiaReal._indicadorViviendaHabitadaDeudor:
+                                        if (drGarReal[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                        {
+                                            bool estadoAlmacenado;
+                                            string estado = ((bool.TryParse(drGarReal[nIndice, DataRowVersion.Current].ToString(), out estadoAlmacenado)) ? ((estadoAlmacenado) ? "Sí" : "No") : "No");
+
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                       drGarReal.Table.Columns[nIndice].ColumnName,
+                                                       estado,
+                                                       string.Empty);
+                                        }
+                                        else
+                                        {
+                                            oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                                       3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                                       drGarReal.Table.Columns[nIndice].ColumnName,
+                                                       string.Empty,
+                                                       string.Empty);
+                                        }
+
+                                        break;
+
+                                    default:
+                                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                                         3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                                         drGarReal.Table.Columns[nIndice].ColumnName,
+                                         drGarReal[nIndice, DataRowVersion.Current].ToString(),
+                                         string.Empty);
+                                        break;
+                                }
+                            }
+                        }
+
+                        #endregion
+                    }
+                    else
+                    {
+                        oBitacora.InsertarBitacora("GAR_GARANTIA_REAL", strUsuario, strIP, null,
+                            3, 2, strGarantia, strOperacionCrediticia, strEliminarGarantiaReal, string.Empty,
+                            string.Empty,
+                            string.Empty,
+                            string.Empty);
+                    }
+
                 }
+
+                #endregion
             }
-            catch
+            catch (SqlException ex)
             {
-                throw;
+                string errorBD = string.Format("Código del Error: {0}, Descripción del error: {1}", ex.ErrorCode.ToString(), ex.Message);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA_DETALLE, identifiacionGarantia, errorBD, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_ELIMINANDO_GARANTIA_DETALLE, identifiacionGarantia, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw ex;
             }
         }
 
@@ -2083,6 +1664,9 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         tramaGarantiaReal = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Consultar_Garantia_Real", out parametrosSalida, parameters);
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
                 }
                 catch (Exception ex)
@@ -2140,6 +1724,9 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         tramaObtenida = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "pa_ObtenerCatalogos", out parametrosSalida, parameters);
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
                 }
                 catch (Exception ex)
@@ -2211,6 +1798,9 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         tramaObtenida = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Obtener_Valuadores", out parametrosSalida, parameters);
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
                 }
                 catch (Exception ex)
@@ -2268,7 +1858,7 @@ namespace BCRGARANTIAS.Negocios
             clsGarantiaReal entidadGarantiaReal = new clsGarantiaReal();
             string tramaGarantiaReal = string.Empty;
             clsGarantiaReal garantiaRealNormalizar = null;
-
+           
             if (datosGarantiaReal != null)
             {
                 foreach (clsOperacionCrediticia GarOperActualizar in datosGarantiaReal.OperacionesRelacionadas)
@@ -2295,6 +1885,14 @@ namespace BCRGARANTIAS.Negocios
                     //Se revisa que la entidad haya sido creada
                     if (garantiaRealNormalizar != null)
                     {
+                        //Se establecen los datos de la operación que será normalizada
+                        garantiaRealNormalizar.Contabilidad = GarOperActualizar.Contabilidad;
+                        garantiaRealNormalizar.Oficina = GarOperActualizar.Oficina;
+                        garantiaRealNormalizar.MonedaOper = GarOperActualizar.Moneda;
+                        garantiaRealNormalizar.Producto = GarOperActualizar.Producto;
+                        garantiaRealNormalizar.NumeroOperacion = GarOperActualizar.Operacion;
+                        garantiaRealNormalizar.TipoOperacion = GarOperActualizar.TipoOperacion;
+
                         //Se procede a modificar la información de la garantía y la relación de esta con la operación/contrato
                         garantiaRealNormalizar.CodTipoBien = datosGarantiaReal.CodTipoBien;
                         garantiaRealNormalizar.CodTipoMitigador = datosGarantiaReal.CodTipoMitigador;
@@ -2320,8 +1918,11 @@ namespace BCRGARANTIAS.Negocios
                         garantiaRealNormalizar.PorcentajeAceptacionTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionTerrenoCalculado;
                         garantiaRealNormalizar.PorcentajeAceptacionNoTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionNoTerrenoCalculado;
 
-                        //Se procede a modificar la información de la póliza, sólo si dicha póliza está asociada a la operación replicada
-                        List<clsPolizaSap> listaPolizas = garantiaRealNormalizar.PolizasSap.ObtenerPolizasPorTipoBien(garantiaRealNormalizar.CodTipoBien);
+                        //Se desliga cualquier póliza.
+                        garantiaRealNormalizar.PolizaSapAsociada = null;
+
+                       //Se procede a modificar la información de la póliza, sólo si dicha póliza está asociada a la operación replicada
+                       List <clsPolizaSap> listaPolizas = garantiaRealNormalizar.PolizasSap.ObtenerPolizasPorTipoBien(garantiaRealNormalizar.CodTipoBien);
 
                         if ((listaPolizas != null) && (listaPolizas.Count > 0))
                         {
@@ -2339,9 +1940,9 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Se utilizan los mismos datos las pistas de auditoria 
-                        garantiaRealNormalizar.UsuarioModifico = datosGarantiaReal.UsuarioModifico;
-                        garantiaRealNormalizar.FechaModifico = datosGarantiaReal.FechaModifico;
-                        garantiaRealNormalizar.FechaInserto = datosGarantiaReal.FechaInserto;
+                        garantiaRealNormalizar.UsuarioModifico = strUsuario;
+                        garantiaRealNormalizar.FechaModifico = DateTime.Today;
+                        garantiaRealNormalizar.FechaInserto = DateTime.Today;
 
                         //Se procede a modificar la operación respaldada por la garantía
                         procesoNormalizacion = true;
@@ -2364,102 +1965,12 @@ namespace BCRGARANTIAS.Negocios
                             UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorNormalizandoAvaluoDetalle, strGarantia, detalleError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
                         }
                     }
-                    //}
                 }
 
                 if (errorReplica)
                 {
                     throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, sbOperacionesSinNormalizar.ToString(), Mensajes.ASSEMBLY));
                 }
-
-                #region Obsoleto
-
-                //try
-                //{
-                //    SqlParameter[] parametrosNormalizarAvaluos = new SqlParameter[] { 
-                //        new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psIP", SqlDbType.VarChar, 20),
-                //        new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),
-                //        new SqlParameter("piConsecutivo_Garantia_Real", SqlDbType.BigInt),
-                //        new SqlParameter("psFecha_Valuacion", SqlDbType.VarChar, 10),
-                //        new SqlParameter("piTipo_Bien", SqlDbType.SmallInt),
-                //        new SqlParameter("piTipo_Mitigador", SqlDbType.SmallInt),
-                //        new SqlParameter("psCodigo_Bien", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psCodigo_Operacion", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psListaCodigosOperaciones", SqlDbType.VarChar, 1000),
-                //        new SqlParameter("psRespuesta", SqlDbType.VarChar, 1000)
-                //    };
-
-
-                //    parametrosNormalizarAvaluos[0].Value = strUsuario;
-                //    parametrosNormalizarAvaluos[1].Value = strIP;
-                //    parametrosNormalizarAvaluos[2].Value = datosGarantiaReal.CodOperacion;
-                //    parametrosNormalizarAvaluos[3].Value = datosGarantiaReal.CodGarantiaReal;
-                //    parametrosNormalizarAvaluos[4].Value = datosGarantiaReal.FechaValuacion.ToString("yyyyMMdd");
-                //    parametrosNormalizarAvaluos[5].Value = datosGarantiaReal.CodTipoBien;
-                //    parametrosNormalizarAvaluos[6].Value = datosGarantiaReal.CodTipoMitigador;
-                //    parametrosNormalizarAvaluos[7].Value = datosGarantiaReal.GarantiaRealBitacora;
-                //    parametrosNormalizarAvaluos[8].Value = strOperacionCrediticia;
-                //    parametrosNormalizarAvaluos[9].Value = datosGarantiaReal.OperacionesRelacionadas.ListaConsecutivosOperaciones();
-                //    parametrosNormalizarAvaluos[10].Direction = ParameterDirection.Output;
-
-                //    using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-                //    {
-                //        oConexion.Open();
-
-                //        AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Normalizar_Avaluo_Garantias_Reales", parametrosNormalizarAvaluos);
-
-                //        respuestaObtenida = parametrosNormalizarAvaluos[10].Value.ToString();
-                //    }
-
-                //    if (respuestaObtenida.Length > 0)
-                //    {
-                //        strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
-
-                //        if (strMensajeObtenido[0].CompareTo("0") != 0)
-                //        {
-                //            throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, Mensajes.ASSEMBLY));
-                //        }
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    string errorBitacora = string.Empty;
-                //    string errorUsuario = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, Mensajes.ASSEMBLY);
-                //    ExcepcionBase errorUI = new ExcepcionBase(errorUsuario);
-
-                //    if ((strMensajeObtenido != null) && (strMensajeObtenido.Length > 1))
-                //    {
-                //        string detalleError = ((strMensajeObtenido[0] != null) && (strMensajeObtenido[0].Trim().Length > 0)) ? ("Código del error: " + strMensajeObtenido[0] + ". ") : "Código del error: N/A. ";
-                //        detalleError += ((strMensajeObtenido[1] != null) && (strMensajeObtenido[1].Trim().Length > 0)) ? ("Mensaje del error: " + strMensajeObtenido[1] + ". ") : "Mensaje del error: N/A. ";
-                //        detalleError += ((strMensajeObtenido[2] != null) && (strMensajeObtenido[2].Trim().Length > 0)) ? ("Detalle del error: " + strMensajeObtenido[2] + ". ") : "Detalle del error: N/A. ";
-                //        detalleError += "Detalle Técnico: " + ex.Message;
-
-                //        errorBitacora = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluoDetalle, strGarantia, detalleError, Mensajes.ASSEMBLY);
-
-                //        if ((strMensajeObtenido[0].Trim().Length > 0) && (strMensajeObtenido[1].Trim().Length > 0))
-                //        {
-                //            if ((strMensajeObtenido[0].CompareTo("-1") == 0) || (strMensajeObtenido[0].CompareTo("-2") == 0) ||
-                //               (strMensajeObtenido[0].CompareTo("-3") == 0) || (strMensajeObtenido[0].CompareTo("-4") == 0) ||
-                //               (strMensajeObtenido[0].CompareTo("-5") == 0))
-                //            {
-                //                errorUsuario += " Detalle:" + strMensajeObtenido[1];
-                //                errorUI = new ExcepcionBase(errorUsuario);
-                //                errorUI.Source = strMensajeObtenido[0];
-                //            }
-                //        }
-
-                //    }
-                //    else
-                //    {
-                //        errorBitacora = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluoDetalle, strGarantia, ex.Message, Mensajes.ASSEMBLY);
-                //    }
-
-                //    UtilitariosComun.RegistraEventLog(errorBitacora, EventLogEntryType.Error);
-                //    throw errorUI;
-                //}
-
-                #endregion Obsoleto
             }
         }
 

@@ -7,7 +7,6 @@
 			<siteMapNode url="frmGarantiasFiduciaria.aspx" title="Garantías Fiduciarias"  description="" roles="" />
 			<siteMapNode url="frmGarantiasporPerfil.aspx" title="Garantías por Perfil"  description="" roles="" />
 			<siteMapNode url="frmGarantiasReales.aspx" title="Garantías Reales"  description="" roles="" />
-			<!--siteMapNode url="frmGarantiasRealesCopia.aspx" title="Garantías Reales Copia"  description="" roles="" /-->
 			<siteMapNode url="frmGarantiasValor.aspx" title="Garantías de Valor"  description="" roles="" />
 			<siteMapNode url="frmGarantiasGiros.aspx" title="Relacionar Giros"  description="" roles="" />
 			<siteMapNode url="" title="-----------------------------------"  description="" roles="" />

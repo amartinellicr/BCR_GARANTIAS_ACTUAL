@@ -28,8 +28,16 @@ namespace BCRGarantias.Contenedores
         public const string COD_MONEDA = "cod_moneda";
         public const string FECHA_PRESCRIPCION = "fecha_prescripcion";
         public const string COD_ESTADO = "cod_estado";
+        public const string FECHA_VALUACION_SICC = "Fecha_Valuacion_SICC";
+        public const string USUARIO_MODIFICO = "Usuario_Modifico";
+        public const string FECHA_MODIFICO = "Fecha_Modifico";
+        public const string FECHA_INSERTO = "Fecha_Inserto";
+        public const string FECHA_REPLICA = "Fecha_Replica";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        
+        
+        #endregion
 
         public ContenedorGarantias_reales_x_operacion()
 		{
@@ -113,10 +121,32 @@ namespace BCRGarantias.Contenedores
             campo.Llave = COD_ESTADO;
 			campo.EsLlave = true;
 			Campos.Agregar(campo);
+            
+            campo = new CampoBase();
+            campo.Llave = FECHA_VALUACION_SICC;
+            Campos.Agregar(campo);
 
+            campo = new CampoBase();
+            campo.Llave = USUARIO_MODIFICO;
+            Campos.Agregar(campo);
 
+            campo = new CampoBase();
+            campo.Llave = FECHA_MODIFICO;
+            Campos.Agregar(campo);
 
-			NombreEntidad = NOMBRE_ENTIDAD;
+            campo = new CampoBase();
+            campo.Llave = FECHA_INSERTO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_REPLICA;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = PORCENTAJE_ACEPTACION;
+            Campos.Agregar(campo);
+
+            NombreEntidad = NOMBRE_ENTIDAD;
 
 		}
     }

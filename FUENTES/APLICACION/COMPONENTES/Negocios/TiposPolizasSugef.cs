@@ -1,11 +1,7 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
-using System.Xml;
-using System.Collections.Specialized;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
@@ -54,6 +50,9 @@ namespace BCRGARANTIAS.Negocios
                     AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Insertar_Tipo_Poliza_Sugef", parameters);
 
                     respuestaObtenida = parameters[3].Value.ToString();
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
 
                 if (respuestaObtenida.Length > 0)
@@ -148,6 +147,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Modificar_Tipo_Poliza_Sugef", parameters);
 
                         respuestaObtenida = parameters[3].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -233,6 +235,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Eliminar_Tipo_Poliza_Sugef", parameters);
 
                         respuestaObtenida = parameters[1].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -319,6 +324,9 @@ namespace BCRGARANTIAS.Negocios
 
                         consecutivoRetornado = ((int.TryParse(parameters[2].Value.ToString(), out consecutivoNuevo)) ? consecutivoNuevo : -1);
                     }
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)

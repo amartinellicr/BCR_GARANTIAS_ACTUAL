@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Collections.Specialized;
-using System.Xml;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
 using BCR.GARANTIAS.Comun;
-using BCR.GARANTIAS.Entidades;
 
 
 namespace BCRGARANTIAS.Negocios
@@ -100,13 +94,14 @@ namespace BCRGARANTIAS.Negocios
                 parameters[3].Value = null;
                 parameters[3].Direction = ParameterDirection.Output;
 
-
-                SqlParameter[] parametrosSalida = new SqlParameter[] { };
-
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
-                    oConexion.Open();                    
+                    oConexion.Open();
+
                     dsDatosCambioGarantia = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Cambios_Garantias", parameters, 0);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)
@@ -119,7 +114,8 @@ namespace BCRGARANTIAS.Negocios
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS_DETALLE, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
         
                 dsDatosCambioGarantia = null;
-            }         
+            }
+
             return dsDatosCambioGarantia;
         }
 

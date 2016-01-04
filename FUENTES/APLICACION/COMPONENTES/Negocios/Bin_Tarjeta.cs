@@ -1,10 +1,9 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
-using System.Configuration;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -27,30 +26,34 @@ namespace BCRGARANTIAS.Negocios
                 try
                 {
                     /*declara el sqlCommand que se utilizará para la consulta*/
-                    SqlCommand cmdInsertarBin = new SqlCommand("pa_InsertarBinTarjeta", oConexion);
+                    using (SqlCommand cmdInsertarBin = new SqlCommand("pa_InsertarBinTarjeta", oConexion))
+                    {
+                        /*indica al sqlCommand que es un procedimiento almacenado el que se ejecutará*/
+                        cmdInsertarBin.CommandType = CommandType.StoredProcedure;
+                        /*indica al sqlCommand el tiempo que puede durar la ejecución*/
+                        cmdInsertarBin.CommandTimeout = AccesoBD.TiempoEsperaEjecucion;
 
-                    /*indica al sqlCommand que es un procedimiento almacenado el que se ejecutará*/
-                    cmdInsertarBin.CommandType = CommandType.StoredProcedure;
-                    /*indica al sqlCommand el tiempo que puede durar la ejecución*/
-                    cmdInsertarBin.CommandTimeout = 120;
+                        /*ingresa los parámetro requeridos por el procedimiento almacenado*/
+                        cmdInsertarBin.Parameters.AddWithValue("@nNumeroBin", nBin);
 
-                    /*ingresa los parámetro requeridos por el procedimiento almacenado*/
-                    cmdInsertarBin.Parameters.AddWithValue("@nNumeroBin", nBin);
+                        /*abre la conexión con el servidor*/
+                        cmdInsertarBin.Connection.Open();
 
-                    /*abre la conexión con el servidor*/
-                    oConexion.Open();
+                        nMensaje = Convert.ToInt32(cmdInsertarBin.ExecuteScalar().ToString());
 
-                    nMensaje = Convert.ToInt32(cmdInsertarBin.ExecuteScalar().ToString());
+                        cmdInsertarBin.Connection.Close();
+                        cmdInsertarBin.Connection.Dispose();
+                    }
 
                     if (nMensaje == 0)
                     {
-                        string strInsertarBin = "INSERT INTO TAR_BIN_SISTAR(bin) VALUES(" + nBin.ToString() + ")";
+                        string strInsertarBin = string.Format("INSERT INTO TAR_BIN_SISTAR(bin) VALUES({0})", nBin.ToString());
 
                         Bitacora oBitacora = new Bitacora();
 
                         oBitacora.InsertarBitacora("TAR_BIN_SISTAR", strUsuario, strIP, null,
                            1, null, string.Empty, string.Empty, strInsertarBin, string.Empty,
-                           ContenedorTar_bin_sistar.BIN,
+                           clsTarjeta._numeroBin,
                            string.Empty,
                            nBin.ToString());
                     }
@@ -88,30 +91,34 @@ namespace BCRGARANTIAS.Negocios
                 try
                 {
                     /*declara el sqlCommand que se utilizará para la consulta*/
-                    SqlCommand cmdInsertarBin = new SqlCommand("pa_EliminarBinTarjeta", oConexion);
+                    using (SqlCommand cmdInsertarBin = new SqlCommand("pa_EliminarBinTarjeta", oConexion))
+                    {
+                        /*indica al sqlCommand que es un procedimiento almacenado el que se ejecutará*/
+                        cmdInsertarBin.CommandType = CommandType.StoredProcedure;
+                        /*indica al sqlCommand el tiempo que puede durar la ejecución*/
+                        cmdInsertarBin.CommandTimeout = 120;
 
-                    /*indica al sqlCommand que es un procedimiento almacenado el que se ejecutará*/
-                    cmdInsertarBin.CommandType = CommandType.StoredProcedure;
-                    /*indica al sqlCommand el tiempo que puede durar la ejecución*/
-                    cmdInsertarBin.CommandTimeout = 120;
+                        /*ingresa los parámetro requeridos por el procedimiento almacenado*/
+                        cmdInsertarBin.Parameters.AddWithValue("@nNumeroBin", nBin);
 
-                    /*ingresa los parámetro requeridos por el procedimiento almacenado*/
-                    cmdInsertarBin.Parameters.AddWithValue("@nNumeroBin", nBin);
+                        /*abre la conexión con el servidor*/
+                        cmdInsertarBin.Connection.Open();
 
-                    /*abre la conexión con el servidor*/
-                    oConexion.Open();
+                        nMensaje = Convert.ToInt32(cmdInsertarBin.ExecuteScalar().ToString());
 
-                    nMensaje = Convert.ToInt32(cmdInsertarBin.ExecuteScalar().ToString());
+                        cmdInsertarBin.Connection.Close();
+                        cmdInsertarBin.Connection.Dispose();
+                    }
 
                     if (nMensaje == 0)
                     {
-                        string strEliminarBin = "DELETE FROM TAR_BIN_SISTAR WHERE bin = " + nBin.ToString();
+                        string strEliminarBin = string.Format("DELETE FROM TAR_BIN_SISTAR WHERE bin = {0}", nBin.ToString());
 
                         Bitacora oBitacora = new Bitacora();
 
                         oBitacora.InsertarBitacora("TAR_BIN_SISTAR", strUsuario, strIP, null,
                            3, null, string.Empty, string.Empty, strEliminarBin, string.Empty,
-                           ContenedorTar_bin_sistar.BIN,
+                           clsTarjeta._numeroBin,
                            nBin.ToString(),
                            string.Empty);
                     }
@@ -140,17 +147,19 @@ namespace BCRGARANTIAS.Negocios
         {
             DataSet dsBines = new DataSet();
 
+            try
+            {
+                string[] listaCampos = { clsTarjeta._numeroBin, clsTarjeta._fechaIngreso, clsTarjeta._entidadBinSistar, clsTarjeta._numeroBin };
+                string sentenciaSQL = string.Format("SELECT {0}, {1} FROM dbo.{2} ORDER BY {3}", listaCampos);
 
-                try
-                {
-                    dsBines = AccesoBD.ejecutarConsulta("select bin, fecingreso from " + ContenedorTar_bin_sistar.NOMBRE_ENTIDAD + " order by bin");
-                }
-                catch
-                {
-                    return null;
-                }
+                dsBines = AccesoBD.ejecutarConsulta(sentenciaSQL);
+            }
+            catch
+            {
+                return null;
+            }
 
-                return dsBines;
+            return dsBines;
         }
     }
 }

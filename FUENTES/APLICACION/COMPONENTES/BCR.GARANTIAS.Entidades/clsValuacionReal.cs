@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace BCR.GARANTIAS.Entidades
@@ -8,25 +6,37 @@ namespace BCR.GARANTIAS.Entidades
     public class clsValuacionReal
     {
         #region Constantes
+        public const string _entidadValuacionesReales          = "GAR_VALUACIONES_REALES";
 
-        private const string _codGarantiaReal                   = "cod_garantia_real";
-        private const string _fechaValuacion                    = "fecha_valuacion";
-        private const string _cedulaEmpresa                     = "cedula_empresa";
-        private const string _cedulaPerito                      = "cedula_perito";
-        private const string _montoUltimaTasacionTerreno        = "monto_ultima_tasacion_terreno";
-        private const string _montoUltimaTasacionNoTerreno      = "monto_ultima_tasacion_no_terreno";
-        private const string _montoTasacionActualizadaTerreno   = "monto_tasacion_actualizada_terreno";
-        private const string _montoTasacionActualizadaNoTerreno = "monto_tasacion_actualizada_no_terreno";
-        private const string _fechaUltimoSeguimiento            = "fecha_ultimo_seguimiento";
-        private const string _montoTotalAvaluo                  = "monto_total_avaluo";
-        private const string _codRecomendacionPerito            = "cod_recomendacion_perito";
-        private const string _codInspeccionMenorTresMeses       = "cod_inspeccion_menor_tres_meses";
-        private const string _fechaConstruccion                 = "fecha_construccion";
-        private const string _desRecomendacionPerito            = "des_recomendacion_perito";
-        private const string _desInspeccionMenorTresMeses       = "des_inspeccion_menor_tres_meses";
-        private const string _nombreClientePerito               = "nombre_cliente_perito";
-        private const string _nombreClienteEmpresa              = "nombre_cliente_empresa";
-
+        public const string _codGarantiaReal                   = "cod_garantia_real";
+        public const string _fechaValuacion                    = "fecha_valuacion";
+        public const string _cedulaEmpresa                     = "cedula_empresa";
+        public const string _cedulaPerito                      = "cedula_perito";
+        public const string _montoUltimaTasacionTerreno        = "monto_ultima_tasacion_terreno";
+        public const string _montoUltimaTasacionNoTerreno      = "monto_ultima_tasacion_no_terreno";
+        public const string _montoTasacionActualizadaTerreno   = "monto_tasacion_actualizada_terreno";
+        public const string _montoTasacionActualizadaNoTerreno = "monto_tasacion_actualizada_no_terreno";
+        public const string _fechaUltimoSeguimiento            = "fecha_ultimo_seguimiento";
+        public const string _montoTotalAvaluo                  = "monto_total_avaluo";
+        public const string _codRecomendacionPerito            = "cod_recomendacion_perito";
+        public const string _codInspeccionMenorTresMeses       = "cod_inspeccion_menor_tres_meses";
+        public const string _fechaConstruccion                 = "fecha_construccion";
+        public const string _desRecomendacionPerito            = "des_recomendacion_perito";
+        public const string _desInspeccionMenorTresMeses       = "des_inspeccion_menor_tres_meses";
+        public const string _nombreClientePerito               = "nombre_cliente_perito";
+        public const string _nombreClienteEmpresa              = "nombre_cliente_empresa";
+        public const string _indicadorTipoRegistro             = "Indicador_Tipo_Registro";
+        public const string _indicadorAvaluoActualizado        = "Indicador_Actualizado_Calculo";
+        public const string _fechaSemestreActualizado          = "Fecha_Semestre_Calculado";
+        public const string _usuarioModifico                   = "Usuario_Modifico";
+        public const string _fechaModifico                     = "Fecha_Modifico";
+        public const string _fechaInserto                      = "Fecha_Inserto";
+        public const string _fechaReplica                      = "Fecha_Replica";
+        public const string _porcentajeAceptacionTerreno       = "Porcentaje_Aceptacion_Terreno";
+        public const string _porcentajeAceptacionNoTerreno     = "Porcentaje_Aceptacion_No_Terreno";
+        public const string _porcentajeAceptacionTerrenoCalculado   = "Porcentaje_Aceptacion_Terreno_Calculado";
+        public const string _porcentajeAceptacionNoTerrenoCalculado = "Porcentaje_Aceptacion_No_Terreno_Calculado";
+        
         #endregion Constantes
 
         #region Variables

@@ -143,10 +143,10 @@ BEGIN
 														Cod_Garantia_Real						BIGINT,
 														Cod_Tipo_Garantia_real					TINYINT,
 														Cod_Tipo_Operacion						TINYINT,
-														Cod_Bien								VARCHAR(25)	COLLATE database_default,
+														Cod_Bien								VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Codigo_Partido							SMALLINT,
-														Numero_Finca							VARCHAR(25)	COLLATE database_default,
-														Num_Placa_Bien							VARCHAR(25)	COLLATE database_default,
+														Numero_Finca							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
+														Num_Placa_Bien							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Clase_Garantia							SMALLINT,
 														Fecha_Valuacion							DATETIME,
 														Monto_Ultima_Tasacion_Terreno			MONEY	,
@@ -160,7 +160,7 @@ BEGIN
 														Monto_Avaluo_SICC						DECIMAL(14,2),
 														Fecha_Proximo_Calculo					DATETIME,
 														Tipo_Bien								SMALLINT,
-														Cod_Usuario								VARCHAR (30)	COLLATE database_default
+														Cod_Usuario								VARCHAR (30)	COLLATE DATABASE_DEFAULT
 														PRIMARY KEY (Cod_Llave)
 												)
 
@@ -177,10 +177,10 @@ BEGIN
 														Cod_Garantia_Real						BIGINT,
 														Cod_Tipo_Garantia_real					TINYINT,
 														Cod_Tipo_Operacion						TINYINT,
-														Cod_Bien								VARCHAR(25)	COLLATE database_default,
+														Cod_Bien								VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Codigo_Partido							SMALLINT,
-														Numero_Finca							VARCHAR(25)	COLLATE database_default,
-														Num_Placa_Bien							VARCHAR(25)	COLLATE database_default,
+														Numero_Finca							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
+														Num_Placa_Bien							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Clase_Garantia							SMALLINT,
 														Tipo_Mitigador_Riesgo					SMALLINT,
 														Fecha_Valuacion							DATETIME,
@@ -207,7 +207,8 @@ BEGIN
 														Cantidad_Coberturas_Obligatorias		INT,
 														Cantidad_Coberturas_Obligatorias_Asignadas	INT,
 														Indicador_Deudor_Habita_Vivienda		BIT,
-														Cod_Usuario								VARCHAR (30)	COLLATE database_default
+														Porcentaje_Aceptacion					DECIMAL(5,2),
+														Cod_Usuario								VARCHAR (30)	COLLATE DATABASE_DEFAULT
 														PRIMARY KEY (Cod_Llave)
 													)
 
@@ -217,7 +218,7 @@ BEGIN
 
 	DECLARE @ERRORES_TRANSACCIONALES TABLE	(
 												Codigo_Error		TINYINT,
-												Descripcion_Error	VARCHAR(4000) COLLATE database_default
+												Descripcion_Error	VARCHAR(4000) COLLATE DATABASE_DEFAULT
 											)
 
 	DECLARE @NUMEROS TABLE (Consecutivo BIGINT IDENTITY(1,1),
@@ -513,7 +514,7 @@ BEGIN
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE DATABASE_DEFAULT
 		WHERE	GGR.cod_clase_garantia = 11
 		
 		
@@ -723,7 +724,7 @@ BEGIN
 			INNER JOIN 	#TEMP_GAR_PRENDAS_ALF TMP
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE DATABASE_DEFAULT
 		WHERE	GGR.cod_clase_garantia = 38
 			OR GGR.cod_clase_garantia = 43
 		
@@ -1623,8 +1624,8 @@ BEGIN
 									FROM		@NUMEROS TMP,
 										dbo.GAR_VALUACIONES_REALES GR1 
 										INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-										ON GRO.cod_garantia_real		= GR1.cod_garantia_real
-										AND GRO.Fecha_Valuacion_SICC	= GR1.fecha_valuacion
+										ON GRO.cod_garantia_real = GR1.cod_garantia_real
+										AND GRO.Fecha_Valuacion_SICC = GR1.fecha_valuacion
 									WHERE	GR1.Indicador_Tipo_Registro = 1
 										AND TMP.Consecutivo <= @viMeses_Agregar
 										AND DATEADD(MONTH,6*(TMP.Consecutivo-1), GR1.fecha_valuacion) >= GR1.fecha_valuacion
@@ -1632,9 +1633,9 @@ BEGIN
 								ON TF1.cod_garantia_real = GRV.cod_garantia_real
 								WHERE	GRV.Indicador_Tipo_Registro = 1
 								) TFS
-					ON TFS.cod_operacion		= TGR.Cod_Operacion
-					AND TFS.cod_garantia_real	= TGR.Cod_Garantia_Real
-					AND TFS.fecha_valuacion		= TGR.Fecha_Avaluo_SICC
+					ON TFS.cod_operacion = TGR.Cod_Operacion
+					AND TFS.cod_garantia_real = TGR.Cod_Garantia_Real
+					AND TFS.fecha_valuacion = TGR.Fecha_Avaluo_SICC
 				
 				--Se obtiene el tipo de cambio y el IPC para cada semestre
 				UPDATE	TCM
@@ -1652,8 +1653,8 @@ BEGIN
 				
 				--Se obtienen los datos del semestre anterior
 				UPDATE	TCM
-				SET		TCM.Tipo_Cambio_Anterior				= CIA.Tipo_Cambio,
-						TCM.Indice_Precios_Consumidor_Anterior	= CIA.Indice_Precios_Consumidor
+				SET		TCM.Tipo_Cambio_Anterior = CIA.Tipo_Cambio,
+						TCM.Indice_Precios_Consumidor_Anterior = CIA.Indice_Precios_Consumidor
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 					INNER JOIN dbo.CAT_INDICES_ACTUALIZACION_AVALUO CIA 
 					ON CONVERT(DATETIME,CAST(CIA.Fecha_Hora AS VARCHAR(11)),101) = DATEADD(MONTH, -6, TCM.Semestre_Calculado)
@@ -1666,7 +1667,7 @@ BEGIN
 					
 				--Se actualiza el dato del total de número de semestres
 				UPDATE	TCM
-				SET		TCM.Total_Semestres_Calcular	= TC1.Numero_Registro
+				SET		TCM.Total_Semestres_Calcular = TC1.Numero_Registro
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 					INNER JOIN (SELECT	MAX(Numero_Registro) AS Numero_Registro, Codigo_Operacion, Codigo_Garantia
 								FROM	dbo.TMP_CALCULO_MTAT_MTANT  
@@ -1714,8 +1715,8 @@ BEGIN
 					
 				--Se igualan los montos a los correspondientes de la última tasación, esto sólo para el primer semestre 
 				UPDATE	TCM
-				SET		TCM.Monto_Tasacion_Actualizada_Terreno		= TCM.Monto_Ultima_Tasacion_Terreno,
-						TCM.Monto_Tasacion_Actualizada_No_Terreno	= TCM.Monto_Ultima_Tasacion_No_Terreno
+				SET		TCM.Monto_Tasacion_Actualizada_Terreno = TCM.Monto_Ultima_Tasacion_Terreno,
+						TCM.Monto_Tasacion_Actualizada_No_Terreno = TCM.Monto_Ultima_Tasacion_No_Terreno
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE	TCM.Numero_Registro = 1
 					AND TCM.Usuario = @psCedula_Usuario
@@ -1724,8 +1725,8 @@ BEGIN
 
 				--Se asigna el valor NULL a los montos calculados en caso de que alguno de los factores sea igual a NULL.
 				UPDATE TCM
-				SET TCM.Monto_Tasacion_Actualizada_Terreno		= NULL,
-					TCM.Monto_Tasacion_Actualizada_No_Terreno	= NULL
+				SET TCM.Monto_Tasacion_Actualizada_Terreno = NULL,
+					TCM.Monto_Tasacion_Actualizada_No_Terreno = NULL
 				FROM dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE TCM.Numero_Registro > 1
 					AND TCM.Usuario = @psCedula_Usuario
@@ -1746,8 +1747,8 @@ BEGIN
 				BEGIN
 					--Se calculan los montos usando como menor factor el tipo de cambio, para los registros que tengan más de un semestre por calcular
 					UPDATE	TCM
-					SET		TCM.Monto_Tasacion_Actualizada_Terreno		= dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior * (1 + TCM.Factor_Tipo_Cambio))),
-							TCM.Monto_Tasacion_Actualizada_No_Terreno	= dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_Tipo_Cambio)))
+					SET		TCM.Monto_Tasacion_Actualizada_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior * (1 + TCM.Factor_Tipo_Cambio))),
+							TCM.Monto_Tasacion_Actualizada_No_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_Tipo_Cambio)))
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 						INNER JOIN (SELECT	TC1.Codigo_Operacion, TC1.Codigo_Garantia, TC1.Numero_Registro,
 										TC1.Monto_Tasacion_Actualizada_Terreno AS MTAT_Anterior,
@@ -1758,18 +1759,18 @@ BEGIN
 										AND TC1.Fecha_Hora >= @vdtFecha_Actual_Hora) CMM
 						ON	CMM.Codigo_Operacion = TCM.Codigo_Operacion
 						AND CMM.Codigo_Garantia = TCM.Codigo_Garantia
-					WHERE	TCM.Factor_Tipo_Cambio	IS NOT NULL
-						AND TCM.Factor_IPC			IS NOT NULL
-						AND TCM.Factor_Tipo_Cambio	<= TCM.Factor_IPC
-						AND TCM.Numero_Registro		= @viContador
+					WHERE	TCM.Factor_Tipo_Cambio IS NOT NULL
+						AND TCM.Factor_IPC IS NOT NULL
+						AND TCM.Factor_Tipo_Cambio <= TCM.Factor_IPC
+						AND TCM.Numero_Registro = @viContador
 						AND TCM.Total_Semestres_Calcular > 1
 						AND TCM.Usuario = @psCedula_Usuario
 						AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 					--Se calculan los montos usando como menor factor el IPC, para los registros que tengan más de un semestre por calcular
 					UPDATE	TCM
-					SET		TCM.Monto_Tasacion_Actualizada_Terreno		= dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior *  (1 + TCM.Factor_IPC))),
-							TCM.Monto_Tasacion_Actualizada_No_Terreno	= dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_IPC)))
+					SET		TCM.Monto_Tasacion_Actualizada_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior *  (1 + TCM.Factor_IPC))),
+							TCM.Monto_Tasacion_Actualizada_No_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_IPC)))
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 						INNER JOIN (SELECT	TC1.Codigo_Operacion, TC1.Codigo_Garantia, TC1.Numero_Registro,
 										TC1.Monto_Tasacion_Actualizada_Terreno AS MTAT_Anterior,
@@ -1780,10 +1781,10 @@ BEGIN
 										AND TC1.Fecha_Hora >= @vdtFecha_Actual_Hora) CMM
 						ON	CMM.Codigo_Operacion = TCM.Codigo_Operacion
 						AND CMM.Codigo_Garantia = TCM.Codigo_Garantia
-					WHERE	TCM.Factor_Tipo_Cambio	IS NOT NULL
-						AND TCM.Factor_IPC			IS NOT NULL
-						AND TCM.Factor_Tipo_Cambio	> TCM.Factor_IPC
-						AND TCM.Numero_Registro		= @viContador
+					WHERE	TCM.Factor_Tipo_Cambio IS NOT NULL
+						AND TCM.Factor_IPC IS NOT NULL
+						AND TCM.Factor_Tipo_Cambio > TCM.Factor_IPC
+						AND TCM.Numero_Registro = @viContador
 						AND TCM.Total_Semestres_Calcular > 1
 						AND TCM.Usuario = @psCedula_Usuario
 						AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
@@ -1816,14 +1817,14 @@ BEGIN
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM 
 					WHERE	TCM.Semestre_Calculado = (	SELECT	MAX(CM1.Semestre_Calculado)
 														FROM	dbo.TMP_CALCULO_MTAT_MTANT CM1 
-														WHERE	CM1.Codigo_Operacion	= TCM.Codigo_Operacion
-															AND CM1.Codigo_Garantia		= TCM.Codigo_Garantia
+														WHERE	CM1.Codigo_Operacion = TCM.Codigo_Operacion
+															AND CM1.Codigo_Garantia	= TCM.Codigo_Garantia
 															AND CM1.Usuario = @psCedula_Usuario
 															AND CM1.Fecha_Hora >= @vdtFecha_Actual_Hora)
 						AND TCM.Numero_Registro = (	SELECT	MAX(CM2.Numero_Registro)
 													FROM	dbo.TMP_CALCULO_MTAT_MTANT CM2 
-													WHERE	CM2.Codigo_Operacion	= TCM.Codigo_Operacion
-														AND CM2.Codigo_Garantia		= TCM.Codigo_Garantia
+													WHERE	CM2.Codigo_Operacion = TCM.Codigo_Operacion
+														AND CM2.Codigo_Garantia = TCM.Codigo_Garantia
 														AND CM2.Usuario = @psCedula_Usuario
 														AND CM2.Fecha_Hora >= @vdtFecha_Actual_Hora)
 						AND TCM.Usuario = @psCedula_Usuario
@@ -1949,7 +1950,7 @@ BEGIN
 		 Fecha_Proximo_Calculo, Tipo_Bien, Indicador_Inscripcion, Fecha_Constitucion, Porcentaje_Aceptacion_Parametrizado, Porcentaje_Aceptacion_Terreno, 
 		 Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, Porcentaje_Aceptacion_No_Terreno_Calculado, 
 		 Indicador_Calculo, Fecha_Ultimo_Seguimiento, Cantidad_Coberturas_Obligatorias, Cantidad_Coberturas_Obligatorias_Asignadas, 
-		 Indicador_Deudor_Habita_Vivienda, Cod_Usuario)
+		 Indicador_Deudor_Habita_Vivienda, Porcentaje_Aceptacion, Cod_Usuario)
 		SELECT	DISTINCT 
 				TGR.Codigo_Contabilidad, 			
 				TGR.Codigo_Oficina, 		
@@ -1996,13 +1997,14 @@ BEGIN
 				0 AS Cantidad_Coberturas_Obligatorias, 
 				0 AS Cantidad_Coberturas_Obligatorias_Asignadas,
 				GGR.Indicador_Vivienda_Habitada_Deudor AS Indicador_Deudor_Habita_Vivienda,
+				0 AS Porcentaje_Aceptacion,
 				TGR.Codigo_Usuario
 		FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-			ON GRO.cod_operacion		= TGR.Codigo_Operacion
-			AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GRO.cod_operacion = TGR.Codigo_Operacion
+			AND GRO.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
-			ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GGR.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GRV 
 			ON GRV.cod_garantia_real = GRO.cod_garantia_real
 		WHERE	TGR.Codigo_Usuario = @psCedula_Usuario
@@ -2045,7 +2047,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 1
-			AND @vdtFecha_Actual	>= DATEADD(DAY, 30, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 30, Fecha_Constitucion)
 
 
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2053,7 +2055,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 2
-			AND @vdtFecha_Actual	>= DATEADD(DAY, 60, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 60, Fecha_Constitucion)
 		
 		
 		
@@ -2067,7 +2069,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
-			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
 		SET	    Porcentaje_Aceptacion_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
@@ -2086,7 +2088,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
-			AND @vdtFecha_Actual	> DATEADD(YEAR, 5, Fecha_Valuacion)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 5, Fecha_Valuacion)
 		
 		
 		--Se asigna el porcentaje parametrizado al campo, esto para todos aquellos registros que no entraron dentro del cálculo
@@ -2323,7 +2325,7 @@ BEGIN
 		 Fecha_Proximo_Calculo, Tipo_Bien, Indicador_Inscripcion, Fecha_Constitucion, Porcentaje_Aceptacion_Parametrizado, Porcentaje_Aceptacion_Terreno, 
 		 Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, Porcentaje_Aceptacion_No_Terreno_Calculado, 
 		 Indicador_Calculo, Fecha_Ultimo_Seguimiento, Cantidad_Coberturas_Obligatorias, Cantidad_Coberturas_Obligatorias_Asignadas, 
-		 Indicador_Deudor_Habita_Vivienda, Cod_Usuario)
+		 Indicador_Deudor_Habita_Vivienda, Porcentaje_Aceptacion, Cod_Usuario)
 		SELECT	DISTINCT 
 				TGR.Codigo_Contabilidad, 			
 				TGR.Codigo_Oficina, 		
@@ -2370,13 +2372,14 @@ BEGIN
 				0 AS Cantidad_Coberturas_Obligatorias, 
 				0 AS Cantidad_Coberturas_Obligatorias_Asignadas,
 				GGR.Indicador_Vivienda_Habitada_Deudor AS Indicador_Deudor_Habita_Vivienda,
+				0 AS Porcentaje_Aceptacion,
 				TGR.Codigo_Usuario
 		FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-			ON GRO.cod_operacion		= TGR.Codigo_Operacion
-			AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GRO.cod_operacion = TGR.Codigo_Operacion
+			AND GRO.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
-			ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GGR.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GRV 
 			ON GRV.cod_garantia_real = GRO.cod_garantia_real
 		WHERE	TGR.Codigo_Usuario = @psCedula_Usuario
@@ -2460,7 +2463,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 1
-			AND @vdtFecha_Actual	>= DATEADD(DAY, 30, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 30, Fecha_Constitucion)
 
 
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2468,7 +2471,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 2
-			AND @vdtFecha_Actual	>= DATEADD(DAY, 60, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 60, Fecha_Constitucion)
 													
 		
 		--Se aplican las validaciones que reducen a la mitad el porcentaje de aceptación parametrizado, al porcentaje de aceptación del terreno calculado
@@ -2480,7 +2483,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
-			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 			
 		--Castigo por inconsistencia en la fecha de último seguimiento, para el tipo de bien 2, se excluyen las prendas
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2490,7 +2493,7 @@ BEGIN
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien = 2
 			AND Indicador_Deudor_Habita_Vivienda = 0
-			AND @vdtFecha_Actual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		
 		--Si el tipo de bien es igual a 4, esto para las prendas
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2499,7 +2502,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND Cod_Tipo_Garantia_real = 3
 			AND Tipo_Bien = 4
-			AND @vdtFecha_Actual	> DATEADD(MONTH, 6, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(MONTH, 6, Fecha_Ultimo_Seguimiento)
 		
 		
 		--Castigo por inconsistencia en la fecha de valuación, se excluyen las prendas
@@ -2509,7 +2512,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
-			AND @vdtFecha_Actual	> DATEADD(YEAR, 5, Fecha_Valuacion)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 5, Fecha_Valuacion)
 		
 		
 		--Si la garantía no tiene una póliza asignada
@@ -2791,4 +2794,5 @@ BEGIN
 		END
 
 	END	
+
 END

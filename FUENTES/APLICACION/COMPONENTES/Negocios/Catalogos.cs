@@ -1,37 +1,52 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
+using BCR.GARANTIAS.Entidades;
 using BCR.GARANTIAS.Comun;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Catalogos.
-	/// </summary>
-	public class Catalogos
+    /// <summary>
+    /// Summary description for Catalogos.
+    /// </summary>
+    public class Catalogos
 	{
-		#region Metodos Publicos
-		public void Crear(int nCatalogo, string strCampo, string strDescripcion, string strUsuario, string strIP)
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        int nFilasAfectadas = 0;
+
+        #endregion Variables Globales
+
+        #region Metodos Publicos
+        public void Crear(int nCatalogo, string strCampo, string strDescripcion, string strUsuario, string strIP)
 		{
-			try
-			{
-                string strInsertarCatalogo = "INSERT INTO CAT_ELEMENTO (CAT_CATALOGO, CAT_CAMPO, CAT_DESCRIPCION) VALUES (" + nCatalogo + ", '" + strCampo + "','" + strDescripcion + "');";
-				
-                //AccesoBD.ejecutarConsulta(strQry);
+            try
+            {
+                listaCampos = new string[] { clsElemento._entidadElemento,
+                                             clsElemento._codigoCatalogo, clsElemento._codigoCampo, clsElemento._descripcionElemento,
+                                             nCatalogo.ToString(), strCampo, strDescripcion};
 
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                sentenciaSql = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}) VALUES({5}, '{6}', '{7}')", listaCampos);
+                string strInsertarCatalogo = sentenciaSql;
+
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strInsertarCatalogo, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
 
 					if (nFilasAfectadas > 0)
 					{
@@ -43,7 +58,7 @@ namespace BCRGARANTIAS.Negocios
 
 						oBitacora.InsertarBitacora("CAT_ELEMENTO", strUsuario, strIP, null,
 						   1, null, string.Empty, string.Empty, strInsertarCatalogo, string.Empty,
-						   ContenedorElemento.CAT_CATALOGO,
+                           clsElemento._codigoCatalogo,
 						   string.Empty,
 						   oTraductor.TraducirTipoCatalogo(nCatalogo));
 
@@ -53,7 +68,7 @@ namespace BCRGARANTIAS.Negocios
 						//   nCampo.ToString());
 
 						oBitacora.InsertarBitacora("CAT_ELEMENTO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarCatalogo, string.Empty, ContenedorElemento.CAT_DESCRIPCION,
+						   1, null, string.Empty, string.Empty, strInsertarCatalogo, string.Empty, clsElemento._descripcionElemento,
 						   string.Empty,
 						   strDescripcion);
 
@@ -89,28 +104,38 @@ namespace BCRGARANTIAS.Negocios
 		{
 			try
 			{
-				string strModificarCatalogo = " UPDATE CAT_ELEMENTO " +
-                                " SET CAT_DESCRIPCION = '" + strDescripcion + "', CAT_CAMPO = '" + strCampo + "'" +
-								" WHERE CAT_ELEMENTO = " + nElemento;
-				
-                //AccesoBD.ejecutarConsulta(strQry);
+                listaCampos = new string[] { clsElemento._entidadElemento,
+                                             clsElemento._descripcionElemento, strDescripcion,
+                                             clsElemento._codigoCampo, strCampo,
+                                             clsElemento._consecutivoElemento, nElemento.ToString() };
 
-                DataSet dsElemento = AccesoBD.ejecutarConsulta("select " + ContenedorElemento.CAT_DESCRIPCION + "," +
-                    ContenedorElemento.CAT_CAMPO +
-                    " from " + ContenedorElemento.NOMBRE_ENTIDAD +
-                    " where " + ContenedorElemento.CAT_ELEMENTO + " = " + nElemento.ToString());
+                sentenciaSql = string.Format("UPDATE dbo.{0} SET {1} = '{2}', {3} = '{4}' WHERE {5} = {6}", listaCampos);
+                string strModificarCatalogo = sentenciaSql;
+
+
+                listaCampos = new string[] { clsElemento._descripcionElemento, clsElemento._codigoCampo,
+                                             clsElemento._entidadElemento,
+                                             clsElemento._consecutivoElemento, nElemento.ToString() };
+
+                sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2} WHERE {3} = {4}", listaCampos);
+
+                DataSet dsElemento = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strModificarCatalogo, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(strModificarCatalogo, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
 
 					if (nFilasAfectadas > 0)
 					{
@@ -120,14 +145,14 @@ namespace BCRGARANTIAS.Negocios
 						{
 							Bitacora oBitacora = new Bitacora();
 
-							if (!dsElemento.Tables[0].Rows[0].IsNull(ContenedorElemento.CAT_DESCRIPCION))
+							if (!dsElemento.Tables[0].Rows[0].IsNull(clsElemento._descripcionElemento))
 							{
-								string strCatalogoDescripcionObt = dsElemento.Tables[0].Rows[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
+								string strCatalogoDescripcionObt = dsElemento.Tables[0].Rows[0][clsElemento._descripcionElemento].ToString();
 
 								if (strCatalogoDescripcionObt.CompareTo(strDescripcion) != 0)
 								{
 									oBitacora.InsertarBitacora("CAT_ELEMENTO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCatalogo, string.Empty, ContenedorElemento.CAT_DESCRIPCION,
+									   2, null, string.Empty, string.Empty, strModificarCatalogo, string.Empty, clsElemento._descripcionElemento,
 									   strCatalogoDescripcionObt,
 									   strDescripcion);
 								}
@@ -135,7 +160,7 @@ namespace BCRGARANTIAS.Negocios
 							else
 							{
 								oBitacora.InsertarBitacora("CAT_ELEMENTO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCatalogo, string.Empty, ContenedorElemento.CAT_DESCRIPCION,
+									   2, null, string.Empty, string.Empty, strModificarCatalogo, string.Empty, clsElemento._descripcionElemento,
 									   string.Empty,
 									   strDescripcion);
 							}
@@ -192,29 +217,33 @@ namespace BCRGARANTIAS.Negocios
 		{
 			try
 			{
-				string strEliminarCatalogo = "DELETE CAT_ELEMENTO WHERE CAT_ELEMENTO = " + nElemento.ToString();
+                string strEliminarCatalogo = string.Format("DELETE FROM dbo.{0} WHERE {1} = {2}", clsElemento._entidadElemento, clsElemento._consecutivoElemento, nElemento.ToString());
 
-                string strConsultarCatalogo = "select " + ContenedorElemento.CAT_CATALOGO + "," +
-                    ContenedorElemento.CAT_DESCRIPCION + 
-                    " from " + ContenedorElemento.NOMBRE_ENTIDAD + 
-                    " where " + ContenedorElemento.CAT_ELEMENTO + " = " + nElemento.ToString();
+                listaCampos = new string[] { clsElemento._codigoCatalogo, clsElemento._descripcionElemento, 
+                                             clsElemento._entidadElemento,
+                                             clsElemento._consecutivoElemento, nElemento.ToString() };
 
-                //AccesoBD.ejecutarConsulta(strQry);
+                sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2} WHERE {3} = {4}", listaCampos);
 
-                DataSet dsElemento = AccesoBD.ejecutarConsulta(strConsultarCatalogo);
+                DataSet dsElemento = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strEliminarCatalogo, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(strEliminarCatalogo, oConexion))
+                    {
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					if (nFilasAfectadas > 0)
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+
+                    if (nFilasAfectadas > 0)
 					{
 						#region Inserción en Bitácora
 
@@ -228,7 +257,7 @@ namespace BCRGARANTIAS.Negocios
 							{
 								for (int nIndice = 0; nIndice < drElemento.Table.Columns.Count; nIndice++)
 								{
-									if (drElemento.Table.Columns[nIndice].ColumnName.CompareTo(ContenedorElemento.CAT_CATALOGO) == 0)
+									if (drElemento.Table.Columns[nIndice].ColumnName.CompareTo(clsElemento._codigoCatalogo) == 0)
 									{
 										if (drElemento[nIndice, DataRowVersion.Current].ToString() != string.Empty)
 										{

@@ -1,18 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.Reflection;
 
 namespace BCR.GARANTIAS.Entidades
 {
-        /// <summary>
-        /// This class is used to compare any
-        /// type(property) of a class for sorting.
-        /// This class automatically fetches the
-        /// type of the property and compares.
-        /// </summary>
-        public sealed class clsComparadorGenerico<T> : IComparer<T>
+    /// <summary>
+    /// This class is used to compare any
+    /// type(property) of a class for sorting.
+    /// This class automatically fetches the
+    /// type of the property and compares.
+    /// </summary>
+    public sealed class clsComparadorGenerico<T> : IComparer<T>
         {
             public enum SortOrder { Ascending, Descending };
 

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
-using System.Collections.Specialized;
-using System.Reflection;
-using System.Configuration;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
-using System.Globalization;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -428,47 +423,47 @@ namespace BCR.GARANTIAS.Entidades
 
             //Crea el nodo de la descripcion del campo afectado
             objEscritor.WriteStartElement(_descripcionCampoAfectado);
-            objEscritor.WriteString(this.descripcionCampoAfectado.ToString());
+            objEscritor.WriteString(descripcionCampoAfectado.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la estado anterior del campo afectado
             objEscritor.WriteStartElement(_estadoAnteriorCampoAfectado);
-            objEscritor.WriteString(this.estadoAnteriorCampoAfectado.ToString());
+            objEscritor.WriteString(estadoAnteriorCampoAfectado.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la estado actual del campo afectado
             objEscritor.WriteStartElement(_estadoActualCampoAfectado);
-            objEscritor.WriteString(this.estadoActualCampoAfectado.ToString());
+            objEscritor.WriteString(estadoActualCampoAfectado.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la fecha de modificacion 
             objEscritor.WriteStartElement(_fechaHora);
-            objEscritor.WriteString(this.fechaHora.ToString("yyyyMMdd"));
+            objEscritor.WriteString(fechaHora.ToString("yyyyMMdd"));
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la cedula del usuario que modifico 
             objEscritor.WriteStartElement(_codigoUsuario);
-            objEscritor.WriteString(this.codigoUsuario.ToString());
+            objEscritor.WriteString(codigoUsuario.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo del nombre del usuario que modifico 
             objEscritor.WriteStartElement(_nombreUsuario);
-            objEscritor.WriteString(this.nombreUsuario.ToString());
+            objEscritor.WriteString(nombreUsuario.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la descripcion del tipo de garantia
             objEscritor.WriteStartElement(_desTipoGarantia);
-            objEscritor.WriteString(this.desTipoGarantia.ToString());
+            objEscritor.WriteString(desTipoGarantia.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la descripcion del tipo de mitigador
             objEscritor.WriteStartElement(_desTipoMitigador);
-            objEscritor.WriteString(this.desTipoMitigador.ToString());
+            objEscritor.WriteString(desTipoMitigador.ToString());
             objEscritor.WriteEndElement();
 
             //Crea el nodo de la descripcion de la accion realizada
             objEscritor.WriteStartElement(_desAccionRealizada);
-            objEscritor.WriteString(this.desAccionRealizada.ToString());
+            objEscritor.WriteString(desAccionRealizada.ToString());
             objEscritor.WriteEndElement();
 
 

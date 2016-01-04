@@ -61,6 +61,16 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
+			<Fecha>03/12/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
+				crear el campo referente al porcentaje de aceptación, este campo reemplazará al campo porcentaje de responsabilidad dentro de 
+				cualquier lógica existente.  
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -247,7 +257,7 @@ BEGIN
 			GRO.Codigo_Partido,
 			GRO.Numero_Finca,
 			GRO.Numero_Placa_Bien,
-			COALESCE(GRO.Porcentaje_Responsabilidad, 0 ) AS Porcentaje_Aceptacion,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se modifica el cmapo fuente utilizado.
 			NULL AS Monto_Total_Avaluo,
 			NULL AS Antiguedad_Annos_Avaluo, 
 			LEN(GRO.Numero_Finca) AS Tamanno_Finca,
@@ -402,17 +412,7 @@ BEGIN
 	 *                                                                                              *
 	 *                                                                                              *
 	 ************************************************************************************************/
-	
-	--Se asigna el valor NULL a las fechas de último seguimiento y de contrucción que posean el valor 01/01/1900
-	UPDATE	@TMP_VALUACIONES
-	SET		Fecha_Ultimo_Seguimiento = NULL
-	WHERE	Fecha_Ultimo_Seguimiento = '19000101'
-
-	UPDATE	@TMP_VALUACIONES
-	SET		Fecha_Construccion	= NULL
-	WHERE	Fecha_Construccion	= '19000101'
-
-
+		
 	/*INCONSISTENCIAS DEL CAMPO: FECHA DEL ULTIMO SEGUIMIENTO*/
 
 	--Se obtienen las garantías reales cuyo avalúo posea una fecha de siguimiento inválida
@@ -432,10 +432,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_último_seguimiento', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND Fecha_Ultimo_Seguimiento	> Fecha_Constitucion
-		AND Codigo_Tipo_Operacion		= 1
-		AND Fecha_Ultimo_Seguimiento	IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Fecha_Ultimo_Seguimiento > Fecha_Constitucion
+		AND Codigo_Tipo_Operacion = 1
+		AND Fecha_Ultimo_Seguimiento <> '19000101'
 
 	UNION ALL
 
@@ -447,10 +447,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_último_seguimiento', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND Fecha_Ultimo_Seguimiento	> Fecha_Constitucion
-		AND Codigo_Tipo_Operacion		= 2
-		AND Fecha_Ultimo_Seguimiento	IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Fecha_Ultimo_Seguimiento > Fecha_Constitucion
+		AND Codigo_Tipo_Operacion = 2
+		AND Fecha_Ultimo_Seguimiento <> '19000101'
 
 	UNION ALL
 	
@@ -462,10 +462,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_último_seguimiento', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND Fecha_Ultimo_Seguimiento	> Fecha_Presentacion
-		AND Codigo_Tipo_Operacion		= 1
-		AND Fecha_Ultimo_Seguimiento	IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Fecha_Ultimo_Seguimiento > Fecha_Presentacion
+		AND Codigo_Tipo_Operacion = 1
+		AND Fecha_Ultimo_Seguimiento <> '19000101'
 
 	UNION ALL
 	
@@ -477,10 +477,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_último_seguimiento', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND Fecha_Ultimo_Seguimiento	> Fecha_Presentacion
-		AND Codigo_Tipo_Operacion		= 2
-		AND Fecha_Ultimo_Seguimiento	IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Fecha_Ultimo_Seguimiento > Fecha_Presentacion
+		AND Codigo_Tipo_Operacion = 2
+		AND Fecha_Ultimo_Seguimiento <> '19000101'
 
 
 	/*INCONSISTENCIAS DEL CAMPO: FECHA DE CONSTRUCCION*/
@@ -503,10 +503,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_construcción', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 1
-		AND Codigo_Tipo_Operacion	= 1
-		AND Fecha_Construccion		IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Codigo_Tipo_Operacion = 1
+		AND Fecha_Construccion <> '19000101'
 
 	UNION ALL
 
@@ -518,10 +518,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_construcción', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 1
-		AND Codigo_Tipo_Operacion	= 2
-		AND Fecha_Construccion		IS NOT NULL
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Codigo_Tipo_Operacion = 2
+		AND Fecha_Construccion <> '19000101'
 
 	UNION ALL
 
@@ -533,10 +533,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_construcción', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 2
-		AND Fecha_Construccion		IS NULL
-		AND Codigo_Tipo_Operacion	= 1
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 2
+		AND Fecha_Construccion = '19000101'
+		AND Codigo_Tipo_Operacion = 1
 
 	UNION ALL
 
@@ -548,10 +548,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Fecha_construcción', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 2
-		AND Fecha_Construccion		IS NULL
-		AND Codigo_Tipo_Operacion	= 2
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 2
+		AND Fecha_Construccion = '19000101'
+		AND Codigo_Tipo_Operacion = 2
 
 	/*INCONSISTENCIAS DEL CAMPO: TIPO DE BIEN*/
 	
@@ -573,10 +573,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Tipo_de_bien', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario						= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien					= 1
-		AND Monto_Ultima_Tasacion_No_Terreno	> 0
-		AND Codigo_Tipo_Operacion				= 1
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Monto_Ultima_Tasacion_No_Terreno > 0
+		AND Codigo_Tipo_Operacion = 1
 
 	UNION ALL
 
@@ -588,10 +588,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Tipo_de_bien', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario						= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien					= 1
-		AND Monto_Ultima_Tasacion_No_Terreno	> 0
-		AND Codigo_Tipo_Operacion				= 2
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Monto_Ultima_Tasacion_No_Terreno > 0
+		AND Codigo_Tipo_Operacion = 2
 
 	UNION ALL
 
@@ -603,10 +603,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Tipo_de_bien', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario							= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien						= 1
-		AND Monto_Tasacion_Actualizada_No_Terreno	> 0
-		AND Codigo_Tipo_Operacion					= 1
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Monto_Tasacion_Actualizada_No_Terreno > 0
+		AND Codigo_Tipo_Operacion = 1
 
 	UNION ALL
 
@@ -618,10 +618,10 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Tipo_de_bien', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario							= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien						= 1
-		AND Monto_Tasacion_Actualizada_No_Terreno	> 0
-		AND Codigo_Tipo_Operacion					= 2
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Monto_Tasacion_Actualizada_No_Terreno > 0
+		AND Codigo_Tipo_Operacion = 2
 	
 
 	/*INCONSISTENCIAS DEL CAMPO: FECHA DE VALUACIÓN DIFERENTE ENTRE OPERACIONES QUE POSEEN UNA MISMA GARANTIA*/
@@ -646,12 +646,12 @@ BEGIN
 		(SELECT		Codigo_Clase_Garantia, Codigo_Bien, Fecha_Valuacion
 		 FROM		@TMP_VALUACIONES 
 		 GROUP		BY Codigo_Clase_Garantia, Codigo_Bien, Fecha_Valuacion) TV2
-	WHERE	TV1.Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND	TV1.Codigo_Clase_Garantia	= TV2.Codigo_Clase_Garantia
-		AND TV1.Codigo_Bien				= TV2.Codigo_Bien
-		AND TV1.Codigo_Tipo_Operacion	= 1
-		AND ((TV1.Fecha_Valuacion		< TV2.Fecha_Valuacion)
-			OR (TV1.Fecha_Valuacion		> TV2.Fecha_Valuacion))
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND	TV1.Codigo_Clase_Garantia = TV2.Codigo_Clase_Garantia
+		AND TV1.Codigo_Bien = TV2.Codigo_Bien
+		AND TV1.Codigo_Tipo_Operacion = 1
+		AND ((TV1.Fecha_Valuacion < TV2.Fecha_Valuacion)
+			OR (TV1.Fecha_Valuacion > TV2.Fecha_Valuacion))
 
 	UNION ALL
 	
@@ -666,12 +666,12 @@ BEGIN
 		(SELECT		Codigo_Clase_Garantia, Codigo_Bien, Fecha_Valuacion
 		 FROM		@TMP_VALUACIONES 
 		 GROUP		BY Codigo_Clase_Garantia, Codigo_Bien, Fecha_Valuacion) TV2
-	WHERE	TV1.Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND	TV1.Codigo_Clase_Garantia	= TV2.Codigo_Clase_Garantia
-		AND TV1.Codigo_Bien				= TV2.Codigo_Bien
-		AND TV1.Codigo_Tipo_Operacion	= 2
-		AND ((TV1.Fecha_Valuacion		< TV2.Fecha_Valuacion)
-			OR (TV1.Fecha_Valuacion		> TV2.Fecha_Valuacion))
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND	TV1.Codigo_Clase_Garantia = TV2.Codigo_Clase_Garantia
+		AND TV1.Codigo_Bien = TV2.Codigo_Bien
+		AND TV1.Codigo_Tipo_Operacion = 2
+		AND ((TV1.Fecha_Valuacion < TV2.Fecha_Valuacion)
+			OR (TV1.Fecha_Valuacion > TV2.Fecha_Valuacion))
 		
 	/*INCONSISTENCIAS DEL CAMPO: MONTO TOTAL DEL AVALUO*/
 	
@@ -699,15 +699,15 @@ BEGIN
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = TV1.Codigo_Producto
 		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 1
-		AND TV1.Tamanno_Finca				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 1
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Finca
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 1
+		AND TV1.Tamanno_Finca > 0
+		AND TV1.Codigo_Tipo_Operacion = 1
+		AND GSP.prmgt_pnuidegar	= TV1.Numero_Finca
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND GSP.prmgt_pnu_part = TV1.Codigo_Partido
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing	> TV1.Monto_Total_Avaluo))
 									
 	
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato,
@@ -733,15 +733,15 @@ BEGIN
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = 10
 		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 1
-		AND TV1.Tamanno_Finca				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 2
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Finca
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 1
+		AND TV1.Tamanno_Finca > 0
+		AND TV1.Codigo_Tipo_Operacion = 2
+		AND GSP.prmgt_pnuidegar	= TV1.Numero_Finca
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND GSP.prmgt_pnu_part = TV1.Codigo_Partido
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing	> TV1.Monto_Total_Avaluo))
 
 	
 	--Se obtienen las garantías reales que posea un monto total del avalúo diferente al registrado en el SICC
@@ -768,16 +768,16 @@ BEGIN
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = TV1.Codigo_Producto
 		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 2
-		AND TV1.Tamanno_Finca				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 1
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Finca
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
-		AND GSP.prmgt_pcotengar				= 1
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 2
+		AND TV1.Tamanno_Finca > 0
+		AND TV1.Codigo_Tipo_Operacion = 1
+		AND GSP.prmgt_pnuidegar	= TV1.Numero_Finca
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND GSP.prmgt_pnu_part = TV1.Codigo_Partido
+		AND GSP.prmgt_pcotengar = 1
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing > TV1.Monto_Total_Avaluo))
 								
 
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato,
@@ -802,17 +802,17 @@ BEGIN
 		AND GSP.prmgt_pco_ofici = TV1.Codigo_Oficina
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = 10
-		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 2
-		AND TV1.Tamanno_Finca				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 2
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Finca
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND GSP.prmgt_pnu_part				= TV1.Codigo_Partido
-		AND GSP.prmgt_pcotengar				= 1
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+		AND GSP.prmgt_pnu_oper = TV1.Operacion
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 2
+		AND TV1.Tamanno_Finca > 0
+		AND TV1.Codigo_Tipo_Operacion = 2
+		AND GSP.prmgt_pnuidegar = TV1.Numero_Finca
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND GSP.prmgt_pnu_part = TV1.Codigo_Partido
+		AND GSP.prmgt_pcotengar	= 1
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing > TV1.Monto_Total_Avaluo))
 	
 	
 	--Se obtienen las garantías reales que posea un monto total del avalúo diferente al registrado en el SICC
@@ -838,15 +838,15 @@ BEGIN
 		AND GSP.prmgt_pco_ofici = TV1.Codigo_Oficina
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = TV1.Codigo_Producto
-		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 3
-		AND TV1.Tamanno_Placa				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 1
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Placa_Bien
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+		AND GSP.prmgt_pnu_oper = TV1.Operacion
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 3
+		AND TV1.Tamanno_Placa > 0
+		AND TV1.Codigo_Tipo_Operacion = 1
+		AND GSP.prmgt_pnuidegar = TV1.Numero_Placa_Bien
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing > TV1.Monto_Total_Avaluo))
 								
 
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato, 
@@ -871,15 +871,15 @@ BEGIN
 		AND GSP.prmgt_pco_ofici = TV1.Codigo_Oficina
 		AND GSP.prmgt_pco_moned = TV1.Codigo_Moneda
 		AND GSP.prmgt_pco_produ = 10
-		AND GSP.prmgt_pnu_oper	= TV1.Operacion
-	WHERE	TV1.Codigo_Usuario				= @vsIdentificacion_Usuario
-		AND TV1.Codigo_Tipo_Garantia_Real	= 3
-		AND TV1.Tamanno_Placa				> 0
-		AND TV1.Codigo_Tipo_Operacion		= 2
-		AND GSP.prmgt_pnuidegar				= TV1.Numero_Placa_Bien
-		AND GSP.prmgt_pcoclagar				= TV1.Codigo_Clase_Garantia
-		AND ((GSP.prmgt_pmoavaing			< TV1.Monto_Total_Avaluo)
-			OR (GSP.prmgt_pmoavaing			> TV1.Monto_Total_Avaluo))
+		AND GSP.prmgt_pnu_oper = TV1.Operacion
+	WHERE	TV1.Codigo_Usuario = @vsIdentificacion_Usuario
+		AND TV1.Codigo_Tipo_Garantia_Real = 3
+		AND TV1.Tamanno_Placa > 0
+		AND TV1.Codigo_Tipo_Operacion = 2
+		AND GSP.prmgt_pnuidegar = TV1.Numero_Placa_Bien
+		AND GSP.prmgt_pcoclagar = TV1.Codigo_Clase_Garantia
+		AND ((GSP.prmgt_pmoavaing < TV1.Monto_Total_Avaluo)
+			OR (GSP.prmgt_pmoavaing > TV1.Monto_Total_Avaluo))
 
 	
 	/*INCONSISTENCIAS DEL CAMPO: VALIDEZ DEL MONTO DEL AVALÚO ACTUALIZADO TERRENO */
@@ -902,11 +902,11 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Validez_Monto_Avalúo_Actualizado_Terreno', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 1
-		AND Codigo_Tipo_Operacion	= 1
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Codigo_Tipo_Operacion = 1
 		AND Antiguedad_Annos_Avaluo > 5
-		AND Porcentaje_Aceptacion	> 40
+		AND Porcentaje_Aceptacion > 40
 
 
 	INSERT	INTO @TMP_INCONSISTENCIAS (Contabilidad, Oficina, Moneda, Producto, Operacion, Contrato,
@@ -925,9 +925,9 @@ BEGIN
 		Monto_Ultima_Tasacion_No_Terreno, Monto_Tasacion_Actualizada_No_Terreno,
 		'Validez_Monto_Avalúo_Actualizado_Terreno', @vsIdentificacion_Usuario
 	FROM	@TMP_VALUACIONES 
-	WHERE	Codigo_Usuario			= @vsIdentificacion_Usuario
-		AND Codigo_Tipo_Bien		= 1
-		AND Codigo_Tipo_Operacion	= 2
+	WHERE	Codigo_Usuario = @vsIdentificacion_Usuario
+		AND Codigo_Tipo_Bien = 1
+		AND Codigo_Tipo_Operacion = 2
 		AND Antiguedad_Annos_Avaluo > 5
 		AND Porcentaje_Aceptacion	> 40
 

@@ -1,62 +1,61 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Capacidad_Pago.
-	/// </summary>
-	public class Capacidad_Pago
-	{	
-		#region Metodos Publicos
-		public void Crear(string strCedula, string dFecha, int nCapacidadPago, decimal nSensibilidad, 
+    /// <summary>
+    /// Summary description for Capacidad_Pago.
+    /// </summary>
+    public class Capacidad_Pago
+	{
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        string strInsertarCapacidadPago = string.Empty;
+        int nFilasAfectadas = 0;
+
+        #endregion Variables Globales
+
+        #region Métodos Públicos
+        public void Crear(string strCedula, string dFecha, int nCapacidadPago, decimal nSensibilidad, 
                           string strUsuario, string strIP)
 		{
 			try
 			{
 				string strSensibilidad = nSensibilidad.ToString();
-//				strSensibilidad = strSensibilidad.Replace(",",".");
 
                 DateTime dFechaConv = Convert.ToDateTime(dFecha);
+               
+                string strFecha = dFechaConv.ToString("yyyyMMdd");
 
-				string strInsertarCapacidadPago = "INSERT INTO GAR_CAPACIDAD_PAGO " +
-						 "(CEDULA_DEUDOR, FECHA_CAPACIDAD_PAGO, ";
-				
-				if (nCapacidadPago != -1)
-                    strInsertarCapacidadPago += "COD_CAPACIDAD_PAGO, ";
+                listaCampos = new string[] { clsCapacidadPago._entidadCapacidadPagoDeudor,
+                                             clsCapacidadPago._cedulaDeudor, clsCapacidadPago._fechaCapacidadPago, clsCapacidadPago._codCapacidadPago, clsCapacidadPago._porSensibilidadTipoCambio,
+                                             strCedula, strFecha, ((nCapacidadPago != -1) ? nCapacidadPago.ToString() : DBNull.Value.ToString()),
+                                             strSensibilidad};
 
-                DateTime dFecha1 = DateTime.Parse(dFecha);
+                sentenciaSql = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}) VALUES({5}, {6}, {7}, CONVERT(DECIMAL(5,2), '{8}'))", listaCampos);
 
-                string strFecha = dFecha1.ToString("yyyyMMdd");
+                strInsertarCapacidadPago = sentenciaSql;
 
-                strInsertarCapacidadPago += "SENSIBILIDAD_TIPO_CAMBIO) " +
-                    "VALUES ('" + strCedula + "', '" + strFecha + "',";
-                    
-                                                        //dFecha.Substring(6,4).ToString() + "/" +
-                                                        //dFecha.Substring(0,2).ToString() + "/" +
-                                                        //dFecha.Substring(3,2).ToString() + "', ";
-				
-				if (nCapacidadPago != -1)
-                    strInsertarCapacidadPago += nCapacidadPago + ", ";
-
-                strInsertarCapacidadPago += " convert(decimal(5,2), '" + strSensibilidad + "'));";
-
-                //AccesoBD.ejecutarConsulta(strQry);
-
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strInsertarCapacidadPago, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
 
 					if (nFilasAfectadas > 0)
 					{
@@ -67,25 +66,25 @@ namespace BCRGARANTIAS.Negocios
 						Bitacora oBitacora = new Bitacora();
 
 						oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, ContenedorCapacidad_pago.CEDULA_DEUDOR,
+						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, clsCapacidadPago._cedulaDeudor,
 						   string.Empty,
 						   strCedula);
 
 						oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO,
+						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, clsCapacidadPago._fechaCapacidadPago,
 						   string.Empty,
 						   dFecha);
 
 						if (nCapacidadPago != -1)
 						{
 							oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-							   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO,
+							   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, clsCapacidadPago._codCapacidadPago,
 							   string.Empty,
 							   oTraductor.TraducirTipoCapacidadPago(nCapacidadPago));
 						}
 
 						oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO,
+						   1, null, string.Empty, string.Empty, strInsertarCapacidadPago, string.Empty, clsCapacidadPago._porSensibilidadTipoCambio,
 						   string.Empty,
 						   strSensibilidad);
 
@@ -106,35 +105,42 @@ namespace BCRGARANTIAS.Negocios
 			{
 				string strSensibilidad = nSensibilidad.ToString();
 				strSensibilidad = strSensibilidad.Replace(",",".");
-
-                //string strFecha = new System.Data.SqlTypes.SqlDateTime(dFecha).ToString();
+                                
                 string strFecha = dFecha.ToString("yyyyMMdd");
 
-				string strModificarCapacidadPago = "UPDATE GAR_CAPACIDAD_PAGO " +
-                                "SET FECHA_CAPACIDAD_PAGO = convert(varchar(10),'" + strFecha + "',111), " +
-								"COD_CAPACIDAD_PAGO = " + nCapacidadPago + ", " +
-								"SENSIBILIDAD_TIPO_CAMBIO = convert(decimal(5,2), '" + strSensibilidad + "') " +
-								" WHERE CEDULA_DEUDOR = '" + strCedula + "' AND " +
-                                " FECHA_CAPACIDAD_PAGO = '" + strFecha + "'";
-                //AccesoBD.ejecutarConsulta(strQry);
+                listaCampos = new string[] { clsCapacidadPago._entidadCapacidadPagoDeudor,
+                                             clsCapacidadPago._fechaCapacidadPago, strFecha,
+                                             clsCapacidadPago._codCapacidadPago, nCapacidadPago.ToString(),
+                                             clsCapacidadPago._porSensibilidadTipoCambio, strSensibilidad,
+                                             clsCapacidadPago._cedulaDeudor, strCedula,
+                                             clsCapacidadPago._fechaCapacidadPago, strFecha};
 
-                DataSet dsCapacidadPago = AccesoBD.ejecutarConsulta("select " + ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO + "," +
-                    ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO + "," + ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO + 
-                    " from " + ContenedorCapacidad_pago.NOMBRE_ENTIDAD +
-                    " where " + ContenedorCapacidad_pago.CEDULA_DEUDOR + " = '" + strCedula + "'" +
-                    " and " + ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO + " = '" + strFecha + "'");
+                string strModificarCapacidadPago = string.Format("UPDATE dbo.{0} SET {1} = {2}, {3} = {4}, {5} = CONVERT(DECIMAL(5,2), '{6}') WHERE {7} = '{8}' AND {9} = '{10}'", listaCampos);
+
+                listaCampos = new string[] { clsCapacidadPago._fechaCapacidadPago, clsCapacidadPago._codCapacidadPago, clsCapacidadPago._porSensibilidadTipoCambio,
+                                             clsCapacidadPago._entidadCapacidadPagoDeudor,
+                                             clsCapacidadPago._cedulaDeudor, strCedula,
+                                             clsCapacidadPago._fechaCapacidadPago, strFecha};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2} FROM dbo.{3} WHERE {4} = '{5}' AND {6} = '{7}'", listaCampos);
+
+                DataSet dsCapacidadPago = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strModificarCapacidadPago, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(strModificarCapacidadPago, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
 
 					if (nFilasAfectadas > 0)
 					{
@@ -146,14 +152,14 @@ namespace BCRGARANTIAS.Negocios
 
 							Bitacora oBitacora = new Bitacora();
 
-							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO))
+							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(clsCapacidadPago._fechaCapacidadPago))
 							{
-								DateTime dFechaCapacidadPagoObt = Convert.ToDateTime(dsCapacidadPago.Tables[0].Rows[0][ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO].ToString());
+								DateTime dFechaCapacidadPagoObt = Convert.ToDateTime(dsCapacidadPago.Tables[0].Rows[0][clsCapacidadPago._fechaCapacidadPago].ToString());
 
 								if (dFechaCapacidadPagoObt != dFecha)
 								{
 									oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._fechaCapacidadPago,
 									   dFechaCapacidadPagoObt.ToShortDateString(),
 									   dFecha.ToShortDateString());
 								}
@@ -161,19 +167,19 @@ namespace BCRGARANTIAS.Negocios
 							else
 							{
 								oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._fechaCapacidadPago,
 									   string.Empty,
 									   dFecha.ToShortDateString());
 							}
 
-							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO))
+							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(clsCapacidadPago._codCapacidadPago))
 							{
-								int nCodigoCapacidadPagoObt = Convert.ToInt32(dsCapacidadPago.Tables[0].Rows[0][ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO].ToString());
+								int nCodigoCapacidadPagoObt = Convert.ToInt32(dsCapacidadPago.Tables[0].Rows[0][clsCapacidadPago._codCapacidadPago].ToString());
 
 								if ((nCapacidadPago != -1) && (nCodigoCapacidadPagoObt != nCapacidadPago))
 								{
 									oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._codCapacidadPago,
 									   nCodigoCapacidadPagoObt.ToString(),
 									   oTraductor.TraducirTipoCapacidadPago(nCapacidadPago));
 								}
@@ -181,19 +187,19 @@ namespace BCRGARANTIAS.Negocios
 							else
 							{
 								oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._codCapacidadPago,
 									   string.Empty,
 									   oTraductor.TraducirTipoCapacidadPago(nCapacidadPago));
 							}
 
-							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO))
+							if (!dsCapacidadPago.Tables[0].Rows[0].IsNull(clsCapacidadPago._porSensibilidadTipoCambio))
 							{
-								decimal nSensibilidadTipoCambioObt = Convert.ToDecimal(dsCapacidadPago.Tables[0].Rows[0][ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO].ToString());
+								decimal nSensibilidadTipoCambioObt = Convert.ToDecimal(dsCapacidadPago.Tables[0].Rows[0][clsCapacidadPago._porSensibilidadTipoCambio].ToString());
 
 								if (nSensibilidadTipoCambioObt != (Convert.ToDecimal(strSensibilidad)))
 								{
 									oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._porSensibilidadTipoCambio,
 									   nSensibilidadTipoCambioObt.ToString(),
 									   strSensibilidad);
 								}
@@ -201,7 +207,7 @@ namespace BCRGARANTIAS.Negocios
 							else
 							{
 								oBitacora.InsertarBitacora("GAR_CAPACIDAD_PAGO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO,
+									   2, null, string.Empty, string.Empty, strModificarCapacidadPago, string.Empty, clsCapacidadPago._porSensibilidadTipoCambio,
 									   string.Empty,
 									   strSensibilidad);
 							}
@@ -223,29 +229,38 @@ namespace BCRGARANTIAS.Negocios
 			try
 			{
                 DateTime dFechaConv = DateTime.Parse(dFecha);
-                //string strFecha = new System.Data.SqlTypes.SqlDateTime(dFechaConv).ToString();
+                
                 string strFecha = dFechaConv.ToString("yyyyMMdd");
 
-				string strEliminarCapacidadPago = "DELETE GAR_CAPACIDAD_PAGO WHERE CEDULA_DEUDOR = '" + strCedula + "' " +
-                    "AND FECHA_CAPACIDAD_PAGO = '" + strFecha + "'";
+                listaCampos = new string[] { clsCapacidadPago._entidadCapacidadPagoDeudor,
+                                             clsCapacidadPago._cedulaDeudor, strCedula,
+                                             clsCapacidadPago._fechaCapacidadPago, strFecha};
 
-                DataSet dsCapacidadPago = AccesoBD.ejecutarConsulta("select " + ContenedorCapacidad_pago.CEDULA_DEUDOR + "," +
-                    ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO + "," + ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO + "," + 
-                    ContenedorCapacidad_pago.SENSIBILIDAD_TIPO_CAMBIO +
-                    " from " + ContenedorCapacidad_pago.NOMBRE_ENTIDAD +
-                    " where " + ContenedorCapacidad_pago.CEDULA_DEUDOR + " = '" + strCedula + "'" +
-                    " and " + ContenedorCapacidad_pago.FECHA_CAPACIDAD_PAGO + " = '" + strFecha + "'");
+                string strEliminarCapacidadPago = string.Format("DELETE FROM dbo.{0} WHERE {1} = '{2}' AND {3} = '{4}'", listaCampos);
+
+                listaCampos = new string[] { clsCapacidadPago._cedulaDeudor, clsCapacidadPago._codCapacidadPago, clsCapacidadPago._fechaCapacidadPago, clsCapacidadPago._porSensibilidadTipoCambio,
+                                             clsCapacidadPago._entidadCapacidadPagoDeudor,
+                                             clsCapacidadPago._cedulaDeudor, strCedula,
+                                             clsCapacidadPago._fechaCapacidadPago, strFecha};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3} FROM dbo.{4} WHERE {5} = '{6}' AND {7} = '{8}'", listaCampos);
+
+                DataSet dsCapacidadPago = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
 				{
-					SqlCommand oComando = new SqlCommand(strEliminarCapacidadPago, oConexion);
+                    using (SqlCommand oComando = new SqlCommand(strEliminarCapacidadPago, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
 
 					if (nFilasAfectadas > 0)
 					{
@@ -261,7 +276,7 @@ namespace BCRGARANTIAS.Negocios
 							{
 								for (int nIndice = 0; nIndice < drCapacidadPago.Table.Columns.Count; nIndice++)
 								{
-									if (drCapacidadPago.Table.Columns[nIndice].ColumnName.CompareTo(ContenedorCapacidad_pago.COD_CAPACIDAD_PAGO) == 0)
+									if (drCapacidadPago.Table.Columns[nIndice].ColumnName.CompareTo(clsCapacidadPago._codCapacidadPago) == 0)
 									{
 										if (drCapacidadPago[nIndice, DataRowVersion.Current].ToString() != string.Empty)
 										{

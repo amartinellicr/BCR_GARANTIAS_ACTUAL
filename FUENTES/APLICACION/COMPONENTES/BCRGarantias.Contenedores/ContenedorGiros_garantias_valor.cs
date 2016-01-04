@@ -45,8 +45,9 @@ namespace BCRGarantias.Contenedores
         public const string COD_TIPO_EMISOR = "cod_tipo_emisor";
         public const string CEDULA_EMISOR = "cedula_emisor";
         public const string PREMIO = "premio";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        #endregion
 
         public ContenedorGiros_garantias_valor()
 		{

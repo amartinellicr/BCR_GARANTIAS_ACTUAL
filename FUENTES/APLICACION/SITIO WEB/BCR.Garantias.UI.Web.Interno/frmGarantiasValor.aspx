@@ -9,33 +9,22 @@
     <contenttemplate>
         <div>
 		    <table style="WIDTH: 775px" cellSpacing="1" cellPadding="1" width="775" align="center"
-			    bgColor="window" border="0">
-			    
-			  <div id="contenedorDatosModificacion" runat="server" enableviewstate="true">
-			       <tr>
-                    <td  bgcolor="#e0e0df">
-                        <table>                         
-                                   <tr>
-                                <td align="left">
-                                    <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="472px"></asp:Label></td>
-                                <td align="right">
-                                   <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="286px"></asp:Label>                              
-                                    </td>                              
-                            </tr>
-                            <tr>
-                                <td>
-                                </td>
-                              <td align="right" >
-                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha" ></asp:Label>                                 
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr> 
-			    
-			           </div>  
-			    
-			    
+			    bgColor="window" border="0">		    
+			    <tr style="border-color:#E0E0DF; border-width:0px;">
+                    <td>
+			            <div id="contenedorDatosModificacion" runat="server" enableviewstate="true" style="clear:both; width:880px; border-color:#E0E0DF; background-color:#E0E0DF; padding-left:7px; padding-right:7px;">
+                            <div style="text-align:left; width:540px; float:left; display:inline; background-color:transparent; border-color:transparent;">
+                                <asp:Label ID="lblUsrModifico" runat="server" CssClass="Txt_Fecha" Width="540px"></asp:Label>
+                            </div>
+                            <div style="text-align:right; width:320px; float:right; display:inline; background-color:transparent; border-color:transparent;">
+                                <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
+                            </div>
+                            <div style="text-align:right; float:right; display:block; background-color:transparent; border-color:transparent;">
+                                <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>
+                            </div>
+			            </div> 
+                    </td> 
+                </tr>	    
 			    <tr>
 				    <td style="HEIGHT: 43px" align="center" colSpan="3"><asp:label id="lblTexto" runat="server" CssClass="TextoTitulo"> Mantenimiento de Garantías de Valor</asp:label></td>
 			    </tr>
@@ -315,7 +304,7 @@
                                             <td class="td_Texto">% Responsabilidad:</td>
                                             <td>
 										        <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
-										                        ToolTip="Porcentaje de Responsabilidad" Enabled= "False" tabIndex="20"/>
+										                        ToolTip="Porcentaje de Responsabilidad" Enabled="False" tabIndex="20"/>
                                                 <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
 										    </td>
                                             <td></td>
@@ -344,12 +333,7 @@
 							    <td align="center">
 							    <br>
 							        <asp:GridView ID="gdvGarantiasValor" runat="server" CellPadding="4" ForeColor="#333333" GridLines="Both" Width="730px" AllowPaging="True" AllowSorting="True"
-                                         AutoGenerateColumns="False" DataKeyNames="cod_operacion, cod_garantia_valor, cod_tipo_garantia, cod_clase_garantia, fecha_constitucion, 
-	                                        fecha_vencimiento, cod_clasificacion_instrumento, des_instrumento, des_serie_instrumento, cod_tipo_emisor, cedula_emisor, 
-	                                        premio, cod_isin, valor_facial, cod_moneda_valor_facial, valor_mercado, cod_moneda_valor_mercado, cod_tenencia,
-	                                        fecha_prescripcion, cod_tipo_mitigador, cod_tipo_documento_legal, cod_inscripcion, monto_mitigador, 
-	                                        fecha_presentacion, porcentaje_responsabilidad, cod_grado_gravamen, cod_grado_prioridades, monto_prioridades, cod_operacion_especial,
-	                                        cod_tipo_acreedor, cedula_acreedor, des_clase_garantia, numero_seguridad, cod_estado" 
+                                         AutoGenerateColumns="False" DataKeyNames="cod_operacion, cod_garantia_valor, des_clase_garantia, numero_seguridad" 
                                          OnRowCommand="gdvGarantiasValor_RowCommand" 
                                          OnPageIndexChanging="gdvGarantiasValor_PageIndexChanging" CssClass="gridview" BorderColor="black" >
                                              <PagerSettings Mode="Numeric" Position="Bottom" PageButtonCount="10" />
@@ -359,37 +343,7 @@
                                                 <asp:ButtonField DataTextField="des_clase_garantia" CommandName="SelectedGarantiaValor" HeaderText="Clase de Garantía" Visible="True" ItemStyle-Width="400px" ItemStyle-HorizontalAlign="Center" ItemStyle-BorderColor="black" HeaderStyle-BorderColor="black"/>
                                                 <asp:ButtonField DataTextField="numero_seguridad" CommandName="SelectedGarantiaValor" HeaderText="Número de Seguridad" Visible="True" ItemStyle-Width="350px" ItemStyle-HorizontalAlign="Center" ItemStyle-BorderColor="black" HeaderStyle-BorderColor="black"/>
                                                 <asp:BoundField DataField="cod_operacion" Visible="false"/>
-                                                <asp:BoundField DataField="cod_garantia_valor" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tipo_garantia" Visible="false"/>
-                                                <asp:BoundField DataField="cod_clase_garantia" Visible="false"/>
-                                                <asp:BoundField DataField="fecha_constitucion" Visible="false" HtmlEncode="false" DataFormatString="{0:dd-MM-yyyy}"/>
-                                                <asp:BoundField DataField="fecha_vencimiento" Visible="false"/>
-                                                <asp:BoundField DataField="cod_clasificacion_instrumento" Visible="false"/>
-                                                <asp:BoundField DataField="des_instrumento" Visible="false"/>
-                                                <asp:BoundField DataField="des_serie_instrumento" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tipo_emisor" Visible="false"/>
-                                                <asp:BoundField DataField="cedula_emisor" Visible="false"/>
-                                                <asp:BoundField DataField="premio" Visible="false"/>
-                                                <asp:BoundField DataField="cod_isin" Visible="false"/>
-                                                <asp:BoundField DataField="valor_facial" Visible="false"/>
-                                                <asp:BoundField DataField="cod_moneda_valor_facial" Visible="false"/>
-                                                <asp:BoundField DataField="valor_mercado" Visible="false"/>
-                                                <asp:BoundField DataField="cod_moneda_valor_mercado" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tenencia" Visible="false"/>
-                                                <asp:BoundField DataField="fecha_prescripcion" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tipo_mitigador" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tipo_documento_legal" Visible="false"/>
-                                                <asp:BoundField DataField="cod_inscripcion" Visible="false"/>
-                                                <asp:BoundField DataField="monto_mitigador" Visible="false"/>
-                                                <asp:BoundField DataField="fecha_presentacion" Visible="false"/>
-                                                <asp:BoundField DataField="porcentaje_responsabilidad" Visible="false"/>
-                                                <asp:BoundField DataField="cod_grado_gravamen" Visible="false"/>
-                                                <asp:BoundField DataField="cod_grado_prioridades" Visible="false"/>
-                                                <asp:BoundField DataField="monto_prioridades" Visible="false"/>
-                                                <asp:BoundField DataField="cod_operacion_especial" Visible="false"/>
-                                                <asp:BoundField DataField="cod_tipo_acreedor" Visible="false"/>
-                                                <asp:BoundField DataField="cedula_acreedor" Visible="false"/>
-                                                <asp:BoundField DataField="cod_estado" Visible="false"/>
+                                                <asp:BoundField DataField="cod_garantia_valor" Visible="false"/>                                               
                                             </Columns>
                                             <RowStyle BackColor="#EFF3FB" />
                                             <EditRowStyle BackColor="#2461BF" />
@@ -414,4 +368,5 @@
         </div>
     </contenttemplate>
 </asp:UpdatePanel>
+<asp:HiddenField ID="hdnAplicaCalculoPA" runat="server" Value="0"></asp:HiddenField>
 </asp:Content>

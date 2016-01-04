@@ -21,8 +21,9 @@ namespace BCRGarantias.Contenedores
         public const string FECHA_EXPIRACION = "fecha_expiracion";
         public const string MONTO_COBERTURA = "monto_cobertura";
         public const string DES_OBSERVACION = "des_observacion";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        #endregion
 
         public ContenedorGarantias_fiduciarias_x_tarjeta()
 		{

@@ -4110,6 +4110,7 @@ function ValidarPorcentajeAceptacionCalculado() {
         if ((tipoBien > 4) || (porceAceptCalculadoOriginal === 0)) {
 
             $$('txtPorcentajeAceptacionCalculado').val(porcentajeAceptacion);
+            $calculoMontoMitigadorAplicado = false;
             return;
         }
 

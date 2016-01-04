@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 
@@ -87,7 +86,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsSemestres()
         {
-            this.tramaSemestres = string.Empty;
+            tramaSemestres = string.Empty;
         }
 
         /// <summary>
@@ -133,13 +132,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadSemestre.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadSemestre.ErrorDatos;
-                                    this.descripcionError = entidadSemestre.DescripcionError;
+                                    errorDatos = entidadSemestre.ErrorDatos;
+                                    descripcionError = entidadSemestre.DescripcionError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadSemestre);
+                                    Agregar(entidadSemestre);
                                 }
                             }
                         }
@@ -229,7 +228,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsSemestre semestre in this.InnerList)
+                foreach (clsSemestre semestre in InnerList)
                 {
                     objEscritor.WriteStartElement(_tagSemestre);
 
@@ -299,13 +298,13 @@ namespace BCR.GARANTIAS.Entidades
             StringBuilder listaSemetresJSON = new StringBuilder();
 
             //Se revisa que la lista posea semestres
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                 listaSemetresJSON.Append("{");
 
                 //Se recorren los semestres y se genera la cedena JSON de cada uno
-                foreach (clsSemestre convertirSemestre in this.InnerList)
+                foreach (clsSemestre convertirSemestre in InnerList)
                 {
                     listaSemetresJSON.Append(convertirSemestre.ConvertirJSON());
                     listaSemetresJSON.Append(",");
@@ -358,7 +357,7 @@ namespace BCR.GARANTIAS.Entidades
                         if (semestreAgregar != null)
                         {
                             //Se agrega a la lista el semestre generado
-                            this.Agregar(semestreAgregar);
+                            Agregar(semestreAgregar);
                         }
 
                         //Se reincia la cadena de texto que permite obtener cada semestre

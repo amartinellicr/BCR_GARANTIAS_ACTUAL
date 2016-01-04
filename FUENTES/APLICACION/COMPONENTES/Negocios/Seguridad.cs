@@ -1,18 +1,20 @@
 using System;
-using System.Text;
-using System.Collections;
 using System.DirectoryServices;
 using System.Data.OleDb;
 using System.Data;
 using System.Configuration;
 using Negocios.ActDirectory;
+using System.Data.SqlClient;
+
+using BCRGARANTIAS.Datos;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Seguridad.
-	/// </summary>
-	public class Seguridad
+    /// <summary>
+    /// Summary description for Seguridad.
+    /// </summary>
+    public class Seguridad
 	{
 		#region Constantes
 
@@ -31,15 +33,21 @@ namespace BCRGARANTIAS.Negocios
 		/// </summary>
 		public const string CODESTADOVALIDACIONUSUARIO_FALLO_AUTENTICACION = "2";
 
-		#endregion Constantes
+        #endregion Constantes
 
-		
-		/// <summary>
-		/// Valida los permisos de ingreso a la aplicacion
-		/// </summary>
-		/// <param name="strUsuario">Identificación del usuario</param>
-		/// <param name="strPassword">Password del usuario</param>
-		public bool ValidarUsuario(string strUsuario, string strPassword)
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+
+        #endregion Variables Globales
+
+        /// <summary>
+        /// Valida los permisos de ingreso a la aplicacion
+        /// </summary>
+        /// <param name="strUsuario">Identificación del usuario</param>
+        /// <param name="strPassword">Password del usuario</param>
+        public bool ValidarUsuario(string strUsuario, string strPassword)
 		{
 			bool bErrorRegistrado = false;
 
@@ -58,10 +66,28 @@ namespace BCRGARANTIAS.Negocios
 
 						try
 						{
-							OleDbConnection oConexion = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-							OleDbDataAdapter cmdUsuario = new OleDbDataAdapter("SELECT COD_USUARIO FROM dbo.SEG_USUARIO WHERE COD_USUARIO = '" + strUsuario + "'", oConexion);
-							cmdUsuario.Fill(dsData, "Usuarios");
-						}
+                            listaCampos = new string[] { clsUsuario._cedulaUsuario,
+                                                         clsUsuario._entidadUsuario,
+                                                         clsUsuario._cedulaUsuario, strUsuario};
+
+                            sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = '{3}'", listaCampos);
+
+                            using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                            {
+                                using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                                {
+                                    oComando.Connection.Open();
+
+                                    using (SqlDataAdapter cmdUsuario = new SqlDataAdapter(oComando))
+                                    {
+                                        cmdUsuario.Fill(dsData, "Usuarios");
+                                    }
+
+                                    oComando.Connection.Close();
+                                    oComando.Connection.Dispose();
+                                }
+                            }
+ 						}
 						catch(Exception ex)
 						{
 							bErrorRegistrado = true;
@@ -148,20 +174,38 @@ namespace BCRGARANTIAS.Negocios
 			try
 			{
 				DataSet dsData = new DataSet();
-				using (OleDbConnection oConexion = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion())
-				{
-                    OleDbDataAdapter cmdUsuario = new OleDbDataAdapter("select 1 from dbo.SEG_USUARIO a inner join dbo.SEG_ROLES_X_PERFIL b on a.COD_PERFIL = b.COD_PERFIL where a.COD_USUARIO = '" + strUsuario + "' and b.COD_ROL = " + nRol, oConexion);
-                    cmdUsuario.Fill(dsData, "Roles");
 
-					if ((dsData != null) && (dsData.Tables["Roles"].Rows.Count > 0))
-					{
-						bRespuesta = true;
-					}
-					else
-					{
-						bRespuesta = false;
-					}
-				}
+                listaCampos = new string[] {clsUsuario._entidadUsuario, clsRolXPerfil._entidadRolXPerfil,
+                                            clsUsuario._codigoPerfil, clsRolXPerfil._codigoPerfil,
+                                            clsUsuario._cedulaUsuario, strUsuario,
+                                            clsRolXPerfil._codigoRol, nRol.ToString()};
+
+                sentenciaSql = string.Format("SELECT 1 FROM dbo.{0} SU1 INNER JOIN dbo.{1} SRP ON SU1.{2} = SRP.{3} WHERE SU1.{4} = '{5}' AND {6} = {7}", listaCampos);
+
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                    {
+                        oComando.Connection.Open();
+
+                        using (SqlDataAdapter cmdUsuario = new SqlDataAdapter(oComando))
+                        {
+                            cmdUsuario.Fill(dsData, "Roles");
+                        }
+
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
+
+                if ((dsData != null) && (dsData.Tables["Roles"].Rows.Count > 0))
+                {
+                    bRespuesta = true;
+                }
+                else
+                {
+                    bRespuesta = false;
+                }
 			}
 			catch(Exception ex)
 			{

@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Collections.Specialized;
 
 namespace BCR.GARANTIAS.Comun
@@ -270,7 +269,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (Exception e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
 			}
 		}
@@ -285,7 +284,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}
@@ -301,7 +300,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}
@@ -322,7 +321,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}

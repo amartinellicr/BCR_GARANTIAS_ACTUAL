@@ -1,6 +1,7 @@
 using System;
 using System.Resources;
 using System.Reflection;
+using System.IO;
 
 namespace BCR.GARANTIAS.Comun
 {
@@ -30,56 +31,75 @@ namespace BCR.GARANTIAS.Comun
 			string texto = string.Empty;
 			ResourceManager resourceManager;
 			string nombreLargoClase = string.Empty;
+            string rutaLibreria = string.Empty;
 
-			try
-			{
-				if (nombreAssembly == null)
-				{
-					nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name +  "." + nombreClase;
-					resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetExecutingAssembly());
-					texto = resourceManager.GetString(llave);
+            try
+            {
+                 if (nombreAssembly == null)
+                {
+                    nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name + "." + nombreClase;
+                    resourceManager = new ResourceManager(nombreLargoClase, Assembly.GetExecutingAssembly());
+                    texto = resourceManager.GetString(llave);
 
                     UtilitariosComun.RegistraEventLog("Error encontrando llave (1), nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
 
-				}
-				else
-				{
-					Assembly assembly = Assembly.GetExecutingAssembly();
-					string rutaLibreria = assembly.CodeBase;
-					rutaLibreria = rutaLibreria.Substring(8, rutaLibreria.Length-8);
-					rutaLibreria = rutaLibreria.Replace(SLASH, BACKSLASH);
-					rutaLibreria = rutaLibreria.Substring(0, rutaLibreria.LastIndexOf(BACKSLASH));
-					rutaLibreria = rutaLibreria + BACKSLASH + nombreAssembly;
+                }
+                else
+                {
+                     Assembly assembly = Assembly.GetExecutingAssembly();
+                    rutaLibreria = assembly.CodeBase;
+                    rutaLibreria = rutaLibreria.Substring(8, rutaLibreria.Length - 8);
+                    rutaLibreria = rutaLibreria.Replace(SLASH, BACKSLASH);
+                    rutaLibreria = rutaLibreria.Substring(0, rutaLibreria.LastIndexOf(BACKSLASH));
+                    rutaLibreria = rutaLibreria + BACKSLASH + nombreAssembly;
 
-					assembly = Assembly.LoadFile(rutaLibreria);
-					nombreLargoClase = assembly.GetName().Name + "." + nombreClase;
-					resourceManager = new ResourceManager (nombreLargoClase, assembly);
-					texto = resourceManager.GetString(llave);
+                    if (!nombreAssembly.Contains(assembly.GetName().Name))
+                    {
+                        assembly = Assembly.LoadFile(rutaLibreria);
+                    }
 
-					if (texto == null)
-					{
-						nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name +  "." + nombreClase;
-						resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetExecutingAssembly());
-						texto = resourceManager.GetString(llave);
+                    nombreLargoClase = assembly.GetName().Name + "." + nombreClase;
+                    resourceManager = new ResourceManager(nombreLargoClase, assembly);
+
+                    texto = resourceManager.GetString(llave);
+
+                    if (texto == null)
+                    {
+                        nombreLargoClase = Assembly.GetExecutingAssembly().GetName().Name + "." + nombreClase;
+                        resourceManager = new ResourceManager(nombreLargoClase, Assembly.GetExecutingAssembly());
+                        texto = resourceManager.GetString(llave);
 
                         UtilitariosComun.RegistraEventLog("Error encontrando llave (2), nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
-					}
-				}				
-				if (texto == null)
-				{
-					nombreLargoClase = Assembly.GetEntryAssembly().GetName().Name +  "." + nombreClase;
-					resourceManager = new ResourceManager (nombreLargoClase, Assembly.GetEntryAssembly());
+                    }
+                }
+                if (texto == null)
+                {
+                    nombreLargoClase = Assembly.GetEntryAssembly().GetName().Name + "." + nombreClase;
+                    resourceManager = new ResourceManager(nombreLargoClase, Assembly.GetEntryAssembly());
 
                     UtilitariosComun.RegistraEventLog("Error encontrando llave (3), nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
-				}
-				return texto;
-			}
-			catch (Exception e)
-			{
-                UtilitariosComun.RegistraEventLog("Error encontrando llave (4), nombre largo clase: " + nombreLargoClase, System.Diagnostics.EventLogEntryType.Error);
+                }
 
-				throw new ExcepcionBase(Mensajes.ERROR_ACCESANDO_RECURSOS, e);
-			}
+                return texto;
+            }
+            catch (FileLoadException ex)
+            {
+                UtilitariosComun.RegistraEventLog("El archivo fue encontrado pero no cargado, rutaLibreria: " + rutaLibreria + ". Detalle Técnico: " + ex.Message, System.Diagnostics.EventLogEntryType.Error);
+
+                throw new ExcepcionBase(Mensajes.ERROR_ACCESANDO_RECURSOS, ex);
+            }
+            catch (FileNotFoundException ex)
+            {
+                UtilitariosComun.RegistraEventLog("El archivo no fue encontrado, rutaLibreria: " + rutaLibreria + ". Detalle Técnico: " + ex.Message, System.Diagnostics.EventLogEntryType.Error);
+
+                throw new ExcepcionBase(Mensajes.ERROR_ACCESANDO_RECURSOS, ex);
+            }
+            catch (Exception e)
+            {
+                UtilitariosComun.RegistraEventLog("Error encontrando llave (4), rutaLibreria: " + rutaLibreria + ", nombre largo clase: " + nombreLargoClase + ". Detalle Técnico: " + e.Message, System.Diagnostics.EventLogEntryType.Error);
+
+                throw new ExcepcionBase(Mensajes.ERROR_ACCESANDO_RECURSOS, e);
+            }
 		}
 
 		/// <summary>

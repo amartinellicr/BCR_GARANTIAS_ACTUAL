@@ -225,7 +225,7 @@
                                                 <td class="td_Texto">% Responsabilidad:</td>
                                                 <td>
 										            <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
-										                         ToolTip="Porcentaje de Responsabilidad" Enabled= "False" tabIndex="20"/>
+										                         ToolTip="Porcentaje de Responsabilidad" Enabled="False" tabIndex="20"/>
                                                     <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
 										        </td>
                                                 <td></td>
@@ -594,6 +594,7 @@
     <asp:HiddenField ID="hdnListaSemestresCalculados" runat="server"></asp:HiddenField>
     <asp:HiddenField ID="hdnIndiceAccordionPolizaActivo" runat="server" Value="-1"></asp:HiddenField>
     <asp:HiddenField ID="hdnHabilitarPoliza" runat="server" Value="0"></asp:HiddenField>
+    <asp:HiddenField ID="hdnAplicaCalculoPA" runat="server" Value="1"></asp:HiddenField>
    
 </asp:Content>
 

@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -81,7 +79,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsTiposBienRelacionados()
         {
-            this.tramaRelaciones = string.Empty;
+            tramaRelaciones = string.Empty;
         }
 
         /// <summary>
@@ -90,7 +88,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaRelacionesBD">Trama que posee los datos de las relaciones entre el tipo de bien y los tipos de pólizas obtenidas de la Base de Datos</param>
         public clsTiposBienRelacionados(string tramaRelacionesBD)
         {
-            this.tramaRelaciones = string.Empty;
+            tramaRelaciones = string.Empty;
 
             if (tramaRelacionesBD.Length > 0)
             {
@@ -113,7 +111,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlRelaciones != null)
                 {
-                    this.tramaRelaciones = tramaRelacionesBD;
+                    tramaRelaciones = tramaRelacionesBD;
 
                     if (xmlRelaciones.HasChildNodes)
                     {
@@ -125,13 +123,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadTipoBienRelacionado.ErrorDatos)
                             {
-                                this.errorDatos = entidadTipoBienRelacionado.ErrorDatos;
-                                this.descripcionError = entidadTipoBienRelacionado.DescripcionError;
+                                errorDatos = entidadTipoBienRelacionado.ErrorDatos;
+                                descripcionError = entidadTipoBienRelacionado.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadTipoBienRelacionado);
+                                Agregar(entidadTipoBienRelacionado);
                             }
                         }
                     }

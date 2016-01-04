@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Data;
 
@@ -129,7 +127,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtValuacionesReales.NewRow();
 
-                foreach (clsValuacionReal avaluoReal in this.InnerList)
+                foreach (clsValuacionReal avaluoReal in InnerList)
                 {
                     drFila[_codGarantiaReal] = avaluoReal.CodGarantiaReal;
                     drFila[_fechaValuacion] = avaluoReal.FechaValuacion;
@@ -175,7 +173,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsValuacionReal avaluoReal in this.InnerList)
+                foreach (clsValuacionReal avaluoReal in InnerList)
                 {
                     if (avaluoReal.FechaValuacion == fecha_evaluacion)
                     {

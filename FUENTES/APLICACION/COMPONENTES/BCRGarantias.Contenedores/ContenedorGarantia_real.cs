@@ -20,8 +20,16 @@ namespace BCRGarantias.Contenedores
         public const string COD_CLASE_BIEN = "cod_clase_bien";
         public const string NUM_PLACA_BIEN = "num_placa_bien";
         public const string COD_TIPO_BIEN = "cod_tipo_bien";
+        public const string IDENTIFICACION_SICC = "Identificacion_Sicc";
+        public const string IDENTIFICACION_ALFANUMERICA_SICC = "Identificacion_Alfanumerica_Sicc";
+        public const string INDICADOR_VIVIENDA_HABITADA_DEUDOR = "Indicador_Vivienda_Habitada_Deudor";
+        public const string USUARIO_MODIFICO = "Usuario_Modifico";
+        public const string FECHA_MODIFICO = "Fecha_Modifico";
+        public const string FECHA_INSERTO = "Fecha_Inserto";
+        public const string FECHA_REPLICA = "Fecha_Replica";
 
-		#endregion
+   
+        #endregion
 
         public ContenedorGarantia_real()
 		{
@@ -75,9 +83,36 @@ namespace BCRGarantias.Contenedores
             campo.Llave = COD_TIPO_BIEN;
 			Campos.Agregar(campo);
 
+            campo = new CampoBase();
+            campo.Llave = IDENTIFICACION_SICC;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = IDENTIFICACION_ALFANUMERICA_SICC;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = INDICADOR_VIVIENDA_HABITADA_DEUDOR;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = USUARIO_MODIFICO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_MODIFICO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_INSERTO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_REPLICA;
+            Campos.Agregar(campo);
 
 
-			NombreEntidad = NOMBRE_ENTIDAD;
+            NombreEntidad = NOMBRE_ENTIDAD;
 
 		}
     }

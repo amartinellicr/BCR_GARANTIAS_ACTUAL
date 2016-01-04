@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 using System.Globalization;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -517,24 +510,18 @@ namespace BCR.GARANTIAS.Entidades
         {
             bool camposRequeridos = true;
 
-            if (camposRequeridos && this.codigoTipoGarantia == -1)
+            if (camposRequeridos && codigoTipoGarantia == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de garantia", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de garantia", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.codigoTipoMitigador == -1)
+            if (camposRequeridos && codigoTipoMitigador == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de mitigador de riesgo", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de mitigador de riesgo", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            //if (camposRequeridos && this.porcentajeAceptacion == 0)
-            //{
-            //    this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al porcentaje de aceptación", Mensajes.ASSEMBLY);
-            //    this.errorDatos = true;
-            //    camposRequeridos = false;
-            //}
 
             return camposRequeridos;
 

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Data;
 
@@ -81,7 +79,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtCapacidadesPago.NewRow();
 
-                foreach (clsCapacidadPago capacidadPago in this.InnerList)
+                foreach (clsCapacidadPago capacidadPago in InnerList)
                 {
                     drFila[_fechaCapacidadPago] = capacidadPago.FechaCapacidadPago;
                     drFila[_codCapacidadPago] = capacidadPago.CapacidadPago;

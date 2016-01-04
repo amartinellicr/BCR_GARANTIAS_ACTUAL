@@ -10,12 +10,13 @@ namespace BCRGARANTIAS.Datos
 	public class ProcesosDatos
     {
         #region [ Control de procesos desatendidos ]
+
         public bool SeEjecutoProceso(string tcocProceso, DateTime tfecEjecucion)
         {
             bool fueEjecutado;
 
              SqlParameter[] parameters = new SqlParameter[] { 
-                 new SqlParameter("ReturnValue", SqlDbType.Bit),
+                new SqlParameter("ReturnValue", SqlDbType.Bit),
                 new SqlParameter("tcocProceso", SqlDbType.VarChar, 20), 
                 new SqlParameter("tfecCorrida", SqlDbType.DateTime)
                  

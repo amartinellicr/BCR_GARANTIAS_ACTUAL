@@ -1,14 +1,12 @@
 using System;
 using System.Web;
-using System.Collections;
-using System.Runtime.Serialization;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for CGarantiaFiduciaria.
-	/// </summary>
-	[Serializable]
+    /// <summary>
+    /// Summary description for CGarantiaFiduciaria.
+    /// </summary>
+    [Serializable]
 	public class CGarantiaFiduciaria
 	{
 		#region Variables

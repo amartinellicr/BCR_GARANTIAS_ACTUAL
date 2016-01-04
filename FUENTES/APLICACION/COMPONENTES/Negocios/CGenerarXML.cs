@@ -1,15 +1,9 @@
-using System;
-using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
-using System.Text;
-
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for CGenerarXML.
-	/// </summary>
-	public class CGenerarXML
+    /// <summary>
+    /// Summary description for CGenerarXML.
+    /// </summary>
+    public class CGenerarXML
 	{
 		#region Header
 		/// <summary>
@@ -30,19 +24,13 @@ namespace BCRGARANTIAS.Negocios
 										string strUsuario, string strOficinaOrigen, 
 										string strEstacion, string strFechaHora)
 		{
-			string strXML;
-			strXML = "<HEADER>";
-			strXML = strXML + "<REFERENCIA>" + strReferencia + "</REFERENCIA>";
-			strXML = strXML + "<CANAL>" + strCanal + "</CANAL>";
-			strXML = strXML + "<TRANS>" + strTrans + "</TRANS>";
-			strXML = strXML + "<CODIGORESPUESTA>" + strCodigoRespuesta + "</CODIGORESPUESTA>";
-			strXML = strXML + "<DESCRIPCION>" + strDescripcion + "</DESCRIPCION>";
-			strXML = strXML + "<USUARIO>" + strUsuario + "</USUARIO>";
-			strXML = strXML + "<OFICINAORIGEN>" + strOficinaOrigen + "</OFICINAORIGEN>";
-			strXML = strXML + "<ESTACION>" + strEstacion + "</ESTACION>";
-			strXML = strXML + "<FECHAHORA>" + strFechaHora + "</FECHAHORA>";
-			strXML = strXML + "</HEADER>";
-			return strXML;
+
+            string[] listaCampos = new string[] { strReferencia, strCanal, strTrans, strCodigoRespuesta, strDescripcion, strUsuario, strOficinaOrigen,
+                                                  strEstacion, strFechaHora};
+
+            string strXML = string.Format("<HEADER><REFERENCIA>{0}</REFERENCIA><CANAL>{1}</CANAL><TRANS>{2}</TRANS><CODIGORESPUESTA>{3}</CODIGORESPUESTA><DESCRIPCION>{4}</DESCRIPCION><USUARIO>{5}</USUARIO><OFICINAORIGEN>{6}</OFICINAORIGEN><ESTACION>{7}</ESTACION><FECHAHORA>{8}</FECHAHORA></HEADER>", listaCampos);
+
+            return strXML;
 		}
 		#endregion 
 
@@ -81,28 +69,14 @@ namespace BCRGARANTIAS.Negocios
 							string strMoneda, string strProducto, string strOperacion, string strClase,
 							string strNumero)
 		{
-			string strXML;
+            string encabezadoTrama = GenerarHeaderXML(strReferencia, strCanal, strTrans,
+                                                      strCodigoRespuesta, strDescripcion, strUsuario,
+                                                      strOficinaOrigen, strEstacion, strFechaHora);
 
-			strXML = "<TRAMAXML>";
+            string[] listaCampos = new string[] { encabezadoTrama, strIspec, strFijo, strProximo, strAyuda, strFecha, strContabilidad, strOficina,
+                                                  strMoneda, strProducto, strOperacion, strClase, strNumero};
 
-			strXML = strXML + GenerarHeaderXML(strReferencia, strCanal, strTrans, 
-				strCodigoRespuesta, strDescripcion, strUsuario, 
-				strOficinaOrigen, strEstacion, strFechaHora);
-
-			strXML = strXML + "<PRC18>" + "<ISPEC>" + strIspec + "</ISPEC>";
-			strXML = strXML + "<FIJO>" + strFijo + "</FIJO>";
-			strXML = strXML + "<PROXIMO>" + strProximo + "</PROXIMO>";
-			strXML = strXML + "<AYUDA>" + strAyuda + "</AYUDA>";
-			strXML = strXML + "<FECHA>" + strFecha + "</FECHA>";
-			strXML = strXML + "<PCO-CONT>" + strContabilidad + "</PCO-CONT>";
-			strXML = strXML + "<PCO-OFIC>" + strOficina + "</PCO-OFIC>";
-			strXML = strXML + "<PCO-MONE>" + strMoneda + "</PCO-MONE>";
-			strXML = strXML + "<PCO-PROD>" + strProducto + "</PCO-PROD>";
-			strXML = strXML + "<PCO-OPERA>" + strOperacion + "</PCO-OPERA>";
-			strXML = strXML + "<CLASE>" + strClase + "</CLASE>";
-			strXML = strXML + "<NUMERO>" + strNumero + "</NUMERO>";
-			strXML = strXML + "</PRC18>";
-			strXML = strXML + "</TRAMAXML>";
+            string strXML = string.Format("<TRAMAXML>{0}<PRC18><ISPEC>{1}</ISPEC><FIJO>{2}</FIJO><PROXIMO>{3}</PROXIMO><AYUDA>{4}</AYUDA><FECHA>{5}</FECHA><PCO-CONT>{6}</PCO-CONT><PCO-OFIC>{7}</PCO-OFIC><PCO-MONE>{8}</PCO-MONE><PCO-PROD>{9}</PCO-PROD><PCO-OPERA>{10}</PCO-OPERA><CLASE>{11}</CLASE><NUMERO>{12}</NUMERO></PRC18></TRAMAXML>");
 
 			return strXML;
 		}

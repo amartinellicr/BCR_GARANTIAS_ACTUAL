@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -213,22 +205,22 @@ namespace BCR.GARANTIAS.Entidades
         {
             bool camposRequeridos = true;
 
-            if (camposRequeridos && this.FechaHora == DateTime.MinValue)
+            if (camposRequeridos && FechaHora == DateTime.MinValue)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "a la fecha de vigencia", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "a la fecha de vigencia", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.tipoCambio == 0)
+            if (camposRequeridos && tipoCambio == 0)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de cambio", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de cambio", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.indicePreciosConsumidor == 0)
+            if (camposRequeridos && indicePreciosConsumidor == 0)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al índice de precios al consumidor", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al índice de precios al consumidor", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
 

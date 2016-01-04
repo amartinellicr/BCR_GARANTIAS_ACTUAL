@@ -1,11 +1,7 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
-using System.Xml;
-using System.Collections.Specialized;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
@@ -60,6 +56,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Insertar_Tipo_Bien_Relacionado", parameters);
 
                         respuestaObtenida = parameters[5].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -181,6 +180,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Modificar_Tipo_Bien_Relacionado", parameters);
 
                         respuestaObtenida = parameters[6].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -314,6 +316,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Eliminar_Tipo_Bien_Relacionado", parameters);
 
                         respuestaObtenida = parameters[1].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -411,6 +416,9 @@ namespace BCRGARANTIAS.Negocios
                     oConexion.Open();
 
                     tramaObtenida = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Consultar_Tipo_Bien_Relacionado", out parametrosSalida, parameters);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)

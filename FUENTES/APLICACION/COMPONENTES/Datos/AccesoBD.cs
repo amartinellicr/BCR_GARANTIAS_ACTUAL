@@ -10,6 +10,8 @@ using System.Collections;
 using BCR.Seguridad;
 using System.Security.Cryptography;
 using System.Text;
+using System.Data.Sql;
+using System.Data.OleDb;
 
 
 namespace BCRGARANTIAS.Datos
@@ -23,6 +25,19 @@ namespace BCRGARANTIAS.Datos
         /// Tiempo de espera que transcurre al ejecutar una sentencia a nivel de base de datos. Es dado en segundos.
         /// </summary>
         private const int tiempo_Espera_Ejecucion = 300;
+
+        /// <summary>
+        /// Tiempo de espera parametrizado para la ejecución de un proceso
+        /// </summary>
+        public static int TiempoEsperaEjecucion
+        {
+            get
+            {
+                string tiempoParametrizado = ((ConfigurationManager.AppSettings["TIEMPO_ESPERA_EJECUCION"] != null) ? ConfigurationManager.AppSettings["TIEMPO_ESPERA_EJECUCION"] : string.Empty);
+                int tiempoRetornado = ((tiempoParametrizado.Length > 0) ? (int.Parse(tiempoParametrizado)) : tiempo_Espera_Ejecucion);
+                return tiempoRetornado;
+            }
+        }
 
         /// <summary>
         /// Metodo para obtener el string de conexión de la base de datos
@@ -65,36 +80,39 @@ namespace BCRGARANTIAS.Datos
         /// </summary>
         /// <param name="sqlQuery">consulta SQL</param>
         /// <returns>System.Data.DataSet</returns>
-        private static System.Data.DataSet consultarBD(string sqlQuery)
+        private static DataSet consultarBD(string sqlQuery)
         {
-            System.Data.DataSet myDS = new System.Data.DataSet();   //se carga el resultado de la consulta
-            System.Data.OleDb.OleDbDataAdapter myDA = new System.Data.OleDb.OleDbDataAdapter();     //resultado de la consulta
-            System.Data.OleDb.OleDbCommand comando = new System.Data.OleDb.OleDbCommand();
+            DataSet myDS = new DataSet();   //se carga el resultado de la consulta
 
-            try
+            using (SqlConnection oConexion = new SqlConnection(ObtenerConnectionString()))
             {
-                comando.Connection = ObtenerStringConexion();
-                comando.CommandTimeout = tiempo_Espera_Ejecucion;
-                comando.CommandText = sqlQuery;
+                 using (SqlCommand oComando = new SqlCommand(sqlQuery, oConexion))
+                {
+                    oComando.CommandTimeout = TiempoEsperaEjecucion;
+                    oComando.CommandText = sqlQuery;
+                    oComando.Connection.Open();
 
-                if (sqlQuery.StartsWith("select"))
-                {
-                    //es un select y retorna el dataset
-                    myDA.SelectCommand = comando;
-                    myDS.Clear();
-                    myDA.Fill(myDS, "resultado");
-                    return myDS;
+                    if (sqlQuery.ToLower().StartsWith("select"))
+                    {
+                        using (SqlDataAdapter oDataAdapter = new SqlDataAdapter())
+                        {
+                            oDataAdapter.SelectCommand = oComando;
+                            oDataAdapter.SelectCommand.Connection = oConexion;
+                            oDataAdapter.Fill(myDS, "resultado");
+                            oComando.Connection.Close();
+                            oComando.Connection.Dispose();
+                            return myDS;
+                        }
+                    }
+                    else
+                    {
+                        //es un update , insert o delete
+                        oComando.ExecuteNonQuery();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                        return null;
+                    }
                 }
-                else
-                {
-                    //es un update , insert o delete
-                    comando.ExecuteNonQuery();
-                    return null;
-                }
-            }
-            finally
-            {
-                comando.Connection.Close();
             }
         }
 
@@ -103,7 +121,7 @@ namespace BCRGARANTIAS.Datos
         /// </summary>
         /// <param name="sqlQuery">consulta SQL</param>
         /// <returns>System.Data.DataSet</returns>
-        public static System.Data.DataSet ejecutarConsulta(string sqlQuery)
+        public static DataSet ejecutarConsulta(string sqlQuery)
         {
             return consultarBD(sqlQuery);
         }
@@ -133,7 +151,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
+            oComando.CommandTimeout = TiempoEsperaEjecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -208,7 +226,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
+            oComando.CommandTimeout = TiempoEsperaEjecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -271,7 +289,7 @@ namespace BCRGARANTIAS.Datos
 
             SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
+            oComando.CommandTimeout = TiempoEsperaEjecucion;
 
             AttachParameters(oComando, parameters);
 
@@ -338,7 +356,7 @@ namespace BCRGARANTIAS.Datos
 
             //declara las propiedades del comando
             oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempo_Espera_Ejecucion;
+            oComando.CommandTimeout = TiempoEsperaEjecucion;
             AttachParameters(oComando, parameters);
 
             oDataAdapter.SelectCommand = oComando;
@@ -909,7 +927,7 @@ namespace BCRGARANTIAS.Datos
 
             // Associate the connection with the command
             command.Connection = connection;
-            command.CommandTimeout = tiempo_Espera_Ejecucion;
+            command.CommandTimeout = TiempoEsperaEjecucion;
 
             // Set the command text (stored procedure name or SQL statement)
             command.CommandText = commandText;

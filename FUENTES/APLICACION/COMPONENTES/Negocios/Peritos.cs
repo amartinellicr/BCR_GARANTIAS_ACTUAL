@@ -1,348 +1,375 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Peritos.
-	/// </summary>
-	public class Peritos
+    /// <summary>
+    /// Summary description for Peritos.
+    /// </summary>
+    public class Peritos
 	{
-		#region Metodos Publicos
-		public void Crear(string strCedula, string strNombre, int nTipoPersona, string strTelefono, 
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        int nFilasAfectadas = 0;
+
+        #endregion Variables Globales
+
+        #region Metodos Publicos
+
+        public void Crear(string strCedula, string strNombre, int nTipoPersona, string strTelefono,
                           string strEmail, string strDireccion, string strUsuario, string strIP)
-		{
-			try
-			{
-				string strInsertarPerito = "INSERT INTO GAR_PERITO " +
-						        "(CEDULA_PERITO, DES_PERITO, COD_TIPO_PERSONA, DES_TELEFONO, DES_EMAIL, DES_DIRECCION) " +
-								"VALUES ('" + strCedula + "', '" + strNombre + "'," + nTipoPersona + ", '" + strTelefono + "', '" + strEmail + "', '" + strDireccion + "');";
-				
-                //AccesoBD.ejecutarConsulta(strQry);
+        {
+            try
+            {
+                listaCampos = new string[] { clsPerito._entidadPerito,
+                                             clsPerito._cedulaPerito, clsPerito._nombrePerito, clsPerito._codigoTipoPersona, clsPerito._numeroTelefono, clsPerito._correo, clsPerito._direccion,
+                                             strCedula, strNombre, nTipoPersona.ToString(), strTelefono, strEmail, strDireccion};
 
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand(strInsertarPerito, oConexion);
+                string strInsertarPerito = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}, {5}, {6}) VALUES('{7}', '{8}', {9}, '{10}', '{11}', '{12}')", listaCampos);
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(strInsertarPerito, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					if (nFilasAfectadas > 0)
-					{
-						Bitacora oBitacora = new Bitacora();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
 
-						TraductordeCodigos oTraductor = new TraductordeCodigos();
+                    }
+                }
+                if (nFilasAfectadas > 0)
+                {
+                    Bitacora oBitacora = new Bitacora();
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.CEDULA_PERITO,
-						   string.Empty,
-						   strCedula);
+                    TraductordeCodigos oTraductor = new TraductordeCodigos();
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.DES_PERITO,
-						   string.Empty,
-						   strNombre);
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._cedulaPerito,
+                       string.Empty,
+                       strCedula);
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.COD_TIPO_PERSONA,
-						   string.Empty,
-						   oTraductor.TraducirTipoPersona(nTipoPersona));
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._nombrePerito,
+                       string.Empty,
+                       strNombre);
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.DES_TELEFONO,
-						   string.Empty,
-						   strTelefono);
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._codigoTipoPersona,
+                       string.Empty,
+                       oTraductor.TraducirTipoPersona(nTipoPersona));
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.DES_EMAIL,
-						   string.Empty,
-						   strEmail);
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._numeroTelefono,
+                       string.Empty,
+                       strTelefono);
 
-						oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-						   1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, ContenedorPerito.DES_DIRECCION,
-						   string.Empty,
-						   strDireccion);
-					}
-				}
-			}
-			catch
-			{
-				throw;
-			}
-		}
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._correo,
+                       string.Empty,
+                       strEmail);
+
+                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                       1, null, string.Empty, string.Empty, strInsertarPerito, string.Empty, clsPerito._direccion,
+                       string.Empty,
+                       strDireccion);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
 		public void Modificar(string strCedula, string strNombre, int nTipoPersona, string strTelefono,
                               string strEmail, string strDireccion, string strUsuario, string strIP)
 		{
-			try
-			{
-				string strModificarPerito = "UPDATE GAR_PERITO " +
-								"SET CEDULA_PERITO = '" + strCedula + "', DES_PERITO = '" + strNombre + "', " +
-								"COD_TIPO_PERSONA = " + nTipoPersona + ", DES_TELEFONO = '" + strTelefono + "', " +
-								"DES_EMAIL = '" + strEmail + "', DES_DIRECCION = '" + strDireccion + "' " + 
-								"WHERE CEDULA_PERITO = '" + strCedula + "'";
-				
-                //AccesoBD.ejecutarConsulta(strQry);
+            DataSet dsPerito = new DataSet();
 
+            try
+            {
+                listaCampos = new string[] {clsPerito._cedulaPerito, clsPerito._nombrePerito, clsPerito._codigoTipoPersona, clsPerito._numeroTelefono, clsPerito._correo, clsPerito._direccion,
+                                            clsPerito._entidadPerito,
+                                            clsPerito._cedulaPerito, strCedula};
+
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}')", listaCampos);
 
                 //Se obtienen los datos antes de ser modificados, con el fin de poder ingresarlos en la bitácora
-                DataSet dsPerito = AccesoBD.ejecutarConsulta("select " + ContenedorPerito.CEDULA_PERITO + "," +
-                    ContenedorPerito.DES_PERITO + "," + ContenedorPerito.COD_TIPO_PERSONA + "," +
-                    ContenedorPerito.DES_TELEFONO + "," + ContenedorPerito.DES_EMAIL + "," +
-                    ContenedorPerito.DES_DIRECCION + 
-                    " from " + ContenedorPerito.NOMBRE_ENTIDAD +
-                    " where " + ContenedorPerito.CEDULA_PERITO + " = '" + strCedula + "'");
+                dsPerito = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand(strModificarPerito, oConexion);
+                listaCampos = new string[] {clsPerito._entidadPerito,
+                                            clsPerito._cedulaPerito, strCedula,
+                                            clsPerito._nombrePerito, strNombre,
+                                            clsPerito._codigoTipoPersona, nTipoPersona.ToString(),
+                                            clsPerito._numeroTelefono, strTelefono,
+                                            clsPerito._correo, strEmail,
+                                            clsPerito._direccion, strDireccion,
+                                            clsPerito._cedulaPerito, strCedula};
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                string strModificarPerito = string.Format("UPDATE dbo.{0} SET {1} = '{2}', {3} = '{4}', {5} = {6}, {7} = '{8}', {9} = '{10}', {11} = '{12}' WHERE {13} = '{14}'", listaCampos);
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(strModificarPerito, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					if (nFilasAfectadas > 0)
-					{
-						#region Inserción en Bitácora
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-						if ((dsPerito != null) && (dsPerito.Tables.Count > 0) && (dsPerito.Tables[0].Rows.Count > 0))
-						{
-							Bitacora oBitacora = new Bitacora();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
 
-							TraductordeCodigos oTraductor = new TraductordeCodigos();
+                if (nFilasAfectadas > 0)
+                {
+                    #region Inserción en Bitácora
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.CEDULA_PERITO))
-							{
-								string strCedulaPeritoObt = dsPerito.Tables[0].Rows[0][ContenedorPerito.CEDULA_PERITO].ToString();
+                    if ((dsPerito != null) && (dsPerito.Tables.Count > 0) && (dsPerito.Tables[0].Rows.Count > 0))
+                    {
+                        Bitacora oBitacora = new Bitacora();
 
-								if (strCedulaPeritoObt.CompareTo(strCedula) != 0)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.CEDULA_PERITO,
-									   strCedulaPeritoObt,
-									   strCedula);
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.CEDULA_PERITO,
-									   string.Empty,
-									   strCedula);
-							}
+                        TraductordeCodigos oTraductor = new TraductordeCodigos();
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.DES_PERITO))
-							{
-								string strNombrePeritoObt = dsPerito.Tables[0].Rows[0][ContenedorPerito.DES_PERITO].ToString();
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._cedulaPerito))
+                        {
+                            string strCedulaPeritoObt = dsPerito.Tables[0].Rows[0][clsPerito._cedulaPerito].ToString();
 
-								if (strNombrePeritoObt.CompareTo(strNombre) != 0)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_PERITO,
-									   strNombrePeritoObt,
-									   strNombre);
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_PERITO,
-									   string.Empty,
-									   strNombre);
-							}
+                            if (strCedulaPeritoObt.CompareTo(strCedula) != 0)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._cedulaPerito,
+                                   strCedulaPeritoObt,
+                                   strCedula);
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._cedulaPerito,
+                                   string.Empty,
+                                   strCedula);
+                        }
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.COD_TIPO_PERSONA))
-							{
-								int nCodigoTipoPersonaObt = Convert.ToInt32(dsPerito.Tables[0].Rows[0][ContenedorPerito.COD_TIPO_PERSONA].ToString());
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._nombrePerito))
+                        {
+                            string strNombrePeritoObt = dsPerito.Tables[0].Rows[0][clsPerito._nombrePerito].ToString();
 
-								if (nCodigoTipoPersonaObt != nTipoPersona)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.COD_TIPO_PERSONA,
-									   oTraductor.TraducirTipoPersona(nCodigoTipoPersonaObt),
-									   oTraductor.TraducirTipoPersona(nTipoPersona));
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.COD_TIPO_PERSONA,
-									   string.Empty,
-									   oTraductor.TraducirTipoPersona(nTipoPersona));
-							}
+                            if (strNombrePeritoObt.CompareTo(strNombre) != 0)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._nombrePerito,
+                                   strNombrePeritoObt,
+                                   strNombre);
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._nombrePerito,
+                                   string.Empty,
+                                   strNombre);
+                        }
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.DES_TELEFONO))
-							{
-								string strTelefonoObt = dsPerito.Tables[0].Rows[0][ContenedorPerito.DES_TELEFONO].ToString();
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._codigoTipoPersona))
+                        {
+                            int nCodigoTipoPersonaObt = Convert.ToInt32(dsPerito.Tables[0].Rows[0][clsPerito._codigoTipoPersona].ToString());
 
-								if (strTelefonoObt.CompareTo(strTelefono) != 0)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_TELEFONO,
-									   strTelefonoObt,
-									   strTelefono);
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_TELEFONO,
-									   string.Empty,
-									   strTelefono);
-							}
+                            if (nCodigoTipoPersonaObt != nTipoPersona)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._codigoTipoPersona,
+                                   oTraductor.TraducirTipoPersona(nCodigoTipoPersonaObt),
+                                   oTraductor.TraducirTipoPersona(nTipoPersona));
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._codigoTipoPersona,
+                                   string.Empty,
+                                   oTraductor.TraducirTipoPersona(nTipoPersona));
+                        }
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.DES_EMAIL))
-							{
-								string strEmailObt = dsPerito.Tables[0].Rows[0][ContenedorPerito.DES_EMAIL].ToString();
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._numeroTelefono))
+                        {
+                            string strTelefonoObt = dsPerito.Tables[0].Rows[0][clsPerito._numeroTelefono].ToString();
 
-								if (strEmailObt.CompareTo(strEmail) != 0)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_EMAIL,
-									   strEmailObt,
-									   strEmail);
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_EMAIL,
-									   string.Empty,
-									   strEmail);
-							}
+                            if (strTelefonoObt.CompareTo(strTelefono) != 0)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._numeroTelefono,
+                                   strTelefonoObt,
+                                   strTelefono);
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._numeroTelefono,
+                                   string.Empty,
+                                   strTelefono);
+                        }
 
-							if (!dsPerito.Tables[0].Rows[0].IsNull(ContenedorPerito.DES_DIRECCION))
-							{
-								string strDireccionObt = dsPerito.Tables[0].Rows[0][ContenedorPerito.DES_DIRECCION].ToString();
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._correo))
+                        {
+                            string strEmailObt = dsPerito.Tables[0].Rows[0][clsPerito._correo].ToString();
 
-								if (strDireccionObt.CompareTo(strDireccion) != 0)
-								{
-									oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_DIRECCION,
-									   strDireccionObt,
-									   strDireccion);
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-									   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, ContenedorPerito.DES_DIRECCION,
-									   string.Empty,
-									   strDireccion);
-							}
-						}
+                            if (strEmailObt.CompareTo(strEmail) != 0)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._correo,
+                                   strEmailObt,
+                                   strEmail);
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._correo,
+                                   string.Empty,
+                                   strEmail);
+                        }
 
-						#endregion
-					}
-				}
-			}
-			catch
-			{
-				throw;
-			}
+                        if (!dsPerito.Tables[0].Rows[0].IsNull(clsPerito._direccion))
+                        {
+                            string strDireccionObt = dsPerito.Tables[0].Rows[0][clsPerito._direccion].ToString();
+
+                            if (strDireccionObt.CompareTo(strDireccion) != 0)
+                            {
+                                oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._direccion,
+                                   strDireccionObt,
+                                   strDireccion);
+                            }
+                        }
+                        else
+                        {
+                            oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                   2, null, string.Empty, string.Empty, strModificarPerito, string.Empty, clsPerito._direccion,
+                                   string.Empty,
+                                   strDireccion);
+                        }
+                    }
+
+                    #endregion
+                }
+            }
+            catch
+            {
+                throw;
+            }
 		}
 
         public void Eliminar(string strCedula, string strUsuario, string strIP)
 		{
-			try
-			{
-				string strEliminarPerito = "DELETE GAR_PERITO WHERE CEDULA_PERITO = '" + strCedula + "'";
+            DataSet dsPerito = new DataSet();
 
-                string strConsultarPerito = "select " + ContenedorPerito.CEDULA_PERITO + "," +
-                   ContenedorPerito.DES_PERITO + "," + ContenedorPerito.COD_TIPO_PERSONA + "," +
-                   ContenedorPerito.DES_TELEFONO + "," + ContenedorPerito.DES_EMAIL + "," +
-                   ContenedorPerito.DES_DIRECCION +
-                   " from " + ContenedorPerito.NOMBRE_ENTIDAD +
-                   " where " + ContenedorPerito.CEDULA_PERITO + " = '" + strCedula + "'";
+            try
+            {
+                listaCampos = new string[] {clsPerito._cedulaPerito, clsPerito._nombrePerito, clsPerito._codigoTipoPersona, clsPerito._numeroTelefono, clsPerito._correo, clsPerito._direccion,
+                                            clsPerito._entidadPerito,
+                                            clsPerito._cedulaPerito, strCedula};
 
-                DataSet dsPerito = AccesoBD.ejecutarConsulta(strConsultarPerito);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}')", listaCampos);
 
+                dsPerito = AccesoBD.ejecutarConsulta(sentenciaSql);
 
-                //AccesoBD.ejecutarConsulta(strQry);
+                listaCampos = new string[] {clsPerito._entidadPerito,
+                                            clsPerito._cedulaPerito, strCedula};
 
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand(strEliminarPerito, oConexion);
+                string strEliminarPerito = string.Format("DELETE FROM dbo.{0} WHERE {1} = '{2}'", listaCampos);
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(strEliminarPerito, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-					if (nFilasAfectadas > 0)
-					{
-						#region Inserción en Bitácora
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
 
-						Bitacora oBitacora = new Bitacora();
+                if (nFilasAfectadas > 0)
+                {
+                    #region Inserción en Bitácora
 
-						TraductordeCodigos oTraductor = new TraductordeCodigos();
+                    Bitacora oBitacora = new Bitacora();
 
-						if ((dsPerito != null) && (dsPerito.Tables.Count > 0) && (dsPerito.Tables[0].Rows.Count > 0))
-						{
-							foreach (DataRow drPerito in dsPerito.Tables[0].Rows)
-							{
-								for (int nIndice = 0; nIndice < drPerito.Table.Columns.Count; nIndice++)
-								{
-									if (drPerito.Table.Columns[nIndice].ColumnName.CompareTo(ContenedorPerito.COD_TIPO_PERSONA) == 0)
-									{
-										if (drPerito[nIndice, DataRowVersion.Current].ToString() != string.Empty)
-										{
-											oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-											   3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
-											   drPerito.Table.Columns[nIndice].ColumnName,
-											   oTraductor.TraducirTipoPersona(Convert.ToInt32(drPerito[nIndice, DataRowVersion.Current].ToString())),
-											   string.Empty);
-										}
-										else
-										{
-											oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-											   3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
-											   drPerito.Table.Columns[nIndice].ColumnName,
-											   string.Empty,
-											   string.Empty);
-										}
-									}
-									else
-									{
-										oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-										   3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
-										   drPerito.Table.Columns[nIndice].ColumnName,
-										   drPerito[nIndice, DataRowVersion.Current].ToString(),
-										   string.Empty);
-									}
-								}
-							}
-						}
-						else
-						{
-							oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
-							  3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty, string.Empty,
-							  string.Empty,
-							  string.Empty);
-						}
+                    TraductordeCodigos oTraductor = new TraductordeCodigos();
 
-						#endregion
-					}
-				}
-			}
-			catch
-			{
-				throw;
-			}
+                    if ((dsPerito != null) && (dsPerito.Tables.Count > 0) && (dsPerito.Tables[0].Rows.Count > 0))
+                    {
+                        foreach (DataRow drPerito in dsPerito.Tables[0].Rows)
+                        {
+                            for (int nIndice = 0; nIndice < drPerito.Table.Columns.Count; nIndice++)
+                            {
+                                if (drPerito.Table.Columns[nIndice].ColumnName.CompareTo(clsPerito._codigoTipoPersona) == 0)
+                                {
+                                    if (drPerito[nIndice, DataRowVersion.Current].ToString() != string.Empty)
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                           3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
+                                           drPerito.Table.Columns[nIndice].ColumnName,
+                                           oTraductor.TraducirTipoPersona(Convert.ToInt32(drPerito[nIndice, DataRowVersion.Current].ToString())),
+                                           string.Empty);
+                                    }
+                                    else
+                                    {
+                                        oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                           3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
+                                           drPerito.Table.Columns[nIndice].ColumnName,
+                                           string.Empty,
+                                           string.Empty);
+                                    }
+                                }
+                                else
+                                {
+                                    oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                                       3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty,
+                                       drPerito.Table.Columns[nIndice].ColumnName,
+                                       drPerito[nIndice, DataRowVersion.Current].ToString(),
+                                       string.Empty);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        oBitacora.InsertarBitacora("GAR_PERITO", strUsuario, strIP, null,
+                          3, null, string.Empty, string.Empty, strEliminarPerito, string.Empty, string.Empty,
+                          string.Empty,
+                          string.Empty);
+                    }
+
+                    #endregion
+                }
+            }
+            catch
+            {
+                throw;
+            }
 		}
 		#endregion
 	}

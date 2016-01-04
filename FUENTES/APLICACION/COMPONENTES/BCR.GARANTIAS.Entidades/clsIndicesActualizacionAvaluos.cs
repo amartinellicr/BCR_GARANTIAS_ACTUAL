@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -77,7 +75,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsIndicesActualizacionAvaluos()
         {
-            this.tramaIndices = string.Empty;
+            tramaIndices = string.Empty;
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaIndicesBD">Trama que posee los datos del os catálogos obtenidos de la Base de Datos</param>
         public clsIndicesActualizacionAvaluos(string tramaIndicesBD)
         {
-            this.tramaIndices = string.Empty;
+            tramaIndices = string.Empty;
 
             if (tramaIndicesBD.Length > 0)
             {
@@ -109,7 +107,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlIndices != null)
                 {
-                    this.tramaIndices = tramaIndicesBD;
+                    tramaIndices = tramaIndicesBD;
 
                     if (xmlIndices.HasChildNodes)
                     {
@@ -121,13 +119,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadIndiceActAvaluos.ErrorDatos)
                             {
-                                this.errorDatos = entidadIndiceActAvaluos.ErrorDatos;
-                                this.descripcionError = entidadIndiceActAvaluos.DescripcionError;
+                                errorDatos = entidadIndiceActAvaluos.ErrorDatos;
+                                descripcionError = entidadIndiceActAvaluos.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadIndiceActAvaluos);
+                                Agregar(entidadIndiceActAvaluos);
                             }
                         }
                     }

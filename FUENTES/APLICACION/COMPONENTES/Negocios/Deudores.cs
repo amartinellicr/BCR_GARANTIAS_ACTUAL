@@ -1,374 +1,387 @@
 using System;
 using System.Data;
-using System.Configuration;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
+using BCR.GARANTIAS.Entidades;
+using BCR.GARANTIAS.Comun;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Deudores.
-	/// </summary>
-	public class Deudores
+    /// <summary>
+    /// Summary description for Deudores.
+    /// </summary>
+    public class Deudores
 	{
-		#region Metodos Publicos
-		public void Modificar(int nTipoPersona, string strCedula, string strNombre, int nCondicionEspecial,
-							  int nTipoAsignacion, int nGeneradorDivisas, int nVinculadoEntidad, string strUsuario, string strIP,
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        int nFilasAfectadas = 0;
+
+        #endregion Variables Globales
+
+        #region Metodos Publicos
+        public void Modificar(int nTipoPersona, string strCedula, string strNombre, int nCondicionEspecial,
+                              int nTipoAsignacion, int nGeneradorDivisas, int nVinculadoEntidad, string strUsuario, string strIP,
                               int nTipoGarantia)
-		{
-			try
-			{
+        {
+            try
+            {
                 string strGarantia = "-";
                 string strOperacionCrediticia = "-";
-				string strQry;
+                string strQry;
+                
 
-				strQry = "UPDATE GAR_DEUDOR " +
-						 "SET COD_TIPO_DEUDOR = " + nTipoPersona + ", " +
-						 "COD_GENERADOR_DIVISAS = " + nGeneradorDivisas + ", COD_VINCULADO_ENTIDAD = " + nVinculadoEntidad + ", ";
-				
-				if (nCondicionEspecial != -1)
-					strQry = strQry + "COD_CONDICION_ESPECIAL = " + nCondicionEspecial + ", ";
-				else
-					strQry = strQry + "COD_CONDICION_ESPECIAL = NULL, ";
+                listaCampos = new string[] { clsDeudor._entidadDeudor,
+                                             clsDeudor._codTipoDeudor, nTipoPersona.ToString(),
+                                             clsDeudor._codGeneradorDivisas, nGeneradorDivisas.ToString(),
+                                             clsDeudor._codVinculadoEntidad, nVinculadoEntidad.ToString(),
+                                             clsDeudor._codCondicionEspecial, ((nCondicionEspecial != -1) ? nCondicionEspecial.ToString(): DBNull.Value.ToString()),
+                                             clsDeudor._codTipoAsignacion, ((nTipoAsignacion != -1) ? nTipoAsignacion.ToString(): DBNull.Value.ToString()),
+                                             clsDeudor._nombreDeudor, strNombre,
+                                             clsDeudor._cedulaDeudor, strCedula};
 
-				if (nTipoAsignacion != -1)
-					strQry = strQry + "COD_TIPO_ASIGNACION = " + nTipoAsignacion + ", ";
-				else
-					strQry = strQry + "COD_TIPO_ASIGNACION = NULL, ";
+                strQry = string.Format("UPDATE dbo.{0} SET {1} = {2}, {3} = {4}, {5} = {6}, {7} = {8}, {9} = {10}, {11} = '{12}' WHERE {13} = '{14}'", listaCampos);
 
-				strQry = strQry + "NOMBRE_DEUDOR = '" + strNombre + "' " +
-							 " WHERE CEDULA_DEUDOR = '" + strCedula + "'";
 
-                DataSet dsDeudor = AccesoBD.ejecutarConsulta("select " + ContenedorDeudor.COD_TIPO_DEUDOR + "," +
-                   ContenedorDeudor.COD_GENERADOR_DIVISAS + "," + ContenedorDeudor.COD_VINCULADO_ENTIDAD + "," + 
-                   ContenedorDeudor.COD_CONDICION_ESPECIAL + "," + ContenedorDeudor.COD_TIPO_ASIGNACION + "," + 
-                   ContenedorDeudor.NOMBRE_DEUDOR +
-                   " from " + ContenedorDeudor.NOMBRE_ENTIDAD +
-                   " where " + ContenedorDeudor.CEDULA_DEUDOR + " = '" + strCedula + "'");
+                listaCampos = new string[] { clsDeudor._codTipoDeudor, clsDeudor._codGeneradorDivisas, clsDeudor._codVinculadoEntidad,
+                                             clsDeudor._codCondicionEspecial, clsDeudor._codTipoAsignacion, clsDeudor._nombreDeudor,
+                                             clsDeudor._entidadDeudor,
+                                             clsDeudor._cedulaDeudor, strCedula};
 
-                //AccesoBD.ejecutarConsulta(strQry);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}'", listaCampos);
 
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand(strQry, oConexion);
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.Text;
-					oConexion.Open();
+                DataSet dsDeudor = AccesoBD.ejecutarConsulta(sentenciaSql);
 
-					//Ejecuta el comando
-					int nFilasAfectadas = oComando.ExecuteNonQuery();
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(strQry, oConexion))
+                    {
+                        //Declara las propiedades del comando
+                        oComando.CommandType = CommandType.Text;
+                        oComando.Connection.Open();
+                        oComando.CommandTimeout = AccesoBD.TiempoEsperaEjecucion;
 
-					if (nFilasAfectadas > 0)
-					{
-						#region Inserción en Bitácora
+                        //Ejecuta el comando
+                        nFilasAfectadas = oComando.ExecuteNonQuery();
 
-						if ((dsDeudor != null) && (dsDeudor.Tables.Count > 0) && (dsDeudor.Tables[0].Rows.Count > 0))
-						{
-							Bitacora oBitacora = new Bitacora();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
 
-							TraductordeCodigos oTraductor = new TraductordeCodigos();
+                if (nFilasAfectadas > 0)
+                {
+                    #region Inserción en Bitácora
 
-							#region Obtener datos relevantes
+                    if ((dsDeudor != null) && (dsDeudor.Tables.Count > 0) && (dsDeudor.Tables[0].Rows.Count > 0))
+                    {
+                        Bitacora oBitacora = new Bitacora();
 
-							if (nTipoGarantia == 1)
-							{
-								CGarantiaFiduciaria oGarantia = CGarantiaFiduciaria.Current;
+                        TraductordeCodigos oTraductor = new TraductordeCodigos();
 
-								if (oGarantia.TipoOperacion != int.Parse(ConfigurationManager.AppSettings["TARJETA"].ToString()))
-								{
-									if (oGarantia.Contabilidad != 0)
-										strOperacionCrediticia = oGarantia.Contabilidad.ToString();
+                        #region Obtener datos relevantes
 
-									if (oGarantia.Oficina != 0)
-										strOperacionCrediticia += "-" + oGarantia.Oficina.ToString();
+                        if (nTipoGarantia == 1)
+                        {
+                            clsGarantiaFiduciaria oGarantia = clsGarantiaFiduciaria.Current;
 
-									if (oGarantia.Moneda != 0)
-										strOperacionCrediticia += "-" + oGarantia.Moneda.ToString();
+                            switch (oGarantia.TipoOperacion)
+                            {
+                                case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(),  oGarantia.Producto.ToString(),
+                                                                     oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}");
 
-									if (oGarantia.TipoOperacion == int.Parse(ConfigurationManager.AppSettings["OPERACION_CREDITICIA"].ToString()))
-									{
-										if (oGarantia.Producto != 0)
-											strOperacionCrediticia += "-" + oGarantia.Producto.ToString();
-									}
+                                    break;
 
-									if (oGarantia.Numero != 0)
-										strOperacionCrediticia += "-" + oGarantia.Numero.ToString();
-								}
-								else
-								{
-									strOperacionCrediticia = oGarantia.Tarjeta;
-								}
+                                case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(), oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}");
 
-								if (oGarantia.CedulaFiador != string.Empty)
-								{
-									strGarantia = oGarantia.CedulaFiador;
-								}
-							}
-							else if (nTipoGarantia == 2)
-							{
-								CGarantiaReal oGarantia = CGarantiaReal.Current;
+                                    break;
 
-								if (oGarantia.Contabilidad != 0)
-									strOperacionCrediticia = oGarantia.Contabilidad.ToString();
+                                case ((int)Enumeradores.Tipos_Operaciones.Tarjeta):
 
-								if (oGarantia.Oficina != 0)
-									strOperacionCrediticia += "-" + oGarantia.Oficina.ToString();
+                                    strOperacionCrediticia = oGarantia.Tarjeta;
 
-								if (oGarantia.Moneda != 0)
-									strOperacionCrediticia += "-" + oGarantia.Moneda.ToString();
+                                    break;
 
-								if (oGarantia.TipoOperacion == int.Parse(ConfigurationManager.AppSettings["OPERACION_CREDITICIA"].ToString()))
-								{
-									if (oGarantia.Producto != 0)
-										strOperacionCrediticia += "-" + oGarantia.Producto.ToString();
-								}
+                                default:
+                                    break;
+                            }
 
-								if (oGarantia.Numero != 0)
-									strOperacionCrediticia += "-" + oGarantia.Numero.ToString();
+                            strGarantia = ((oGarantia.CedulaFiador.Length > 0) ? oGarantia.CedulaFiador : "-");
+                        }
+                        else if (nTipoGarantia == 2)
+                        {
+                            CGarantiaReal oGarantia = CGarantiaReal.Current;
 
-								if (oGarantia.TipoGarantiaReal == int.Parse(ConfigurationManager.AppSettings["HIPOTECAS"].ToString()))
-								{
-									if (oGarantia.Partido != -1)
-										strGarantia = oGarantia.Partido.ToString();
+                            switch (oGarantia.TipoOperacion)
+                            {
+                                case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(),  oGarantia.Producto.ToString(),
+                                                                     oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}");
 
-									if (oGarantia.Finca != -1)
-										strGarantia += "-" + oGarantia.Finca.ToString();
-								}
-								else if (oGarantia.TipoGarantiaReal == int.Parse(ConfigurationManager.AppSettings["CEDULAS_HIPOTECARIAS"].ToString()))
-								{
-									if (oGarantia.Partido != -1)
-										strGarantia = oGarantia.Partido.ToString();
+                                    break;
 
-									if (oGarantia.Finca != -1)
-										strGarantia += "-" + oGarantia.Finca.ToString();
-								}
-								else if (oGarantia.TipoGarantiaReal == int.Parse(ConfigurationManager.AppSettings["PRENDAS"].ToString()))
-								{
-									if (oGarantia.ClaseBien != null)
-										strGarantia = oGarantia.ClaseBien.ToString();
+                                case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(), oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}");
 
-									if (oGarantia.NumPlaca != null)
-										strGarantia += "-" + oGarantia.NumPlaca.ToString();
-								}
-							}
-							else if (nTipoGarantia == 3)
-							{
-								CGarantiaValor oGarantia = CGarantiaValor.Current;
+                                    break;
 
-								if (oGarantia.Contabilidad != 0)
-									strOperacionCrediticia = oGarantia.Contabilidad.ToString();
+                                default:
+                                    break;
+                            }
 
-								if (oGarantia.Oficina != 0)
-									strOperacionCrediticia += "-" + oGarantia.Oficina.ToString();
+                            switch (oGarantia.TipoGarantiaReal)
+                            {
+                                case ((int)Enumeradores.Tipos_Garantia_Real.Hipoteca):
+                                    strGarantia = string.Format("{0}-{1}", ((oGarantia.Partido != -1) ? oGarantia.Partido.ToString() : string.Empty), ((oGarantia.Finca != -1) ? oGarantia.Finca.ToString() : string.Empty));
+                                    break;
+                                case ((int)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria):
+                                    strGarantia = string.Format("{0}-{1}", ((oGarantia.Partido != -1) ? oGarantia.Partido.ToString() : string.Empty), ((oGarantia.Finca != -1) ? oGarantia.Finca.ToString() : string.Empty));
+                                    break;
+                                case ((int)Enumeradores.Tipos_Garantia_Real.Prenda):
+                                    strGarantia = string.Format("{0}-{1}", ((oGarantia.ClaseBien != null) ? oGarantia.ClaseBien : string.Empty), ((oGarantia.NumPlaca != null) ? oGarantia.NumPlaca : string.Empty));
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else if (nTipoGarantia == 3)
+                        {
+                            CGarantiaValor oGarantia = CGarantiaValor.Current;
 
-								if (oGarantia.Moneda != 0)
-									strOperacionCrediticia += "-" + oGarantia.Moneda.ToString();
+                            switch (oGarantia.TipoOperacion)
+                            {
+                                case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(),  oGarantia.Producto.ToString(),
+                                                                     oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}");
 
-								if (oGarantia.TipoOperacion == int.Parse(ConfigurationManager.AppSettings["OPERACION_CREDITICIA"].ToString()))
-								{
-									if (oGarantia.Producto != 0)
-										strOperacionCrediticia += "-" + oGarantia.Producto.ToString();
-								}
+                                    break;
 
-								if (oGarantia.Numero != 0)
-									strOperacionCrediticia += "-" + oGarantia.Numero.ToString();
+                                case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                                    listaCampos = new string[] { oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(),
+                                                                     oGarantia.Moneda.ToString(), oGarantia.Numero.ToString()};
+                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}");
 
-								if (oGarantia.Seguridad != null)
-									strGarantia = oGarantia.Seguridad.ToString();
-							}
+                                    break;
 
-							#endregion
+                                default:
+                                    break;
+                            }
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.COD_TIPO_DEUDOR))
-							{
-								int nTipoDeudorObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][ContenedorDeudor.COD_TIPO_DEUDOR].ToString());
+                            strGarantia = ((oGarantia.Seguridad != null) ? oGarantia.Seguridad : "-");
+                        }
 
-								if (nTipoDeudorObt != nTipoPersona)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty,
-									   ContenedorDeudor.COD_TIPO_DEUDOR,
-									   oTraductor.TraducirTipoPersona(nTipoDeudorObt),
-									   oTraductor.TraducirTipoPersona(nTipoPersona));
-								}
-							}
-							else
-							{
-								if (nTipoPersona != -1)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										  2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_TIPO_DEUDOR,
-										  string.Empty,
-										  oTraductor.TraducirTipoPersona(nTipoPersona));
-								}
-							}
+                        #endregion
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.COD_GENERADOR_DIVISAS))
-							{
-								int nCodigoGeneradorDivisasObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][ContenedorDeudor.COD_GENERADOR_DIVISAS].ToString());
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._codTipoDeudor))
+                        {
+                            int nTipoDeudorObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][clsDeudor._codTipoDeudor].ToString());
 
-								if (nCodigoGeneradorDivisasObt != nGeneradorDivisas)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_GENERADOR_DIVISAS,
-									   oTraductor.TraducirTipoGenerador(nCodigoGeneradorDivisasObt),
-									   oTraductor.TraducirTipoGenerador(nGeneradorDivisas));
-								}
-							}
-							else
-							{
-								if (nGeneradorDivisas != -1)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_GENERADOR_DIVISAS,
-										   string.Empty,
-										   oTraductor.TraducirTipoGenerador(nGeneradorDivisas));
-								}
-							}
+                            if (nTipoDeudorObt != nTipoPersona)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty,
+                                   clsDeudor._codTipoDeudor,
+                                   oTraductor.TraducirTipoPersona(nTipoDeudorObt),
+                                   oTraductor.TraducirTipoPersona(nTipoPersona));
+                            }
+                        }
+                        else
+                        {
+                            if (nTipoPersona != -1)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                      2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codTipoDeudor,
+                                      string.Empty,
+                                      oTraductor.TraducirTipoPersona(nTipoPersona));
+                            }
+                        }
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.COD_VINCULADO_ENTIDAD))
-							{
-								int nCodigoVinculadoEntidadObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][ContenedorDeudor.COD_VINCULADO_ENTIDAD].ToString());
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._codGeneradorDivisas))
+                        {
+                            int nCodigoGeneradorDivisasObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][clsDeudor._codGeneradorDivisas].ToString());
 
-								if (nCodigoVinculadoEntidadObt != nVinculadoEntidad)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_VINCULADO_ENTIDAD,
-									   oTraductor.TraducirTipoVinculadoEntidad(nCodigoVinculadoEntidadObt),
-									   oTraductor.TraducirTipoVinculadoEntidad(nVinculadoEntidad));
-								}
-							}
-							else
-							{
-								if (nVinculadoEntidad != -1)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										  2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_VINCULADO_ENTIDAD,
-										  string.Empty,
-										  oTraductor.TraducirTipoVinculadoEntidad(nVinculadoEntidad));
-								}
-							}
+                            if (nCodigoGeneradorDivisasObt != nGeneradorDivisas)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codGeneradorDivisas,
+                                   oTraductor.TraducirTipoGenerador(nCodigoGeneradorDivisasObt),
+                                   oTraductor.TraducirTipoGenerador(nGeneradorDivisas));
+                            }
+                        }
+                        else
+                        {
+                            if (nGeneradorDivisas != -1)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codGeneradorDivisas,
+                                       string.Empty,
+                                       oTraductor.TraducirTipoGenerador(nGeneradorDivisas));
+                            }
+                        }
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.COD_CONDICION_ESPECIAL))
-							{
-								int nCodigoCondicionEspecialObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][ContenedorDeudor.COD_CONDICION_ESPECIAL].ToString());
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._codVinculadoEntidad))
+                        {
+                            int nCodigoVinculadoEntidadObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][clsDeudor._codVinculadoEntidad].ToString());
 
-								if (nCodigoCondicionEspecialObt != nCondicionEspecial)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_CONDICION_ESPECIAL,
-									   oTraductor.TraducirTipoCondicionEspecial(nCodigoCondicionEspecialObt),
-									   oTraductor.TraducirTipoCondicionEspecial(nCondicionEspecial));
-								}
-							}
-							else
-							{
-								if (nCondicionEspecial != -1)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_CONDICION_ESPECIAL,
-										   string.Empty,
-										   oTraductor.TraducirTipoCondicionEspecial(nCondicionEspecial));
-								}
-							}
+                            if (nCodigoVinculadoEntidadObt != nVinculadoEntidad)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codVinculadoEntidad,
+                                   oTraductor.TraducirTipoVinculadoEntidad(nCodigoVinculadoEntidadObt),
+                                   oTraductor.TraducirTipoVinculadoEntidad(nVinculadoEntidad));
+                            }
+                        }
+                        else
+                        {
+                            if (nVinculadoEntidad != -1)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                      2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codVinculadoEntidad,
+                                      string.Empty,
+                                      oTraductor.TraducirTipoVinculadoEntidad(nVinculadoEntidad));
+                            }
+                        }
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.COD_TIPO_ASIGNACION))
-							{
-								int nCodigoTipoAsignacionObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][ContenedorDeudor.COD_TIPO_ASIGNACION].ToString());
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._codCondicionEspecial))
+                        {
+                            int nCodigoCondicionEspecialObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][clsDeudor._codCondicionEspecial].ToString());
 
-								if (nCodigoTipoAsignacionObt != nTipoAsignacion)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_TIPO_ASIGNACION,
-									   oTraductor.TraducirTipoAsignacion(nCodigoTipoAsignacionObt),
-									   oTraductor.TraducirTipoAsignacion(nTipoAsignacion));
-								}
-							}
-							else
-							{
-								if (nTipoAsignacion != -1)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.COD_TIPO_ASIGNACION,
-										   string.Empty,
-										   oTraductor.TraducirTipoAsignacion(nTipoAsignacion));
-								}
-							}
+                            if (nCodigoCondicionEspecialObt != nCondicionEspecial)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codCondicionEspecial,
+                                   oTraductor.TraducirTipoCondicionEspecial(nCodigoCondicionEspecialObt),
+                                   oTraductor.TraducirTipoCondicionEspecial(nCondicionEspecial));
+                            }
+                        }
+                        else
+                        {
+                            if (nCondicionEspecial != -1)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codCondicionEspecial,
+                                       string.Empty,
+                                       oTraductor.TraducirTipoCondicionEspecial(nCondicionEspecial));
+                            }
+                        }
 
-							if (!dsDeudor.Tables[0].Rows[0].IsNull(ContenedorDeudor.NOMBRE_DEUDOR))
-							{
-								string strNombreDeudorObt = dsDeudor.Tables[0].Rows[0][ContenedorDeudor.NOMBRE_DEUDOR].ToString();
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._codTipoAsignacion))
+                        {
+                            int nCodigoTipoAsignacionObt = Convert.ToInt32(dsDeudor.Tables[0].Rows[0][clsDeudor._codTipoAsignacion].ToString());
 
-								if ((strNombreDeudorObt.Trim().CompareTo(strNombre.Trim()) != 0) && (strNombre != string.Empty))
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-									   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.NOMBRE_DEUDOR,
-									   strNombreDeudorObt,
-									   strNombre);
-								}
-							}
-							else
-							{
-								if (strNombre != string.Empty)
-								{
-									oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
-										   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, ContenedorDeudor.NOMBRE_DEUDOR,
-										   string.Empty,
-										   strNombre);
-								}
-							}
-						}
+                            if (nCodigoTipoAsignacionObt != nTipoAsignacion)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codTipoAsignacion,
+                                   oTraductor.TraducirTipoAsignacion(nCodigoTipoAsignacionObt),
+                                   oTraductor.TraducirTipoAsignacion(nTipoAsignacion));
+                            }
+                        }
+                        else
+                        {
+                            if (nTipoAsignacion != -1)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._codTipoAsignacion,
+                                       string.Empty,
+                                       oTraductor.TraducirTipoAsignacion(nTipoAsignacion));
+                            }
+                        }
 
-						#endregion
-					}
-				}
-			}
-			catch
-			{
-				throw;
-			}
-		}
+                        if (!dsDeudor.Tables[0].Rows[0].IsNull(clsDeudor._nombreDeudor))
+                        {
+                            string strNombreDeudorObt = dsDeudor.Tables[0].Rows[0][clsDeudor._nombreDeudor].ToString();
 
-		public string ObtenerNombreDeudor(string strCedula)
-		{
-			try
-			{
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand("pa_ObtenerNombreCliente", oConexion);
-					DataSet dsData = new DataSet();
-					SqlParameter oParam = new SqlParameter();
+                            if ((strNombreDeudorObt.Trim().CompareTo(strNombre.Trim()) != 0) && (strNombre != string.Empty))
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                   2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._nombreDeudor,
+                                   strNombreDeudorObt,
+                                   strNombre);
+                            }
+                        }
+                        else
+                        {
+                            if (strNombre != string.Empty)
+                            {
+                                oBitacora.InsertarBitacora("GAR_DEUDOR", strUsuario, strIP, null,
+                                       2, nTipoGarantia, strGarantia, strOperacionCrediticia, strQry, string.Empty, clsDeudor._nombreDeudor,
+                                       string.Empty,
+                                       strNombre);
+                            }
+                        }
+                    }
 
-					//declara las propiedades del comando
-					oComando.CommandType = CommandType.StoredProcedure;
+                    #endregion
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
-					//agrega los parametros
-					oComando.Parameters.AddWithValue("@strCedula", strCedula);
+        public string ObtenerNombreDeudor(string strCedula)
+        {
+            string nombreDeudor = string.Empty;
 
-					//inicializacion del objeto output
-					oParam.SqlDbType = SqlDbType.VarChar;
-					oParam.Size = 150;
-					oParam.Direction = ParameterDirection.Output;
-					oParam.ParameterName = "@strNombre";
-					oComando.Parameters.Add(oParam);
+            try
+            {
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand("pa_ObtenerNombreCliente", oConexion))
+                    {
+                        SqlParameter oParam = new SqlParameter();
 
-					//Abre la conexion
-					oConexion.Open();
+                        //declara las propiedades del comando
+                        oComando.CommandType = CommandType.StoredProcedure;
+                        oComando.CommandTimeout = AccesoBD.TiempoEsperaEjecucion;
 
-					//Ejecuta el comando
-					oComando.ExecuteNonQuery();
+                        //agrega los parametros
+                        oComando.Parameters.AddWithValue("@strCedula", strCedula);
 
-					return oParam.Value.ToString();
-				}
-			}
-			catch
-			{
-				throw;
-			}
-		}
+                        //inicializacion del objeto output
+                        oParam.SqlDbType = SqlDbType.VarChar;
+                        oParam.Size = 150;
+                        oParam.Direction = ParameterDirection.Output;
+                        oParam.ParameterName = "@strNombre";
+                        oComando.Parameters.Add(oParam);
+
+                        //Abre la conexion
+                        oComando.Connection.Open();
+
+                        //Ejecuta el comando
+                        oComando.ExecuteNonQuery();
+
+                        nombreDeudor = oParam.Value.ToString();
+
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return nombreDeudor;
+        }
 	#endregion
 	}
 }

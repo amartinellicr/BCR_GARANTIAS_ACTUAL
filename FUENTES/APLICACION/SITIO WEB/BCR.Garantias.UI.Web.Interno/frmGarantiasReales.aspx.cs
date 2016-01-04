@@ -3637,7 +3637,7 @@ namespace BCRGARANTIAS.Forms
                 #region Conversión e inicialización de datos
 
                 Dictionary<string, string> listaDescripcionValoresActualesCombos = new Dictionary<string, string>();
-                decimal nPorcentaje;
+                decimal porcentajeAceptacion;
                 int nTipoDocumento;
                 DateTime dFechaPresentacion;
                 DateTime dFechaVencimiento;
@@ -3714,7 +3714,7 @@ namespace BCRGARANTIAS.Forms
                 else
                     dFechaPresentacion = DateTime.Parse("1900-01-01");
 
-                nPorcentaje = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "-1"));
+                porcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
 
 
                 DateTime dFechaConstitucion = DateTime.Parse(((txtFechaConstitucion.Text.Length > 0) ? txtFechaConstitucion.Text : "1900-01-01"));
@@ -3761,10 +3761,10 @@ namespace BCRGARANTIAS.Forms
 
 
                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                porcAceptacionTerreno = Convert.ToDecimal((txtPorcentajeAceptacionTerreno.Text.Length > 0) ? txtPorcentajeAceptacionTerreno.Text : "0");
-                porcAceptacionNoTerreno = Convert.ToDecimal((txtPorcentajeAceptacionNoTerreno.Text.Length > 0) ? txtPorcentajeAceptacionNoTerreno.Text : "0");
-                porcAceptacionTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionTerrenoCalculado.Text : "0");
-                porcAceptacionNoTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionNoTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionNoTerrenoCalculado.Text : "0");
+                porcAceptacionTerreno = Convert.ToDecimal((txtPorcentajeAceptacionTerreno.Text.Length > 0) ? txtPorcentajeAceptacionTerreno.Text : "-1");
+                porcAceptacionNoTerreno = Convert.ToDecimal((txtPorcentajeAceptacionNoTerreno.Text.Length > 0) ? txtPorcentajeAceptacionNoTerreno.Text : "-1");
+                porcAceptacionTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionTerrenoCalculado.Text : "-1");
+                porcAceptacionNoTerrenoCalculado = Convert.ToDecimal((txtPorcentajeAceptacionNoTerrenoCalculado.Text.Length > 0) ? txtPorcentajeAceptacionNoTerrenoCalculado.Text : "-1");
 
                 #endregion Datos del avalúo
 
@@ -3807,7 +3807,7 @@ namespace BCRGARANTIAS.Forms
                 entidadGarantia.MontoMitigador = nMontoMitigador;
                 entidadGarantia.CodInscripcion = ((short)nInscripcion);
                 entidadGarantia.FechaPresentacion = dFechaPresentacion;
-                entidadGarantia.PorcentajeResponsabilidad = nPorcentaje;
+                entidadGarantia.PorcentajeResponsabilidad = -1;
                 entidadGarantia.CodGradoGravamen = ((short)nGradoGravamen);
                 entidadGarantia.FechaConstitucion = dFechaConstitucion;
                 entidadGarantia.FechaVencimiento = dFechaVencimiento;
@@ -3817,6 +3817,7 @@ namespace BCRGARANTIAS.Forms
                 entidadGarantia.Operacion = strOperacionCrediticia;
                 entidadGarantia.Garantia = strGarantia;
                 entidadGarantia.FechaModifico = DateTime.Now;
+                entidadGarantia.PorcentajeAceptacion = porcentajeAceptacion;
 
                 string porAceptCalc = (((ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO] != null) && (ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString().Length > 0)) ? ViewState[LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO].ToString() : "0.00");
 
@@ -5176,8 +5177,8 @@ namespace BCRGARANTIAS.Forms
                     //if ((entidadGarantia.CodTipoBien > 4) || (entidadGarantia.PorcentajeAceptacionCalculadoOriginal == 0))
                     if (entidadGarantia.CodTipoBien > 4)
                     {
-                        txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeResponsabilidad.ToString("N2");
-                        entidadGarantia.PorcentajeAceptacionCalculado = entidadGarantia.PorcentajeResponsabilidad;
+                        txtPorcentajeAceptacionCalculado.Text = entidadGarantia.PorcentajeAceptacion.ToString("N2");
+                        entidadGarantia.PorcentajeAceptacionCalculado = entidadGarantia.PorcentajeAceptacion;
                         Entidad_Real = entidadGarantia;
                     }
                     else if (entidadGarantia.PorcentajeAceptacionCalculadoOriginal == 0)
@@ -7104,7 +7105,7 @@ namespace BCRGARANTIAS.Forms
                             }
                         }
 
-                        //if (entidadGarantiaReal.PorcentajeResponsabilidad == 0)
+                        //if (entidadGarantiaReal.PorcentajeAceptacion == 0)
                         //{
                         //    errorMontoMitiga = true;
                         //}
@@ -7141,7 +7142,7 @@ namespace BCRGARANTIAS.Forms
                                     esInformativo = true;
                                     //parametrosCalculo.Add(entidadGarantiaReal.MontoTotalAvaluo.ToString());
                                     //parametrosCalculo.Add(entidadGarantiaReal.FechaValuacion.ToShortDateString());
-                                    //parametrosCalculo.Add(entidadGarantiaReal.PorcentajeResponsabilidad.ToString());
+                                    //parametrosCalculo.Add(entidadGarantiaReal.PorcentajeAceptacion.ToString());
                                     //parametrosCalculo.Add(entidadGarantiaReal.MontoMitigador.ToString());
                                     //parametrosCalculo.Add(((DatosOperacion.Length > 0) ? DatosOperacion.Replace('_', '-') : "--"));
 
@@ -7153,7 +7154,7 @@ namespace BCRGARANTIAS.Forms
                                     esInformativo = true;
                                     //parametrosCalculo.Add(entidadGarantiaReal.MontoTotalAvaluo.ToString());
                                     //parametrosCalculo.Add(entidadGarantiaReal.FechaValuacion.ToShortDateString());
-                                    //parametrosCalculo.Add(entidadGarantiaReal.PorcentajeResponsabilidad.ToString());
+                                    //parametrosCalculo.Add(entidadGarantiaReal.PorcentajeAceptacion.ToString());
                                     //parametrosCalculo.Add(entidadGarantiaReal.MontoMitigador.ToString());
                                     //parametrosCalculo.Add(((DatosOperacion.Length > 0) ? DatosOperacion.Replace('_', '-') : "--"));
 
@@ -7925,7 +7926,6 @@ namespace BCRGARANTIAS.Forms
 
             entidadGarantia.FechaModifico = DateTime.Now;
 
-            //entidadGarantia.PorcentajeResponsabilidad >hace referencia al porcentaje aceptacion 
             //se selecciona el valor del campo menor entre el % aceptacion y % aceptacion calculado
 
             if (entidadGarantia.CodTipoBien <= 4)
@@ -7944,9 +7944,9 @@ namespace BCRGARANTIAS.Forms
                 }
                 else
                 {
-                    if ((entidadGarantia.PorcentajeResponsabilidad > entidadGarantia.PorcentajeAceptacionCalculado) || (entidadGarantia.PorcentajeResponsabilidad == 0))
+                    if ((entidadGarantia.PorcentajeAceptacion > entidadGarantia.PorcentajeAceptacionCalculado) || (entidadGarantia.PorcentajeAceptacion == 0))
                     {
-                        entidadGarantia.PorcentajeResponsabilidad = entidadGarantia.PorcentajeAceptacionCalculado;
+                        entidadGarantia.PorcentajeAceptacion = entidadGarantia.PorcentajeAceptacionCalculado;
                     }
                 }
             }
@@ -8036,7 +8036,7 @@ namespace BCRGARANTIAS.Forms
                     GuardarDatosSession();
                 }
 
-                //decimal porcentaje = Convert.ToDecimal((entidadGarantia.PorcentajeResponsabilidad / 100));
+                //decimal porcentaje = Convert.ToDecimal((entidadGarantia.PorcentajeAceptacion / 100));
                 //decimal montoMitigaCalc = Convert.ToDecimal(entidadGarantia.MontoTotalAvaluo * porcentaje);
 
                 //decimal diferenciaEntreMontos = (((montoMitigaCalc >= entidadGarantia.MontoMitigador)) ? (Convert.ToDecimal(montoMitigaCalc - entidadGarantia.MontoMitigador)) : (Convert.ToDecimal(entidadGarantia.MontoMitigador - montoMitigaCalc)));

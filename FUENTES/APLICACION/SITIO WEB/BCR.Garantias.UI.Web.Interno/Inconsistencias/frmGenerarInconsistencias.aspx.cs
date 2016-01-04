@@ -1,22 +1,11 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
 using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using System.Diagnostics;
-using System.Text;
-using System.Threading;
 using System.Data.OleDb;
 using System.IO;
-using System.Net;
-using System.Security.AccessControl;
 using System.Security.Principal;
 using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Checksums;
 
 using BCRGARANTIAS.Negocios;
 using BCRGARANTIAS.Utilidades;
@@ -38,6 +27,10 @@ namespace BCRGARANTIAS.Forms
 
         private ZipUtil zUtil = new ZipUtil();
 
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
+
         #endregion
 
         #region Eventos
@@ -54,6 +47,9 @@ namespace BCRGARANTIAS.Forms
 
             if (!IsPostBack)
             {
+                seRedirecciona = false;
+                urlPaginaMensaje = string.Empty;
+
                 try
                 {
                     if (Global.UsuarioSistema.Length > 0)
@@ -88,18 +84,29 @@ namespace BCRGARANTIAS.Forms
 
 
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect(strRutaActual + "/frmMensaje.aspx?" +
-                                        "bError=1" +
-                                        "&strTitulo=" + "Acceso Denegado" +
-                                        "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
-                                        "&bBotonVisible=0", true);
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = (strRutaActual + "/frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Acceso Denegado" +
+                                            "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
+                                            "&bBotonVisible=0");
+                    }
                     else
-                        Response.Redirect(strRutaActual + "/frmMensaje.aspx?" +
-                                        "bError=1" +
-                                        "&strTitulo=" + "Problemas Cargando Página" +
-                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_GENERAL_APLICACION, Mensajes.ASSEMBLY) +
-                                        "&bBotonVisible=0", true);
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = (strRutaActual + "/frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Cargando Página" +
+                                            "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_GENERAL_APLICACION, Mensajes.ASSEMBLY) +
+                                            "&bBotonVisible=0");
+                    }
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -189,13 +196,14 @@ namespace BCRGARANTIAS.Forms
                             strRutaActual = strRutaActual.Remove(strRutaActual.IndexOf("/Inconsistencias"));
 
 
-                            Response.Redirect(strRutaActual + "/frmMensaje.aspx?" +
-                                            "bError=0" +
-                                            "&strTitulo=" + "Generación Exitosa" +
-                                            "&strMensaje=" + "Los archivos se generaron satisfactoriamente." +
-                                            "&bBotonVisible=1" +
-                                            "&strTextoBoton=Regresar" +
-                                            "&strHref=" + strRutaActual + "/Inconsistencias/frmGenerarInconsistencias.aspx", true);
+                            seRedirecciona = true;
+                            urlPaginaMensaje = (strRutaActual + "/frmMensaje.aspx?" +
+                                                "bError=0" +
+                                                "&strTitulo=" + "Generación Exitosa" +
+                                                "&strMensaje=" + "Los archivos se generaron satisfactoriamente." +
+                                                "&bBotonVisible=1" +
+                                                "&strTextoBoton=Regresar" +
+                                                "&strHref=" + strRutaActual + "/Inconsistencias/frmGenerarInconsistencias.aspx");
                         }
                         else
                             lblMensaje.Text = "Se presentaron problemas generando los archivos solicitados. Por favor reintente.";
@@ -217,6 +225,11 @@ namespace BCRGARANTIAS.Forms
             {
                 lblMensaje.Text = "La impersonalización es nula";
                 lblMensaje.Visible = true;
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 

@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
-using System.Globalization;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -243,7 +235,7 @@ namespace BCR.GARANTIAS.Entidades
         {
             get
             {
-                return string.Format("{0} - {1}{2}", this.descripcionCortaCobertura, this.descripcionCobertura, ((this.indicadorObligatoria) ? " *" : string.Empty));
+                return string.Format("{0} - {1}{2}", descripcionCortaCobertura, descripcionCobertura, ((indicadorObligatoria) ? " *" : string.Empty));
             }
         }
 
@@ -264,7 +256,7 @@ namespace BCR.GARANTIAS.Entidades
 
             string tipoLista = "0";
 
-            switch (this.tipoListaCobertura)
+            switch (tipoListaCobertura)
             {
                 case Enumeradores.Tipos_Trama_Cobertura.PorAsignar: tipoLista = "1";
                     break;
@@ -318,7 +310,7 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append(_descripcionCompuesta);
             formatoJSON.Append('"');
             formatoJSON.Append(':');
-            formatoJSON.Append(UtilitariosComun.EnquoteJSON(this.DescripcionCompuesta));
+            formatoJSON.Append(UtilitariosComun.EnquoteJSON(DescripcionCompuesta));
                                    
             formatoJSON.Append('}');
 

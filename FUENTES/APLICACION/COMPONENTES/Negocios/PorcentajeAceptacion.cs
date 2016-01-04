@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
-using System.Xml;
 using System.Collections.Specialized;
 
 using BCRGARANTIAS.Datos;
@@ -19,8 +16,12 @@ namespace BCRGARANTIAS.Negocios
 
     public class PorcentajeAceptacion
     {
-        //FALTA AGREGAR EL METODO DE INSERT DEL HISTORIAL DE PORCENTAJE ACEPTACION
+        #region Variables Globales
 
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+       
+        #endregion Variables Globales
 
         #region Metodos Públicos
 
@@ -37,7 +38,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                SqlParameter[] parameters = new SqlParameter[] { 
+                SqlParameter[] parameters = new SqlParameter[] {
                         new SqlParameter("piCodigo_Tipo_Garantia", SqlDbType.Int),
                         new SqlParameter("piCodigo_Tipo_Mitigador", SqlDbType.Int),
                         new SqlParameter("pbIndicador_Sin_Calificacion", SqlDbType.Bit),
@@ -46,7 +47,7 @@ namespace BCRGARANTIAS.Negocios
                         new SqlParameter("pdPorcentaje_Cuatro", SqlDbType.Decimal),
                         new SqlParameter("pdPorcentaje_Cinco", SqlDbType.Decimal),
                         new SqlParameter("pdPorcentaje_Seis", SqlDbType.Decimal),
-                        new SqlParameter("psUsuario_Inserto", SqlDbType.VarChar,30),         
+                        new SqlParameter("psUsuario_Inserto", SqlDbType.VarChar,30),
                         new SqlParameter("psRespuesta", SqlDbType.VarChar, 1000)
                     };
 
@@ -68,6 +69,9 @@ namespace BCRGARANTIAS.Negocios
                     AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Insertar_Porcentaje_Aceptacion", parameters);
 
                     respuestaObtenida = parameters[9].Value.ToString();
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
 
                 if (respuestaObtenida.Length > 0)
@@ -89,7 +93,7 @@ namespace BCRGARANTIAS.Negocios
             }
             catch (ExcepcionBase ex)
             {
-               UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoPorcentajeAceptacionDetalle, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInsertandoPorcentajeAceptacionDetalle, ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
                 throw ex;
             }
@@ -106,17 +110,18 @@ namespace BCRGARANTIAS.Negocios
 
             #region Armar String de Inserción del registro
 
-            string insertaPorcentajeAceptacion = "INSERT INTO dbo.CAT_PORCENTAJE_ACEPTACION" +
-              "(Codigo_Tipo_Garantia,Codigo_Tipo_Mitigador,Indicador_Sin_Calificacion,Porcentaje_Aceptacion,Porcentaje_Cero_Tres,Porcentaje_Cuatro,Porcentaje_Cinco,"+ 
-				"Porcentaje_Seis,Usuario_Inserto)" +
+            listaCampos = new string[] {clsPorcentajeAceptacion._catTipoPorcentajeAceptacion,
+                                        clsPorcentajeAceptacion._codigoTipoGarantia, clsPorcentajeAceptacion._codigoTipoMitigador, clsPorcentajeAceptacion._indicadorSinCalificacion,
+                                        clsPorcentajeAceptacion._porcentajeAceptacion, clsPorcentajeAceptacion._porcentajeCeroTres, clsPorcentajeAceptacion._porcentajeCuatro,
+                                        clsPorcentajeAceptacion._porcentajeCinco, clsPorcentajeAceptacion._porcentajeSeis, clsPorcentajeAceptacion._usuarioInserto,
+                                        entidadPorcentajeAceptacion.CodigoTipoGarantia.ToString(), entidadPorcentajeAceptacion.CodigoTipoMitigador.ToString(),
+                                        ((entidadPorcentajeAceptacion.IndicadorSinCalificacion) ? "1" : "0"),  entidadPorcentajeAceptacion.PorcentajeAceptacion.ToString(),
+                                        entidadPorcentajeAceptacion.PorcentajeCeroTres.ToString(), entidadPorcentajeAceptacion.PorcentajeCuatro.ToString(),
+                                        entidadPorcentajeAceptacion.PorcentajeCinco.ToString(), entidadPorcentajeAceptacion.PorcentajeSeis.ToString(), usuario};
 
-              "VALUES (" + entidadPorcentajeAceptacion.CodigoTipoGarantia.ToString() + "," + entidadPorcentajeAceptacion.CodigoTipoMitigador.ToString() + "," + ((entidadPorcentajeAceptacion.IndicadorSinCalificacion) ? "1" : "0") + "," +
-              entidadPorcentajeAceptacion.PorcentajeAceptacion.ToString() + "," + entidadPorcentajeAceptacion.PorcentajeCeroTres.ToString() + "," + entidadPorcentajeAceptacion.PorcentajeCuatro.ToString() + "," +
-              entidadPorcentajeAceptacion.PorcentajeCinco.ToString() + "," + entidadPorcentajeAceptacion.PorcentajeSeis.ToString() + "," + usuario + ")";
+            string insertaPorcentajeAceptacion = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}) VALUES({10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18})", listaCampos);
 
             #endregion
-
-            //HACER UN REGISTRO POR CAMPO
 
             oBitacora.InsertarBitacora(clsPorcentajeAceptacion._catTipoPorcentajeAceptacion, usuario, ip, null,
                 1, null, string.Empty, string.Empty, insertaPorcentajeAceptacion, string.Empty,
@@ -152,10 +157,10 @@ namespace BCRGARANTIAS.Negocios
             //  1, null, string.Empty, string.Empty, insertaPorcentajeAceptacion, string.Empty,
             //  clsPorcentajeAceptacion._porcentajeSeis, string.Empty, entidadPorcentajeAceptacion.PorcentajeSeis.ToString());
 
-        
+
             #endregion
 
-           #region Insercion en el Histórico de Porcentaje de Aceptacion
+            #region Insercion en el Histórico de Porcentaje de Aceptacion
 
             HistoricoPorcentajeAceptacion oHistorico = new HistoricoPorcentajeAceptacion();
 
@@ -182,8 +187,6 @@ namespace BCRGARANTIAS.Negocios
 
             // oHistorico.InsertarHistorico(usuario, 1, insertaPorcentajeAceptacion, entidadPorcentajeAceptacion.CodigoTipoGarantia, entidadPorcentajeAceptacion.CodigoTipoMitigador, 
             //clsPorcentajeAceptacion._porcentajeSeis,string.Empty, entidadPorcentajeAceptacion.PorcentajeSeis.ToString());
-        
-        
 
             #endregion
 
@@ -242,16 +245,15 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Modificar_Porcentaje_Aceptacion", parameters);
 
                         respuestaObtenida = parameters[10].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
                     {
                         strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
 
-                        //if (strMensajeObtenido[0].CompareTo("0") != 0)
-                        //{
-                        //    throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorModificandoPorcentajeAceptacion, Mensajes.ASSEMBLY));
-                        //}
                         if (strMensajeObtenido[0].CompareTo("0") != 0)
                         {
                             if (strMensajeObtenido[0].CompareTo("1") == 0)
@@ -299,17 +301,20 @@ namespace BCRGARANTIAS.Negocios
 
                 //FALTAN AGREGAR LOS MAS CAMPOS 
 
-                if ((actualizacionCodigoTipoGarantia.Length > 0) || (actualizacionCoditoTipoMitigador.Length > 0) ||  (actualizacionIndicadorSinCalificacion.Length > 0) || (actualizacionPorcentajeAceptacion.Length > 0) )
+                if ((actualizacionCodigoTipoGarantia.Length > 0) || (actualizacionCoditoTipoMitigador.Length > 0) || (actualizacionIndicadorSinCalificacion.Length > 0) || (actualizacionPorcentajeAceptacion.Length > 0))
                 {
-                    //string camposAjustados =   actualizacionCodigoTipoGarantia +  actualizacionCoditoTipoMitigador + actualizacionIndicadorSinCalificacion + actualizacionPorcentajeAceptacion 
-                    //                           +  actualizacionPorcentajeCeroTres + actualizacionPorcentajeCuatro +  actualizacionPorcentajeCinco + actualizacionPorcentajeSeis +   actualizacionUsuarioModifico       ;
-                   
-                    string camposAjustados = actualizacionCodigoTipoGarantia + actualizacionCoditoTipoMitigador + actualizacionIndicadorSinCalificacion + actualizacionPorcentajeAceptacion + actualizacionUsuarioModifico;
-                    
+                    listaCampos = new string[] {actualizacionCodigoTipoGarantia, actualizacionCoditoTipoMitigador, actualizacionIndicadorSinCalificacion, actualizacionPorcentajeAceptacion,
+                                                actualizacionUsuarioModifico };
+
+                    string camposAjustados = string.Format("{0}{1}{2}{3}{4}", listaCampos);
+                     
                     camposAjustados = camposAjustados.TrimEnd(",".ToCharArray());
 
-                    modificaPorcentajeAceptacion = "UPDATE dbo.CAT_PORCENTAJE_ACEPTACION SET" + camposAjustados +
-                        " WHERE	Codigo_Porcentaje_Aceptacion = " + entidadPorcentajeAceptacion.CodigoPorcentajeAceptacion.ToString();
+                    listaCampos = new string[] {clsPorcentajeAceptacion._catTipoPorcentajeAceptacion,
+                                                camposAjustados,
+                                                clsPorcentajeAceptacion._codigoPorcentajeAceptacion, entidadPorcentajeAceptacion.CodigoPorcentajeAceptacion.ToString()};
+
+                       modificaPorcentajeAceptacion = string.Format("UPDATE dbo.{0} SET {1} WHERE {2} = {3}", listaCampos);
 
                     if (actualizacionCodigoTipoGarantia.Length > 0)
                     {
@@ -342,7 +347,6 @@ namespace BCRGARANTIAS.Negocios
                 }
 
                 #endregion
-
 
                 #region Insercion en el Histórico de Porcentaje de Aceptacion
 
@@ -418,6 +422,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Eliminar_Porcentaje_Aceptacion", parameters);
 
                         respuestaObtenida = parameters[1].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -441,10 +448,11 @@ namespace BCRGARANTIAS.Negocios
 
                 Bitacora oBitacora = new Bitacora();
 
-                string eliminaPorcentajeAceptacion = "DELETE  FROM dbo.CAT_PORCENTAJE_ACEPTACION" +
-                    " WHERE	Codigo_Porcentaje_Aceptacion = " + entidadPorcentajeAceptacion.CodigoPorcentajeAceptacion.ToString();
-               
+                listaCampos = new string[] {clsPorcentajeAceptacion._catTipoPorcentajeAceptacion,
+                                            clsPorcentajeAceptacion._codigoPorcentajeAceptacion, entidadPorcentajeAceptacion.CodigoPorcentajeAceptacion.ToString()};
 
+                string eliminaPorcentajeAceptacion = string.Format("DELETE FROM dbo.{0} WHERE {1} = {2}", listaCampos);
+ 
                 oBitacora.InsertarBitacora(clsPorcentajeAceptacion._catTipoPorcentajeAceptacion, usuario, ip, null,
                  3, null, string.Empty, string.Empty, eliminaPorcentajeAceptacion, string.Empty,
                  clsPorcentajeAceptacion._codigoTipoGarantia, string.Empty, entidadPorcentajeAceptacion.CodigoTipoGarantia.ToString());
@@ -523,6 +531,7 @@ namespace BCRGARANTIAS.Negocios
         public DataSet ObtenerDatosPorcentajeAceptacion(int? codigoPorcentajeAceptacion,int? codigoTipoGarantia, int? codigoTipoMitigador, int accion)
         {
             DataSet dsDatosPorcentajeAceptacion = new DataSet();
+
             try
             {
 
@@ -530,36 +539,9 @@ namespace BCRGARANTIAS.Negocios
                         new SqlParameter("piConsecutivo_Registro", SqlDbType.Int),
                         new SqlParameter("piCodigo_Tipo_Garantia", SqlDbType.Int),
                         new SqlParameter("piCodigo_Tipo_Mitigador", SqlDbType.Int),
-
                         new SqlParameter("piAccion", SqlDbType.Int),                      
                         new SqlParameter("psRespuesta", SqlDbType.VarChar, 1000)
                     };
-
-                //if (codigoPorcentajeAceptacion == 0)
-                //{
-                //    parameters[0].Value = null;
-                //}
-                //else
-                //{
-                //    parameters[0].Value = codigoPorcentajeAceptacion;
-                //}
-
-                //if (codigoTipoGarantia == 0)
-                //{
-                //    parameters[1].Value = null;
-                //}
-                //else
-                //{
-                //    parameters[1].Value = codigoTipoGarantia;
-                //}
-                //if (codigoTipoMitigador == 0)
-                //{
-                //    parameters[2].Value = null;
-                //}
-                //else
-                //{
-                //    parameters[2].Value = codigoTipoMitigador;
-                //}
 
                 parameters[0].Value =((codigoPorcentajeAceptacion.HasValue) ? codigoPorcentajeAceptacion : null);
                 parameters[1].Value = ((codigoTipoGarantia.HasValue) ? codigoTipoGarantia : null); ;
@@ -574,7 +556,11 @@ namespace BCRGARANTIAS.Negocios
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
                     oConexion.Open();
+
                     dsDatosPorcentajeAceptacion = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Porcentaje_Aceptacion", parameters, 0);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)
@@ -589,6 +575,7 @@ namespace BCRGARANTIAS.Negocios
 
                 dsDatosPorcentajeAceptacion = null;
             }
+
             return dsDatosPorcentajeAceptacion;
         }
 
@@ -613,7 +600,6 @@ namespace BCRGARANTIAS.Negocios
                         new SqlParameter("piConsecutivo_Registro", SqlDbType.Int),
                         new SqlParameter("piCodigo_Tipo_Garantia", SqlDbType.Int),
                         new SqlParameter("piCodigo_Tipo_Mitigador", SqlDbType.Int),
-
                         new SqlParameter("piAccion", SqlDbType.Int),                      
                         new SqlParameter("psRespuesta", SqlDbType.VarChar, 1000)
                     };
@@ -632,6 +618,9 @@ namespace BCRGARANTIAS.Negocios
                 {
                     oConexion.Open();
                     object datoRetornado = AccesoBD.ExecuteScalar(CommandType.StoredProcedure,"Consultar_Porcentaje_Aceptacion",parameters);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
 
                     porcentajeAceptacionCalculado = (Decimal.TryParse(datoRetornado.ToString(), out porAcepCal) ? porAcepCal : 0);
                        

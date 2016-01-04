@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -78,7 +76,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsCatalogos()
         {
-            this.tramaCatalogo = string.Empty;
+            tramaCatalogo = string.Empty;
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaCatalogos">Trama que posee los datos del os catálogos obtenidos de la Base de Datos</param>
         public clsCatalogos(string tramaCatalogos)
         {
-            this.tramaCatalogo = string.Empty;
+            tramaCatalogo = string.Empty;
 
             if (tramaCatalogos.Length > 0)
             {
@@ -110,7 +108,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlCatalogos != null)
                 {
-                    this.tramaCatalogo = tramaCatalogos;
+                    tramaCatalogo = tramaCatalogos;
 
                     if (xmlCatalogos.HasChildNodes)
                     {
@@ -122,13 +120,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadCatalogo.ErrorDatos)
                             {
-                                this.errorDatos = entidadCatalogo.ErrorDatos;
-                                this.descripcionError = entidadCatalogo.DescripcionError;
+                                errorDatos = entidadCatalogo.ErrorDatos;
+                                descripcionError = entidadCatalogo.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadCatalogo);
+                                Agregar(entidadCatalogo);
                             }
                         }
                     }

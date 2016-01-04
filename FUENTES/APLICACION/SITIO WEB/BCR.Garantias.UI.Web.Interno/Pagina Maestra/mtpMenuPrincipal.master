@@ -210,7 +210,7 @@
 
             function FormatNumber(oControl, num, decimalPlaces, appendZeros, insertCommas, EsPorcentaje) 
             {
-                var $Aplica_Calculo_Porcentaje_Aceptacion = parseInt(((typeof ($$('hdnAplicaCalculoPA')) !== 'undefined') && ($$('hdnAplicaCalculoPA').val().length > 0) ? $$('hdnAplicaCalculoPA').val() : '1'));
+                var $Aplica_Calculo_Porcentaje_Aceptacion = parseInt(((typeof ($$('hdnAplicaCalculoPA')) !== 'undefined') && (typeof ($$('hdnAplicaCalculoPA').val()) !== 'undefined') && ($$('hdnAplicaCalculoPA').val().length > 0) ? $$('hdnAplicaCalculoPA').val() : '1'));
                 
                 var bSeFormatea = true;
                 var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
@@ -221,8 +221,7 @@
                 bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerreno") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
                 bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
                 bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
-           
-            
+
                 if(num.toString().length > 0)
 		        {
 			        if(!IsNum(oControl))
@@ -309,7 +308,7 @@
                     }
                 }
 
-                if ((bSeFormatea) && (bValidarPorAcept) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                 if ((bSeFormatea) && (bValidarPorAcept) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
                     $MostrarMensajesPorAceptAvaluo = true;
                     ValidarPorcentajeAceptacionCalculado();
                     ValidarPorcentajeAceptacion();
