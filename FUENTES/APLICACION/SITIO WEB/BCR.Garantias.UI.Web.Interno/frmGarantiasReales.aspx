@@ -52,7 +52,8 @@
 												        Width="194px">
 												        <asp:ListItem Value="1">Operación Crediticia</asp:ListItem>
 												        <asp:ListItem Value="2">Contrato</asp:ListItem>
-											        </asp:dropdownlist><asp:button id="Button2" runat="server" BackColor="White" BorderColor="White" BorderStyle="None"></asp:button></td>
+											        </asp:dropdownlist>
+										        </td>
 									        </tr>
 									        <tr>
 										        <td class="td_Texto" width="24%">Contabilidad:</td>

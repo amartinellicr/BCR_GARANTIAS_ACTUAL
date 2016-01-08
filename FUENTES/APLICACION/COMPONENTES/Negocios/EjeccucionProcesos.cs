@@ -86,63 +86,66 @@ namespace BCRGARANTIAS.Negocios
                     //Ejecuta el comando
                     oRetornoDEP = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Obtener_Resultado_Ejecucion_Procesos_Replica", parameters);
 
-                    oConexion.Close();
-                    oConexion.Dispose();
-                }
 
-                if (oRetornoDEP != null)
-                {
-                    while (oRetornoDEP.Read())
+
+                    if (oRetornoDEP != null)
                     {
-                        sbDEP.AppendLine(oRetornoDEP.ReadOuterXml());
-                    }
-
-                    vsObtenerDEP = sbDEP.ToString();
-
-                    if (vsObtenerDEP.Length > 0)
-                    {
-                        strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(vsObtenerDEP);
-                        if (strMensajeObtenido.Length > 1)
+                        while (oRetornoDEP.Read())
                         {
-                            if (strMensajeObtenido[0].CompareTo("0") == 0)
+                            sbDEP.AppendLine(oRetornoDEP.ReadOuterXml());
+                        }
+
+                        vsObtenerDEP = sbDEP.ToString();
+
+                        if (vsObtenerDEP.Length > 0)
+                        {
+                            strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(vsObtenerDEP);
+                            if (strMensajeObtenido.Length > 1)
                             {
-                                if (vsObtenerDEP.Length > 0)
+                                if (strMensajeObtenido[0].CompareTo("0") == 0)
                                 {
-                                    xmlTrama.LoadXml(vsObtenerDEP);
-
-                                    if (xmlTrama != null)
+                                    if (vsObtenerDEP.Length > 0)
                                     {
-                                        nodoResultados = xmlTrama.SelectSingleNode("//" + _resultados);
+                                        xmlTrama.LoadXml(vsObtenerDEP);
 
-                                        if ((nodoResultados != null) && (nodoResultados.HasChildNodes))
+                                        if (xmlTrama != null)
                                         {
-                                            clsEjecucionProceso entidadEjecucionProceso;
-                                            listaProcesosEjecutados = new clsEjecucionProcesos<clsEjecucionProceso>();
+                                            nodoResultados = xmlTrama.SelectSingleNode("//" + _resultados);
 
-                                            foreach (XmlNode nodoResultado in nodoResultados.ChildNodes)
+                                            if ((nodoResultados != null) && (nodoResultados.HasChildNodes))
                                             {
-                                                entidadEjecucionProceso = new clsEjecucionProceso(nodoResultado.OuterXml);
+                                                clsEjecucionProceso entidadEjecucionProceso;
+                                                listaProcesosEjecutados = new clsEjecucionProcesos<clsEjecucionProceso>();
 
-                                                listaProcesosEjecutados.Agregar(entidadEjecucionProceso);
+                                                foreach (XmlNode nodoResultado in nodoResultados.ChildNodes)
+                                                {
+                                                    entidadEjecucionProceso = new clsEjecucionProceso(nodoResultado.OuterXml);
+
+                                                    listaProcesosEjecutados.Agregar(entidadEjecucionProceso);
+                                                }
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
                                     }
                                 }
                                 else
                                 {
-                                    throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
+                                    if (strMensajeObtenido[0].CompareTo("1") == 0)
+                                    {
+                                        listaProcesosEjecutados = null;
+                                    }
+                                    else
+                                    {
+                                        throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
+                                    }
                                 }
                             }
                             else
                             {
-                                if (strMensajeObtenido[0].CompareTo("1") == 0)
-                                {
-                                    listaProcesosEjecutados = null;
-                                }
-                                else
-                                {
-                                    throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
-                                }
+                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
                             }
                         }
                         else
@@ -154,10 +157,9 @@ namespace BCRGARANTIAS.Negocios
                     {
                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
                     }
-                }
-                else
-                {
-                    throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)

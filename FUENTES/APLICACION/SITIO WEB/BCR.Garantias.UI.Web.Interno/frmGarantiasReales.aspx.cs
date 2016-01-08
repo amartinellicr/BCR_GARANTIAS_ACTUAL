@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.ComponentModel;
 using System.Data;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using System.Diagnostics;
 using System.Text;
-using System.Threading;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-
-using BCRGARANTIAS.Datos;
 using BCRGARANTIAS.Negocios;
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
@@ -93,14 +82,13 @@ namespace BCRGARANTIAS.Forms
 
         #region Variables Globales
 
-        protected System.Data.OleDb.OleDbConnection oleDbConnection1;
-        protected System.Web.UI.WebControls.Label lblOperacion;
-        protected System.Web.UI.WebControls.Label lblTipoGarantia;
-        protected System.Web.UI.WebControls.Button btnCalificaciones;
-        protected System.Web.UI.WebControls.DropDownList cbGradoPrioridad;
-        protected System.Web.UI.WebControls.DropDownList cbInspeccin;
-        protected System.Web.UI.WebControls.Label lblTitulo2;
-        protected System.Web.UI.WebControls.Label Label1;
+        protected Label lblOperacion;
+        protected Label lblTipoGarantia;
+        protected Button btnCalificaciones;
+        protected DropDownList cbGradoPrioridad;
+        protected DropDownList cbInspeccin;
+        protected Label lblTitulo2;
+        protected Label Label1;
 
         private string strOperacionCrediticia = "-";
         private string strGarantia = "-";
@@ -117,6 +105,9 @@ namespace BCRGARANTIAS.Forms
         private bool seRedirecciona = false;
 
         private string urlPaginaMensaje = string.Empty;
+
+        private string[] listaCampos = { string.Empty };
+
 
         #endregion
 
@@ -1785,7 +1776,6 @@ namespace BCRGARANTIAS.Forms
         {
             base.OnInit(e);
 
-            Button2.Click += new EventHandler(Button2_Click);
             btnEliminar.Click += new EventHandler(btnEliminar_Click);
             btnLimpiar.Click += new EventHandler(btnLimpiar_Click);
             btnModificar.Click += new EventHandler(btnModificar_Click);
@@ -2021,8 +2011,6 @@ namespace BCRGARANTIAS.Forms
 
                     if (Gestor.IsInRol(Global.UsuarioSistema, int.Parse(Application["MNU_GARANTIA_REAL"].ToString())))
                     {
-                        FormatearCamposNumericos();
-
                         DiferenciaMontosMitigadores = "0.00";
 
                         btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, "0.00");
@@ -2054,8 +2042,7 @@ namespace BCRGARANTIAS.Forms
 
                         }
 
-                        AplicarCalculoMontoMitigador();
-
+                        
                         #region Bloquear campos según requerimiento Siebel No. 1-21317176  ---> 009 Req_Validaciones Indicador Inscripción, por AMM-Lidersoft Internacional S.A., el 11/07/2012
 
                         txtMontoMitigador.Enabled = false;
@@ -2080,6 +2067,8 @@ namespace BCRGARANTIAS.Forms
 
                         if ((Session["EsOperacionValidaReal"] != null) && (bool.Parse(Session["EsOperacionValidaReal"].ToString())))
                         {
+                            AplicarCalculoMontoMitigador();
+
                             if ((Session["Accion"] == null) || (Session["Accion"].ToString().Length == 0))
                             {
                                 btnModificar.Enabled = false;
@@ -2280,6 +2269,8 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
                     MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
 
+                    CargaInicial = true;
+
                     btnModificar_Click(sender, e);
                 }
             }
@@ -2289,12 +2280,7 @@ namespace BCRGARANTIAS.Forms
                 contenedorDatosModificacion.Visible = true;
             }
         }
-
-        private void Button2_Click(object sender, System.EventArgs e)
-        {
-            FormatearCamposNumericos();
-        }
-
+         
         /// <summary>
         /// Este evento permite verificar si la información de la operación es valida
         /// </summary>
@@ -2303,74 +2289,64 @@ namespace BCRGARANTIAS.Forms
         private void btnValidarOperacion_Click(object sender, System.EventArgs e)
         {
             int nProducto = -1;
-            string numeroOperacion = string.Empty;
+            int nContabilidad;
+            int nOficina;
+            int nMoneda;
+            long nOperacion;
+            short tipoOperacion;
 
-            BloquearCampos(false, true);
+            strOperacionCrediticia = string.Empty;
 
-            FormatearCamposNumericos();
+            clsOperacionCrediticia oOperacion = new clsOperacionCrediticia();
+                        
+            
 
             EliminarDatosGlobales();
-            Session["Tipo_Operacion"] = int.Parse(cbTipoCaptacion.SelectedValue.ToString());
+
+            tipoOperacion = short.Parse(cbTipoCaptacion.SelectedValue.ToString());
+
+            Session["Tipo_Operacion"] = tipoOperacion;
 
             if (ValidarDatosOperacion())
             {
-                string strProducto = ((int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString())) ? txtProducto.Text : string.Empty);
-                DataSet dsDatos = new DataSet();
-
                 try
                 {
-                    oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                    OleDbCommand oComando = new OleDbCommand("pa_ValidarOperaciones", oleDbConnection1);
-                    oComando.CommandTimeout = 120;
-                    oComando.CommandType = CommandType.StoredProcedure;
-                    oComando.Parameters.AddWithValue("@Contabilidad", txtContabilidad.Text);
-                    oComando.Parameters.AddWithValue("@Oficina", txtOficina.Text);
-                    oComando.Parameters.AddWithValue("@Moneda", txtMoneda.Text);
+                    string strProducto = ((int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString())) ? txtProducto.Text : string.Empty);
 
-                    if (strProducto.Length > 0)
+                    nContabilidad = ((int.TryParse(txtContabilidad.Text, out nContabilidad)) ? nContabilidad : -1);
+                    nOficina = ((int.TryParse(txtOficina.Text, out nOficina)) ? nOficina : -1);
+                    nMoneda = ((int.TryParse(txtMoneda.Text, out nMoneda)) ? nMoneda : -1);
+                    nProducto = ((int.TryParse(((strProducto.Length > 0) ? strProducto : "-1"), out nProducto)) ? nProducto : -1);
+                    nOperacion = ((long.TryParse(txtOperacion.Text, out nOperacion)) ? nOperacion : -1);
+
+                    //Se crea el dato correspondiente a operación crediticia que se almacenará en la bitácora
+                    switch (tipoOperacion)
                     {
-                        oComando.Parameters.AddWithValue("@Producto", strProducto);
-                    }
-                    else
-                    {
-                        oComando.Parameters.AddWithValue("@Producto", DBNull.Value);
-                    }
-
-                    oComando.Parameters.AddWithValue("@Operacion", txtOperacion.Text);
-                    oComando.Parameters["@Producto"].IsNullable = true;
-
-                    numeroOperacion = ((strProducto.Length > 0) ? (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + strProducto + "-" + txtOperacion.Text) : (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + txtOperacion.Text));
-
-                    OleDbDataAdapter cmdConsulta = new OleDbDataAdapter();
-
-                    if ((oleDbConnection1 != null) && (oleDbConnection1.State == ConnectionState.Closed))
-                    {
-                        oleDbConnection1.Open();
+                        case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                            strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}", nContabilidad.ToString(), nOficina.ToString(), nMoneda.ToString(), nProducto.ToString(), nOperacion.ToString());
+                            break;
+                        case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                            strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}", nContabilidad.ToString(), nOficina.ToString(), nMoneda.ToString(), nOperacion.ToString());
+                            break;
+                        default:
+                            break;
                     }
 
-                    cmdConsulta.SelectCommand = oComando;
-                    cmdConsulta.SelectCommand.Connection = oleDbConnection1;
-                    cmdConsulta.Fill(dsDatos, "Operacion");
+                    oOperacion = Gestor.ValidarOperacion(nContabilidad, nOficina, nMoneda, nProducto, nOperacion);
 
+                    oOperacion.TipoOperacion = tipoOperacion;
                 }
                 catch (Exception ex)
                 {
-                    Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                    Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + strOperacionCrediticia + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
                     seRedirecciona = true;
                     urlPaginaMensaje = ("frmMensaje.aspx?" +
                                         "bError=1" +
                                         "&strTitulo=" + "Problemas Validando Operación" +
-                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + strOperacionCrediticia + "'"), Mensajes.ASSEMBLY) +
                                         "&bBotonVisible=0");
                 }
-                finally
-                {
-                    if ((oleDbConnection1 != null) && (oleDbConnection1.State == ConnectionState.Open))
-                    {
-                        oleDbConnection1.Close();
-                    }
-                }
-
+                
                 if (seRedirecciona)
                 {
                     Response.Redirect(urlPaginaMensaje, true);
@@ -2380,40 +2356,37 @@ namespace BCRGARANTIAS.Forms
 
                 try
                 {
-                    if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Operacion"].Rows.Count > 0))
+                    if (oOperacion.EsValida)
                     {
-                        EsGiro = (((dsDatos.Tables["Operacion"].Columns.Contains("esGiro")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("esGiro")) && (dsDatos.Tables["Operacion"].Rows[0]["esGiro"].ToString().CompareTo("1") == 0)) ? true : false);
+                        EsGiro = oOperacion.EsGiro;
 
-                        ConsecutivoContrato = (((dsDatos.Tables["Operacion"].Columns.Contains("consecutivoContrato")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("consecutivoContrato"))) ? (long.Parse(dsDatos.Tables["Operacion"].Rows[0]["consecutivoContrato"].ToString())) : -1);
+                        ConsecutivoContrato = oOperacion.ConsecutivoContrato;
 
-                        _contratoDelGiro = (((EsGiro) && (dsDatos.Tables["Operacion"].Columns.Contains("Contrato")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("Contrato"))) ? (dsDatos.Tables["Operacion"].Rows[0]["Contrato"].ToString()) : string.Empty);
+                        _contratoDelGiro = oOperacion.FormatoLargoContrato;
 
                         if (!EsGiro)
                         {
-                            ConsecutivoOperacion = long.Parse(dsDatos.Tables["Operacion"].Rows[0]["cod_operacion"].ToString());
+                            ConsecutivoOperacion = oOperacion.ConsecutivoOperacion;
 
-                            DatosOperacion = cbTipoCaptacion.SelectedItem.Value + "_" + txtOficina.Text + "_" + txtMoneda.Text + "_" + txtProducto.Text + "_" + txtOperacion.Text;
+                            listaCampos = new string[] { oOperacion.TipoOperacion.ToString(), txtOficina.Text, txtMoneda.Text, txtProducto.Text, txtOperacion.Text };
 
-                            Session["Deudor"] = dsDatos.Tables["Operacion"].Rows[0]["cedula_deudor"].ToString();
+                            DatosOperacion = string.Format("{0}_{1}_{2}_{3}_{4}", listaCampos); 
 
-                            if (txtProducto.Text.Length != 0)
-                                nProducto = int.Parse(txtProducto.Text);
-
+                            Session["Deudor"] = oOperacion.CedulaDeudor;
+                                                       
                             CargarGrid(int.Parse(cbTipoCaptacion.SelectedValue.ToString()),
-                                        ((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion),
-                                        int.Parse(txtContabilidad.Text),
-                                        int.Parse(txtOficina.Text),
-                                        int.Parse(txtMoneda.Text),
-                                        nProducto,
-                                        long.Parse(txtOperacion.Text));
+                                                ((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion),
+                                                oOperacion.Contabilidad,
+                                                oOperacion.Oficina,
+                                                oOperacion.Moneda,
+                                                oOperacion.Producto,
+                                                oOperacion.Operacion);
 
                             lblDeudor.Visible = true;
                             lblNombreDeudor.Visible = true;
-
-                            Session["Nombre_Deudor"] = dsDatos.Tables["Operacion"].Rows[0]["cedula_deudor"].ToString() + " - " +
-                                                        dsDatos.Tables["Operacion"].Rows[0]["nombre_deudor"].ToString();
-
-                            lblNombreDeudor.Text = Session["Nombre_Deudor"].ToString();
+                            string nombreDeudor = string.Format("{0} - {1}", oOperacion.CedulaDeudor, oOperacion.NombreDeudor);
+                            Session["Nombre_Deudor"] = nombreDeudor;
+                            lblNombreDeudor.Text = nombreDeudor;
                             btnModificar.Enabled = false;
                             btnEliminar.Enabled = false;
                             Session["EsOperacionValidaReal"] = true;
@@ -2454,12 +2427,12 @@ namespace BCRGARANTIAS.Forms
                 }
                 catch (Exception ex)
                 {
-                    Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                    Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_DETALLE, (" '" + strOperacionCrediticia + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
                     seRedirecciona = true;
                     urlPaginaMensaje = ("frmMensaje.aspx?" +
                                         "bError=1" +
                                         "&strTitulo=" + "Problemas Cargando Garantías" +
-                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY) +
+                                        "&strMensaje=" + Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS, (" '" + strOperacionCrediticia + "'"), Mensajes.ASSEMBLY) +
                                         "&bBotonVisible=0");
                 }
 
@@ -2472,7 +2445,7 @@ namespace BCRGARANTIAS.Forms
 
         private void cbInscripcion_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            FormatearCamposNumericos();
+            
             if (cbInscripcion.SelectedItem.Text == string.Empty || int.Parse(cbInscripcion.SelectedValue.ToString()) == 0 || int.Parse(cbInscripcion.SelectedValue.ToString()) == 1)
             {
                 txtFechaRegistro.Enabled = false;
@@ -2493,7 +2466,7 @@ namespace BCRGARANTIAS.Forms
 
             try
             {
-                FormatearCamposNumericos();
+                
                 LimpiarCampos();
                 CargarCombos();
                 btnModificar.Enabled = false;
@@ -2555,7 +2528,7 @@ namespace BCRGARANTIAS.Forms
                 }
 
                 AplicarCalculoMontoMitigador();
-
+               
                 if (entidadValida)
                 {
                     if ((!MostrarErrorMontoMitigador) || (!MostrarListaOperaciones) || (!MostrarErrorInfraSeguro) || (!MostrarErrorAcreenciasDiferentes)
@@ -2719,7 +2692,7 @@ namespace BCRGARANTIAS.Forms
             try
             {
                 //Campos llave
-                FormatearCamposNumericos();
+                
                 txtOficina.Text = "";
                 txtMoneda.Text = "";
                 txtProducto.Text = "";
@@ -2767,7 +2740,7 @@ namespace BCRGARANTIAS.Forms
         {
             try
             {
-                FormatearCamposNumericos();
+                
                 LimpiarGarantiaReal();
                 Session["EsCambioTipoGarantia"] = true;
 
@@ -2902,15 +2875,14 @@ namespace BCRGARANTIAS.Forms
             }
             catch (Exception ex)
             {
-                string numeroOperacion = ((txtProducto.Text.Length > 0) ? (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + txtProducto.Text + "-" + txtOperacion.Text) : (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + txtOperacion.Text));
                 string numeroGarantia = ((gdvGarantiasReales.SelectedDataKey[3] != null) ? gdvGarantiasReales.SelectedDataKey[3].ToString() : "Sin Definir");
                 StringCollection listaDatosError = new StringCollection();
                 listaDatosError.Add(numeroGarantia);
-                listaDatosError.Add(numeroOperacion);
+                listaDatosError.Add(strOperacionCrediticia);
                 listaDatosError.Add(ex.Message);
 
                 Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS_DETALLE, listaDatosError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                lblMensaje.Text = Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, numeroGarantia, numeroOperacion, Mensajes.ASSEMBLY);
+                lblMensaje.Text = Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, numeroGarantia, strOperacionCrediticia, Mensajes.ASSEMBLY);
             }
         }
 
@@ -3082,16 +3054,15 @@ namespace BCRGARANTIAS.Forms
             }
             catch (Exception ex)
             {
-                string numeroOperacion = ((txtProducto.Text.Length > 0) ? (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + txtProducto.Text + "-" + txtOperacion.Text) : (txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + txtOperacion.Text));
                 string numeroGarantia = ((gdvGarantiasReales.SelectedDataKey[3] != null) ? gdvGarantiasReales.SelectedDataKey[3].ToString() : "Sin Definir");
                 string errorObtenido = "Error Porcentaje Aceptación Calculado: " + ex.Message;
                 StringCollection listaDatosError = new StringCollection();
                 listaDatosError.Add(numeroGarantia);
-                listaDatosError.Add(numeroOperacion);
+                listaDatosError.Add(strOperacionCrediticia);
                 listaDatosError.Add(errorObtenido);
 
                 Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS_DETALLE, listaDatosError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
-                lblMensaje.Text = Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, numeroGarantia, numeroOperacion, Mensajes.ASSEMBLY);
+                lblMensaje.Text = Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, numeroGarantia, strOperacionCrediticia, Mensajes.ASSEMBLY);
             }
         }
 
@@ -3121,7 +3092,7 @@ namespace BCRGARANTIAS.Forms
                         ConsecutivoGarantia = long.Parse(gdvGarantiasReales.SelectedDataKey[1].ToString());
                         DescripcionGarantia = gdvGarantiasReales.SelectedDataKey[3].ToString();
 
-                        tipoGarantiaReal = int.Parse(gdvGarantiasReales.SelectedDataKey[2].ToString());
+                        CodigoTipoGarantiaReal = int.Parse(gdvGarantiasReales.SelectedDataKey[2].ToString());
 
                         AnnosCalculoFechaPrescripcion = ObtenerCantidadAnnosPrescripcion(tipoGarantiaReal);
 
@@ -3130,9 +3101,9 @@ namespace BCRGARANTIAS.Forms
 
                         CargaInicial = true;
 
-                        CargarDatosGarantia(((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion), ConsecutivoGarantia, DescripcionGarantia, out bloquearControles, true, tipoGarantiaReal);
+                        CargarDatosGarantia(((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion), ConsecutivoGarantia, DescripcionGarantia, out bloquearControles, true, CodigoTipoGarantiaReal);
 
-                        AplicarCalculoMontoMitigador();
+                        //AplicarCalculoMontoMitigador();
                         
                         if (!bloquearControles)
                         {
@@ -3291,6 +3262,8 @@ namespace BCRGARANTIAS.Forms
         {
             try
             {
+                BloquearCampos(false, false);
+
                 txtPartido.Text = string.Empty;
                 txtNumFinca.Text = string.Empty;
                 txtGrado.Text = string.Empty;
@@ -3461,60 +3434,20 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
-        private void FormatearCamposNumericos()
-        {
-            System.Globalization.NumberFormatInfo a = new System.Globalization.NumberFormatInfo();
-            a.NumberDecimalSeparator = ".";
-        }
-
         private void CargarGrid(int nTipoOperacion, long nCodOperacion, int nContabilidad,
                                 int nOficina, int nMoneda, int nProducto, long nOperacion)
         {
-            System.Data.DataSet dsDatos = new System.Data.DataSet();
             ScriptManager requestSM = ScriptManager.GetCurrent(this.Page);
 
-            using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+            try
             {
-                SqlCommand oComando = null;
-
-                if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-                    oComando = new SqlCommand("pa_ObtenerGarantiasRealesOperaciones", oConexion);
-                else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
-                    oComando = new SqlCommand("pa_ObtenerGarantiasRealesContratos", oConexion);
-
-                SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-                //declara las propiedades del comando
-                oComando.CommandType = CommandType.StoredProcedure;
-                oComando.CommandTimeout = 120;
-                oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", nCodOperacion);
-                oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", nContabilidad);
-                oComando.Parameters.AddWithValue("@piCodigo_Oficina", nOficina);
-                oComando.Parameters.AddWithValue("@piCodigo_Moneda", nMoneda);
-
-                if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-                {
-                    oComando.Parameters.AddWithValue("@piCodigo_Producto", nProducto);
-                    oComando.Parameters.AddWithValue("@pdNumero_Operacion", nOperacion);
-                }
-                else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
-                {
-                    oComando.Parameters.AddWithValue("@pdNumero_Contrato", nOperacion);
-                }
-
-                oComando.Parameters.AddWithValue("@psCedula_Usuario", Global.UsuarioSistema);
-
-
-                //Abre la conexión
-                oConexion.Open();
-                oDataAdapter.SelectCommand = oComando;
-                oDataAdapter.SelectCommand.Connection = oConexion;
-                oDataAdapter.Fill(dsDatos, "Datos");
+                DataSet dsDatos = Gestor.ObtenerListaGarantiasReales(nTipoOperacion, nCodOperacion, nContabilidad, nOficina, nMoneda, nProducto, nOperacion, Session["strUSER"].ToString());
 
                 if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Datos"].Rows.Count > 0))
                 {
 
-                    if ((!dsDatos.Tables["Datos"].Rows[0].IsNull("tipo_garantia_real")) &&
-                        (!dsDatos.Tables["Datos"].Rows[0].IsNull("Garantia_Real")))
+                    if ((!dsDatos.Tables["Datos"].Rows[0].IsNull(clsGarantiaReal._codTipoGarantiaReal)) &&
+                        (!dsDatos.Tables["Datos"].Rows[0].IsNull(clsGarantiaReal._garantiaRealConsulta)))
                     {
                         this.gdvGarantiasReales.DataSource = dsDatos.Tables["Datos"].DefaultView;
                         this.gdvGarantiasReales.DataBind();
@@ -3562,6 +3495,10 @@ namespace BCRGARANTIAS.Forms
                                                            false);
                 }
 
+            }
+            catch
+            {
+                throw;
             }
         }
 
@@ -4466,9 +4403,6 @@ namespace BCRGARANTIAS.Forms
                     lblMensaje3.Text = "Debe seleccionar la fecha de prescripción.";
                     bRespuesta = false;
                 }
-                if (!bRespuesta)
-                    FormatearCamposNumericos();
-
             }
             catch (Exception ex)
             {
@@ -4600,22 +4534,26 @@ namespace BCRGARANTIAS.Forms
             bloquearControles = false;
 
             bool asignarPoliza = false;
-
-            int annosCalculoPrescripcion = 0;
-
+                        
             bool polizaEstaVigente = false;
 
-            string datosOperacion = txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text + "-" + ((txtProducto.Text.Length > 0) ?
-                (txtProducto.Text + "-" + txtOperacion.Text) : txtOperacion.Text);
-
-            strOperacionCrediticia = datosOperacion;
+            //Se crea el dato correspondiente a operación crediticia que se almacenará en la bitácora
+            switch ((Convert.ToInt32(TipoOperacion)))
+            {
+                case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}", txtContabilidad.Text, txtOficina.Text, txtMoneda.Text, txtProducto.Text, txtOperacion.Text);
+                    break;
+                case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}", txtContabilidad.Text, txtOficina.Text, txtMoneda.Text, txtOperacion.Text);
+                    break;
+                default:
+                    break;
+            }
 
             if (obtenerDatosBD)
             {
-                annosCalculoPrescripcion = ObtenerCantidadAnnosPrescripcion(tipoGarantiaReal);
-
                 entidadGarantia = new clsGarantiaReal();
-                entidadGarantia = Gestor.ObtenerDatosGarantiaReal(nOperacion, nGarantia, datosOperacion, desGarantia, Session["strUSER"].ToString(), annosCalculoPrescripcion);
+                entidadGarantia = Gestor.ObtenerDatosGarantiaReal(nOperacion, nGarantia, strOperacionCrediticia, desGarantia, Session["strUSER"].ToString(), AnnosCalculoFechaPrescripcion);
                 TramaInicial = entidadGarantia.TramaInicial;
 
                 mostrarErrorRelacionPolizaGarantia = true;
@@ -4676,7 +4614,7 @@ namespace BCRGARANTIAS.Forms
 
                 MontoTotalAvaluo = entidadGarantia.MontoTotalAvaluo.ToString("N");
 
-                FormatearCamposNumericos();
+                
                 int nTGarantiaReal = -1;
 
                 #region Datos de la Garantía
@@ -5232,7 +5170,7 @@ namespace BCRGARANTIAS.Forms
             }
             else
             {
-                lblMensaje.Text = ((entidadGarantia.DescripcionError.Length > 0) ? entidadGarantia.DescripcionError : Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, desGarantia, datosOperacion, Mensajes.ASSEMBLY));
+                lblMensaje.Text = ((entidadGarantia.DescripcionError.Length > 0) ? entidadGarantia.DescripcionError : Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS, desGarantia, strOperacionCrediticia, Mensajes.ASSEMBLY));
             }
 
             //Se cambia el puntero del cursor
@@ -7982,16 +7920,12 @@ namespace BCRGARANTIAS.Forms
                 }
             }
 
-            CargarCombos();
-            LimpiarCampos();
-
             StringBuilder url = new StringBuilder(Page.ResolveUrl("frmMensaje.aspx"));
             url.Append("?bError=0&strTitulo=Modificación Exitosa&strMensaje=");
             url.Append(Mensajes.Obtener(Mensajes.MODIFICACION_SATISFACTORIA_GARANTIA, "real", Mensajes.ASSEMBLY));
             url.Append("&bBotonVisible=1&strTextoBoton=Regresar&strHref=frmGarantiasReales.aspx");
             seRedirecciona = true;
             urlPaginaMensaje = url.ToString();
-            //Response.Redirect(url.ToString(), false);
         }
 
         /// <summary>

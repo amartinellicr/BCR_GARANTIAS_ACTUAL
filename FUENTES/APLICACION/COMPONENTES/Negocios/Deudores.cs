@@ -37,8 +37,8 @@ namespace BCRGARANTIAS.Negocios
                                              clsDeudor._codTipoDeudor, nTipoPersona.ToString(),
                                              clsDeudor._codGeneradorDivisas, nGeneradorDivisas.ToString(),
                                              clsDeudor._codVinculadoEntidad, nVinculadoEntidad.ToString(),
-                                             clsDeudor._codCondicionEspecial, ((nCondicionEspecial != -1) ? nCondicionEspecial.ToString(): DBNull.Value.ToString()),
-                                             clsDeudor._codTipoAsignacion, ((nTipoAsignacion != -1) ? nTipoAsignacion.ToString(): DBNull.Value.ToString()),
+                                             clsDeudor._codCondicionEspecial, ((nCondicionEspecial != -1) ? nCondicionEspecial.ToString(): UtilitariosComun.ValorNulo),
+                                             clsDeudor._codTipoAsignacion, ((nTipoAsignacion != -1) ? nTipoAsignacion.ToString(): UtilitariosComun.ValorNulo),
                                              clsDeudor._nombreDeudor, strNombre,
                                              clsDeudor._cedulaDeudor, strCedula};
 

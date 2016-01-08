@@ -39,9 +39,9 @@ namespace BCRGARANTIAS.Negocios
 
                 listaCampos = new string[] { clsValuacionesFiador._entidadAvaluoFiador,
                                              clsValuacionesFiador._consecutivoGarantiaFiduciaria, clsValuacionesFiador._fechaValuacion, clsValuacionesFiador._montoIngresoNeto, clsValuacionesFiador._indicadorTieneCapacidadPago,
-                                             nGarantiaFiduciaria.ToString(), strFecha, strIngreso,  ((nTieneCapacidad != -1) ? nTieneCapacidad.ToString() : DBNull.Value.ToString())};
+                                             nGarantiaFiduciaria.ToString(), strFecha, strIngreso,  ((nTieneCapacidad != -1) ? nTieneCapacidad.ToString() : UtilitariosComun.ValorNulo)};
 
-                string strInsertarValuacionesFiador = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}) VALUES({5}, {6}, {7}, CONVERT(DECIMAL(18,2), '{8}'))", listaCampos);
+                string strInsertarValuacionesFiador = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}) VALUES({5}, '{6}', CONVERT(DECIMAL(18,2), '{7}'), {8})", listaCampos);
 
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
@@ -120,132 +120,7 @@ namespace BCRGARANTIAS.Negocios
             catch
             {
                 throw;
-            }
-		
-		}
-
-		public void Modificar(int nGarantiaFiduciaria, DateTime dFecha, decimal nIngresoNeto, int nTieneCapacidad, 
-                              string strUsuario, string strIP)
-		{
-			try
-			{                
-                listaCampos = new string[] { clsValuacionesFiador._entidadAvaluoFiador,
-                                             clsValuacionesFiador._montoIngresoNeto, nIngresoNeto.ToString(),
-                                             clsValuacionesFiador._indicadorTieneCapacidadPago, ((nTieneCapacidad != -1) ? nTieneCapacidad.ToString() : DBNull.Value.ToString()),
-                                             clsValuacionesFiador._consecutivoGarantiaFiduciaria, nGarantiaFiduciaria.ToString(),
-                                             clsValuacionesFiador._fechaValuacion, dFecha.ToString("yyyyMMdd")};
-
-                string strModificarValuacionesFiador = string.Format("UPDATE dbo.{0} SET {1} = {2}, {3} = {4}, {5} = {6} WHERE {7} = {8} AND {9} = CONVERT(VARCHAR(10),'{10}',111)", listaCampos);
-
-                listaCampos = new string[] { clsValuacionesFiador._montoIngresoNeto, clsValuacionesFiador._indicadorTieneCapacidadPago,
-                                             clsValuacionesFiador._entidadAvaluoFiador,
-                                             clsValuacionesFiador._consecutivoGarantiaFiduciaria, nGarantiaFiduciaria.ToString(),
-                                             clsValuacionesFiador._fechaValuacion, dFecha.ToShortDateString()};
-
-                sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2} WHERE {3} = {4} AND {5} = '{6}'", listaCampos);
-
-                DataSet dsValuacionesFiador = AccesoBD.ejecutarConsulta(sentenciaSql);
-
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-                    using (SqlCommand oComando = new SqlCommand(strModificarValuacionesFiador, oConexion))
-                    {
-                        //Declara las propiedades del comando
-                        oComando.CommandType = CommandType.Text;
-                        oComando.Connection.Open();
-
-                        //Ejecuta el comando
-                        nFilasAfectadas = oComando.ExecuteNonQuery();
-
-                        oComando.Connection.Close();
-                        oComando.Connection.Dispose();
-                    }
-
-					if (nFilasAfectadas > 0)
-					{
-						#region Inserción en Bitácora
-
-						if ((dsValuacionesFiador != null) && (dsValuacionesFiador.Tables.Count > 0) && (dsValuacionesFiador.Tables[0].Rows.Count > 0))
-						{
-							Bitacora oBitacora = new Bitacora();
-
-							TraductordeCodigos oTraductor = new TraductordeCodigos();
-
-							CGarantiaFiduciaria oGarantia = CGarantiaFiduciaria.Current;
-
-                            switch (oGarantia.TipoOperacion)
-                            {
-                                case ((int)Enumeradores.Tipos_Operaciones.Directa):
-
-                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Producto.ToString(), oGarantia.Numero.ToString());
-                                    break;
-
-                                case ((int)Enumeradores.Tipos_Operaciones.Contrato):
-                                    strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Numero.ToString());
-                                    break;
-                                case ((int)Enumeradores.Tipos_Operaciones.Tarjeta):
-                                    strOperacionCrediticia = oGarantia.Tarjeta;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            //Informacion del fiador
-                            if (oGarantia.CedulaFiador != null)
-								strGarantia = oGarantia.CedulaFiador;
-
-							if (!dsValuacionesFiador.Tables[0].Rows[0].IsNull(clsValuacionesFiador._montoIngresoNeto))
-							{
-								decimal nIngresoNetoObt = Convert.ToDecimal(dsValuacionesFiador.Tables[0].Rows[0][clsValuacionesFiador._montoIngresoNeto].ToString());
-
-								if (nIngresoNetoObt != nIngresoNeto)
-								{
-									oBitacora.InsertarBitacora("GAR_VALUACIONES_FIADOR", strUsuario, strIP, null,
-									   2, 1, strGarantia, strOperacionCrediticia, strModificarValuacionesFiador, string.Empty,
-									   clsValuacionesFiador._montoIngresoNeto,
-									   nIngresoNetoObt.ToString("N2"),
-									   nIngresoNeto.ToString("N2"));
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_VALUACIONES_FIADOR", strUsuario, strIP, null,
-									   2, 1, strGarantia, strOperacionCrediticia, strModificarValuacionesFiador, string.Empty,
-									   clsValuacionesFiador._montoIngresoNeto,
-									   string.Empty,
-									   nIngresoNeto.ToString("N2"));
-							}
-
-							if (!dsValuacionesFiador.Tables[0].Rows[0].IsNull(clsValuacionesFiador._indicadorTieneCapacidadPago))
-							{
-								int nCodigoCapacidadPagoObt = Convert.ToInt32(dsValuacionesFiador.Tables[0].Rows[0][clsValuacionesFiador._indicadorTieneCapacidadPago].ToString());
-
-								if ((nTieneCapacidad != -1) && (nCodigoCapacidadPagoObt != nTieneCapacidad))
-								{
-									oBitacora.InsertarBitacora("GAR_VALUACIONES_FIADOR", strUsuario, strIP, null,
-									   2, 1, strGarantia, strOperacionCrediticia, strModificarValuacionesFiador, string.Empty,
-									   clsValuacionesFiador._indicadorTieneCapacidadPago,
-									   oTraductor.TraducirTipoCapacidadPago(nCodigoCapacidadPagoObt),
-									   oTraductor.TraducirTipoTieneCapacidad(nTieneCapacidad));
-								}
-							}
-							else
-							{
-								oBitacora.InsertarBitacora("GAR_VALUACIONES_FIADOR", strUsuario, strIP, null,
-									   2, 1, strGarantia, strOperacionCrediticia, strModificarValuacionesFiador, string.Empty,
-									   clsValuacionesFiador._indicadorTieneCapacidadPago,
-									   string.Empty,
-									   oTraductor.TraducirTipoTieneCapacidad(nTieneCapacidad));
-							}
-						}
-						#endregion
-					}
-				}
-			}
-			catch
-			{
-				throw;
-			}
+            }		
 		}
 
 		public void Eliminar(int nGarantiaFiduciaria, string dFecha, string strUsuario, string strIP)
@@ -388,6 +263,55 @@ namespace BCRGARANTIAS.Negocios
                 throw;
             }
 		}
+
+        public DataSet ObtenerValuaciones(int nGarantiaFiduciaria)
+        {
+            DataSet listaAvaluos = new DataSet();
+
+            try
+            {
+                listaCampos = new string[] {clsValuacionesFiador._fechaValuacion, clsValuacionesFiador._montoIngresoNeto,
+                                            clsValuacionesFiador._entidadAvaluoFiador,
+                                            clsValuacionesFiador._consecutivoGarantiaFiduciaria,  nGarantiaFiduciaria.ToString()};
+
+                string strInsertarValuacionesFiador = string.Format("SELECT CONVERT(VARCHAR(10), {0}, 103) AS fecha_valuacion, {0} AS fecha_Avaluo, {1} FROM dbo.{2} WHERE {3} = {4} ORDER BY fecha_Avaluo DESC", listaCampos);
+
+                listaAvaluos = AccesoBD.ejecutarConsulta(strInsertarValuacionesFiador);
+
+            }
+            catch
+            {
+                throw;
+            }
+
+            return listaAvaluos;
+        }
+        
+        public bool ExisteFecha(int nGarantiaFiduciaria, string dFecha)
+        {
+            bool existeFecha = false;
+            int valorRetornado;
+
+            try
+            {
+                listaCampos = new string[] {clsValuacionesFiador._entidadAvaluoFiador,
+                                            clsValuacionesFiador._consecutivoGarantiaFiduciaria, nGarantiaFiduciaria.ToString(),
+                                            clsValuacionesFiador._fechaValuacion, dFecha};
+
+                string strConsultarFechaValuacion = string.Format("(SELECT 1 FROM dbo.{0} WHERE {1} = {2} AND {3} = '{4}')", listaCampos);
+
+                SqlParameter[] parameters = new SqlParameter[] { };
+
+                object resultadoObtenido = AccesoBD.ExecuteScalar(CommandType.Text, strConsultarFechaValuacion, parameters);
+                existeFecha = (((resultadoObtenido != null) && (int.TryParse(resultadoObtenido.ToString(), out valorRetornado))) ? ((valorRetornado != 0) ? true : false) : false);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return existeFecha;
+        }
 
 		#endregion
 	}

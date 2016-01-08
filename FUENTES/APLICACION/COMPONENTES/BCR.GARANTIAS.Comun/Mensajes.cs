@@ -233,6 +233,14 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorInsertandoGarantia                                            = "ERROR_INSERTANDO_GARANTIA";
         public const string _errorInsertandoGarantiaDetalle                                     = "ERROR_INSERTANDO_GARANTIA_DETALLE";
 
+        public const string _errorValidandoTarjeta                                              = "ERROR_VALIDANDO_TARJETA";
+        public const string _errorValidandoTarjetaDetalle                                       = "ERROR_VALIDANDO_TARJETA_DETALLE";
+        public const string _errorConexionWebServices                                           = "ERROR_CONEXION_WEB_SERVICES";
+        public const string _errorConexionWebServicesDetalle                                    = "ERROR_CONEXION_WEB_SERVICE_DETALLE";
+        public const string _errorInterfaceSistar                                               = "ERROR_INTERFAZ_SISTAR";
+        public const string _errorTramaSistar                                                   = "ERROR_TRAMA_SISTAR";
+        public const string _errorObteniendoTipoCambioBCCR                                      = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR";
+        public const string _errorObteniendoTipoCambioBCCRFechas                                = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR_FECHAS";
 
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico

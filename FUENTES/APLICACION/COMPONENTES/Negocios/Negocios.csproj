@@ -73,6 +73,7 @@
     <Compile Include="EjeccucionProcesos.cs" />
     <Compile Include="HistoricoPorcentajeAceptacion.cs" />
     <Compile Include="IndicesActualizacionAvaluos.cs" />
+    <Compile Include="InterfacesSistemas.cs" />
     <Compile Include="PorcentajeAceptacion.cs" />
     <Compile Include="Procesos.cs" />
     <Compile Include="ProcesosDatos.cs" />
@@ -110,11 +111,32 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\BCCR.IndicadoresEconomicos\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\BCR.MQ.Servicios\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <WebReferenceUrl Include="http://192.168.162.15/WSMQ/WSMQ.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\BCR.MQ.Servicios\</RelPath>
+      <UpdateFromURL>http://192.168.162.15/WSMQ/WSMQ.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Negocios_BCR_MQ_Servicios_WSMQ</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\ActDirectory\</RelPath>
@@ -125,6 +147,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Negocios_ActDirectory_ActiveDirectory</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\BCCR.IndicadoresEconomicos\</RelPath>
+      <UpdateFromURL>http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Negocios_BCCR_IndicadoresEconomicos_wsIndicadoresEconomicos</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +175,16 @@
     <None Include="Web References\ActDirectory\Usuario.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\BCCR.IndicadoresEconomicos\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\BCCR.IndicadoresEconomicos\wsIndicadoresEconomicos.wsdl" />
+    <None Include="Web References\BCR.MQ.Servicios\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\BCR.MQ.Servicios\WSMQ.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BCR.GARANTIAS.Comun\BCR.GARANTIAS.Comun.csproj">
@@ -160,6 +203,12 @@
       <Project>{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}</Project>
       <Name>Datos</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\BCR.MQ.Servicios\WSMQ.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\BCCR.IndicadoresEconomicos\wsIndicadoresEconomicos.disco" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

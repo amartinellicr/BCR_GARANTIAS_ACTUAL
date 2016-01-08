@@ -103,7 +103,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsPerito._entidadPerito,
                                             clsPerito._cedulaPerito, strCedula};
 
-                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}')", listaCampos);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}'", listaCampos);
 
                 //Se obtienen los datos antes de ser modificados, con el fin de poder ingresarlos en la bitácora
                 dsPerito = AccesoBD.ejecutarConsulta(sentenciaSql);
@@ -286,7 +286,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsPerito._entidadPerito,
                                             clsPerito._cedulaPerito, strCedula};
 
-                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}')", listaCampos);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5} FROM dbo.{6} WHERE {7} = '{8}'", listaCampos);
 
                 dsPerito = AccesoBD.ejecutarConsulta(sentenciaSql);
 

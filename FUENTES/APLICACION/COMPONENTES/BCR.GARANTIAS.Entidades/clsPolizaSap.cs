@@ -13,14 +13,14 @@ namespace BCR.GARANTIAS.Entidades
     {
         #region Constantes
 
-        private const string _codigoSap = "Codigo_SAP";
+        public const string _codigoSap = "Codigo_SAP";
         private const string _tipoPoliza = "Tipo_Poliza";
         private const string _montoPoliza = "Monto_Poliza";
         private const string _monedaMontoPoliza = "Moneda_Monto_Poliza";
         private const string _fechaVencimientoPoliza = "Fecha_Vencimiento";
         private const string _cedulaAcreedorPoliza = "Cedula_Acreedor";
         private const string _nombreAcreedorPoliza = "Nombre_Acreedor";
-        private const string _montoAcreencia = "Monto_Acreencia";
+        public const string _montoAcreencia = "Monto_Acreencia";
         private const string _detallePoliza = "Detalle_Poliza";
         private const string _polizaSeleccionada = "Poliza_Seleccionada";
         private const string _montoPolizaColonizado = "Monto_Poliza_Colonizado";

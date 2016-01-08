@@ -3,11 +3,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Entidades;
 using BCR.GARANTIAS.Comun;
-
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -442,7 +442,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsGarantiaValor._entidadGarantiaValor,
                                             clsGarantiaValor._consecutivoGarantiaValor, nGarantiaValor.ToString()};
 
-               sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}  FROM dbo.{15} WHERE {16} = {17})", listaCampos);
+               sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}  FROM dbo.{15} WHERE {16} = {17}", listaCampos);
 
                 dsGarantiaValor = AccesoBD.ejecutarConsulta(sentenciaSql);
 
@@ -454,7 +454,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsGarantiaValor._consecutivoOperacion, nOperacion.ToString(),
                                             clsGarantiaValor._consecutivoGarantiaValor, nGarantiaValor.ToString()};
 
-                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11} FROM dbo.{12} WHERE {13} = {14} AND {15} = {16})", listaCampos);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11} FROM dbo.{12} WHERE {13} = {14} AND {15} = {16}", listaCampos);
  
                 dsGarantiaValorXOperacion = AccesoBD.ejecutarConsulta(sentenciaSql);
 
@@ -1641,28 +1641,95 @@ namespace BCRGARANTIAS.Negocios
             }
 		}
         
+        /// <summary>
+        /// Método que obtiene el listado de las garantías de valor asociadas a una operación o contrato
+        /// </summary>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="cedulaUsuario">Identificación del usuario que realiza la consulta</param>
+        /// <returns>Lista de garantías relacionadas</returns>
+        public DataSet ObtenerListaGarantias(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario)
+        {
+            DataSet dsDatos = new DataSet();
+
+            using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+            {
+                SqlCommand oComando = null;
+
+                switch (tipoOperacion)
+                {
+                    case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                        oComando = new SqlCommand("pa_ObtenerGarantiasValorOperaciones", oConexion);
+                        break;
+                    case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                        oComando = new SqlCommand("pa_ObtenerGarantiasValorContratos", oConexion);
+                        break;
+                    default:
+                        break;
+                }
+
+                //declara las propiedades del comando
+                oComando.CommandType = CommandType.StoredProcedure;
+                oComando.CommandTimeout = 120;
+                oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", consecutivoOperacion);
+                oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", codigoContabilidad);
+                oComando.Parameters.AddWithValue("@piCodigo_Oficina", codigoOficina);
+                oComando.Parameters.AddWithValue("@piCodigo_Moneda", codigoMoneda);
+
+                if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
+                {
+                    oComando.Parameters.AddWithValue("@piCodigo_Producto", codigoProducto);
+                    oComando.Parameters.AddWithValue("@pdNumero_Operacion", numeroOperacion);
+                }
+                else
+                {
+                    oComando.Parameters.AddWithValue("@pdNumero_Contrato", numeroOperacion);
+                }
+
+                oComando.Parameters.AddWithValue("@psCedula_Usuario", cedulaUsuario);
+
+                using (SqlDataAdapter oDataAdapter = new SqlDataAdapter(oComando))
+                {
+                    //Abre la conexion
+                    oComando.Connection.Open();
+
+                    oDataAdapter.Fill(dsDatos, "Datos");
+
+                    oComando.Connection.Close();
+                    oComando.Connection.Dispose();
+                }
+
+                return dsDatos;
+            }
+        }
 
         /// <summary>
         /// Permite obtener la información de una garantía especfica, así como las posibles inconsistencias que posea.
         /// </summary>
-        /// <param name="nCodOperacion">Consecutivo de la operación de la cual se obtendrá la garantía</param>
-        /// <param name="nContabilidad">Consecutivo de la garantía de la cual se requiere la información</param>
-        /// <param name="nOficina"></param>
-        /// <param name="nMoneda"></param>
-        /// <param name="nProducto"></param>
+        /// <param name="nOperacion">Consecutivo de la operación de la cual se obtendrá la garantía</param>
+        ///  <param name="nGarantia">Consecutivo de la garantía de la cual se requiere la información</param>
         /// <param name="strUsuario">Identificación del usuario que realiza la consulta</param>
-        ///  <param name="nCodGarantiaValor">Consecutivo de la garantía de la cual se requiere la información</param>
-        /// <returns>DataSet, con los datos de la garanta consultada</returns>
-        public DataSet ObtenerDatosGarantiaValor(long nOperacion, long nGarantia, string strUsuario) 
+        /// <returns>Entidad del tipo clsGarantiaValor, con los datos de la garanta consultada</returns>
+        public clsGarantiaValor ObtenerDatosGarantiaValor(long nOperacion, long nGarantia, string strUsuario) 
         {
+            clsGarantiaValor datosGarantia = new clsGarantiaValor();
+            DateTime dFecha;
             DataSet dsDatos = new DataSet();
+            DateTime fechaBase = new DateTime(1900, 01, 01);
+            string[] formatosFecha = { "yyyyMMdd", "dd/MM/yyyy" };
+
             try
-            {              
-                SqlParameter[] parameters = new SqlParameter[] { 
-                            new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),                            
+            {
+                SqlParameter[] parameters = new SqlParameter[] {
+                            new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),
                             new SqlParameter("piConsecutivo_Garantia", SqlDbType.BigInt) ,
                             new SqlParameter("psCedula_Usuario", SqlDbType.VarChar,30),
-                            new SqlParameter("psRespuesta", SqlDbType.VarChar,100)   
+                            new SqlParameter("psRespuesta", SqlDbType.VarChar,100)
                         };
 
                 parameters[0].Value = nOperacion;
@@ -1671,23 +1738,161 @@ namespace BCRGARANTIAS.Negocios
                 parameters[3].Value = null;
                 parameters[3].Direction = ParameterDirection.Output;
 
-                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Garantia_Valor", parameters);
+
+                if((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables[0].Rows.Count > 0))
                 {
-                    oConexion.Open();
-                    dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Garantia_Valor", parameters);
-                }
+                    datosGarantia.ConsecutivoGarantia = nGarantia;
+                    datosGarantia.ConsecutivoOperacion = nOperacion;
+                                        
+                    datosGarantia.CodigoClaseGarantia = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoClaseGarantia) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoClaseGarantia].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoClaseGarantia].ToString() : "-1"));
+                    datosGarantia.NumeroSeguridad = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._numeroSeguridad) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._numeroSeguridad].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._numeroSeguridad].ToString() : string.Empty);
+
+                    string fechaConstitucion = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaConstitucion) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaConstitucion].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaConstitucion].ToString() : "19000101");
+                    string fechaVencimiento = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaVencimientoInstrumento) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaVencimientoInstrumento].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaVencimientoInstrumento].ToString() : "19000101");
+                    string fechaPrescripcion = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaPrescripcion) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaPrescripcion].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaPrescripcion].ToString() : "19000101");
+                    string fechaPresentacion = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaPresentacionRegistro) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaPresentacionRegistro].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaPresentacionRegistro].ToString() : "19000101");
+
+                    datosGarantia.FechaConstitucion = ((DateTime.TryParseExact(fechaConstitucion, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+                    datosGarantia.FechaVencimientoInstrumento = ((DateTime.TryParseExact(fechaVencimiento, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+                    datosGarantia.FechaPrescripcion = ((DateTime.TryParseExact(fechaPrescripcion, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+                    datosGarantia.FechaPresentacion = ((DateTime.TryParseExact(fechaPresentacion, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+
+                    datosGarantia.CodigoClasificacionInstrumento = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoClasificacionInstrumento) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoClasificacionInstrumento].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoClasificacionInstrumento].ToString() : "-1"));
+
+                    datosGarantia.DescripcionInstrumento = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._descripcionInstrumento) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._descripcionInstrumento].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._descripcionInstrumento].ToString() : string.Empty);
+
+                    datosGarantia.SerieInstrumento = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._serieInstrumento) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._serieInstrumento].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._serieInstrumento].ToString() : string.Empty);
+
+                    datosGarantia.CodigoTipoPersonaEmisor = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoTipoPersonaEmisor) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoPersonaEmisor].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoPersonaEmisor].ToString() : "-1"));
+
+                    datosGarantia.CedulaEmisor = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._cedulaEmisor) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaEmisor].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaEmisor].ToString() : string.Empty);
+                    
+                    datosGarantia.PorcentajePremio = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._porcentajePremio) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajePremio].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajePremio].ToString() : "0"));
+
+                    datosGarantia.CodigoIsin = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoIsin) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoIsin].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoIsin].ToString() : string.Empty);
+                    
+                    datosGarantia.MontoValorFacial = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._montoValorFacial) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoValorFacial].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoValorFacial].ToString() : "0"));
+
+                    datosGarantia.CodigoMonedaValorFacial = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoMonedaValorFacial) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoMonedaValorFacial].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoMonedaValorFacial].ToString() : "-1"));
+
+                    datosGarantia.MontoValorMercado = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._montoValorMercado) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoValorMercado].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoValorMercado].ToString() : "0"));
+                    datosGarantia.CodigoMonedaValorMercado = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoMonedaValorMercado) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoMonedaValorMercado].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoMonedaValorMercado].ToString() : "-1"));
+
+                    datosGarantia.CodigoTipoTenencia = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoTenencia) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTenencia].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTenencia].ToString() : "-1"));
+
+                    datosGarantia.CodigoTipoMitigador = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoTipoMitigador) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoMitigador].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoMitigador].ToString() : "-1"));
+
+                    datosGarantia.CodigoTipoDocumentoLegal = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoTipoDocumentoLegal) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoDocumentoLegal].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoDocumentoLegal].ToString() : "-1"));
+                    
+                    datosGarantia.MontoMitigiador = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._montoMitigador) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoMitigador].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoMitigador].ToString() : "0"));
+
+                    datosGarantia.CodigoIndicadorInscripcion = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoIndicadorInscripcion) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoIndicadorInscripcion].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoIndicadorInscripcion].ToString() : "-1"));
+
+                    datosGarantia.PorcentajeResponsabilidad = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._porcentajeResponsabilidad) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajeResponsabilidad].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajeResponsabilidad].ToString() : "-1"));
+
+                    datosGarantia.PorcentajeAceptacion = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._porcentajeAceptacion) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajeAceptacion].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._porcentajeAceptacion].ToString() : "0"));
+
+                    datosGarantia.CodigoGradoGravamen = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoGradoGravamen) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoGradoGravamen].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoGradoGravamen].ToString() : "-1"));
+
+                    datosGarantia.CodigoGradoPrioridad = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoGradoPrioridades) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoGradoPrioridades].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoGradoPrioridades].ToString() : "-1"));
+
+                    datosGarantia.MontoPrioridad = Convert.ToDecimal(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._montoPrioridades) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoPrioridades].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._montoPrioridades].ToString() : "0"));
+
+                    datosGarantia.CodigoOperacionEspecial = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoOperacionEspecial) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoOperacionEspecial].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoOperacionEspecial].ToString() : "-1"));
+
+                    datosGarantia.CodigoTipoPersonaAcreedor = int.Parse(((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._codigoTipoPersonaAcreedor) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoPersonaAcreedor].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._codigoTipoPersonaAcreedor].ToString() : "-1"));
+
+                    datosGarantia.CedulaAcreedor = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._cedulaAcreedor) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaAcreedor].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaAcreedor].ToString() : string.Empty);
+
+                    string fechaModifico = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaModifico) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaModifico].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaModifico].ToString() : "19000101");
+                    string fechaInserto = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaInserto) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaInserto].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaInserto].ToString() : "19000101");
+                    string fechaReplica = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._fechaReplica) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaReplica].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._fechaReplica].ToString() : "19000101");
+
+                    datosGarantia.FechaModifico = ((DateTime.TryParseExact(fechaModifico, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+                    datosGarantia.FechaInserto = ((DateTime.TryParseExact(fechaInserto, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+                    datosGarantia.FechaReplica = ((DateTime.TryParseExact(fechaReplica, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out dFecha)) ? dFecha : fechaBase);
+
+                    datosGarantia.UsuarioModifico = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._cedulaUsuarioModifico) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaUsuarioModifico].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._cedulaUsuarioModifico].ToString() : string.Empty);
+                    datosGarantia.NombreUsuarioModifico = ((!dsDatos.Tables[0].Rows[0].IsNull(clsGarantiaValor._nombreUsuarioModifico) && (dsDatos.Tables[0].Rows[0][clsGarantiaValor._nombreUsuarioModifico].ToString() != null)) ? dsDatos.Tables[0].Rows[0][clsGarantiaValor._nombreUsuarioModifico].ToString() : string.Empty);                    
+                }                
             }
             catch (Exception ex)
             {
                 StringCollection parametros = new StringCollection();
-                //parametros.Add(desGarantia);
-                //parametros.Add(desOperacion);
                 parametros.Add(("El error se da al obtener la información de la base de datos: " + ex.Message));
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_GARANTIAS_DETALLE, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
             }
 
-            return dsDatos;
+            return datosGarantia;
+        }
+
+        /// <summary>
+        /// Verifica si la garantía valor existe
+        /// </summary>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="numeroSeguridad">Número de seguridad</param>
+        /// <returns>True: La garantía existe. False: La garantía no existe</returns>
+        public bool ExisteGarantia(string codigoContabilidad, string codigoOficina, string codigoMoneda, string codigoProducto, string numeroOperacion, int tipoOperacion, string numeroSeguridad)
+        {
+            bool existeGarantia = false;
+            string[] listaCampos = new string[] {string.Empty};
+            string sentenciaSql = string.Empty;
+            int valorRetornado;
+
+            try
+            {
+                if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
+                {
+                    listaCampos = new string[] {clsOperacionCrediticia._entidadOperacion,
+                                            clsGarantiaValor._entidadGarantiaValorXOperacion,
+                                            clsGarantiaValor._consecutivoOperacion, clsOperacionCrediticia._consecutivoOperacion,
+                                            clsGarantiaValor._entidadGarantiaValor,
+                                            clsGarantiaValor._consecutivoGarantiaValor, clsGarantiaValor._consecutivoGarantiaValor,
+                                            clsOperacionCrediticia._codigoContabilidad, codigoContabilidad,
+                                            clsOperacionCrediticia._codigoOficina, codigoOficina,
+                                            clsOperacionCrediticia._codigoMoneda, codigoMoneda,
+                                            clsOperacionCrediticia._codigoProducto, codigoProducto,
+                                            clsOperacionCrediticia._numeroDeOperacion, numeroOperacion,
+                                            clsOperacionCrediticia._numeroContrato, "0",
+                                            clsGarantiaValor._numeroSeguridad, numeroSeguridad};
+
+                    sentenciaSql = string.Format("SELECT 1 FROM dbo.{0} GO1 INNER JOIN dbo.{1} GVO ON GVO.{2} = GO1.{3} INNER JOIN dbo.{4} GGV ON GGV.{5} = GVO.{6} WHERE GO1.{7} = {8} AND GO1.{9} = {10} AND GO1.{11} = {12} AND GO1.{13} = {14} AND GO1.{15} = {16}  AND GO1.{17} = {18} AND GGV.{19} = '{20}'", listaCampos);
+                }
+                else if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Contrato))
+                {
+                    listaCampos = new string[] {clsOperacionCrediticia._entidadOperacion,
+                                            clsGarantiaValor._entidadGarantiaValorXOperacion,
+                                            clsGarantiaValor._consecutivoOperacion, clsOperacionCrediticia._consecutivoOperacion,
+                                            clsGarantiaValor._entidadGarantiaValor,
+                                            clsGarantiaValor._consecutivoGarantiaValor, clsGarantiaValor._consecutivoGarantiaValor,
+                                            clsOperacionCrediticia._codigoContabilidad, codigoContabilidad,
+                                            clsOperacionCrediticia._codigoOficina, codigoOficina,
+                                            clsOperacionCrediticia._codigoMoneda, codigoMoneda,
+                                            clsOperacionCrediticia._numeroDeOperacion, "IS NULL",
+                                            clsOperacionCrediticia._numeroContrato, numeroOperacion,
+                                            clsGarantiaValor._numeroSeguridad, numeroSeguridad};
+
+                    sentenciaSql = string.Format("SELECT 1 FROM dbo.{0} GO1 INNER JOIN dbo.{1} GVO ON GVO.{2} = GO1.{3} INNER JOIN dbo.{4} GGV ON GGV.{5} = GVO.{6} WHERE GO1.{7} = {8} AND GO1.{9} = {10} AND GO1.{11} = {12} AND GO1.{13} = {14} AND GO1.{15} = {16} AND GGV.{17} = '{18}'", listaCampos);
+                }
+
+                SqlParameter[] parameters = new SqlParameter[] { };
+
+                object resultadoObtenido = AccesoBD.ExecuteScalar(CommandType.Text, sentenciaSql, parameters);
+                existeGarantia = (((resultadoObtenido != null) && (int.TryParse(resultadoObtenido.ToString(), out valorRetornado))) ? ((valorRetornado != 0) ? true : false) : false);
+            }
+            catch
+            {
+                throw;
+            }
+            
+            return existeGarantia;
         }
 
 		#endregion

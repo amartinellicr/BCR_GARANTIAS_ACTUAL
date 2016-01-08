@@ -15,7 +15,13 @@ namespace BCR.GARANTIAS.Comun
 	/// </remarks>
 	public static class UtilitariosComun
 	{
-		public static void RegistraEventLog(string Mensaje, EventLogEntryType Level)
+        #region Constantes
+
+        public const string ValorNulo = "NULL";
+
+        #endregion Constantes
+
+        public static void RegistraEventLog(string Mensaje, EventLogEntryType Level)
 		{
 			try
 			{
@@ -72,8 +78,7 @@ namespace BCR.GARANTIAS.Comun
 				}
 			}
 		}
-
-
+        
         /// <summary>
         /// Elimina los encabezados de la trama. Deja sólo el contenido del tag "DETALLE"
         /// </summary>

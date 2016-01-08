@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -6,9 +7,12 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Configuration;
+using System.Globalization;
+using System.Data.SqlClient;
 
 using BCR.GARANTIAS.Comun;
-using System.Globalization;
+using BCRGARANTIAS.Datos;
+
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -1088,6 +1092,8 @@ namespace BCR.GARANTIAS.Entidades
         public const string _identificacionSicc = "Identificacion_Sicc";
         public const string _identificacionAlfanumericaSicc = "Identificacion_Alfanumerica_Sicc";
         public const string _fechaValuacionSicc = "Fecha_Valuacion_SICC";
+
+        public const string _garantiaRealConsulta = "Garantia_Real";
 
         //Mensajes que se presentarn según la inconsistencia encontrada
         private const string _mensajeFechaPresentacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeFechaPresentacion) !== 'undefined'){$MensajeFechaPresentacion.dialog('open');} </script>";
@@ -6578,7 +6584,7 @@ namespace BCR.GARANTIAS.Entidades
             string porcentajeAceptCalculadoOriginal = string.Empty;
             DateTime fechaBase = new DateTime(1900,01,01);
 
-            DateTime fecModifico;
+            DateTime fecModifico;            
 
             if ((tramaInicial.Length > 0) && (tramaDatosActuales.Length > 0))
             {
@@ -6602,6 +6608,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 clsPolizasSap<clsPolizaSap> listaPolizasInicial = new clsPolizasSap<clsPolizaSap>(xmlTramaInicial.SelectSingleNode("//" + _tagPolizas).OuterXml);
                 clsPolizaSap polizaSeleccionadaInicial = listaPolizasInicial.ObtenerPolizaSapSeleccionada();
+                clsPolizaSap polizaRelacionada = ObtenerPolizaRelacionada(codOperacion, codGarantiaReal);
 
                 if ((xmlTramaGarantiaInicial != null) && (xmlTramaGarantiaActual != null))
                 {
@@ -6624,6 +6631,10 @@ namespace BCR.GARANTIAS.Entidades
                     if (((polizaSeleccionadaInicial != null) && (polizaSapAsociada == null))
                         || ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
                         && (polizaSeleccionadaInicial.CodigoPolizaSap != polizaSapAsociada.CodigoPolizaSap)))
+                    {
+                        existePolizaEliminada = true;
+                    }
+                    else if ((polizaRelacionada != null) && (polizaRelacionada.CodigoPolizaSap != -1))
                     {
                         existePolizaEliminada = true;
                     }
@@ -6685,8 +6696,8 @@ namespace BCR.GARANTIAS.Entidades
                         //listaDatosInsertadosGarPoliza.Add(_codOperacion, ("-|" + codOperacion.ToString()));
                         //listaDatosInsertadosGarPoliza.Add(_codGarantiaReal, ("-|" + codGarantiaReal.ToString()));
                         listaDatosInsertadosGarPoliza.Add(_montoAcreencia, string.Format("-|{0}", polizaSapAsociada.MontoAcreenciaPolizaSap.ToString()));
-                        //listaDatosInsertadosGarPoliza.Add(_fechaInserto, (string.Format("-|{0}", fechaInsercion.ToString("yyyyMMdd HH:mm:ss"))));
-                        //listaDatosInsertadosGarPoliza.Add(_usuarioInserto, (string.Format("-|{0}", idUsuario)));
+                        listaDatosInsertadosGarPoliza.Add(_fechaInserto, (string.Format("-|{0}", fechaInsercion.ToString("yyyyMMdd HH:mm:ss"))));
+                        listaDatosInsertadosGarPoliza.Add(_usuarioInserto, (string.Format("-|{0}", idUsuario)));
                     }
                     else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
                             && ((polizaSeleccionadaInicial.CodigoPolizaSap == polizaSapAsociada.CodigoPolizaSap))
@@ -6727,7 +6738,7 @@ namespace BCR.GARANTIAS.Entidades
 
                                             break;
                                         case _usuarioInserto:
-                                        case _usuarioModifico:
+                                        //case _usuarioModifico:
                                         case _fechaInserto:
                                         case _fechaModifico:
                                             sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
@@ -6794,11 +6805,11 @@ namespace BCR.GARANTIAS.Entidades
 
                                             break;
                                         case _usuarioInserto:
-                                        case _usuarioModifico:
+                                        //case _usuarioModifico:
                                         case _fechaInserto:
-                                        case _fechaModifico:
-                                            sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
-                                            break;
+                                        //case _fechaModifico:
+                                        //    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                        //    break;
                                         default:
                                             sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
                                             listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
@@ -6851,11 +6862,11 @@ namespace BCR.GARANTIAS.Entidades
 
                                             break;
                                         case _usuarioInserto:
-                                        case _usuarioModifico:
+                                        //case _usuarioModifico:
                                         case _fechaInserto:
-                                        case _fechaModifico:
-                                            sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
-                                            break;
+                                        //case _fechaModifico:
+                                        //    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                        //    break;
                                         default:
                                             sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
                                             listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
@@ -6985,11 +6996,11 @@ namespace BCR.GARANTIAS.Entidades
 
                                         break;
                                     case _usuarioInserto:
-                                    case _usuarioModifico:
+                                   // case _usuarioModifico:
                                     case _fechaInserto:
-                                    case _fechaModifico:
-                                        sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
-                                        break;
+                                    //case _fechaModifico:
+                                    //    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                    //    break;
                                     default:
                                         if ((nodoInicial != null) && (nodoActual != null) && (nodoInicial.InnerText.CompareTo(((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : string.Empty)) != 0))
                                         {
@@ -7271,6 +7282,48 @@ namespace BCR.GARANTIAS.Entidades
                         objEscritor.WriteEndElement();
 
                         #endregion Nodo de Póliza
+
+                        #region Datos de Control 
+
+                        //Inicializa el nodo que poseer los datos de control
+                        objEscritor.WriteStartElement("CONTROL");
+
+                        //Crea el nodo del campo del consecutivo de la operación
+                        objEscritor.WriteStartElement(_codOperacion);
+                        objEscritor.WriteString(codOperacion.ToString());
+                        objEscritor.WriteEndElement();
+
+                        //Crea el nodo del campo del consecutivo de la garantía
+                        objEscritor.WriteStartElement(_codGarantiaReal);
+                        objEscritor.WriteString(codGarantiaReal.ToString());
+                        objEscritor.WriteEndElement();
+
+                        //Crea el nodo del campo de la fecha de valuación
+                        objEscritor.WriteStartElement(_fechaValuacion);
+                        objEscritor.WriteString(fechaValuacion.ToString("yyyyMMdd"));
+                        objEscritor.WriteEndElement();
+
+
+                        //Crea el nodo del campo del código SAP
+                        objEscritor.WriteStartElement(_codigoSap);
+                        objEscritor.WriteString(((polizaSapAsociada != null) ? polizaSapAsociada.CodigoPolizaSap.ToString() : "-1"));
+                        objEscritor.WriteEndElement();
+
+                        //Se registran los campos correspondientes a la pista de seguimiento del registro
+                        //Se crea el nodo del usuario que realiza el ajuste
+                        objEscritor.WriteStartElement(_usuarioModifico);
+                        objEscritor.WriteString(idUsuario);
+                        objEscritor.WriteEndElement();
+
+                        objEscritor.WriteStartElement(_fechaModifico);
+                        objEscritor.WriteString(fechaModifico.ToString("yyyyMMdd HH:mm:ss"));
+                        objEscritor.WriteEndElement();
+
+
+                        //Final del tag CONTROL
+                        objEscritor.WriteEndElement();
+
+                        #endregion Datos de Control
                     }
 
                     //Final del tag MODIFICADOS
@@ -7282,6 +7335,9 @@ namespace BCR.GARANTIAS.Entidades
                     if (existePolizaEliminada)
                     {
                         clsPolizaSap polizaSap = listaPolizasInicial.ObtenerPolizaSapSeleccionada();
+
+                        polizaSap = ((polizaSap != null) ? polizaSap : polizaRelacionada);
+                        polizaSeleccionadaInicial = ((polizaSeleccionadaInicial != null) ? polizaSeleccionadaInicial : polizaRelacionada);
 
                         if (polizaSap != null)
                         {
@@ -7310,7 +7366,7 @@ namespace BCR.GARANTIAS.Entidades
                             listaDatosEliminadosGarPoliza.Add(_codigoSap, (string.Format("{0}|-", polizaSeleccionadaInicial.CodigoPolizaSap.ToString())));
                             //listaDatosEliminadosGarPoliza.Add(_codOperacion, (codOperacion.ToString() + "|-"));
                             //listaDatosEliminadosGarPoliza.Add(_codGarantiaReal, (codGarantiaReal.ToString() + "|-"));
-                            listaDatosEliminadosGarPoliza.Add(_montoAcreencia, (string.Format("{0}|-",polizaSeleccionadaInicial.MontoAcreenciaPolizaSap.ToString())));
+                            listaDatosEliminadosGarPoliza.Add(_montoAcreencia, (string.Format("{0}|-", polizaSeleccionadaInicial.MontoAcreenciaPolizaSap.ToString())));
 
                             //Final del tag POLIZAS
                             objEscritor.WriteEndElement();
@@ -9534,6 +9590,49 @@ namespace BCR.GARANTIAS.Entidades
 
             return cantidadAnnos;
         }
+
+        /// <summary>
+        /// Obtiene el código SAP relacionado a la operación y a la garantía
+        /// </summary>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="consecutivoGarantia">Consecutivo de la garantía</param>
+        /// <returns>Información de la póliza</returns>
+        private clsPolizaSap ObtenerPolizaRelacionada(long consecutivoOperacion, long consecutivoGarantia)
+        {
+            string[] listaCampos = new string[] { string.Empty };
+            string sentenciaSql = string.Empty;
+            clsPolizaSap valorRetornado = new clsPolizaSap();
+            int codigoSap;
+            decimal montoAcreencia;
+
+            try
+            {
+                listaCampos = new string[] {clsPolizaSap._codigoSap, clsPolizaSap._montoAcreencia,
+                                            clsPolizaSap._tagPolizasRelacionadas,
+                                            _codOperacion, consecutivoOperacion.ToString(),
+                                            _codGarantiaReal, consecutivoGarantia.ToString()};
+
+                sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2} WHERE {3} = {4} AND {5} = {6}", listaCampos);
+
+                SqlParameter[] parameters = new SqlParameter[] { };
+
+               DataSet datosPolizaRelacionada = AccesoBD.ExecuteDataSet(CommandType.Text, sentenciaSql, parameters);
+
+                if ((datosPolizaRelacionada != null) && (datosPolizaRelacionada.Tables.Count > 0) && (datosPolizaRelacionada.Tables[0].Rows.Count > 0))
+                {
+                    valorRetornado.CodigoPolizaSap = (((!datosPolizaRelacionada.Tables[0].Rows[0].IsNull(clsPolizaSap._codigoSap)) && (int.TryParse(datosPolizaRelacionada.Tables[0].Rows[0][clsPolizaSap._codigoSap].ToString(), out codigoSap))) ? codigoSap : -1);
+                    valorRetornado.MontoAcreenciaPolizaSap = (((!datosPolizaRelacionada.Tables[0].Rows[0].IsNull(clsPolizaSap._montoAcreencia)) && (decimal.TryParse(datosPolizaRelacionada.Tables[0].Rows[0][clsPolizaSap._montoAcreencia].ToString(), out montoAcreencia))) ? montoAcreencia : 0);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+
+            return valorRetornado;
+        }
+
 
         #endregion  Métodos Privados
 

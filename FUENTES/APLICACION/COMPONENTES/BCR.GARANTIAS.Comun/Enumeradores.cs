@@ -205,5 +205,70 @@ namespace BCR.GARANTIAS.Comun
         }
 
         #endregion Tipos de Trama de las Coberturas
+
+        #region Moneda
+        /// <summary>
+        /// Tipos de monedas
+        /// </summary>
+        public enum Monedas
+        {
+            Colones = 1,
+            Dolares = 2,
+            Euros = 3,
+            UDES = 4
+        }
+        #endregion Moneda
+
+        #region Catálogos usados por el mantenimiento de garantías fiduciarias
+
+        /*
+            <add key="CAT_TIPO_PERSONA" value="1"/>
+            <add key="CAT_TIPOS_DOCUMENTOS" value="8"/>
+            <add key="CAT_OPERACION_ESPECIAL" value="11"/>
+            <add key="CAT_TIPO_MITIGADOR" value="22"/>
+            
+        */
+
+        public enum Catalogos_Garantias_Fiduciarias
+        {
+            CAT_TIPO_PERSONA = 1,
+            CAT_TIPOS_DOCUMENTOS = 8,
+            CAT_OPERACION_ESPECIAL = 11,
+            CAT_TIPO_MITIGADOR = 22
+        }
+
+        #endregion Catálogos usados por el mantenimiento de garantías fiduciarias
+
+        #region Catálogos usados por el mantenimiento de garantías de valor
+
+        /*
+            <add key="CAT_TIPO_PERSONA" value="1"/>
+            <add key="CAT_CLASE_GARANTIA" value="7"/>
+            <add key="CAT_TIPOS_DOCUMENTOS" value="8"/>
+            <add key="CAT_INSCRIPCION" value="9"/>
+            <add key="CAT_GRADO_GRAVAMEN" value="10"/>
+            <add key="CAT_OPERACION_ESPECIAL" value="11"/>
+            <add key="CAT_TENENCIA" value="14"/>
+            <add key="CAT_MONEDA" value="15"/>
+            <add key="CAT_CLASIFICACION_INSTRUMENTO" value="18"/>
+            <add key="CAT_TIPO_MITIGADOR" value="22"/>
+            
+        */
+
+        public enum Catalogos_Garantias_Valor
+        {
+            CAT_TIPO_PERSONA = 1,
+            CAT_CLASE_GARANTIA = 7,
+            CAT_TIPOS_DOCUMENTOS = 8,
+            CAT_INSCRIPCION = 9,
+            CAT_GRADO_GRAVAMEN = 10,
+            CAT_OPERACION_ESPECIAL = 11,
+            CAT_TENENCIA = 14,
+            CAT_MONEDA = 15,
+            CAT_CLASIFICACION_INSTRUMENTO = 18,
+            CAT_TIPO_MITIGADOR = 22
+        }
+
+        #endregion Catálogos usados por el mantenimiento de garantías de valor
     }
 }

@@ -348,7 +348,7 @@ namespace BCRGARANTIAS.Negocios
 
                         oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                             1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                            clsGarantiaReal._codInscripcion, DBNull.Value.ToString(), nInscripcion.ToString());
+                            clsGarantiaReal._codInscripcion, UtilitariosComun.ValorNulo, nInscripcion.ToString());
 
                         oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                             1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
@@ -1622,6 +1622,74 @@ namespace BCRGARANTIAS.Negocios
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// Método que obtiene el listado de las garantías reales asociadas a una operación o contrato
+        /// </summary>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="cedulaUsuario">Identificación del usuario que realiza la consulta</param>
+        /// <returns>Lista de garantías relacionadas</returns>
+        public DataSet ObtenerListaGarantias(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario)
+        {
+            DataSet dsDatos = new DataSet();
+
+            using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+            {
+                SqlCommand oComando = null;
+
+                switch (tipoOperacion)
+                {
+                    case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                        oComando = new SqlCommand("pa_ObtenerGarantiasRealesOperaciones", oConexion);
+                        break;
+                    case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                        oComando = new SqlCommand("pa_ObtenerGarantiasRealesContratos", oConexion);
+                        break;
+                    default:
+                        break;
+                }
+
+                //declara las propiedades del comando
+                oComando.CommandType = CommandType.StoredProcedure;
+                oComando.CommandTimeout = 120;
+                oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", consecutivoOperacion);
+                oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", codigoContabilidad);
+                oComando.Parameters.AddWithValue("@piCodigo_Oficina", codigoOficina);
+                oComando.Parameters.AddWithValue("@piCodigo_Moneda", codigoMoneda);
+
+                if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
+                {
+                    oComando.Parameters.AddWithValue("@piCodigo_Producto", codigoProducto);
+                    oComando.Parameters.AddWithValue("@pdNumero_Operacion", numeroOperacion);
+                }
+                else
+                {
+                    oComando.Parameters.AddWithValue("@pdNumero_Contrato", numeroOperacion);
+                }
+
+                oComando.Parameters.AddWithValue("@psCedula_Usuario", cedulaUsuario);
+                                
+                using (SqlDataAdapter oDataAdapter = new SqlDataAdapter(oComando))
+                {
+                    //Abre la conexion
+                    oComando.Connection.Open();
+
+                    oDataAdapter.Fill(dsDatos, "Datos");
+
+                    oComando.Connection.Close();
+                    oComando.Connection.Dispose();
+                }
+
+                return dsDatos;
+            }
+        }
+
 
         /// <summary>
         /// Permite obtener la información de una garantía especfica, así como las posibles inconsistencias que posea.

@@ -6,14 +6,13 @@
 <%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="ajaxToolkit" %> 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPrincipal" Runat="Server">
-<asp:ScriptManager id="ScriptManager1" runat="server" EnablePageMethods="true">
+<asp:ScriptManager id="ScriptManager1"  runat="server" ScriptMode="Auto" AsyncPostBackTimeout="210"  EnableScriptGlobalization="True" EnableScriptLocalization="True" LoadScriptsBeforeUI="True">
 </asp:ScriptManager>
  <asp:UpdatePanel id="UpdatePanel1" runat="server">
     <contenttemplate>
         <div>
-		    <table style="WIDTH: 775px" cellSpacing="1" cellPadding="1" width="775" align="center"
-			    bgColor="window" border="0">
-			    <tr style="border-color:#E0E0DF; border-width:0px;">
+		    <table style="width: 880px; background-color:Window;" cellspacing="1" cellpadding="1" width="875" align="center" border="0">
+               <tr style="border-color:#E0E0DF; border-width:0px;">
                         <td>
 			                <div id="contenedorDatosModificacion" runat="server" enableviewstate="true" style="clear:both; width:880px; border-color:#E0E0DF; background-color:#E0E0DF; padding-left:7px; padding-right:7px;">
                                 <div style="text-align:left; width:540px; float:left; display:inline; background-color:transparent; border-color:transparent;">

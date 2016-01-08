@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Entidades;
+using BCR.GARANTIAS.Comun;
+
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -35,7 +37,7 @@ namespace BCRGARANTIAS.Negocios
 
                 listaCampos = new string[] { clsCapacidadPago._entidadCapacidadPagoDeudor,
                                              clsCapacidadPago._cedulaDeudor, clsCapacidadPago._fechaCapacidadPago, clsCapacidadPago._codCapacidadPago, clsCapacidadPago._porSensibilidadTipoCambio,
-                                             strCedula, strFecha, ((nCapacidadPago != -1) ? nCapacidadPago.ToString() : DBNull.Value.ToString()),
+                                             strCedula, strFecha, ((nCapacidadPago != -1) ? nCapacidadPago.ToString() : UtilitariosComun.ValorNulo),
                                              strSensibilidad};
 
                 sentenciaSql = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}) VALUES({5}, {6}, {7}, CONVERT(DECIMAL(5,2), '{8}'))", listaCampos);

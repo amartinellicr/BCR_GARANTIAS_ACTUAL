@@ -1118,7 +1118,7 @@ namespace BCRGARANTIAS.Negocios
                 DataTable dtCatalogos = new DataTable();
 
                 listaCampos = new string[] {clsCatalogo._catCatalogo, clsCatalogo._catDescripcion,
-                                            clsElemento._entidadElemento};
+                                            clsCatalogo._entidadCatalogo};
 
                 sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2}", listaCampos);
 

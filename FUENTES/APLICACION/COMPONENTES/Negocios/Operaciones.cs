@@ -99,6 +99,12 @@ namespace BCRGARANTIAS.Negocios
                     oConexion.Dispose();
                 }
 
+                datosOperacion.Contabilidad = ((short) nContabilidad);
+                datosOperacion.Oficina = ((short) nOficina);
+                datosOperacion.Moneda = ((short) nMoneda);
+                datosOperacion.Producto = ((short) nProducto);
+                datosOperacion.Operacion = nOperacion;
+
                 datosOperacion.EsGiro = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._indicadorEsGiro)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._indicadorEsGiro)) && (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._indicadorEsGiro].ToString().CompareTo("1") == 0)) ? true : false);
 
                 datosOperacion.ConsecutivoContrato = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoContrato))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoContrato].ToString())) : -1);

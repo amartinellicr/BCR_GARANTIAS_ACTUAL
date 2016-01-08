@@ -99,14 +99,16 @@ namespace BCR.GARANTIAS.Entidades
         }
         #endregion Constructor
 
+        #region Métodos Públicos
+
         /// <summary>
-		/// Metodo que retorna el objeto garantía actual en la session
-		/// </summary>
-		public static clsGarantiaFiduciaria Current
+        /// Metodo que retorna el objeto garantía actual en la session
+        /// </summary>
+        public static clsGarantiaFiduciaria Current
         {
             get
             {
-                //Obtiene el objeto CGarantiaFiduciaria del Session
+                //Obtiene el objeto clsGarantiaFiduciaria del Session
                 clsGarantiaFiduciaria oCurrent = HttpContext.Current.Session["clsGarantiaFiduciaria"] as clsGarantiaFiduciaria;
                 
                 if (oCurrent == null)
@@ -118,5 +120,7 @@ namespace BCR.GARANTIAS.Entidades
                 return oCurrent;
             }
         }
+
+        #endregion Métodos Públicos
     }
 }

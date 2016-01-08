@@ -12,8 +12,7 @@ namespace BCR.GARANTIAS.Entidades
         public const string _entidadTarjeta = "TAR_TARJETA";
         public const string _entidadTarjetaSicc = "TAR_TARJETA_SICC";
         public const string _entidadTarjetaSistar = "TAR_TARJETA_SISTAR";
-
-
+        
         //Campos de la tabla de bines        
         public const string _fechaIngreso = "fecingreso";
 
@@ -42,5 +41,23 @@ namespace BCR.GARANTIAS.Entidades
         public const string _codigoInterno = "codigo_interno";
 
         #endregion Constantes
+
+        #region Propiedades
+
+        public bool EsMasterCard { get; set; }
+        public string CedulaDeudor { get; set; }
+        public string NombreDeudor { get; set; }
+        public int NumeroBin { get; set; }
+        public int CodigoInternoSistar { get; set; }
+        public int CodigoMoneda { get; set; }
+        public int CodigoOficinaRegistra { get; set; }
+        public int CodigoTipoGarantia { get; set; }
+        public string EstadoTarjeta { get; set; }
+        public decimal MontoOperacion { get; set; }
+
+        public string CodigoError { get; set; }
+        public string DescripcionError { get; set; }
+
+        #endregion Propiedades
     }
 }

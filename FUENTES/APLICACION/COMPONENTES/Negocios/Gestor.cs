@@ -109,9 +109,44 @@ namespace BCRGARANTIAS.Negocios
             Catalogos oCatalogo = new Catalogos();
             oCatalogo.Eliminar(nElemento, strUsuario, strIP);
         }
+
+        /// <summary>
+        /// Obtiene la lista de catálogos del mantenimiento de garantías reales
+        /// </summary>
+        /// <param name="listaCatalogos">Lista de los catálogos que se deben obtener. La lista debe iniciar y finalizar con el caracter "|", así mismo de requerirse más de un catálogo, los valores deben ir separados por dicho caracter.
+        /// </param>
+        /// <returns>Enditad del tipo catálogos</returns>
+        public static clsCatalogos<clsCatalogo> ObtenerCatalogos(string listaCatalogos)
+        {
+            Catalogos oCatalogo = new Catalogos();
+            return oCatalogo.ObtenerCatalogos(listaCatalogos);
+        }
+
+        /// <summary>
+        /// Obtiene la lista de los códigos ISIN
+        /// </summary>
+        /// </param>
+        /// <returns>DataSet con la lista de los códigos ISIN</returns>
+        public static DataSet ObtenerCatalogoIsin()
+        {
+            Catalogos oCatalogo = new Catalogos();
+            return oCatalogo.ObtenerCatalogoIsin();
+        }
+
+        /// <summary>
+        /// Obtiene la lista de los instrumentos
+        /// </summary>
+        /// </param>
+        /// <returns>DataSet con la información de los intrumentos</returns>
+        public static DataSet ObtenerCatalogoInstrumentos()
+        {
+            Catalogos oCatalogo = new Catalogos();
+            return oCatalogo.ObtenerCatalogoInstrumentos();
+        }
+
         #endregion
 
-        #region Mantenimiento de Deudores
+            #region Mantenimiento de Deudores
         public static void ModificarDeudor(int nTipoPersona, string strCedula, string strNombre,
                                            int nCondicionEspecial, int nTipoAsignacion,
                                            int nGeneradorDivisas, int nVinculadoEntidad, string strUsuario, string strIP,
@@ -224,6 +259,25 @@ namespace BCRGARANTIAS.Negocios
             Garantias_Fiduciarias oGarantia = new Garantias_Fiduciarias();
             oGarantia.Eliminar(nGarantiaFiduciaria, nOperacion, strUsuario, strIP, strOperacionCrediticia);
         }
+
+        /// <summary>
+        /// Verifica si la garantía fiduciaria existe
+        /// </summary>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="cedulaFiador">Cédula del fiador</param>
+        /// <param name="tipoPersonaFiador">Tipo de persona del fiador</param>
+        /// <returns>True: La garantía existe. False: La garantía no existe</returns>
+        public static bool ExisteGarantiaFiduciaria(string codigoContabilidad, string codigoOficina, string codigoMoneda, string codigoProducto, string numeroOperacion, int tipoOperacion, string cedulaFiador, string tipoPersona)
+        {
+            Garantias_Fiduciarias oGarantia = new Garantias_Fiduciarias();
+            return oGarantia.ExisteGarantia(codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, tipoOperacion, cedulaFiador, tipoPersona);
+        }
+
         #endregion
 
         #region Mantenimiento de Garantias Fiduciarias de Tarjetas
@@ -273,6 +327,20 @@ namespace BCRGARANTIAS.Negocios
             oGarantia.Eliminar(nGarantiaFiduciaria, nTarjeta, strUsuario, strIP, strOperacionCrediticia);
         }
 
+        public static clsTarjeta ValidarTarjetaSISTAR(string numeroTarjeta)
+        {
+            Garantias_Fiduciarias_Tarjetas oGarantia = new Garantias_Fiduciarias_Tarjetas();
+
+            return oGarantia.ValidarTarjetaSISTAR(numeroTarjeta);
+        }
+
+        public static bool ModificarGarantiaSISTAR(string numeroTarjeta, string garantiaTarjeta)
+        {
+            Garantias_Fiduciarias_Tarjetas oGarantia = new Garantias_Fiduciarias_Tarjetas();
+
+            return oGarantia.ModificarGarantiaSISTAR(numeroTarjeta, garantiaTarjeta);
+        }
+
         #endregion
 
         #region Mantenimiento de Garantias Giros
@@ -317,6 +385,24 @@ namespace BCRGARANTIAS.Negocios
         }
 
         /// <summary>
+        /// Método que obtiene el listado de las garantías reales asociadas a una operación o contrato
+        /// </summary>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="cedulaUsuario">Identificación del usuario que realiza la consulta</param>
+        /// <returns>Lista de garantías relacionadas</returns>
+        public static DataSet ObtenerListaGarantiasReales(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario)
+        {
+            Garantias_Reales oGarantia = new Garantias_Reales();
+            return oGarantia.ObtenerListaGarantias(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario);
+        }
+
+        /// <summary>
         /// Permite obtener la información de una garantía específica, así como las posibles inconsistencias que posea.
         /// </summary>
         /// <param name="idOperacion">Consecutivo de la operación de la cual se obtendrá la garantía</param>
@@ -332,20 +418,7 @@ namespace BCRGARANTIAS.Negocios
             return oGarantia.ObtenerDatosGarantiaReal(idOperacion, idGarantia, desOperacion, desGarantia, identificacionUsuario,
                                                       annosCalculoPrescripcion);
         }
-
-        /// <summary>
-        /// Obtiene la lista de catálogos del mantenimiento de garantías reales
-        /// </summary>
-        /// <param name="listaCatalogosGarantiaReales">Lista de los catálogos que se deben obtener. La lista debe iniciar y finalizar con el 
-        ///                                            caracter "|", así mismo, los valores deben ir separados por dicho caracter.
-        /// </param>
-        /// <returns>Enditad del tipo catálogos</returns>
-        public static clsCatalogos<clsCatalogo> ObtenerCatalogos(string listaCatalogosGarantiaReales)
-        {
-            Garantias_Reales oGarantia = new Garantias_Reales();
-            return oGarantia.ObtenerCatalogos(listaCatalogosGarantiaReales);
-        }
-
+                
         /// <summary>
         /// Obtiene la lista de valuadores del mantenimiento de garantías reales
         /// </summary>
@@ -429,14 +502,37 @@ namespace BCRGARANTIAS.Negocios
         }
 
 
-        public static DataSet ObtenerDatosGarantiaValor(long nOperacion, long nGarantia, string strUsuario)
+        public static clsGarantiaValor ObtenerDatosGarantiaValor(long nOperacion, long nGarantia, string strUsuario)
         {
             Garantias_Valores oGarantia = new Garantias_Valores();
             return oGarantia.ObtenerDatosGarantiaValor(nOperacion, nGarantia, strUsuario);
         }
 
+        public static DataSet ObtenerListaGarantiasValor(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario)
+        {
+            Garantias_Valores oGarantia = new Garantias_Valores();
+            return oGarantia.ObtenerListaGarantias(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario);
+        }
+
+        /// <summary>
+        /// Verifica si la garantía valor existe
+        /// </summary>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="numeroSeguridad">Número de seguridad</param>
+        /// <returns>True: La garantía existe. False: La garantía no existe</returns>
+        public static bool ExisteGarantiaValor(string codigoContabilidad, string codigoOficina, string codigoMoneda, string codigoProducto, string numeroOperacion, int tipoOperacion, string numeroSeguridad)
+        {
+            Garantias_Valores oGarantia = new Garantias_Valores();
+            return oGarantia.ExisteGarantia(codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, tipoOperacion, numeroSeguridad);
+        }
+
         #endregion
-                
+
         #region Mantenimiento de Capacidades de Pago
         public static void CrearCapacidadPago(string strCedula, string dFecha, int nCapacidadPago, decimal nSensibilidad,
                                               string strUsuario, string strIP)
@@ -466,21 +562,27 @@ namespace BCRGARANTIAS.Negocios
             oValuacion.Crear(nGarantiaFiduciaria, dFecha, nIngresoNeto, nTieneCapacidad, strUsuario, strIP);
         }
 
-        public static void ModificarValuacionFiador(int nGarantiaFiduciaria, DateTime dFecha, decimal nIngresoNeto, int nTieneCapacidad, string strUsuario, string strIP)
-        {
-            Valuaciones_Fiador oValuacion = new Valuaciones_Fiador();
-            oValuacion.Modificar(nGarantiaFiduciaria, dFecha, nIngresoNeto, nTieneCapacidad, strUsuario, strIP);
-        }
-
         public static void EliminarValuacionFiador(int nGarantiaFiduciaria, string dFecha, string strUsuario, string strIP)
         {
             Valuaciones_Fiador oValuacion = new Valuaciones_Fiador();
             oValuacion.Eliminar(nGarantiaFiduciaria, dFecha, strUsuario, strIP);
         }
+
+        public static DataSet ObtenerValuacionesFiador(int nGarantiaFiduciaria)
+        {
+            Valuaciones_Fiador oValuacion = new Valuaciones_Fiador();
+            return oValuacion.ObtenerValuaciones(nGarantiaFiduciaria);
+        }
+
+        public static bool ExisteFecha(int nGarantiaFiduciaria, string fechaValuacion)
+        {
+            Valuaciones_Fiador oValuacion = new Valuaciones_Fiador();
+            return oValuacion.ExisteFecha(nGarantiaFiduciaria, fechaValuacion);
+        }
         #endregion
 
         #region Mantenimiento de Valuaciones Reales
-  
+
         public static clsValuacionesReales<clsValuacionReal> Obtener_Avaluos(long nGarantia, string codigoBien, bool obtenerMasReciente, int catalogoRP, int catalogoIMT)
         {
             Valuaciones_Reales oValuacion = new Valuaciones_Reales();
@@ -887,7 +989,7 @@ namespace BCRGARANTIAS.Negocios
         }
         #endregion
 
-            #region Tarjetas
+        #region Tarjetas
         public static int ActualizarEstadoTarjeta(string strNumeroTarjeta, string strEstadoTarjeta, int nTipoGarantia)
         {
             Tarjetas oTarjeta = new Tarjetas();

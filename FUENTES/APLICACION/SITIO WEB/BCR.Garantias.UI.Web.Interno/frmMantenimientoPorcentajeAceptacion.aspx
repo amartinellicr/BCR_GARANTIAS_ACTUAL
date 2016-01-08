@@ -178,9 +178,7 @@
 
  </asp:UpdatePanel>
 
-
-
-
-
+    <asp:HiddenField ID="hdnAplicaCalculoPA" runat="server" Value="0"></asp:HiddenField>
+    
 </asp:Content>
 

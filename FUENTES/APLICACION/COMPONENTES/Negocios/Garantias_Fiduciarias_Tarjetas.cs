@@ -2,10 +2,16 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Xml;
+using System.Configuration;
+using System.Net;
 
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
 using BCRGARANTIAS.Datos;
+using Negocios;
+using System.Net.Sockets;
+
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -1081,6 +1087,273 @@ namespace BCRGARANTIAS.Negocios
                 throw;
             }
 		}
+
+        #region Validación de Tarjetas
+
+        /// <summary>
+        /// Valida el número de tarjeta
+        /// </summary>
+        /// <param name="numeroTarjeta">Número de tarjeta a validar</param>
+        /// <returns>Arreglo de 5 posiciones con la información retornada por SISTAR, según la siguiente distribución:
+        ///  posición 0: identificación del deudor
+        ///  posición 1: límite de crédito de la tarjeta
+        ///  posición 2: estado de la tarjeta
+        ///  posición 3: moneda de la tarjeta
+        ///  posición 4: nombre del tarjeta habiente
+        /// </returns>
+        public clsTarjeta ValidarTarjetaSISTAR(string numeroTarjeta)
+        {
+            try
+            {
+                /*declara la variable para almacenar la respuesta retornada por SISTAR*/
+                string _tramaRespuesta = string.Empty;
+                clsTarjeta informacionTarjeta = new clsTarjeta();
+                int codigoMoneda = -1;
+                int numeroBin;
+                int codigoIternoSistar;
+                int codigoOficinaRegistra;
+                int codigoTipoGarantia;
+
+                InterfacesSistemas oInterfazSistema = new InterfacesSistemas(0);
+
+                /*almacena la respuesta de la consulta realizada a SISTAR a través de MQ*/
+                _tramaRespuesta = oInterfazSistema.ValidarTarjetaSISTAR(numeroTarjeta, String.Empty);
+                /*variable para almacenar la información de la tarjeta
+                  posición 0: identificación del deudor
+                  posición 1: límite de crédito de la tarjeta
+                  posición 2: estado de la tarjeta
+                  posición 3: moneda de la tarjeta
+                  posición 4: nombre del tarjeta habiente*/
+                string[] _InfoDeudor = new string[5];
+
+                /*recorre la trama para obtener la información correspondiente*/
+                if (_tramaRespuesta != string.Empty)
+                {
+                    /*crea un archivo tipo XML para almacenar la información obtenida de la tarjeta*/
+                    XmlDocument docTrama = new XmlDocument();
+
+                    /*carga la información en formato xml al archivo creado*/
+                    docTrama.LoadXml(_tramaRespuesta);
+
+                    /*obtiene la información almacenada en el nodo TramaXML y que es el que contiene toda la información*/
+                    XmlNode oNodoTrama = docTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoTramaXML"].ToString());
+
+                    /*obtiene la información almacenada en el nodo cabecera del XML*/
+                    XmlNode oNodoHeader = oNodoTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoCabecera"].ToString());
+
+                    /*obtiene la información almacenada en el nodo respuesta localizado en el nodo cabecera*/
+                    XmlNode oNodoCodigoRespuesta = oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoRespuesta"].ToString());
+
+                    /*evalua la respuesta obtenida de la validación de la tarjeta*/
+                    if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00") || oNodoCodigoRespuesta.InnerText.Equals("000")))
+                    {
+                        /*obtiene la información almacenada en el nodo SISTAR*/
+                        XmlNode oNodoSISTAR = oNodoTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoSistar"].ToString());
+
+                        informacionTarjeta.CedulaDeudor = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoCedula"].ToString()).InnerText;
+
+                        decimal _montoOperacion = 0;
+
+                        if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["nodoLimiteCreditoSISTAR"].ToString()))
+                        {
+                            string _montoOperTrama = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoLimiteCreditoSISTAR"].ToString()).InnerText;
+                            _montoOperacion = Convert.ToDecimal((String.IsNullOrEmpty(_montoOperTrama)) ? 0 : _montoOperacion) / 100;
+                        }
+
+                        string codMoneda = HomologarMoneda(oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoMoneda"].ToString()).InnerText);
+                        string estadoTarjeta = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoEstadoTarjeta"].ToString()).InnerText;
+                        string numBin = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoCuentaAfectada"].ToString()).InnerText.Substring(0, 6);
+                        string codInternoSistar = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoCuentaAfectada"].ToString()).InnerText.Substring(6);
+                        string codOficinaRegistra = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoOficinaOrigen"].ToString()).InnerText;
+                        string codTipoGarantia = oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoTipoGarantia"].ToString()).InnerText;
+
+                        informacionTarjeta.MontoOperacion = _montoOperacion;
+                        informacionTarjeta.EstadoTarjeta = ((estadoTarjeta.Length > 0) ? estadoTarjeta : ConfigurationManager.AppSettings["ESTADO_TARJETA_SISTAR"].ToString());
+                        informacionTarjeta.CodigoMoneda = ((int.TryParse(codMoneda, out codigoMoneda)) ? codigoMoneda : -1);
+                        informacionTarjeta.EsMasterCard = true;
+
+                        informacionTarjeta.NombreDeudor = new Deudores().ObtenerNombreDeudor(informacionTarjeta.CedulaDeudor);
+
+                        informacionTarjeta.NumeroBin = ((int.TryParse(numBin, out numeroBin)) ? numeroBin : -1);
+                        informacionTarjeta.CodigoInternoSistar = ((int.TryParse(codInternoSistar, out codigoIternoSistar)) ? codigoIternoSistar : -1);
+                        informacionTarjeta.CodigoOficinaRegistra = ((int.TryParse(codOficinaRegistra, out codigoOficinaRegistra)) ? codigoOficinaRegistra : -1);
+                        informacionTarjeta.CodigoTipoGarantia = ((int.TryParse(codTipoGarantia, out codigoTipoGarantia)) ? codigoTipoGarantia : -1);
+
+                        //Indica que es una tarjeta VISA de débito
+                        if ((oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoTransaccion"].ToString()).InnerText == "1") ||
+                            (oNodoSISTAR.SelectSingleNode(ConfigurationManager.AppSettings["nodoTipoTarjeta"].ToString()).InnerText == "D"))
+                        {
+                            informacionTarjeta.EsMasterCard = false;
+                        }
+
+                    }/*fin del if if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00")))*/
+                    else
+                    {
+                        if ((oNodoCodigoRespuesta != null) && (oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoDescripcion"]) != null))
+                        {
+                            XmlNode oNodoDescripcion = oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoDescripcion"].ToString());
+                            informacionTarjeta.CodigoError = oNodoCodigoRespuesta.InnerText;
+                            informacionTarjeta.DescripcionError = oNodoDescripcion.InnerText;
+                        }
+                        else
+                        {
+                            throw new Exception(Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY));
+                        }
+                    }
+                }/*if (_tramaRespuesta != string.Empty)*/
+
+                return informacionTarjeta;
+            }
+            catch (XmlException oErrorXml)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorTramaSistar, numeroTarjeta, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw new Exception(Mensajes.Obtener(Mensajes._errorTramaSistar, numeroTarjeta, Mensajes.ASSEMBLY), oErrorXml.InnerException);
+            }
+            catch (SocketException oError)
+            {
+                string strDetalle = " Detalle Técnico: La interfaz con SISTAR no responde.";
+                UtilitariosComun.RegistraEventLog((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), EventLogEntryType.Error);
+                throw new Exception((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), oError.InnerException);
+            }
+            catch (WebException oError)
+            {
+                string strDetalle = " Detalle Técnico: La interfaz con SISTAR no responde.";
+                UtilitariosComun.RegistraEventLog((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), EventLogEntryType.Error);
+                throw new Exception((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), oError.InnerException);
+            }
+            catch (Exception oError)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw new Exception(Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY), oError.InnerException);
+            }
+        }/*fin del método ValidarTarjetaSISTAR*/
+
+        /// <summary>
+        /// Modifica el tipo de garantía de la tarjeta en SISTAR
+        /// </summary>
+        /// <param name="numeroTarjeta">
+        /// Número de tarjeta a la cual se le modificará el tipo de garantía
+        /// </param>
+        /// <param name="garantiaTarjeta">
+        /// Tipo de garantía a la cual será actualizada la tarjeta en SISTAR
+        /// </param>
+        /// <returns>
+        /// Boolean que indica si la garantía fue modificada exitosamente en SISTAR
+        /// </returns>
+        public bool ModificarGarantiaSISTAR(string numeroTarjeta, string garantiaTarjeta)
+        {
+            try
+            {
+                InterfacesSistemas oInterfazSistema = new InterfacesSistemas(0);
+
+                /*variable para almacenar si la modificación de la garntía en SISTAR fue exitosa*/
+                bool _garantiaModificada = false;
+
+                /*declara la variable para almacenar la respuesta retornada por el SICC*/
+                string _tramaRespuesta = String.Empty;
+
+                /*almacena la respuesta de la consulta realizada a SISTAR a través de MQ*/
+                _tramaRespuesta = oInterfazSistema.ValidarTarjetaSISTAR(numeroTarjeta, garantiaTarjeta);
+                /*recorre la trama para obtener la información correspondiente*/
+
+                if (_tramaRespuesta != string.Empty)
+                {
+                    /*crea un archivo tipo XML para almacenar la información obtenida de la tarjeta*/
+                    XmlDocument docTrama = new XmlDocument();
+
+                    /*carga la información en formato xml al archivo creado*/
+                    docTrama.LoadXml(_tramaRespuesta);
+
+                    /*obtiene la información almacenada en el nodo TramaXML y que es el que contiene toda la información*/
+                    XmlNode oNodoTrama = docTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoTramaXML"].ToString());
+
+                    /*obtiene la información almacenada en el nodo cabecera del XML*/
+                    XmlNode oNodoHeader = oNodoTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoCabecera"].ToString());
+
+                    /*obtiene la información almacenada en el nodo respuesta localizado en el nodo cabecera*/
+                    XmlNode oNodoCodigoRespuesta = oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoRespuesta"].ToString());
+
+                    /*evalua la respuesta obtenida de la validación de la tarjeta*/
+                    if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00") || oNodoCodigoRespuesta.InnerText.Equals("000")))
+                    {
+                        _garantiaModificada = true;
+
+                    }/*fin del if if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00")))*/
+
+                }/*if (_tramaRespuesta != string.Empty)*/
+
+                /*retorna la variable que indica si la modificación ha sido satistfactoria o no*/
+                return _garantiaModificada;
+            }
+            
+            catch (XmlException oErrorXml)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorTramaSistar, numeroTarjeta, Mensajes.ASSEMBLY),EventLogEntryType.Error);
+                throw new Exception(Mensajes.Obtener(Mensajes._errorTramaSistar, numeroTarjeta, Mensajes.ASSEMBLY), oErrorXml.InnerException);
+            }
+            catch (SocketException oError)
+            {
+                string strDetalle = " Detalle Técnico: La interfaz con SISTAR no responde.";
+                UtilitariosComun.RegistraEventLog((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), EventLogEntryType.Error);
+                throw new Exception((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), oError.InnerException);
+            }
+            catch (WebException oError)
+            {
+                string strDetalle = " Detalle Técnico: La interfaz con SISTAR no responde.";
+                UtilitariosComun.RegistraEventLog((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), EventLogEntryType.Error);
+                throw new Exception((Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY) + strDetalle), oError.InnerException);
+            }
+            catch (Exception oError)
+            {
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+                throw new Exception(Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY), oError.InnerException);
+            }
+        }/*fin del método ModificarGarantiaSISTAR*/
+
+
+        #region Método HomologarMoneda
+
+        /// <summary>
+        /// Hologa la moneda de la operación
+        /// </summary>
+        /// <param name="codigoMoneda">
+        /// Código de la moneda a homologar
+        /// </param>
+        /// <returns>
+        /// Código homologado de la moneda
+        /// </returns>
+        private string HomologarMoneda(string codigoMoneda)
+        {
+            /*variable para almacenar la moneda homologada, por defecto carga la moneda de colones*/
+            string _monedaHomologada = ((int)Enumeradores.Monedas.Colones).ToString();
+
+            /*convierte a entero el valor de la moneda recibida*/
+            int _codigoMoneda = (String.IsNullOrEmpty(codigoMoneda)) ? 0 : Convert.ToInt32(codigoMoneda);
+
+            /*valida que tipo de moneda es para homologarla con la del sistema*/
+            switch (_codigoMoneda)
+            {
+                case 188:
+                    _monedaHomologada = ((int)Enumeradores.Monedas.Colones).ToString();
+                    break;
+
+                case 840:
+                    _monedaHomologada = ((int)Enumeradores.Monedas.Dolares).ToString();
+                    break;
+
+                default:
+                    throw new Exception("Moneda de la operación o tarjeta no soportada por la homologación de moneda del sistema.");
+                    break;
+            }/*fin del switch (codigoMoneda)*/
+
+            /*retorna la moneda homologada*/
+            return _monedaHomologada;
+
+        }/*fin del método HomologarMoneda*/
+
+        #endregion Método HomologarMoneda
+
+        #endregion Validación de Tarjetas
 
 		#endregion
 	}

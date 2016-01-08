@@ -784,31 +784,28 @@ namespace BCRGARANTIAS.Negocios
                         break;
                 }
 
-                using (SqlDataAdapter oDataAdapter = new SqlDataAdapter())
+                //declara las propiedades del comando
+                oComando.CommandType = CommandType.StoredProcedure;
+                oComando.CommandTimeout = 120;
+                oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", consecutivoOperacion);
+                oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", codigoContabilidad);
+                oComando.Parameters.AddWithValue("@piCodigo_Oficina", codigoOficina);
+                oComando.Parameters.AddWithValue("@piCodigo_Moneda", codigoMoneda);
+
+                if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
                 {
-                    //declara las propiedades del comando
-                    oComando.CommandType = CommandType.StoredProcedure;
-                    oComando.CommandTimeout = 120;
-                    oComando.Parameters.AddWithValue("@piConsecutivo_Operacion", consecutivoOperacion);
-                    oComando.Parameters.AddWithValue("@piCodigo_Contabilidad", codigoContabilidad);
-                    oComando.Parameters.AddWithValue("@piCodigo_Oficina", codigoOficina);
-                    oComando.Parameters.AddWithValue("@piCodigo_Moneda", codigoMoneda);
+                    oComando.Parameters.AddWithValue("@piCodigo_Producto", codigoProducto);
+                    oComando.Parameters.AddWithValue("@pdNumero_Operacion", numeroOperacion);
+                }
+                else
+                {
+                    oComando.Parameters.AddWithValue("@pdNumero_Contrato", numeroOperacion);
+                }
 
-                    if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
-                    {
-                        oComando.Parameters.AddWithValue("@piCodigo_Producto", codigoProducto);
-                        oComando.Parameters.AddWithValue("@pdNumero_Operacion", numeroOperacion);
-                    }
-                    else
-                    {
-                        oComando.Parameters.AddWithValue("@pdNumero_Contrato", numeroOperacion);
-                    }
+                oComando.Parameters.AddWithValue("@psCedula_Usuario", cedulaUsuario);
 
-                    oComando.Parameters.AddWithValue("@psCedula_Usuario", cedulaUsuario);
-
-                    oDataAdapter.SelectCommand = oComando;
-                    oDataAdapter.SelectCommand.Connection = oConexion;
-
+                using (SqlDataAdapter oDataAdapter = new SqlDataAdapter(oComando))
+                {
                     //Abre la conexion
                     oComando.Connection.Open();
 
@@ -821,7 +818,77 @@ namespace BCRGARANTIAS.Negocios
                 return dsDatos;
             }
         }
-        
-		#endregion
-	}
+
+        /// <summary>
+        /// Verifica si la garantía fiduciaria existe
+        /// </summary>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="cedulaFiador">Cédula del fiador</param>
+        /// <param name="tipoPersonaFiador">Tipo de persona del fiador</param>
+        /// <returns>True: La garantía existe. False: La garantía no existe</returns>
+        public bool ExisteGarantia(string codigoContabilidad, string codigoOficina, string codigoMoneda, string codigoProducto, string numeroOperacion, int tipoOperacion, string cedulaFiador, string tipoPersonaFiador)
+        {
+            bool existeGarantia = false;
+            string[] listaCampos = new string[] { string.Empty };
+            string sentenciaSql = string.Empty;
+            int valorRetornado;
+
+            try
+            {
+                if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa))
+                {
+                    listaCampos = new string[] {clsOperacionCrediticia._entidadOperacion,
+                                                clsGarantiaFiduciaria._entidadGarantiaFiduciariaXOperacion,
+                                                clsGarantiaFiduciaria._consecutivoOperacion, clsOperacionCrediticia._consecutivoOperacion,
+                                                clsGarantiaFiduciaria._entidadGarantiaFiduciaria,
+                                                clsGarantiaFiduciaria._consecutivoGarantiaFiduciaria, clsGarantiaFiduciaria._consecutivoGarantiaFiduciaria,
+                                                clsOperacionCrediticia._codigoContabilidad, codigoContabilidad,
+                                                clsOperacionCrediticia._codigoOficina, codigoOficina,
+                                                clsOperacionCrediticia._codigoMoneda, codigoMoneda,
+                                                clsOperacionCrediticia._codigoProducto, codigoProducto,
+                                                clsOperacionCrediticia._numeroDeOperacion, numeroOperacion,
+                                                clsOperacionCrediticia._numeroContrato, "0",
+                                                clsGarantiaFiduciaria._cedulaFiador, cedulaFiador,
+                                                clsGarantiaFiduciaria._codigoTipoPersonaFiador, tipoPersonaFiador};
+
+                    sentenciaSql = string.Format("SELECT 1 FROM dbo.{0} GO1 INNER JOIN dbo.{1} GFO ON GFO.{2} = GO1.{3} INNER JOIN dbo.{4} GGF ON GGF.{5} = GFO.{6} WHERE GO1.{7} = {8} AND GO1.{9} = {10} AND GO1.{11} = {12} AND GO1.{13} = {14} AND GO1.{15} = {16}  AND GO1.{17} = {18} AND GGF.{19} = '{20}' AND GGF.{21} = {22}", listaCampos);
+                }
+                else if (tipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Contrato))
+                {
+                    listaCampos = new string[] {clsOperacionCrediticia._entidadOperacion,
+                                                clsGarantiaFiduciaria._entidadGarantiaFiduciariaXOperacion,
+                                                clsGarantiaFiduciaria._consecutivoOperacion, clsOperacionCrediticia._consecutivoOperacion,
+                                                clsGarantiaFiduciaria._entidadGarantiaFiduciaria,
+                                                clsGarantiaFiduciaria._consecutivoGarantiaFiduciaria, clsGarantiaFiduciaria._consecutivoGarantiaFiduciaria,
+                                                clsOperacionCrediticia._codigoContabilidad, codigoContabilidad,
+                                                clsOperacionCrediticia._codigoOficina, codigoOficina,
+                                                clsOperacionCrediticia._codigoMoneda, codigoMoneda,
+                                                clsOperacionCrediticia._codigoProducto, codigoProducto,
+                                                clsOperacionCrediticia._numeroDeOperacion, "IS NULL",
+                                                clsOperacionCrediticia._numeroContrato, numeroOperacion,
+                                                clsGarantiaFiduciaria._cedulaFiador, cedulaFiador,
+                                                clsGarantiaFiduciaria._codigoTipoPersonaFiador, tipoPersonaFiador};
+
+                    sentenciaSql = string.Format("SELECT 1 FROM dbo.{0} GO1 INNER JOIN dbo.{1} GFO ON GFO.{2} = GO1.{3} INNER JOIN dbo.{4} GGF ON GGF.{5} = GFO.{6} WHERE GO1.{7} = {8} AND GO1.{9} = {10} AND GO1.{11} = {12} AND GO1.{13} = {14} AND GO1.{15} = {16}  AND GO1.{17} = {18} AND GGF.{19} = '{20}' AND GGF.{21} = {22}", listaCampos);
+                }
+
+                SqlParameter[] parameters = new SqlParameter[] { };
+
+                object resultadoObtenido = AccesoBD.ExecuteScalar(CommandType.Text, sentenciaSql, parameters);
+                existeGarantia = (((resultadoObtenido != null) && (int.TryParse(resultadoObtenido.ToString(), out valorRetornado))) ? ((valorRetornado != 0) ? true : false) : false);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return existeGarantia;
+        }
+        #endregion
+    }
 }

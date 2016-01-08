@@ -1,10 +1,12 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Entidades;
 using BCR.GARANTIAS.Comun;
+
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -22,6 +24,7 @@ namespace BCRGARANTIAS.Negocios
         #endregion Variables Globales
 
         #region Metodos Publicos
+
         public void Crear(int nCatalogo, string strCampo, string strDescripcion, string strUsuario, string strIP)
 		{
             try
@@ -30,7 +33,7 @@ namespace BCRGARANTIAS.Negocios
                                              clsElemento._codigoCatalogo, clsElemento._codigoCampo, clsElemento._descripcionElemento,
                                              nCatalogo.ToString(), strCampo, strDescripcion};
 
-                sentenciaSql = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}) VALUES({5}, '{6}', '{7}')", listaCampos);
+                sentenciaSql = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}) VALUES({4}, '{5}', '{6}')", listaCampos);
                 string strInsertarCatalogo = sentenciaSql;
 
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
@@ -321,6 +324,116 @@ namespace BCRGARANTIAS.Negocios
 				throw;
 			}
 		}
-	#endregion
-	}
+
+        /// <summary>
+        /// Obtiene la lista de catálogos utilizados por los diferentes mantenimientos
+        /// </summary>
+        /// <param name="listaCatalogos">Lista de los catálogos que se deben obtener. La lista debe iniciar y finalizar con el caracter "|", así mismo de requerirse más de un catálogo, los valores deben ir separados por dicho caracter.
+        /// </param>
+        /// <returns>Enditad del tipo catálogos</returns>
+        public clsCatalogos<clsCatalogo> ObtenerCatalogos(string listaCatalogos)
+        {
+            clsCatalogos<clsCatalogo> entidadCatalogos = null;
+
+            string tramaObtenida = string.Empty;
+            string[] strMensajeObtenido = new string[] { string.Empty };
+
+            if (listaCatalogos.Length > 0)
+            {
+                try
+                {
+                    SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("psListaCatalogos", SqlDbType.VarChar, 150),
+                    };
+
+                    parameters[0].Value = listaCatalogos;
+
+                    SqlParameter[] parametrosSalida = new SqlParameter[] { };
+
+                    using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                    {
+                        oConexion.Open();
+
+                        tramaObtenida = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "pa_ObtenerCatalogos", out parametrosSalida, parameters);
+
+                        oConexion.Close();
+                        oConexion.Dispose();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    entidadCatalogos = new clsCatalogos<clsCatalogo>();
+
+                    entidadCatalogos.ErrorDatos = true;
+                    entidadCatalogos.DescripcionError = Mensajes.Obtener(Mensajes.ERROR_CARGA_CATALOGOS, Mensajes.ASSEMBLY);
+
+                    string desError = "Error al obtener la trama: " + ex.Message;
+                    UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGA_CATALOGOS_DETALLE, desError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                    tramaObtenida = string.Empty;
+                }
+            }
+
+            if (tramaObtenida.Length > 0)
+            {
+                entidadCatalogos = new clsCatalogos<clsCatalogo>(tramaObtenida);
+            }
+
+            return entidadCatalogos;
+        }
+
+        /// <summary>
+        /// Obtiene la lista de los códigos ISIN
+        /// </summary>
+        /// </param>
+        /// <returns>DataSet con la lista de los códigos ISIN</returns>
+        public DataSet ObtenerCatalogoIsin()
+        {
+            DataSet catalogoIsin = new DataSet();
+
+            try
+            {
+                sentenciaSql = "SELECT cod_isin FROM dbo.CAT_ISIN UNION ALL SELECT '' ORDER BY cod_isin";
+
+                SqlParameter[] parametros = new SqlParameter[] { };
+
+                catalogoIsin = AccesoBD.ExecuteDataSet(CommandType.Text, sentenciaSql, parametros);
+            }
+            catch (Exception ex)
+            {
+                string desError = "Error al obtener la lista de códigos ISIN: " + ex.Message;
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGA_CATALOGOS_DETALLE, desError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            }
+            
+            return catalogoIsin;
+        }
+
+        /// <summary>
+        /// Obtiene la lista de los instrumentos
+        /// </summary>
+        /// </param>
+        /// <returns>DataSet con la información de los intrumentos</returns>
+        public DataSet ObtenerCatalogoInstrumentos()
+        {
+            DataSet catalogoInstrumentos = new DataSet();
+
+            try
+            {
+                sentenciaSql = "SELECT cod_instrumento, des_instrumento  FROM dbo.CAT_INSTRUMENTOS UNION ALL SELECT '', '' ORDER BY des_instrumento";
+
+                SqlParameter[] parametros = new SqlParameter[] { };
+
+                catalogoInstrumentos = AccesoBD.ExecuteDataSet(CommandType.Text, sentenciaSql, parametros);
+            }
+            catch (Exception ex)
+            {
+                string desError = "Error al obtener la lista instrumentos de las garantías de valor: " + ex.Message;
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGA_CATALOGOS_DETALLE, desError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            }
+
+            return catalogoInstrumentos;
+        }
+
+        #endregion
+    }
 }

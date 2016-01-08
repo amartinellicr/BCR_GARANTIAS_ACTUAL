@@ -2718,19 +2718,20 @@ function CalcularMontoMitigador() {
         });
     }
     else {
-        
-        $.ajax({
-            type: "POST",
-            url: pageUrl + "/CalcularMontoMitigadorPA",
-            data: '{"porcentajeAceptacionTerreno":"' + pcjAceptTerreno + '", "porcentajeAceptacionNoTerreno":"' + pcjAceptNoTerreno + '", "porcentajeAceptacionTerrenoCalc":"' + pcjAceptTerrenoCalculado + '", "porcentajeAceptacionNoTerrenoCalc":"' + pcjAceptNoTerrenoCalculado + '", "montoTasActTerreno":"' + montoTasActTerreno + '", "montoTasActNoTerreno":"' + montoTasActNoTerreno + '"}',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: OnSuccess,
-            failure: function (response) {
-                $$('lblMensaje').text(response);
-                alert(response);
-            }
-        });
+        if (($$('btnValidarOperacion').attr("CARGAINICIAL")) === '0') {
+            $.ajax({
+                type: "POST",
+                url: pageUrl + "/CalcularMontoMitigadorPA",
+                data: '{"porcentajeAceptacionTerreno":"' + pcjAceptTerreno + '", "porcentajeAceptacionNoTerreno":"' + pcjAceptNoTerreno + '", "porcentajeAceptacionTerrenoCalc":"' + pcjAceptTerrenoCalculado + '", "porcentajeAceptacionNoTerrenoCalc":"' + pcjAceptNoTerrenoCalculado + '", "montoTasActTerreno":"' + montoTasActTerreno + '", "montoTasActNoTerreno":"' + montoTasActNoTerreno + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    $$('lblMensaje').text(response);
+                    alert(response);
+                }
+            });
+        }
     }
 }
 

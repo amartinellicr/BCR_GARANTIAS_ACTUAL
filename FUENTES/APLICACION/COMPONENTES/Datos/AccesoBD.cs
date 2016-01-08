@@ -2,17 +2,12 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Diagnostics;
 using System.Xml;
-using System.IO;
-using System.Reflection;
 using System.Collections;
-using BCR.Seguridad;
-using System.Security.Cryptography;
 using System.Text;
-using System.Data.Sql;
 using System.Data.OleDb;
 
+using BCR.Seguridad.Cryptography;
 
 namespace BCRGARANTIAS.Datos
 {
@@ -43,10 +38,10 @@ namespace BCRGARANTIAS.Datos
         /// Metodo para obtener el string de conexión de la base de datos
         /// </summary>
         /// <returns>System.Data.OleDb.OleDbConnection</returns>
-        public static System.Data.OleDb.OleDbConnection ObtenerStringConexion()
+        public static OleDbConnection ObtenerStringConexion()
         {
-            System.Data.OleDb.OleDbConnection oConexion = new System.Data.OleDb.OleDbConnection();
-            BCR.Seguridad.Cryptography.TripleDES oSeguridad = new BCR.Seguridad.Cryptography.TripleDES();
+            OleDbConnection oConexion = new OleDbConnection();
+            TripleDES oSeguridad = new TripleDES();
 
             try
             {
@@ -66,11 +61,9 @@ namespace BCRGARANTIAS.Datos
         /// </summary>
         public static string ObtenerConnectionString()
         {
-            BCR.Seguridad.Cryptography.TripleDES oSeguridad = new BCR.Seguridad.Cryptography.TripleDES();
+           TripleDES oSeguridad = new TripleDES();
 
-            string strConnectionString;
-
-            strConnectionString = ConfigurationManager.ConnectionStrings["Sql_Server"].ConnectionString;
+            string strConnectionString = ConfigurationManager.ConnectionStrings["Sql_Server"].ConnectionString;
 
             return oSeguridad.Decrypt(strConnectionString);
         }
@@ -128,9 +121,7 @@ namespace BCRGARANTIAS.Datos
 
         public static SqlConnection obtenerConexion()
         {
-            SqlConnection oconection;
-
-            oconection = new SqlConnection(AccesoBD.ObtenerConnectionString());
+            SqlConnection oconection = new SqlConnection(ObtenerConnectionString());
 
             if (oconection.State != ConnectionState.Open)
             {
@@ -145,29 +136,32 @@ namespace BCRGARANTIAS.Datos
         public static object ExecuteScalar(CommandType commandType, string sqlInstruction, SqlParameter[] parameters)
         {
             object vnRetorno = null;
-            SqlConnection oConexion;
 
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = TiempoEsperaEjecucion;
-
-            AttachParameters(oComando, parameters);
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                vnRetorno = oComando.ExecuteScalar();
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = TiempoEsperaEjecucion;
 
-                throw;
-            }
-            finally
-            {
-                oComando.Connection.Close();
+                    AttachParameters(oComando, parameters);
+
+                    try
+                    {
+                        vnRetorno = oComando.ExecuteScalar();
+                        oComando.Parameters.Clear();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    finally
+                    {
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
             }
 
             return vnRetorno;
@@ -176,29 +170,32 @@ namespace BCRGARANTIAS.Datos
         public static object ExecuteScalar(CommandType commandType, string sqlInstruction, int tiempoEspera, SqlParameter[] parameters)
         {
             object vnRetorno = null;
-            SqlConnection oConexion;
 
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempoEspera;
-
-            AttachParameters(oComando, parameters);
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                vnRetorno = oComando.ExecuteScalar();
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = tiempoEspera;
 
-                throw;
-            }
-            finally
-            {
-                oComando.Connection.Close();
+                    AttachParameters(oComando, parameters);
+
+                    try
+                    {
+                        vnRetorno = oComando.ExecuteScalar();
+                        oComando.Parameters.Clear();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    finally
+                    {
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
             }
 
             return vnRetorno;
@@ -220,29 +217,31 @@ namespace BCRGARANTIAS.Datos
         public static int ExecuteNonQuery(CommandType commandType, string sqlInstruction, SqlParameter[] parameters)
         {
             int vnRetorno = 0;
-            SqlConnection oConexion;
-
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = TiempoEsperaEjecucion;
-
-            AttachParameters(oComando, parameters);
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                vnRetorno = oComando.ExecuteNonQuery();
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = TiempoEsperaEjecucion;
 
-                throw;
-            }
-            finally
-            {
-                oComando.Connection.Close();
+                    AttachParameters(oComando, parameters);
+
+                    try
+                    {
+                        vnRetorno = oComando.ExecuteNonQuery();
+                        oComando.Parameters.Clear();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    finally
+                    {
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
             }
 
             return vnRetorno;
@@ -251,29 +250,32 @@ namespace BCRGARANTIAS.Datos
         public static int ExecuteNonQuery(CommandType commandType, string sqlInstruction, int tiempoEspera, SqlParameter[] parameters)
         {
             int vnRetorno = 0;
-            SqlConnection oConexion;
 
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempoEspera;
-
-            AttachParameters(oComando, parameters);
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                vnRetorno = oComando.ExecuteNonQuery();
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = tiempoEspera;
 
-                throw;
-            }
-            finally
-            {
-                oComando.Connection.Close();
+                    AttachParameters(oComando, parameters);
+
+                    try
+                    {
+                        vnRetorno = oComando.ExecuteNonQuery();
+                        oComando.Parameters.Clear();
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    finally
+                    {
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
             }
 
             return vnRetorno;
@@ -283,53 +285,55 @@ namespace BCRGARANTIAS.Datos
         {
             int vnRetorno = 0;
 
-            SqlConnection oConexion;
-
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = TiempoEsperaEjecucion;
-
-            AttachParameters(oComando, parameters);
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                vnRetorno = oComando.ExecuteNonQuery();
-
-                int nParametrosSalida = 0;
-
-                foreach (SqlParameter sqlParam in oComando.Parameters)
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
                 {
-                    if ((sqlParam.Direction == ParameterDirection.Output) || (sqlParam.Direction == ParameterDirection.InputOutput))
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = TiempoEsperaEjecucion;
+
+                    AttachParameters(oComando, parameters);
+
+                    try
                     {
-                        nParametrosSalida++;
+                        vnRetorno = oComando.ExecuteNonQuery();
+
+                        int nParametrosSalida = 0;
+
+                        foreach (SqlParameter sqlParam in oComando.Parameters)
+                        {
+                            if ((sqlParam.Direction == ParameterDirection.Output) || (sqlParam.Direction == ParameterDirection.InputOutput))
+                            {
+                                nParametrosSalida++;
+                            }
+                        }
+
+                        nParametrosSalida = (nParametrosSalida == 0) ? 1 : nParametrosSalida;
+
+                        parametersOut = new SqlParameter[nParametrosSalida];
+
+                        nParametrosSalida = 0;
+
+                        foreach (SqlParameter sqlParam in oComando.Parameters)
+                        {
+                            if ((sqlParam.Direction == ParameterDirection.Output) || (sqlParam.Direction == ParameterDirection.InputOutput))
+                            {
+                                parametersOut[nParametrosSalida] = sqlParam;
+                            }
+                        }
+
+                        oComando.Parameters.Clear();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                    finally
+                    {
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
                     }
                 }
-
-                nParametrosSalida = (nParametrosSalida == 0) ? 1 : nParametrosSalida;
-
-                parametersOut = new SqlParameter[nParametrosSalida];
-
-                nParametrosSalida = 0;
-
-                foreach (SqlParameter sqlParam in oComando.Parameters)
-                {
-                    if ((sqlParam.Direction == ParameterDirection.Output) || (sqlParam.Direction == ParameterDirection.InputOutput))
-                    {
-                        parametersOut[nParametrosSalida] = sqlParam;
-                    }
-                }
-
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                oComando.Connection.Close();
             }
 
             return vnRetorno;
@@ -344,38 +348,35 @@ namespace BCRGARANTIAS.Datos
                 string sqlInstruction,
                 SqlParameter[] parameters)
         {
-            SqlConnection oConexion;
-            SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-            DataSet dsDatos;
+            DataSet dsDatos = new DataSet(); 
 
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-
-            dsDatos = new DataSet();
-
-            //declara las propiedades del comando
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = TiempoEsperaEjecucion;
-            AttachParameters(oComando, parameters);
-
-            oDataAdapter.SelectCommand = oComando;
-            oDataAdapter.SelectCommand.Connection = oConexion;
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                oDataAdapter.Fill(dsDatos, "Datos");
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = TiempoEsperaEjecucion;
+                    AttachParameters(oComando, parameters);
 
-                throw;
-            }
-            finally
-            {
+                    using (SqlDataAdapter oDataAdapter = new SqlDataAdapter(oComando))
+                    {
+                        try
+                        {
+                            oDataAdapter.Fill(dsDatos, "Datos");
+                            oComando.Parameters.Clear();
+                        }
+                        catch (Exception)
+                        {
 
-                oComando.Connection.Close();
+                            throw;
+                        }
+                        finally
+                        {
+                            oComando.Connection.Close();
+                            oComando.Connection.Dispose();
+                        }
+                    }
+                }                
             }
 
 
@@ -384,38 +385,35 @@ namespace BCRGARANTIAS.Datos
 
         public static DataSet ExecuteDataSet(CommandType commandType, string sqlInstruction, SqlParameter[] parameters,int tiempoEspera)
         {
-            SqlConnection oConexion;
-            SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-            DataSet dsDatos;
+            DataSet dsDatos = new DataSet();
 
-            oConexion = obtenerConexion();
-
-            SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion);
-
-            dsDatos = new DataSet();
-
-            //declara las propiedades del comando
-            oComando.CommandType = commandType;
-            oComando.CommandTimeout = tiempoEspera;
-            AttachParameters(oComando, parameters);
-
-            oDataAdapter.SelectCommand = oComando;
-            oDataAdapter.SelectCommand.Connection = oConexion;
-
-            try
+            using (SqlConnection oConexion = obtenerConexion())
             {
-                oDataAdapter.Fill(dsDatos, "Datos");
-                oComando.Parameters.Clear();
-            }
-            catch (Exception)
-            {
+                using (SqlCommand oComando = new SqlCommand(sqlInstruction, oConexion))
+                {
+                    oComando.CommandType = commandType;
+                    oComando.CommandTimeout = tiempoEspera;
+                    AttachParameters(oComando, parameters);
 
-                throw;
-            }
-            finally
-            {
+                    using (SqlDataAdapter oDataAdapter = new SqlDataAdapter(oComando))
+                    {
+                        try
+                        {
+                            oDataAdapter.Fill(dsDatos, "Datos");
+                            oComando.Parameters.Clear();
+                        }
+                        catch (Exception)
+                        {
 
-                oComando.Connection.Close();
+                            throw;
+                        }
+                        finally
+                        {
+                            oComando.Connection.Close();
+                            oComando.Connection.Dispose();
+                        }
+                    }
+                }
             }
 
 

@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Configuration;
-using BCRGARANTIAS.Datos;
 using System.Data.SqlClient;
 using System.Data;
-using BCRGarantias.Contenedores;
-using System.Data.SqlTypes;
 
 
 namespace BCRGARANTIAS.Datos

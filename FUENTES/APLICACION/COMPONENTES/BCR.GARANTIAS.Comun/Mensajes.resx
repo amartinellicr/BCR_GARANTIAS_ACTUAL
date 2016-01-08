@@ -603,4 +603,28 @@
   <data name="ERROR_INSERTANDO_GARANTIA_DETALLE" xml:space="preserve">
     <value>No se pudo insertar la información de la garantía @1. Detalle: @2</value>
   </data>
+  <data name="ERROR_CONEXION_WEB_SERVICES" xml:space="preserve">
+    <value>Ha ocurrido un error. Se ha perdido, o no se puede establecer, la conexión con el servidor @1.</value>
+  </data>
+  <data name="ERROR_CONEXION_WEB_SERVICE_DETALLE" xml:space="preserve">
+    <value>Ha ocurrido un error. Se ha perdido, o no se puede establecer, la conexión con el web service: @1</value>
+  </data>
+  <data name="ERROR_INTERFAZ_SISTAR" xml:space="preserve">
+    <value>Se ha producido un error al intentar utilizar la interfaz con SISTAR.</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR" xml:space="preserve">
+    <value>Ha ocurrido un error al tratar de obtener el tipo de cambio del BCCR a una fecha específica.</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR_FECHAS" xml:space="preserve">
+    <value>Ha ocurrido un error al tratar de obtener el tipo de cambio del BCCR en un rango de fechas.</value>
+  </data>
+  <data name="ERROR_TRAMA_SISTAR" xml:space="preserve">
+    <value>Ha ocurrido un error, se a detectado un error en la trama recibida desde SISTAR al intentar validar la tarjeta @1.</value>
+  </data>
+  <data name="ERROR_VALIDANDO_TARJETA" xml:space="preserve">
+    <value>Ha ocurrido un error a la hora de validar el número de la tarjeta contra @1.</value>
+  </data>
+  <data name="ERROR_VALIDANDO_TARJETA_DETALLE" xml:space="preserve">
+    <value>Se ha presentado un problema al validar la tarjeta @1. Detalle: @2</value>
+  </data>
 </root>
