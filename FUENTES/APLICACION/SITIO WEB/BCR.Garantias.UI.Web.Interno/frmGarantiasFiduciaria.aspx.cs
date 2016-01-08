@@ -1026,9 +1026,25 @@ namespace BCRGARANTIAS.Forms
 
                     if (Gestor.Verifica_Tarjeta_Sistar(nBin))
                     {
+                        #region Método de Validación Anterior
+                        //strTrama = new CreaXML().creaXMLConsultaTarjetaSISTAR(txtTarjeta.Text, "");
+
+                        //ProcesamientoMQ2003.ProcesamientoMQ oMQ = new ProcesamientoMQ2003.ProcesamientoMQ(Application["Qmanager"].ToString(),
+                        //                                                                                Application["Cola_Entrada"].ToString(),
+                        //                                                                                Application["Cola_Salida"].ToString(),
+                        //                                                                                strTrama,
+                        //                                                                                Application["Cola_Respuesta"].ToString(),
+                        //                                                                                Application["IP"].ToString(),
+                        //                                                                                Application["Channel"].ToString(),
+                        //                                                                                Application["Port"].ToString());
+
+                        //string strTramaRespuesta = oMQ.respuestaMQ();
+
+                        #endregion Método de Validación Anterior
+
                         informacionTarjeta = Gestor.ValidarTarjetaSISTAR(numeroTarjeta);
 
-                        if (informacionTarjeta != null)
+                        if ((informacionTarjeta != null) && (informacionTarjeta.TarjetaValida))
                         {
                             if (!informacionTarjeta.EsMasterCard)
                             {

@@ -1094,13 +1094,7 @@ namespace BCRGARANTIAS.Negocios
         /// Valida el número de tarjeta
         /// </summary>
         /// <param name="numeroTarjeta">Número de tarjeta a validar</param>
-        /// <returns>Arreglo de 5 posiciones con la información retornada por SISTAR, según la siguiente distribución:
-        ///  posición 0: identificación del deudor
-        ///  posición 1: límite de crédito de la tarjeta
-        ///  posición 2: estado de la tarjeta
-        ///  posición 3: moneda de la tarjeta
-        ///  posición 4: nombre del tarjeta habiente
-        /// </returns>
+        /// <returns>Entidad del tipo clsTarjeta con la información de la tarjeta</returns>
         public clsTarjeta ValidarTarjetaSISTAR(string numeroTarjeta)
         {
             try
@@ -1115,19 +1109,12 @@ namespace BCRGARANTIAS.Negocios
                 int codigoTipoGarantia;
 
                 InterfacesSistemas oInterfazSistema = new InterfacesSistemas(0);
-
+                
                 /*almacena la respuesta de la consulta realizada a SISTAR a través de MQ*/
                 _tramaRespuesta = oInterfazSistema.ValidarTarjetaSISTAR(numeroTarjeta, String.Empty);
-                /*variable para almacenar la información de la tarjeta
-                  posición 0: identificación del deudor
-                  posición 1: límite de crédito de la tarjeta
-                  posición 2: estado de la tarjeta
-                  posición 3: moneda de la tarjeta
-                  posición 4: nombre del tarjeta habiente*/
-                string[] _InfoDeudor = new string[5];
-
+               
                 /*recorre la trama para obtener la información correspondiente*/
-                if (_tramaRespuesta != string.Empty)
+                if (_tramaRespuesta.Length > 0)
                 {
                     /*crea un archivo tipo XML para almacenar la información obtenida de la tarjeta*/
                     XmlDocument docTrama = new XmlDocument();
@@ -1147,6 +1134,8 @@ namespace BCRGARANTIAS.Negocios
                     /*evalua la respuesta obtenida de la validación de la tarjeta*/
                     if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00") || oNodoCodigoRespuesta.InnerText.Equals("000")))
                     {
+                        informacionTarjeta.TarjetaValida = true;
+
                         /*obtiene la información almacenada en el nodo SISTAR*/
                         XmlNode oNodoSISTAR = oNodoTrama.SelectSingleNode(ConfigurationManager.AppSettings["nodoSistar"].ToString());
 
@@ -1185,15 +1174,21 @@ namespace BCRGARANTIAS.Negocios
                         {
                             informacionTarjeta.EsMasterCard = false;
                         }
-
                     }/*fin del if if (oNodoCodigoRespuesta != null && (oNodoCodigoRespuesta.InnerText.Equals("0") || oNodoCodigoRespuesta.InnerText.Equals("00")))*/
                     else
                     {
+                        informacionTarjeta.TarjetaValida = false;
+
                         if ((oNodoCodigoRespuesta != null) && (oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoDescripcion"]) != null))
                         {
                             XmlNode oNodoDescripcion = oNodoHeader.SelectSingleNode(ConfigurationManager.AppSettings["nodoDescripcion"].ToString());
+
+                            string errorObtenido = string.Format("Número de Tarjeta: {0}. Código del error: {1}. Descripción: {2}", numeroTarjeta, oNodoCodigoRespuesta.InnerText, oNodoDescripcion.InnerText);
+                            
+                            UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInterfaceSistarDetalle, errorObtenido, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
                             informacionTarjeta.CodigoError = oNodoCodigoRespuesta.InnerText;
-                            informacionTarjeta.DescripcionError = oNodoDescripcion.InnerText;
+                            informacionTarjeta.DescripcionError = Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY);
                         }
                         else
                         {
@@ -1201,6 +1196,15 @@ namespace BCRGARANTIAS.Negocios
                         }
                     }
                 }/*if (_tramaRespuesta != string.Empty)*/
+                else
+                {
+                    string errorObtenido = string.Format("Número de Tarjeta: {0}. Descripción: El objeto que permite la comunicación con SISTAR no existe.", numeroTarjeta);
+
+                    UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorInterfaceSistarDetalle, errorObtenido, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                    informacionTarjeta.CodigoError = string.Empty;
+                    informacionTarjeta.DescripcionError = Mensajes.Obtener(Mensajes._errorInterfaceSistar, Mensajes.ASSEMBLY);
+                }
 
                 return informacionTarjeta;
             }

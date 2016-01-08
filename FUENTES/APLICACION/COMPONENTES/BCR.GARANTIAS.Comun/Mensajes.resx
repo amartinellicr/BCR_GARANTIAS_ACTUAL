@@ -627,4 +627,7 @@
   <data name="ERROR_VALIDANDO_TARJETA_DETALLE" xml:space="preserve">
     <value>Se ha presentado un problema al validar la tarjeta @1. Detalle: @2</value>
   </data>
+  <data name="ERROR_INTERFAZ_SISTAR_DETALLE" xml:space="preserve">
+    <value>Se ha producido un error al intentar utilizar la interfaz con SISTAR. Detalle Técnico: @1</value>
+  </data>
 </root>

@@ -131,8 +131,7 @@ BEGIN
 		@viFecha_Entero INT,
 		@viConsecutivo	BIGINT --Se usa para generar los códigos de la tabla temporal de números.
 
-	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT IDENTITY(1,1),
-											Campo_vacio	CHAR(8)
+	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT
 											PRIMARY KEY (Consecutivo)) --Se utilizará para generar los semestres a ser calculados
 
 	SET @vdtFecha_Hoy_Sin_Hora = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
@@ -166,7 +165,7 @@ BEGIN
 	--Se carga la tabla temporal de consecutivos
 	WHILE	@viConsecutivo <= 69
 	BEGIN
-		INSERT INTO @CLASES_GARANTIAS_REALES (Campo_vacio) VALUES(@viConsecutivo)
+		INSERT INTO @CLASES_GARANTIAS_REALES (Consecutivo) VALUES(@viConsecutivo)
 		SET @viConsecutivo = @viConsecutivo + 1
 	END
 

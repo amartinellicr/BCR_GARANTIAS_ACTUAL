@@ -130,21 +130,21 @@ BEGIN
 	
 	
 	
-	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT IDENTITY(1,1),
-											Campo_vacio	CHAR(8)
-											PRIMARY KEY (Consecutivo)) --Se utilizará para generar los semestres a ser calculados
-
 	DECLARE @vdtFecha_Actual_Sin_Hora	DATETIME,  -- Fecha actual sin hora, utilizada en las comparaciones de las validaciones
-			@viConsecutivo	BIGINT --Se usa para generar los códigos de la tabla temporal de números.
+			@viConsecutivo	INT --Se usa para generar los códigos de la tabla temporal de números.
 
 	SET @vdtFecha_Actual_Sin_Hora = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 
 	SET	@viConsecutivo = 20
 
+	DECLARE @CLASES_GARANTIAS_VALOR TABLE (Consecutivo TINYINT 
+											PRIMARY KEY (Consecutivo)) --Se utilizará para generar los semestres a ser calculados
+
+	
 	--Se carga la tabla temporal de consecutivos
 	WHILE	@viConsecutivo <= 29
 	BEGIN
-		INSERT INTO @CLASES_GARANTIAS_REALES (Campo_vacio) VALUES(@viConsecutivo)
+		INSERT INTO @CLASES_GARANTIAS_VALOR (Consecutivo) VALUES(@viConsecutivo)
 		SET @viConsecutivo = @viConsecutivo + 1
 	END
 
@@ -163,7 +163,7 @@ BEGIN
 			MGT.prmgt_pcotengar,
 			MGT.prmgt_pco_produ
 		FROM	dbo.GAR_SICC_PRMGT MGT
-			INNER JOIN @CLASES_GARANTIAS_REALES CGR
+			INNER JOIN @CLASES_GARANTIAS_VALOR CGR
 			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
 		WHERE	MGT.prmgt_estado = 'A'
 			AND MGT.prmgt_pcotengar	IN (2,3,4,6)

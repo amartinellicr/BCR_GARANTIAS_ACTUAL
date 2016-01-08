@@ -44,6 +44,7 @@ namespace BCR.GARANTIAS.Entidades
 
         #region Propiedades
 
+        public bool TarjetaValida { get; set; }
         public bool EsMasterCard { get; set; }
         public string CedulaDeudor { get; set; }
         public string NombreDeudor { get; set; }

@@ -195,10 +195,6 @@
       <Project>{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}</Project>
       <Name>BCR.GARANTIAS.Entidades</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BCRGarantias.Contenedores\BCRGarantias.Contenedores.csproj">
-      <Project>{646A5EBB-35FD-4497-8C35-8D4EFC921541}</Project>
-      <Name>BCRGarantias.Contenedores</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Datos\Datos.csproj">
       <Project>{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}</Project>
       <Name>Datos</Name>

@@ -268,7 +268,7 @@ BEGIN
 	SET @vdtFecha_Actual_Hora = GETDATE()
 	
 	--Se carga la tabla temporal de consecutivos
-	WHILE	@viConsecutivo <=20000
+	WHILE	@viConsecutivo <= 20000
 	BEGIN
 		INSERT INTO @NUMEROS (Campo_vacio) VALUES(@viConsecutivo)
 		SET @viConsecutivo = @viConsecutivo + 1

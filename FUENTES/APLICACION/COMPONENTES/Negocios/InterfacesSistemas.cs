@@ -42,16 +42,31 @@ namespace Negocios
             switch (codInterfaz)
             {
                 case 0:
-                    BCRMQServicios = new WSMQ();
-                    BCRMQServicios.Url = ConfigurationManager.AppSettings.Get("WSMQSERVICIOS_URL");
-                    BCRMQServicios.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
-                    BCRMQServicios.Timeout = -1;
+
+                    if ((ConfigurationManager.AppSettings.Get("WSMQSERVICIOS_URL") != null) && (ConfigurationManager.AppSettings.Get("WSMQSERVICIOS_URL").Length > 0))
+                    {
+                        BCRMQServicios = new WSMQ();
+                        BCRMQServicios.Url = ConfigurationManager.AppSettings.Get("WSMQSERVICIOS_URL");
+                        BCRMQServicios.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
+                        BCRMQServicios.Timeout = -1;
+                    }
+                    else
+                    {
+                        BCRMQServicios = null;
+                    }
                     break;
                 case 1:
-                    BCCRServicios = new wsIndicadoresEconomicos();
-                    BCCRServicios.Url = ConfigurationManager.AppSettings.Get("WSBCCR_URL");
-                    BCCRServicios.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
-                    BCCRServicios.Timeout = -1;
+                    if ((ConfigurationManager.AppSettings.Get("WSBCCR_URL") != null) && (ConfigurationManager.AppSettings.Get("WSBCCR_URL").Length > 0))
+                    {
+                        BCCRServicios = new wsIndicadoresEconomicos();
+                        BCCRServicios.Url = ConfigurationManager.AppSettings.Get("WSBCCR_URL");
+                        BCCRServicios.Credentials = System.Net.CredentialCache.DefaultNetworkCredentials;
+                        BCCRServicios.Timeout = -1;
+                    }
+                    else
+                    {
+                        BCCRServicios = null;
+                    }
                     break;
                 default:
                     break;
@@ -93,7 +108,10 @@ namespace Negocios
                 string _tramaTarjetaSISTAR = new CreaXML().creaXMLConsultaTarjetaSISTAR(_numeroTarjeta, _tipoGarantia);
 
                 /*obtiene la trama de respuesta de MQ para la consulta realizada*/
-                _tramaRespuesta = BCRMQServicios.MQSistar(_tramaTarjetaSISTAR);
+                if (BCRMQServicios != null)
+                {
+                    _tramaRespuesta = BCRMQServicios.MQSistar(_tramaTarjetaSISTAR);
+                }
 
                 /*retorna la trama de respuesta obtenida*/
                 return _tramaRespuesta;
