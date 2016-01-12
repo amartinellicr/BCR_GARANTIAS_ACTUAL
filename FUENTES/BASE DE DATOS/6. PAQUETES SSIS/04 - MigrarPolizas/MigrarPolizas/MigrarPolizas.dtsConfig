@@ -24,6 +24,9 @@
   <Configuration ConfiguredType="Property" Path="\Package.Variables[User::rutaPaqueteSSIS].Properties[Value]" ValueType="String">
     <ConfiguredValue>D:\BCR_GARANTIAS_ACTUAL\PRINCIPAL\FUENTES\BASE DE DATOS\6. PAQUETES SSIS\04 - MigrarPolizas\MigrarPolizas\</ConfiguredValue>
   </Configuration>
+  <Configuration ConfiguredType="Property" Path="\Package.Variables[User::cantidadDiasBorrar].Properties[Value]" ValueType="String">
+    <ConfiguredValue>-5</ConfiguredValue>
+  </Configuration>
   <Configuration ConfiguredType="Property" Path="\Package.Properties[VersionBuild]" ValueType="Int32">
     <ConfiguredValue>19</ConfiguredValue>
   </Configuration>
