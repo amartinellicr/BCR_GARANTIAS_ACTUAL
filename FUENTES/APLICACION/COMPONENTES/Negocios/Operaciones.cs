@@ -105,19 +105,26 @@ namespace BCRGARANTIAS.Negocios
                 datosOperacion.Producto = ((short) nProducto);
                 datosOperacion.Operacion = nOperacion;
 
-                datosOperacion.EsGiro = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._indicadorEsGiro)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._indicadorEsGiro)) && (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._indicadorEsGiro].ToString().CompareTo("1") == 0)) ? true : false);
+                if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables[0].Rows.Count > 0))
+                {
+                    datosOperacion.EsGiro = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._indicadorEsGiro)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._indicadorEsGiro)) && (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._indicadorEsGiro].ToString().CompareTo("1") == 0)) ? true : false);
 
-                datosOperacion.ConsecutivoContrato = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoContrato))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoContrato].ToString())) : -1);
+                    datosOperacion.ConsecutivoContrato = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoContrato))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoContrato].ToString())) : -1);
 
-                datosOperacion.FormatoLargoContrato = (((datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._formatoLargoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._formatoLargoContrato))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._formatoLargoContrato].ToString()) : string.Empty);
+                    datosOperacion.FormatoLargoContrato = (((datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._formatoLargoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._formatoLargoContrato))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._formatoLargoContrato].ToString()) : string.Empty);
 
-                datosOperacion.ConsecutivoOperacion = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoOperacion)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoOperacion))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoOperacion].ToString())) : -1);
+                    datosOperacion.ConsecutivoOperacion = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoOperacion)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoOperacion))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoOperacion].ToString())) : -1);
 
-                datosOperacion.CedulaDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._cedulaDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._cedulaDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._cedulaDeudor].ToString()) : string.Empty);
+                    datosOperacion.CedulaDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._cedulaDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._cedulaDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._cedulaDeudor].ToString()) : string.Empty);
 
-                datosOperacion.NombreDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._nombreDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._nombreDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._nombreDeudor].ToString()) : string.Empty);
+                    datosOperacion.NombreDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._nombreDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._nombreDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._nombreDeudor].ToString()) : string.Empty);
 
-                datosOperacion.EsValida = ((datosOperacion.EsGiro) ? false : true);
+                    datosOperacion.EsValida = ((datosOperacion.EsGiro) ? false : true);
+                }
+                else
+                {
+                    datosOperacion.EsValida = false;
+                }
             }
             catch
             {

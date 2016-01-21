@@ -2968,6 +2968,11 @@ namespace BCRGARANTIAS.Forms
                             //porcentajeAceptacionCalculado = decimal.Parse(entidadGarantia.PorcentajeAceptacionCalculado.ToString("N2"));
                             btnValidarOperacion.Attributes.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
                             ViewState.Add(LLAVE_MONTO_ORIGINAL_PORCENTAJE_ACEPTACION_CALCULADO, porcentajeAceptacionCalculado.ToString("N2"));
+
+                            txtPorcentajeAceptacionCalculado.Text = "0.00";
+                            txtPorcentajeAceptacion.Text = "0.00";
+                            txtPorcentajeAceptacionTerrenoCalculado.Text = "0.00";
+                            txtPorcentajeAceptacionNoTerrenoCalculado.Text = "0.00";
                         }
                         else
                         {
