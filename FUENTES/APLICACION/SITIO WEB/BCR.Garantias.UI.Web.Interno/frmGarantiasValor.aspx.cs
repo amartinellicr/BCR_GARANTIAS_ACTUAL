@@ -930,9 +930,9 @@ namespace BCRGARANTIAS.Forms
                         ConsecutivoGarantia = long.Parse(gdvGarantiasValor.SelectedDataKey[1].ToString());
 
                         dsDatos = Gestor.ObtenerDatosGarantiaValor(ConsecutivoOperacion, ConsecutivoGarantia, Session["strUSER"].ToString());
-                        
+
                         #region Cargar Datos                    
-                        
+
                         if (dsDatos != null)
                         {
                             FormatearCamposNumericos();
@@ -942,7 +942,7 @@ namespace BCRGARANTIAS.Forms
                             cbClaseGarantia.Items.FindByValue(dsDatos.CodigoClaseGarantia.ToString()).Selected = true;
 
                             txtSeguridad.Text = dsDatos.NumeroSeguridad;
-                                                        
+
                             txtFechaConstitucion.Text = ((dsDatos.FechaConstitucion != fechaBase) ? dsDatos.FechaConstitucion.ToString("dd/MM/yyyy") : string.Empty);
                             txtFechaVencimiento.Text = ((dsDatos.FechaVencimientoInstrumento != fechaBase) ? dsDatos.FechaVencimientoInstrumento.ToString("dd/MM/yyyy") : string.Empty);
                             txtFechaPrescripcion.Text = ((dsDatos.FechaPrescripcion != fechaBase) ? dsDatos.FechaPrescripcion.ToString("dd/MM/yyyy") : string.Empty);
@@ -950,9 +950,11 @@ namespace BCRGARANTIAS.Forms
                             CargarClasificacionInstrumento();
                             cbClasificacion.SelectedIndex = -1;
                             cbClasificacion.Items.FindByValue(dsDatos.CodigoClasificacionInstrumento.ToString()).Selected = true;
-
+                            
                             cbInstrumento.SelectedIndex = -1;
-                            cbInstrumento.Items.FindByValue(((dsDatos.DescripcionInstrumento.Length > 0) ? dsDatos.DescripcionInstrumento : string.Empty)).Selected = true;
+                            cbInstrumento.Items.FindByValue((((dsDatos.CodigoClasificacionInstrumento != -1) && (dsDatos.CodigoClasificacionInstrumento != 5) && (dsDatos.DescripcionInstrumento.Length > 0)) ? dsDatos.DescripcionInstrumento : string.Empty)).Selected = true;
+
+                            txtInstrumento.Text = ((dsDatos.CodigoClasificacionInstrumento == 5) ? dsDatos.DescripcionInstrumento : string.Empty);
 
                             cbInstrumento.Visible = (((dsDatos.CodigoClasificacionInstrumento != -1) && (dsDatos.CodigoClasificacionInstrumento != 5)) ? true : false);
                             txtInstrumento.Visible = (((dsDatos.CodigoClasificacionInstrumento != -1) && (dsDatos.CodigoClasificacionInstrumento != 5)) ? false : true);
@@ -978,10 +980,10 @@ namespace BCRGARANTIAS.Forms
                             cbMonedaValorFacial.Items.FindByValue(dsDatos.CodigoMonedaValorFacial.ToString()).Selected = true;
 
                             txtValorMercado.Text = dsDatos.MontoValorMercado.ToString("N2");
-                            
+
                             cbMonedaValorMercado.SelectedIndex = -1;
                             cbMonedaValorMercado.Items.FindByValue(dsDatos.CodigoMonedaValorMercado.ToString()).Selected = true;
-                             
+
                             CargarTenencias();
                             cbTenencia.SelectedIndex = -1;
                             cbTenencia.Items.FindByValue(dsDatos.CodigoTipoTenencia.ToString()).Selected = true;
@@ -995,7 +997,7 @@ namespace BCRGARANTIAS.Forms
                             cbTipoDocumento.Items.FindByValue(dsDatos.CodigoTipoDocumentoLegal.ToString()).Selected = true;
 
                             txtMontoMitigador.Text = dsDatos.MontoMitigiador.ToString("N2");
-                            
+
                             CargarInscripciones();
                             cbInscripcion.SelectedIndex = -1;
                             cbInscripcion.Items.FindByValue(dsDatos.CodigoIndicadorInscripcion.ToString()).Selected = true;
