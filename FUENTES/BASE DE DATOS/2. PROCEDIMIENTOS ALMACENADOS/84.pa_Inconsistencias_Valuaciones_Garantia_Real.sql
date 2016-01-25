@@ -940,14 +940,16 @@ BEGIN
  ************************************************************************************************/
 
 	UPDATE	@TMP_INCONSISTENCIAS
-	SET	Fecha_Ultimo_Seguimiento = NULL
+	SET		Fecha_Ultimo_Seguimiento = NULL
 	WHERE	Fecha_Ultimo_Seguimiento = '19000101'
 
 	UPDATE	@TMP_INCONSISTENCIAS
-	SET	Fecha_Presentacion	= NULL
+	SET		Fecha_Presentacion	= NULL
 	WHERE	Fecha_Presentacion	= '19000101'
 
-	
+	UPDATE	@TMP_INCONSISTENCIAS
+	SET		Porcentaje_Aceptacion	= 0
+	WHERE	Porcentaje_Aceptacion	<= -1
 
 
 	SELECT 	DISTINCT	
