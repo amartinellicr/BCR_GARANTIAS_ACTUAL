@@ -2741,34 +2741,34 @@ DECLARE
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1,3)
 		
-	--SE ASIGNA EL VALOR NULL A LOS CAMPOS DE LOS PORCENTAJES QUE SEAN IGULA A -1
+	--SE ASIGNA EL VALOR NULL A LOS CAMPOS DE LOS PORCENTAJES QUE SEAN MENORES O IGUALES A -1
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno = NULL
 	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
-		AND TGR.Porcentaje_Aceptacion_Terreno = -1
+		AND TGR.Porcentaje_Aceptacion_Terreno <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno = NULL
 	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
-		AND TGR.Porcentaje_Aceptacion_No_Terreno = -1
+		AND TGR.Porcentaje_Aceptacion_No_Terreno <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno_Calculado = NULL
 	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
-		AND TGR.Porcentaje_Aceptacion_Terreno_Calculado = -1
+		AND TGR.Porcentaje_Aceptacion_Terreno_Calculado <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = NULL
 	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
-		AND TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = -1
+		AND TGR.Porcentaje_Aceptacion_No_Terreno_Calculado <= -1
 
 	--FIN RQ: RQ_MANT_2015062410418218_00090
 
@@ -2777,7 +2777,35 @@ DECLARE
 	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.cod_tipo_operacion IN (1, 3)
-		AND TGR.porcentaje_responsabilidad = -1
+		AND TGR.porcentaje_responsabilidad <= -1
+
+	UPDATE	TGR
+	SET		TGR.Porcentaje_Aceptacion = CASE 
+											WHEN TGR.Porcentaje_Aceptacion IS NULL THEN GGR.Porcentaje_Aceptacion
+											WHEN TGR.Porcentaje_Aceptacion <= -1 THEN GGR.Porcentaje_Aceptacion
+											ELSE TGR.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se cambian las referencias a este campo.
+										END
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		LEFT OUTER JOIN dbo.TMP_GARANTIAS_REALES TGR
+		ON TGR.cod_oficina = GGR.cod_oficina
+		AND TGR.cod_moneda = GGR.cod_moneda
+		AND TGR.cod_producto = GGR.cod_producto
+		AND TGR.operacion = GGR.operacion
+		AND TGR.cod_clase_garantia = GGR.cod_clase_garantia
+		AND TGR.cod_bien = GGR.cod_bien  
+	WHERE	GGR.cod_tipo_documento_legal IS NOT NULL
+		AND GGR.cod_estado = 1
+		AND TGR.cod_usuario = @psCedula_Usuario
+		AND TGR.cod_tipo_operacion IN (1, 3)
+		AND TGR.porcentaje_responsabilidad <= -1
+
+
+	UPDATE	TGR
+	SET		TGR.Porcentaje_Aceptacion = 0
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
+	WHERE	TGR.cod_usuario = @psCedula_Usuario
+		AND TGR.cod_tipo_operacion IN (1, 3)
+		AND TGR.Porcentaje_Aceptacion <= -1
 
 	/***************************************************************************************************************************************************/
 
@@ -2799,6 +2827,7 @@ DECLARE
 		END AS INDICADOR_INSCRIPCION,		
 		CASE 
 			WHEN TMP.Porcentaje_Aceptacion IS NULL THEN GGR.Porcentaje_Aceptacion
+			WHEN TMP.Porcentaje_Aceptacion <= -1 THEN GGR.Porcentaje_Aceptacion
 			ELSE TMP.Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se cambian las referencias a este campo.
 		END AS PORCENTAJE_ACEPTACION,		
 		GGR.fecha_constitucion AS FECHA_CONSTITUCION,

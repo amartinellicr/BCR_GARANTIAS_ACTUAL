@@ -562,6 +562,12 @@ BEGIN
 		AND TMP.cod_inscripcion = 2 
 		AND CE1.cat_catalogo = @piCatalogo_Ind_Ins
 
+
+
+	UPDATE	#TMP_ALERTAS
+	SET		Porcentaje_Aceptacion = NULL
+	WHERE	Porcentaje_Aceptacion <= -1
+
 /************************************************************************************************
  *                                                                                              * 
  *                              FIN DE LA SELECCIÓN DE ALERTAS                                  *
