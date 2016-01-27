@@ -1055,7 +1055,8 @@ namespace BCR.GARANTIAS.Entidades
         public const string _fechaPrescripcion = "fecha_prescripcion";
         public const string _codEstado = "cod_estado";
         public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
-        
+        public const string _cedulaAcreedor = "cedula_acreedor";
+
 
         private const string _desTipoBien = "des_tipo_bien";
         private const string _desTipoMitigador = "des_tipo_mitigador";
@@ -6566,6 +6567,7 @@ namespace BCR.GARANTIAS.Entidades
             bool existePolizaEliminada = false;
             bool polizaModificada = false;
             bool polizaInsertada = false;
+            bool porcentajeAcepCalculadoReg = false;
             StringBuilder sentenciaActualizacionGarantia = new StringBuilder("UPDATE dbo.GAR_GARANTIA_REAL SET ");
             StringBuilder sentenciaActualizacionGarOper = new StringBuilder("UPDATE dbo.GAR_GARANTIAS_REALES_X_OPERACION SET ");
             StringBuilder sentenciaActualizacionAvaluos = new StringBuilder("UPDATE dbo.GAR_VALUACIONES_REALES SET ");
@@ -6580,6 +6582,9 @@ namespace BCR.GARANTIAS.Entidades
             listaDatosModificadosGarXOper = new Dictionary<string, string>();
 
             bool aplicanPorcentajesAceptAvaluo = HabilitarPorcentajesAceptacionAvaluo();
+
+            int tipoBienInicial = -1;
+            int tipoBienActual = -1;
 
             string porcentajeAceptCalculadoOriginal = string.Empty;
             DateTime fechaBase = new DateTime(1900,01,01);
@@ -6743,6 +6748,14 @@ namespace BCR.GARANTIAS.Entidades
                                         case _fechaModifico:
                                             sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
                                             break;
+                                        case _codTipoBien:
+
+                                            tipoBienInicial = ((int.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "-1"), out tipoBienInicial)) ? tipoBienInicial : -1);
+                                            tipoBienActual = ((int.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "-1"), out tipoBienActual)) ? tipoBienActual : -1);
+
+                                            sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                            listaDatosModificadosGarantias.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+                                            break;
                                         default:
                                             sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
                                             listaDatosModificadosGarantias.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
@@ -6759,6 +6772,7 @@ namespace BCR.GARANTIAS.Entidades
                                     switch (nodoInicial.Name)
                                     {
                                         case _porcentajeAceptacionCalculado:
+
                                             if (!aplicanPorcentajesAceptAvaluo)
                                             {
                                                 porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
@@ -6766,10 +6780,20 @@ namespace BCR.GARANTIAS.Entidades
                                                 decimal porcentajeAceptacionCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoInicial) ? porcentajeAceptacionCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
                                                 decimal porcentajeAceptacionCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoActual) ? porcentajeAceptacionCalculadoActual : porcentajeAceptacionCalculadoOriginal);
 
+                                                string valorInicial = xmlTramaGarantiaInicial.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+                                                string valorActual = xmlTramaGarantiaActual.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+
+                                                decimal porcentajeAceptacionInicial = (decimal.TryParse(((valorInicial.Length > 0) ? valorInicial : "-1"), out porcentajeAceptacionInicial) ? porcentajeAceptacionInicial : -1);
+                                                decimal porcentajeAceptacionActual = (decimal.TryParse(((valorActual.Length > 0) ? valorActual : "-1"), out porcentajeAceptacionActual) ? porcentajeAceptacionActual : -1);
+
+                                                porcentajeAceptacionCalculadoInicial = ((codTipoBien > 4) ? ((tipoBienInicial != tipoBienActual) ? 0 : porcentajeAceptacionInicial) : porcentajeAceptacionCalculadoInicial);
+                                                porcentajeAceptacionCalculadoActual = ((codTipoBien > 4) ? ((tipoBienInicial != tipoBienActual) ? 0 : porcentajeAceptacionActual) : porcentajeAceptacionCalculadoActual);
+
                                                 if (porcentajeAceptacionCalculadoInicial != porcentajeAceptacionCalculadoActual)
                                                 {
-                                                    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
-                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                                    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionCalculadoActual != -1) ? ((codTipoBien <= 4) ? nodoActual.InnerText : valorActual) : "NULL"))));
+                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? ((codTipoBien <= 4) ? nodoInicial.InnerText : valorInicial) : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? ((codTipoBien <= 4) ? nodoActual.InnerText : valorActual) : "-"))));
+                                                    porcentajeAcepCalculadoReg = true;
                                                 }
                                             }
 
@@ -6779,11 +6803,18 @@ namespace BCR.GARANTIAS.Entidades
                                             {
                                                 decimal porcentajeAceptacionInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "-1"), out porcentajeAceptacionInicial) ? porcentajeAceptacionInicial : -1);
                                                 decimal porcentajeAceptacionActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "-1"), out porcentajeAceptacionActual) ? porcentajeAceptacionActual : -1);
-
+                                                string valorInicial = nodoInicial.InnerText;
+                                                
+                                                if ((tipoBienInicial != tipoBienActual) && (tipoBienActual > 4))
+                                                {
+                                                    porcentajeAceptacionInicial = 0;
+                                                    valorInicial = "0.00";
+                                                }
+                                                    
                                                 if (porcentajeAceptacionInicial != porcentajeAceptacionActual)
                                                 {
                                                     sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "NULL"))));
-                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "-"))));
+                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionInicial != -1) ? valorInicial : "-"), ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "-"))));
                                                 }
                                             }
 
@@ -6872,6 +6903,85 @@ namespace BCR.GARANTIAS.Entidades
                                             listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
 
                                             break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Se verifica si hace falta incluir el cambio del campo porcentaje de aceptación calculado, esto porque no es un campo físico, por lo que en la trama inicial es posible que no exista
+                    if ((!porcentajeAcepCalculadoReg) && (!aplicanPorcentajesAceptAvaluo))
+                    {
+                        //Se verifica si hubo un cambio de tipo de bien
+                        if ((tipoBienInicial != tipoBienActual) && (tipoBienActual > 4))
+                        {
+                            //Se ingresa el valor correspondiente al porcentaje de aceptación calculado
+                            if (listaCamposGarantiaOperacion.Contains(_porcentajeAceptacionCalculado))
+                            {
+                                if (!listaDatosModificadosGarXOper.ContainsKey(_porcentajeAceptacionCalculado))
+                                {
+                                    string valorInicial = "0.00";
+                                    string valorActual = xmlTramaGarantiaActual.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+
+                                    decimal porcentajeAceptacionCalculadoInicial = 0;
+                                    decimal porcentajeAceptacionCalculadoActual = (decimal.TryParse(((valorActual.Length > 0) ? valorActual : "-1"), out porcentajeAceptacionCalculadoActual) ? porcentajeAceptacionCalculadoActual : -1);
+
+                                    if (porcentajeAceptacionCalculadoInicial != porcentajeAceptacionCalculadoActual)
+                                    {
+                                        sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", _porcentajeAceptacionCalculado, ((porcentajeAceptacionCalculadoActual != -1) ? valorActual : "NULL"))));
+                                        listaDatosModificadosGarXOper.Add(_porcentajeAceptacionCalculado, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? valorInicial : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? valorActual : "-"))));
+                                    }
+                                }
+                            }
+                        }
+                        else if ((tipoBienInicial != tipoBienActual) && (tipoBienActual <= 4))
+                        {
+                            //Se ingresa el valor correspondiente al porcentaje de aceptación calculado
+                            if (listaCamposGarantiaOperacion.Contains(_porcentajeAceptacionCalculado))
+                            {
+                                if (!listaDatosModificadosGarXOper.ContainsKey(_porcentajeAceptacionCalculado))
+                                {
+                                    string valorInicial = xmlTramaGarantiaInicial.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+                                    string valorActual = "0.00";
+
+                                    decimal porcentajeAceptacionCalculadoInicial = (decimal.TryParse(((valorInicial.Length > 0) ? valorInicial : "-1"), out porcentajeAceptacionCalculadoInicial) ? porcentajeAceptacionCalculadoInicial : -1);
+                                    decimal porcentajeAceptacionCalculadoActual = 0;
+
+                                    if (porcentajeAceptacionCalculadoInicial != porcentajeAceptacionCalculadoActual)
+                                    {
+                                        sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", _porcentajeAceptacionCalculado, ((porcentajeAceptacionCalculadoActual != -1) ? valorActual : "NULL"))));
+                                        listaDatosModificadosGarXOper.Add(_porcentajeAceptacionCalculado, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? valorInicial : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? valorActual : "-"))));
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (listaCamposGarantiaOperacion.Contains(_porcentajeAceptacionCalculado))
+                            {
+                                if (!listaDatosModificadosGarXOper.ContainsKey(_porcentajeAceptacionCalculado))
+                                {
+                                    porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                    string valorInicialPC = xmlTramaGarantiaInicial.SelectSingleNode("//" + _porcentajeAceptacionCalculado).InnerText;
+                                    string valorActualPC = xmlTramaGarantiaActual.SelectSingleNode("//" + _porcentajeAceptacionCalculado).InnerText;
+
+                                    decimal porcentajeAceptacionCalculadoInicial = (decimal.TryParse(((valorInicialPC.Length > 0) ? valorInicialPC : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoInicial) ? porcentajeAceptacionCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                    decimal porcentajeAceptacionCalculadoActual = (decimal.TryParse(((valorActualPC.Length > 0) ? valorActualPC : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoActual) ? porcentajeAceptacionCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                    string valorInicial = xmlTramaGarantiaInicial.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+                                    string valorActual = xmlTramaGarantiaActual.SelectSingleNode("//" + _porcentajeAceptacion).InnerText;
+
+                                    decimal porcentajeAceptacionInicial = (decimal.TryParse(((valorInicial.Length > 0) ? valorInicial : "-1"), out porcentajeAceptacionInicial) ? porcentajeAceptacionInicial : -1);
+                                    decimal porcentajeAceptacionActual = (decimal.TryParse(((valorActual.Length > 0) ? valorActual : "-1"), out porcentajeAceptacionActual) ? porcentajeAceptacionActual : -1);
+
+                                    porcentajeAceptacionCalculadoInicial = ((codTipoBien > 4) ? ((tipoBienInicial != tipoBienActual) ? 0 : porcentajeAceptacionInicial) : porcentajeAceptacionCalculadoInicial);
+                                    porcentajeAceptacionCalculadoActual = ((codTipoBien > 4) ? ((tipoBienInicial != tipoBienActual) ? 0 : porcentajeAceptacionActual) : porcentajeAceptacionCalculadoActual);
+
+                                    if (porcentajeAceptacionCalculadoInicial != porcentajeAceptacionCalculadoActual)
+                                    {
+                                        sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", _porcentajeAceptacionCalculado, ((porcentajeAceptacionCalculadoActual != -1) ? ((codTipoBien <= 4) ? valorActualPC : valorActual) : "NULL"))));
+                                        listaDatosModificadosGarXOper.Add(_porcentajeAceptacionCalculado, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? ((codTipoBien <= 4) ? valorInicialPC : valorInicial) : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? ((codTipoBien <= 4) ? valorActualPC : valorActual) : "-"))));
                                     }
                                 }
                             }

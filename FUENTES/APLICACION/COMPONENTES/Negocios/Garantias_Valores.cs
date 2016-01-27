@@ -1336,7 +1336,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsGarantiaValor._entidadGarantiaValor,
                                             clsGarantiaValor._consecutivoGarantiaValor, nGarantia.ToString()};
 
-                sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3})", listaCampos);
+                sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3}", listaCampos);
 
                 dsGarantiaValor = AccesoBD.ejecutarConsulta(sentenciaSql);
 
@@ -1350,7 +1350,7 @@ namespace BCRGARANTIAS.Negocios
                                             clsGarantiaValor._consecutivoOperacion, nOperacion.ToString(),
                                             clsGarantiaValor._consecutivoGarantiaValor, nGarantia.ToString()};
 
-                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15} FROM dbo.{16} WHERE {17} = {18} AND {19} = {20})", listaCampos);
+                sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15} FROM dbo.{16} WHERE {17} = {18} AND {19} = {20}", listaCampos);
 
                 dsGarantiaValorXOperacion = AccesoBD.ejecutarConsulta(sentenciaSql);
                 

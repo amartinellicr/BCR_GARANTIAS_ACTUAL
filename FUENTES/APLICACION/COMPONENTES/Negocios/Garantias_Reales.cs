@@ -292,7 +292,7 @@ namespace BCRGARANTIAS.Negocios
                                                      clsGarantiaReal._codOperacion, clsGarantiaReal._codGarantiaReal, clsGarantiaReal._codTipoMitigador, clsGarantiaReal._codTipoDocumentoLegal,
                                                      clsGarantiaReal._montoMitigador, clsGarantiaReal._codInscripcion, clsGarantiaReal._fechaPresentacion, clsGarantiaReal._porcentajeResponsabilidad,
                                                      clsGarantiaReal._codGradoGravamen, clsGarantiaReal._codOperacionEspecial, clsGarantiaReal._fechaConstitucion, clsGarantiaReal._fechaVencimiento,
-                                                     clsGarantiaReal._codTipoAcreedor, clsGarantiaReal._cedAcreedor, clsGarantiaReal._codLiquidez, clsGarantiaReal._codTenencia, clsGarantiaReal._fechaPrescripcion,
+                                                     clsGarantiaReal._codTipoAcreedor, clsGarantiaReal._cedulaAcreedor, clsGarantiaReal._codLiquidez, clsGarantiaReal._codTenencia, clsGarantiaReal._fechaPrescripcion,
                                                      clsGarantiaReal._codMoneda, clsGarantiaReal._porcentajeAceptacion,
                                                      nOperacion.ToString(), strCodigoGarantiaReal,  nTipoMitigador.ToString(), nTipoDocumento.ToString(), nMontoMitigador.ToString(),
                                                      ((nInscripcion > 0) ? nInscripcion.ToString() : "-1"),
@@ -392,7 +392,7 @@ namespace BCRGARANTIAS.Negocios
 
                         oBitacora.InsertarBitacora("GAR_GARANTIAS_REALES_X_OPERACION", strUsuario, strIP, null,
                             1, nTipoGarantia, strGarantia, strOperacionCrediticia, strInsertaGarRealXOperacion, string.Empty,
-                            clsGarantiaReal._cedAcreedor,
+                            clsGarantiaReal._cedulaAcreedor,
                             string.Empty,
                             strCedulaAcreedor);
 
@@ -564,7 +564,7 @@ namespace BCRGARANTIAS.Negocios
                 dsGarantiaReal = AccesoBD.ejecutarConsulta(sentenciaSql);
 
 
-                listaCampos = new string[] {clsGarantiaReal._cedAcreedor, clsGarantiaReal._codEstado,  clsGarantiaReal._codGarantiaReal, clsGarantiaReal._codGradoGravamen,  clsGarantiaReal._codInscripcion,
+                listaCampos = new string[] {clsGarantiaReal._cedulaAcreedor, clsGarantiaReal._codEstado,  clsGarantiaReal._codGarantiaReal, clsGarantiaReal._codGradoGravamen,  clsGarantiaReal._codInscripcion,
                                             clsGarantiaReal._codLiquidez,  clsGarantiaReal._codMoneda, clsGarantiaReal._codOperacion,  clsGarantiaReal._codOperacionEspecial,
                                             clsGarantiaReal._codTenencia,  clsGarantiaReal._codTipoAcreedor, clsGarantiaReal._codTipoDocumentoLegal,  clsGarantiaReal._codTipoMitigador,
                                             clsGarantiaReal._fechaConstitucion,  clsGarantiaReal._fechaPrescripcion, clsGarantiaReal._fechaPresentacion,  clsGarantiaReal._fechaVencimiento,
@@ -596,7 +596,7 @@ namespace BCRGARANTIAS.Negocios
 
                 listaCampos = new string[] {clsGarantiaReal._codigoSap, clsGarantiaReal._codOperacion, clsGarantiaReal._codGarantiaReal, clsPolizaSap._codigoEstadoRegistro, clsGarantiaReal._montoAcreencia,
                                             clsGarantiaReal._fechaInserto,  clsGarantiaReal._usuarioModifico, clsGarantiaReal._fechaModifico,  clsGarantiaReal._usuarioInserto,
-                                            clsGarantiaReal._entidadPolizasRelaciondas +
+                                            clsGarantiaReal._entidadPolizasRelaciondas,
                                             clsGarantiaReal._codOperacion, nOperacion.ToString(),
                                             clsGarantiaReal._codGarantiaReal, nGarantia.ToString()};
 
