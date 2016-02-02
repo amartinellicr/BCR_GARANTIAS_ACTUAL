@@ -9316,9 +9316,7 @@ namespace BCR.GARANTIAS.Entidades
 
             return cantidadAnnos;
         }
-
-        #endregion  Métodos Privados
-
+        
         /// <summary>
         /// Obtiene el código SAP relacionado a la operación y a la garantía
         /// </summary>
@@ -9361,6 +9359,8 @@ namespace BCR.GARANTIAS.Entidades
             return valorRetornado;
         }
 
+        #endregion  Métodos Privados
+        
         #endregion Métodos
     }
 }

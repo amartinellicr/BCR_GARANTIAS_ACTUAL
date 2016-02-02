@@ -60,6 +60,14 @@ AS
 				Se realiza una optimización general, en donde se crean índices en estructuras y tablas nuevas. 
 			</Descripción>
 		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_2016012910535596 Cambio en Estado de Pólizas</Requerimiento>
+			<Fecha>02/02/2016</Fecha>
+			<Descripción>
+				Se realiza un ajuste al momento de actualizar el indicador de estado del registro de las pólizas relacionadas a garantías,
+				se busca activar todas las relaciones para luego desactivar aquellas cuya póliza ha sufrido un cambio de estado. 
+			</Descripción>
 		</Cambio>
 		<Cambio>
 			<Autor></Autor>
@@ -1141,6 +1149,27 @@ BEGIN
 	IF(@piEjecutarParte = 18)
 	BEGIN
 	
+		--INICIO RQ_MANT_2015111010495738_00610
+		BEGIN TRANSACTION TRA_Activar_Rel_Pol
+			BEGIN TRY
+
+				UPDATE	dbo.GAR_POLIZAS_RELACIONADAS
+				SET		Estado_Registro = 1
+				
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Activar_Rel_Pol
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al activar el estado del registro de las relaciones entre las pólizas y las garantías asociadas a una operación/contrato. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Activar_Rel_Pol
+		--FIN RQ_MANT_2015111010495738_00610
+
 		BEGIN TRANSACTION TRA_Act_Rel_Pol
 			BEGIN TRY
 
@@ -1164,6 +1193,31 @@ BEGIN
 			
 		IF (@@TRANCOUNT > 0)
 			COMMIT TRANSACTION TRA_Act_Rel_Pol
+
+		--Se desactivan aquellos registros cuya relación entre la póliza y la operación no exista en el SAP
+		BEGIN TRANSACTION TRA_Act_Relac_Pol
+			BEGIN TRY
+
+				UPDATE	GPR
+				SET		Estado_Registro = 0
+				FROM	dbo.GAR_POLIZAS_RELACIONADAS GPR
+				WHERE	NOT EXISTS (SELECT	1
+									FROM	dbo.GAR_POLIZAS GPO
+									WHERE	GPO.Codigo_SAP = GPR.Codigo_SAP
+										AND GPO.cod_operacion = GPR.cod_operacion)
+
+			END TRY
+			BEGIN CATCH
+				IF (@@TRANCOUNT > 0)
+					ROLLBACK TRANSACTION TRA_Act_Relac_Pol
+
+				SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar el estado del registro de las relaciones entre las pólizas y las garantías asociadas a una operación/contrato cuya relación no existe en el SAP. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+				EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdtFecha_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+			END CATCH
+			
+		IF (@@TRANCOUNT > 0)
+			COMMIT TRANSACTION TRA_Act_Relac_Pol
 	
 	END
 
