@@ -147,17 +147,7 @@ BEGIN
 	
 	CREATE INDEX TMP_GARANTIAS_REALES_X_OPERACION_IX_01 ON #TMP_GARANTIAS_REALES_X_OPERACION (cod_usuario, cod_tipo_garantia_real)
 
-	/*Esta tabla almacenará las garantías registradas en el sistema, según el tipo de garantía real*/
-	CREATE TABLE #TEMP_PRMGT (	prmgt_pcoclagar TINYINT,
-								prmgt_pnu_part TINYINT,
-								prmgt_pco_grado TINYINT,
-								prmgt_pnuidegar DECIMAL(12,0),
-								prmgt_pnuide_alf CHAR(12),
-								prmgt_pcotengar TINYINT,
-								prmgt_pco_produ TINYINT)
-		 
-	CREATE INDEX TEMP_PRMGT_IX_01 ON #TEMP_PRMGT (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf)
-	
+		
 	DECLARE @CLASES_GARANTIAS_REALES TABLE (Consecutivo TINYINT 
 											PRIMARY KEY (Consecutivo)) --Se utilizará para generar los semestres a ser calculados
 
@@ -182,18 +172,21 @@ BEGIN
  ************************************************************************************************/
 
   	/*Se obtienen las garantías relacionadas al contrato*/
-	INSERT	INTO #TEMP_PRMGT(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pco_grado, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pcotengar, prmgt_pco_produ)
 	SELECT  MGT.prmgt_pcoclagar,
 			MGT.prmgt_pnu_part,
 			MGT.prmgt_pco_grado,
 			MGT.prmgt_pnuidegar,
-			MGT.prmgt_pnuide_alf,
+			CASE 
+				WHEN LEN(MGT.prmgt_pnuide_alf) = 0 THEN CONVERT(VARCHAR(25), MGT.prmgt_pnuidegar)
+				ELSE CONVERT(VARCHAR(25), MGT.prmgt_pnuide_alf) 
+			END AS prmgt_pnuide_alf,
 			MGT.prmgt_pcotengar,
 			MGT.prmgt_pco_produ
-		FROM	dbo.GAR_SICC_PRMGT MGT
-			INNER JOIN @CLASES_GARANTIAS_REALES CGR
-			ON CGR.Consecutivo = MGT.prmgt_pcoclagar
-		WHERE	MGT.prmgt_estado = 'A'
+	INTO	#TEMP_PRMGT
+	FROM	dbo.GAR_SICC_PRMGT MGT
+		INNER JOIN @CLASES_GARANTIAS_REALES CGR
+		ON CGR.Consecutivo = MGT.prmgt_pcoclagar
+	WHERE	MGT.prmgt_estado = 'A'
 
 	/*Se eliminan los registros con clase de garantía entre 20 y 29, pero con código de tenencia distinto de 1*/
 	DELETE	FROM #TEMP_PRMGT
@@ -236,7 +229,6 @@ BEGIN
 		INNER JOIN #TEMP_PRMGT MGT
 		ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 		AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc 
-		AND MGT.prmgt_pnuide_alf = GGR.Identificacion_Alfanumerica_Sicc COLLATE DATABASE_DEFAULT
 		AND MGT.prmgt_pco_produ = ROV.cod_producto
 		INNER JOIN dbo.GAR_OPERACION GO1
 		ON GO1.cod_operacion = GRO.cod_operacion
@@ -245,6 +237,11 @@ BEGIN
 	WHERE	ROV.cod_tipo_operacion = 1
 		AND MGT.prmgt_pco_grado = COALESCE(GGR.cod_grado, MGT.prmgt_pco_grado)
 		AND MGT.prmgt_pnu_part = GGR.cod_partido
+		AND MGT.prmgt_pnuide_alf = CASE 
+										WHEN GGR.Identificacion_Alfanumerica_Sicc IS NULL THEN MGT.prmgt_pnuide_alf 
+										WHEN LEN(GGR.Identificacion_Alfanumerica_Sicc) = 0 THEN MGT.prmgt_pnuide_alf
+										ELSE GGR.Identificacion_Alfanumerica_Sicc
+									END	
 	ORDER BY
 		ROV.cod_operacion,
 		GGR.numero_finca,
@@ -288,7 +285,6 @@ BEGIN
 		INNER JOIN #TEMP_PRMGT MGT
 		ON MGT.prmgt_pcoclagar = GGR.cod_clase_garantia
 		AND MGT.prmgt_pnuidegar = GGR.Identificacion_Sicc 
-		AND MGT.prmgt_pnuide_alf = GGR.Identificacion_Alfanumerica_Sicc COLLATE DATABASE_DEFAULT
 		AND MGT.prmgt_pco_produ = 10
 		INNER JOIN dbo.GAR_OPERACION GO1
 		ON GO1.cod_operacion = GRO.cod_operacion
@@ -297,6 +293,11 @@ BEGIN
 	WHERE	ROV.cod_tipo_operacion = 2
 		AND MGT.prmgt_pco_grado = COALESCE(GGR.cod_grado, MGT.prmgt_pco_grado)
 		AND MGT.prmgt_pnu_part = GGR.cod_partido
+		AND MGT.prmgt_pnuide_alf = CASE 
+										WHEN GGR.Identificacion_Alfanumerica_Sicc IS NULL THEN MGT.prmgt_pnuide_alf --COLLATE DATABASE_DEFAULT
+										WHEN LEN(GGR.Identificacion_Alfanumerica_Sicc) = 0 THEN MGT.prmgt_pnuide_alf
+										ELSE GGR.Identificacion_Alfanumerica_Sicc
+									END	
 	ORDER BY
 		ROV.cod_operacion,
 		GGR.numero_finca,
