@@ -1,18 +1,18 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
 using System.IO;
-using System.Reflection;
 using System.Configuration;
+using System.Globalization;
+using System.Data.SqlClient;
 
 using BCR.GARANTIAS.Comun;
 using BCRGARANTIAS.Datos;
-using System.Globalization;
+
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -981,6 +981,12 @@ namespace BCR.GARANTIAS.Entidades
 
         #region Constantes
 
+        //Nombre tablas
+        public const string _entidadGarantiaReal = "GAR_GARANTIA_REAL";
+        public const string _entidadGarantiaRealXOperacion = "GAR_GARANTIAS_REALES_X_OPERACION";
+        public const string _entidadValuacionesReales = "GAR_VALUACIONES_REALES";
+        public const string _entidadPolizasRelaciondas = "GAR_POLIZAS_RELACIONADAS";
+
         //Tags importantes de la trama
         private const string _tagDatos = "DATOS";
         private const string _tagOperacion = "OPERACION";
@@ -1012,9 +1018,9 @@ namespace BCR.GARANTIAS.Entidades
         private const string _numeroOperacion = "numeroOperacion";
 
         //Tags de la parte correspondiente a la garantía
-        private const string _codOperacion = "cod_operacion";
-        private const string _codGarantiaReal = "cod_garantia_real";
-        private const string _codTipoGarantia = "cod_tipo_garantia";
+        public const string _codOperacion = "cod_operacion";
+        public const string _codGarantiaReal = "cod_garantia_real";
+        public const string _codTipoGarantia = "cod_tipo_garantia";
         public const string _codClaseGarantia = "cod_clase_garantia";
         public const string _codTipoGarantiaReal = "cod_tipo_garantia_real";
         private const string _desTipoGarantiaReal = "des_tipo_garantia_real";
@@ -1028,21 +1034,23 @@ namespace BCR.GARANTIAS.Entidades
         public const string _codTipoBien = "cod_tipo_bien";
         public const string _codTipoMitigador = "cod_tipo_mitigador";
         public const string _codTipoDocumentoLegal = "cod_tipo_documento_legal";
-        private const string _montoMitigador = "monto_mitigador";
+        public const string _montoMitigador = "monto_mitigador";
         public const string _codInscripcion = "cod_inscripcion";
         public const string _fechaPresentacion = "fecha_presentacion";
-        private const string _porcentajeResponsabilidad = "porcentaje_responsabilidad";
+        public const string _porcentajeResponsabilidad = "porcentaje_responsabilidad";
         public const string _codGradoGravamen = "cod_grado_gravamen";
         public const string _codOperacionEspecial = "cod_operacion_especial";
         public const string _fechaConstitucion = "fecha_constitucion";
-        private const string _fechaVencimiento = "fecha_vencimiento";
+        public const string _fechaVencimiento = "fecha_vencimiento";
         public const string _codTipoAcreedor = "cod_tipo_acreedor";
-        private const string _cedAcreedor = "ced_acreedor";
+        public const string _cedAcreedor = "ced_acreedor";
         public const string _codLiquidez = "cod_liquidez";
         public const string _codTenencia = "cod_tenencia";
         public const string _codMoneda = "cod_moneda";
-        private const string _fechaPrescripcion = "fecha_prescripcion";
-        private const string _codEstado = "cod_estado";
+        public const string _fechaPrescripcion = "fecha_prescripcion";
+        public const string _codEstado = "cod_estado";
+        public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
+        
 
         private const string _desTipoBien = "des_tipo_bien";
         private const string _desTipoMitigador = "des_tipo_mitigador";
@@ -1065,17 +1073,22 @@ namespace BCR.GARANTIAS.Entidades
         private const string _desTipoTenenciaAnterior = "des_tipo_tenencia_anterior";
         private const string _desTipoMonedaAnterior = "des_tipo_moneda_anterior";
 
-        private const string _usuarioInserto = "Usuario_Inserto";
-        private const string _usuarioModifico = "Usuario_Modifico";
+        public const string _usuarioInserto = "Usuario_Inserto";
+        public const string _usuarioModifico = "Usuario_Modifico";
         private const string _nombreUsuarioModifico = "Nombre_Usuario_Modifico"; //PREGUNTAR
-        private const string _fechaModifico = "Fecha_Modifico";
-        private const string _fechaInserto = "Fecha_Inserto";
-        private const string _fechaReplica = "Fecha_Replica";
+        public const string _fechaModifico = "Fecha_Modifico";
+        public const string _fechaInserto = "Fecha_Inserto";
+        public const string _fechaReplica = "Fecha_Replica";
 
         private const string _porcentajeAceptacionCalculado = "Porcentaje_Aceptacion_Calculado";
         private const string _porcentajeAceptacionCalculadoOriginal = "Porcentaje_Aceptacion_Calculado_Original";
 
-        private const string _indicadorViviendaHabitadaDeudor = "Indicador_Vivienda_Habitada_Deudor";
+        public const string _indicadorViviendaHabitadaDeudor = "Indicador_Vivienda_Habitada_Deudor";
+        public const string _identificacionSicc = "Identificacion_Sicc";
+        public const string _identificacionAlfanumericaSicc = "Identificacion_Alfanumerica_Sicc";
+        public const string _fechaValuacionSicc = "Fecha_Valuacion_SICC";
+
+        public const string _garantiaRealConsulta = "Garantia_Real";
 
         //Mensajes que se presentarn según la inconsistencia encontrada
         private const string _mensajeFechaPresentacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeFechaPresentacion) !== 'undefined'){$MensajeFechaPresentacion.dialog('open');} </script>";
@@ -1209,12 +1222,6 @@ namespace BCR.GARANTIAS.Entidades
         private const string _prmgtFechaValuacion = "prmgt_pfeavaing";
         private const string _prmgtMontoTotalAvaluo = "prmgt_pmoavaing";
 
-        //Nombre de las tablas de BD
-        private const string _tablaGrarantiasReales = "GAR_GARANTIA_REAL";
-        private const string _tablaGarOper = "GAR_GARANTIAS_REALES_X_OPERACION";
-        private const string _tablaValuacionesReales = "GAR_VALUACIONES_REALES";
-        private const string _tablaPolizasRelaciondas = "GAR_POLIZAS_RELACIONADAS";
-
         //Tags referentes a los parámetros usados para el cálculo del monto de la tasación actualizada del no terreno
         private const string _porcentajeLimiteInferior = "porcentaje_limite_inferior";
         private const string _porcentajeLimiteIntermedio = "porcentaje_limite_intermedio";
@@ -1250,14 +1257,14 @@ namespace BCR.GARANTIAS.Entidades
         private const string _totalSemestresCalculo = "Total_Semestres_Calcular";
 
         //Tags de la parte correspondiente a las pólizas
-        private const string _codigoSap = "Codigo_SAP";
+        public const string _codigoSap = "Codigo_SAP";
         private const string _tipoPoliza = "Tipo_Poliza";
         private const string _montoPoliza = "Monto_Poliza";
         private const string _monedaMontoPoliza = "Moneda_Monto_Poliza";
         private const string _fechaVencimientoPoliza = "Fecha_Vencimiento";
         private const string _cedulaAcreedorPoliza = "Cedula_Acreedor";
         private const string _nombreAcreedorPoliza = "Nombre_Acreedor";
-        private const string _montoAcreencia = "Monto_Acreencia";
+        public const string _montoAcreencia = "Monto_Acreencia";
         private const string _detallePoliza = "Detalle_Poliza";
         private const string _polizaSeleccionada = "Poliza_Seleccionada";
         private const string _montoPolizaColonizado = "Monto_Poliza_Colonizado";
@@ -6548,6 +6555,11 @@ namespace BCR.GARANTIAS.Entidades
             listaDatosModificadosGarValuacionesReales = new Dictionary<string, string>();
             listaDatosModificadosGarXOper = new Dictionary<string, string>();
 
+            bool aplicanPorcentajesAceptAvaluo = HabilitarPorcentajesAceptacionAvaluo();
+
+            string porcentajeAceptCalculadoOriginal = string.Empty;
+           DateTime fechaBase = new DateTime(1900,01,01);
+
             DateTime fecModifico;
 
             if ((tramaInicial.Length > 0) && (tramaDatosActuales.Length > 0))
@@ -6656,11 +6668,11 @@ namespace BCR.GARANTIAS.Entidades
                         objEscritor.WriteEndElement();
 
                         sentenciaInsercionPoliza = string.Format(sentenciaInsercionPoliza, (new object[] { polizaSapAsociada.CodigoPolizaSap.ToString(), codOperacion.ToString(), codGarantiaReal.ToString(), polizaSapAsociada.MontoAcreenciaPolizaSap.ToString("N2"), DateTime.Now.ToString("dd/MM/yyyy"), idUsuario, DateTime.Now.ToString("dd/MM/yyyy"), idUsuario }));
-                        listaDatosInsertadosGarPoliza.Add(_codigoSap, ("-|" + polizaSapAsociada.CodigoPolizaSap.ToString()));
+                        listaDatosInsertadosGarPoliza.Add(_codigoSap, (string.Format("-|{0}", polizaSapAsociada.CodigoPolizaSap.ToString())));
                         //listaDatosInsertadosGarPoliza.Add(_codOperacion, ("-|" + codOperacion.ToString()));
                         //listaDatosInsertadosGarPoliza.Add(_codGarantiaReal, ("-|" + codGarantiaReal.ToString()));
-                        listaDatosInsertadosGarPoliza.Add(_montoAcreencia, ("-|" + polizaSapAsociada.MontoAcreenciaPolizaSap.ToString()));
-                        listaDatosInsertadosGarPoliza.Add(_fechaInserto, ("-|" + fechaInsercion.ToString("yyyyMMdd HH:mm:ss")));
+                        listaDatosInsertadosGarPoliza.Add(_montoAcreencia, string.Format("-|{0}", polizaSapAsociada.MontoAcreenciaPolizaSap.ToString()));
+                        listaDatosInsertadosGarPoliza.Add(_fechaInserto, (string.Format("-|{0}", fechaInsercion.ToString("yyyyMMdd HH:mm:ss"))));
                         listaDatosInsertadosGarPoliza.Add(_usuarioInserto, (string.Format("-|{0}", idUsuario)));
                     }
                     else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
@@ -6691,8 +6703,28 @@ namespace BCR.GARANTIAS.Entidades
                             {
                                 if (!listaDatosModificadosGarantias.ContainsKey(nodoInicial.Name))
                                 {
-                                    sentenciaActualizacionGarantia.Append((nodoActual.Name + "=" + (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")) + ","));
-                                    listaDatosModificadosGarantias.Add(nodoInicial.Name, (((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-") + "|" + ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-")));
+                                    switch (nodoInicial.Name)
+                                    {
+                                        case _codPartido:
+                                            if ((codClaseGarantia < 30) && (nodoActual.InnerText.CompareTo("-1") != 0))
+                                            {
+                                                sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                                listaDatosModificadosGarantias.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+                                            }
+
+                                            break;
+                                        case _usuarioInserto:
+                                        //case _usuarioModifico:
+                                        case _fechaInserto:
+                                        case _fechaModifico:
+                                            sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                            break;
+                                        default:
+                                            sentenciaActualizacionGarantia.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                            listaDatosModificadosGarantias.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+
+                                            break;
+                                    }
                                 }
                             }
                             // else 
@@ -6700,8 +6732,66 @@ namespace BCR.GARANTIAS.Entidades
                             {
                                 if (!listaDatosModificadosGarXOper.ContainsKey(nodoInicial.Name))
                                 {
-                                    sentenciaActualizacionGarOper.Append((nodoActual.Name + "=" + (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")) + ","));
-                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-") + "|" + ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-")));
+                                    switch (nodoInicial.Name)
+                                    {
+                                        case _porcentajeAceptacionCalculado:
+                                            if (!aplicanPorcentajesAceptAvaluo)
+                                            {
+                                                porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                                decimal porcentajeAceptacionCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoInicial) ? porcentajeAceptacionCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                                decimal porcentajeAceptacionCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionCalculadoActual) ? porcentajeAceptacionCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                                if (porcentajeAceptacionCalculadoInicial != porcentajeAceptacionCalculadoActual)
+                                                {
+                                                    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                                }
+                                            }
+
+                                            break;
+                                        case _porcentajeAceptacion:
+                                            if (!aplicanPorcentajesAceptAvaluo)
+                                            {
+                                                decimal porcentajeAceptacionInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "-1"), out porcentajeAceptacionInicial) ? porcentajeAceptacionInicial : -1);
+                                                decimal porcentajeAceptacionActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "-1"), out porcentajeAceptacionActual) ? porcentajeAceptacionActual : -1);
+
+                                                if (porcentajeAceptacionInicial != porcentajeAceptacionActual)
+                                                {
+                                                    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                    listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "-"))));
+                                                }
+                                            }
+
+                                            break;
+                                        case _fechaPresentacion:
+
+                                            DateTime fechaInicial = ((DateTime.TryParseExact(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaInicial)) ? fechaInicial : fechaBase);
+                                            DateTime fechaActual = ((DateTime.TryParseExact(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaActual)) ? fechaActual : fechaBase);
+
+                                            fechaInicial = ((fechaInicial == DateTime.MinValue) ? fechaBase : fechaInicial);
+                                            fechaActual = ((fechaActual == DateTime.MinValue) ? fechaBase : fechaActual);
+
+
+                                            if (fechaInicial != fechaActual)
+                                            {
+                                                sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((fechaActual != fechaBase) ? nodoActual.InnerText : "NULL"))));
+                                                listaDatosModificadosGarXOper.Add(nodoInicial.Name, (((fechaInicial != fechaBase) ? nodoInicial.InnerText : "-") + "|" + ((fechaActual != fechaBase) ? nodoActual.InnerText : "-")));
+                                            }
+
+                                            break;
+                                        case _usuarioInserto:
+                                        //case _usuarioModifico:
+                                        case _fechaInserto:
+                                        //case _fechaModifico:
+                                        //    sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                        //    break;
+                                        default:
+                                            sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                            listaDatosModificadosGarXOper.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+
+                                            break;
+                                    }
                                 }
                             }
 
@@ -6709,8 +6799,56 @@ namespace BCR.GARANTIAS.Entidades
                             {
                                 if (!listaDatosModificadosGarValuacionesReales.ContainsKey(nodoInicial.Name))
                                 {
-                                    sentenciaActualizacionAvaluos.Append((nodoActual.Name + "=" + (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")) + ","));
-                                    listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-") + "|" + ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-")));
+                                    switch (nodoInicial.Name)
+                                    {
+                                        case _porcentajeAceptacionTerrenoCalculado:
+                                            if (aplicanPorcentajesAceptAvaluo)
+                                            {
+                                                existenCamposModificados = true;
+
+                                                porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                                decimal porcentajeAceptacionTerrenoCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionTerrenoCalculadoInicial) ? porcentajeAceptacionTerrenoCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                                decimal porcentajeAceptacionTerrenoCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionTerrenoCalculadoActual) ? porcentajeAceptacionTerrenoCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                                if (porcentajeAceptacionTerrenoCalculadoInicial != porcentajeAceptacionTerrenoCalculadoActual)
+                                                {
+                                                    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                    listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionTerrenoCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                                }
+                                            }
+
+                                            break;
+                                        case _porcentajeAceptacionNoTerrenoCalculado:
+                                            if ((aplicanPorcentajesAceptAvaluo) && (codTipoBien != 1))
+                                            {
+                                                existenCamposModificados = true;
+
+                                                porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                                decimal porcentajeAceptacionNoTerrenoCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionNoTerrenoCalculadoInicial) ? porcentajeAceptacionNoTerrenoCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                                decimal porcentajeAceptacionNoTerrenoCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionNoTerrenoCalculadoActual) ? porcentajeAceptacionNoTerrenoCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                                if (porcentajeAceptacionNoTerrenoCalculadoInicial != porcentajeAceptacionNoTerrenoCalculadoActual)
+                                                {
+                                                    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionNoTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                    listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionNoTerrenoCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionNoTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                                }
+                                            }
+
+                                            break;
+                                        case _usuarioInserto:
+                                        //case _usuarioModifico:
+                                        case _fechaInserto:
+                                        //case _fechaModifico:
+                                        //    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                        //    break;
+                                        default:
+                                            sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                            listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+
+                                            break;
+                                    }
                                 }
                             }
                         }
@@ -6721,21 +6859,143 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         XmlNode nodoActual = xmlTramaAvaluoActual.SelectSingleNode("//" + nodoInicial.Name);
 
-                        if ((nodoInicial != null) && (nodoActual != null)
-                            && (nodoInicial.InnerText.CompareTo(((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : string.Empty)) != 0))
+                        if (listaCamposAvaluoGarantia.Contains(nodoInicial.Name))
                         {
-                            existenCamposModificados = true;
-
-                            if (listaCamposAvaluoGarantia.Contains(nodoInicial.Name))
+                            if (!listaDatosModificadosGarValuacionesReales.ContainsKey(nodoInicial.Name))
                             {
-                                if (!listaDatosModificadosGarValuacionesReales.ContainsKey(nodoInicial.Name))
+                                switch (nodoInicial.Name)
                                 {
-                                    sentenciaActualizacionAvaluos.Append((nodoActual.Name + "=" + (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")) + ","));
-                                    listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-") + "|" + ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-")));
+                                    case _porcentajeAceptacionTerrenoCalculado:
+                                        if (aplicanPorcentajesAceptAvaluo)
+                                        {
+                                            existenCamposModificados = true;
+
+                                            porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                            decimal porcentajeAceptacionTerrenoCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionTerrenoCalculadoInicial) ? porcentajeAceptacionTerrenoCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                            decimal porcentajeAceptacionTerrenoCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionTerrenoCalculadoActual) ? porcentajeAceptacionTerrenoCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                            if (porcentajeAceptacionTerrenoCalculadoInicial != porcentajeAceptacionTerrenoCalculadoActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionTerrenoCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                            }
+                                        }
+
+                                        break;
+                                    case _porcentajeAceptacionNoTerrenoCalculado:
+                                        if ((aplicanPorcentajesAceptAvaluo) && (codTipoBien != 1))
+                                        {
+                                            existenCamposModificados = true;
+
+                                            porcentajeAceptCalculadoOriginal = porcentajeAceptacionCalculadoOriginal.ToString();
+
+                                            decimal porcentajeAceptacionNoTerrenoCalculadoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionNoTerrenoCalculadoInicial) ? porcentajeAceptacionNoTerrenoCalculadoInicial : porcentajeAceptacionCalculadoOriginal);
+                                            decimal porcentajeAceptacionNoTerrenoCalculadoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : porcentajeAceptCalculadoOriginal), out porcentajeAceptacionNoTerrenoCalculadoActual) ? porcentajeAceptacionNoTerrenoCalculadoActual : porcentajeAceptacionCalculadoOriginal);
+
+                                            if (porcentajeAceptacionNoTerrenoCalculadoInicial != porcentajeAceptacionNoTerrenoCalculadoActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionNoTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionNoTerrenoCalculadoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionNoTerrenoCalculadoActual != -1) ? nodoActual.InnerText : "-"))));
+                                            }
+                                        }
+
+                                        break;
+                                    case _porcentajeAceptacionTerreno:
+                                        if (aplicanPorcentajesAceptAvaluo)
+                                        {
+                                            existenCamposModificados = true;
+
+                                            decimal porcentajeAceptacionTerrenoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "-1"), out porcentajeAceptacionTerrenoInicial) ? porcentajeAceptacionTerrenoInicial : -1);
+                                            decimal porcentajeAceptacionTerrenoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "-1"), out porcentajeAceptacionTerrenoActual) ? porcentajeAceptacionTerrenoActual : -1);
+
+                                            if (porcentajeAceptacionTerrenoInicial != porcentajeAceptacionTerrenoActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionTerrenoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionTerrenoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionTerrenoActual != -1) ? nodoActual.InnerText : "-"))));
+                                            }
+                                        }
+
+                                        break;
+                                    case _porcentajeAceptacionNoTerreno:
+                                        if ((aplicanPorcentajesAceptAvaluo) && (codTipoBien != 1))
+                                        {
+                                            existenCamposModificados = true;
+
+                                            decimal porcentajeAceptacionNoTerrenoInicial = (decimal.TryParse(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "-1"), out porcentajeAceptacionNoTerrenoInicial) ? porcentajeAceptacionNoTerrenoInicial : -1);
+                                            decimal porcentajeAceptacionNoTerrenoActual = (decimal.TryParse(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "-1"), out porcentajeAceptacionNoTerrenoActual) ? porcentajeAceptacionNoTerrenoActual : -1);
+
+                                            if (porcentajeAceptacionNoTerrenoInicial != porcentajeAceptacionNoTerrenoActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionNoTerrenoActual != -1) ? nodoActual.InnerText : "NULL"))));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((porcentajeAceptacionNoTerrenoInicial != -1) ? nodoInicial.InnerText : "-"), ((porcentajeAceptacionNoTerrenoActual != -1) ? nodoActual.InnerText : "-"))));
+                                            }
+                                        }
+
+                                        break;
+                                    case _fechaConstruccion:
+                                        if (aplicanPorcentajesAceptAvaluo)
+                                        {
+                                            existenCamposModificados = true;
+
+                                            DateTime fechaInicial = ((DateTime.TryParseExact(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaInicial)) ? fechaInicial : fechaBase);
+                                            DateTime fechaActual = ((DateTime.TryParseExact(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaActual)) ? fechaActual : fechaBase);
+
+                                            fechaInicial = ((fechaInicial == DateTime.MinValue) ? fechaBase : fechaInicial);
+                                            fechaActual = ((fechaActual == DateTime.MinValue) ? fechaBase : fechaActual);
+
+                                            if (fechaInicial != fechaActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((nodoActual.Name + "=" + (((fechaActual != fechaBase) ? nodoActual.InnerText : "NULL") + ",")));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (((fechaInicial != fechaBase) ? nodoInicial.InnerText : "-") + "|" + ((fechaActual != fechaBase) ? nodoActual.InnerText : "-")));
+                                            }
+                                        }
+
+                                        break;
+                                    case _fechaUltimoSeguimiento:
+                                        if (aplicanPorcentajesAceptAvaluo)
+                                        {
+                                            existenCamposModificados = true;
+
+                                            DateTime fechaInicial = ((DateTime.TryParseExact(((nodoInicial.InnerText.Length > 0) ? nodoInicial.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaInicial)) ? fechaInicial : fechaBase);
+                                            DateTime fechaActual = ((DateTime.TryParseExact(((nodoActual.InnerText.Length > 0) ? nodoActual.InnerText : "19000101"), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaActual)) ? fechaActual : fechaBase);
+
+                                            fechaInicial = ((fechaInicial == DateTime.MinValue) ? fechaBase : fechaInicial);
+                                            fechaActual = ((fechaActual == DateTime.MinValue) ? fechaBase : fechaActual);
+
+                                            if (fechaInicial != fechaActual)
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((nodoActual.Name + "=" + (((fechaActual != fechaBase) ? nodoActual.InnerText : "NULL") + ",")));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (((fechaInicial != fechaBase) ? nodoInicial.InnerText : "-") + "|" + ((fechaActual != fechaBase) ? nodoActual.InnerText : "-")));
+                                            }
+                                        }
+
+                                        break;
+                                    case _usuarioInserto:
+                                    // case _usuarioModifico:
+                                    case _fechaInserto:
+                                    //case _fechaModifico:
+                                    //    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                    //    break;
+                                    default:
+                                        if ((nodoInicial != null) && (nodoActual != null) && (nodoInicial.InnerText.CompareTo(((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : string.Empty)) != 0))
+                                        {
+                                            existenCamposModificados = true;
+
+                                            if (!listaDatosModificadosGarValuacionesReales.ContainsKey(nodoInicial.Name))
+                                            {
+                                                sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
+                                                listaDatosModificadosGarValuacionesReales.Add(nodoInicial.Name, (string.Format("{0}|{1}", ((nodoInicial.InnerText.Length > 0) ? ((nodoInicial.InnerText.CompareTo("-1") != 0) ? nodoInicial.InnerText : "-") : "-"), ((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "-") : "-"))));
+                                            }
+
+                                        }
+
+                                        break;
                                 }
                             }
                         }
                     }
+
 
                     if (existenCamposModificados)
                     {
@@ -6760,11 +7020,9 @@ namespace BCR.GARANTIAS.Entidades
                                     string valorAct = valorActual;
                                     switch (datosGarantia.Key)
                                     {
-                                        case _fechaModifico:
-                                            valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
+                                        case _fechaModifico: valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
                                             break;
-                                        default:
-                                            valorAct = valorActual;
+                                        default: valorAct = valorActual;
                                             break;
                                     }
                                     //Crea el nodo del campo que se ha modificado
@@ -6817,33 +7075,24 @@ namespace BCR.GARANTIAS.Entidades
                                     string valorAct = valorActual;
                                     switch (datosRelacion.Key)
                                     {
-                                        case _montoMitigador:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoMitigador: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _fechaPresentacion:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPresentacion) ? fecPresentacion.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaPresentacion: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPresentacion) ? fecPresentacion.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _porcentajeResponsabilidad:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _porcentajeResponsabilidad: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _fechaConstitucion:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecConstitucion) ? fecConstitucion.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaConstitucion: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecConstitucion) ? fecConstitucion.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _fechaVencimiento:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecVencimiento) ? fecVencimiento.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaVencimiento: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecVencimiento) ? fecVencimiento.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _fechaPrescripcion:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPrescripcion) ? fecPrescripcion.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaPrescripcion: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPrescripcion) ? fecPrescripcion.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _fechaModifico:
-                                            valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
+                                        case _fechaModifico: valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
                                             break;
-                                        case _porcentajeAceptacionCalculado:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _porcentajeAceptacionCalculado: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
 
-                                        default:
-                                            valorAct = valorActual;
+                                        default: valorAct = valorActual;
                                             break;
                                     }
 
@@ -6897,48 +7146,34 @@ namespace BCR.GARANTIAS.Entidades
 
                                     switch (datosAvaluo.Key)
                                     {
-                                        case _fechaValuacion:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecValuacion) ? fecValuacion.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaValuacion: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecValuacion) ? fecValuacion.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _montoUltimaTasacionTerreno:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoUltimaTasacionTerreno: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _montoUltimaTasacionNoTerreno:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoUltimaTasacionNoTerreno: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _montoTasacionActualizadaTerreno:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoTasacionActualizadaTerreno: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _montoTasacionActualizadaNoTerreno:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoTasacionActualizadaNoTerreno: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _montoTotalAvaluo:
-                                            valorAct = (Convert.ToDecimal(valorActual)).ToString();
+                                        case _montoTotalAvaluo: valorAct = (Convert.ToDecimal(valorActual)).ToString();
                                             break;
-                                        case _fechaUltimoSeguimiento:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecUS) ? fecUS.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaUltimoSeguimiento: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecUS) ? fecUS.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _fechaConstruccion:
-                                            valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecCons) ? fecCons.ToString("yyyyMMdd") : valorActual;
+                                        case _fechaConstruccion: valorAct = DateTime.TryParseExact(valorActual, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecCons) ? fecCons.ToString("yyyyMMdd") : valorActual;
                                             break;
-                                        case _fechaModifico:
-                                            valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
+                                        case _fechaModifico: valorAct = DateTime.TryParse(valorActual, out fecModifico) ? fecModifico.ToString("yyyyMMdd HH:mm:ss") : valorActual;
                                             break;
                                         //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                        case _porcentajeAceptacionTerreno:
-                                            valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                        case _porcentajeAceptacionTerreno: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
                                             break;
-                                        case _porcentajeAceptacionNoTerreno:
-                                            valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                        case _porcentajeAceptacionNoTerreno: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
                                             break;
-                                        case _porcentajeAceptacionTerrenoCalculado:
-                                            valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                        case _porcentajeAceptacionTerrenoCalculado: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
                                             break;
-                                        case _porcentajeAceptacionNoTerrenoCalculado:
-                                            valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
+                                        case _porcentajeAceptacionNoTerrenoCalculado: valorAct = (valorActual.Length.Equals(0)) ? "0" : Convert.ToDecimal(valorActual).ToString();
                                             break;
-                                        default:
-                                            valorAct = valorActual;
+                                        default: valorAct = valorActual;
                                             break;
                                     }
                                     //Crea el nodo del campo que se ha modificado
@@ -7065,13 +7300,11 @@ namespace BCR.GARANTIAS.Entidades
                         objEscritor.WriteEndElement();
 
                         #endregion Datos de Control
-
                     }
 
                     //Final del tag MODIFICADOS
                     objEscritor.WriteEndElement();
                     
-
                     #endregion  Datos Modificados
 
                     #region Datos Eliminados
@@ -7105,18 +7338,17 @@ namespace BCR.GARANTIAS.Entidades
                             objEscritor.WriteString(codGarantiaReal.ToString());
                             objEscritor.WriteEndElement();
 
+                            sentenciaEliminacionPoliza = String.Format(sentenciaEliminacionPoliza, (new object[] { polizaSap.CodigoPolizaSap.ToString(), codOperacion.ToString(), codGarantiaReal.ToString() }));
+                            listaDatosEliminadosGarPoliza.Add(_codigoSap, (string.Format("{0}|-", polizaSeleccionadaInicial.CodigoPolizaSap.ToString())));
+                            //listaDatosEliminadosGarPoliza.Add(_codOperacion, (codOperacion.ToString() + "|-"));
+                            //listaDatosEliminadosGarPoliza.Add(_codGarantiaReal, (codGarantiaReal.ToString() + "|-"));
+                            listaDatosEliminadosGarPoliza.Add(_montoAcreencia, (string.Format("{0}|-", polizaSeleccionadaInicial.MontoAcreenciaPolizaSap.ToString())));
+
                             //Final del tag POLIZAS
                             objEscritor.WriteEndElement();
 
                             //Final del tag ELIMINADOS
                             objEscritor.WriteEndElement();
-
-                            sentenciaEliminacionPoliza = String.Format(sentenciaEliminacionPoliza, (new object[] { polizaSap.CodigoPolizaSap.ToString(), codOperacion.ToString(), codGarantiaReal.ToString() }));
-                            listaDatosEliminadosGarPoliza.Add(_codigoSap, (polizaSeleccionadaInicial.CodigoPolizaSap.ToString() + "|-"));
-                            //listaDatosEliminadosGarPoliza.Add(_codOperacion, (codOperacion.ToString() + "|-"));
-                            //listaDatosEliminadosGarPoliza.Add(_codGarantiaReal, (codGarantiaReal.ToString() + "|-"));
-                            listaDatosEliminadosGarPoliza.Add(_montoAcreencia, (polizaSeleccionadaInicial.MontoAcreenciaPolizaSap.ToString() + "|-"));
-
                          }
                     }
 
@@ -7133,12 +7365,12 @@ namespace BCR.GARANTIAS.Entidades
 
                         if (listaDatosModificadosGarantias.Count > 0)
                         {
-                            clsBitacora entidadBitacoraGR = new clsBitacora(_tablaGrarantiasReales, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraGR = new clsBitacora(_entidadGarantiaReal, idUsuario, dirIP);
                             entidadBitacoraGR.TipoOperacion = Enumeradores.Tipos_Accion.Modificar;
                             entidadBitacoraGR.TipoGarantia = 2;
                             entidadBitacoraGR.NumeroGarantia = GarantiaRealBitacora;
                             entidadBitacoraGR.NumeroOperacion = Operacion;
-                            entidadBitacoraGR.Consulta = sentenciaActualizacionGarantia.ToString().TrimEnd(",".ToCharArray());
+                            entidadBitacoraGR.Consulta = string.Format(sentenciaActualizacionGarantia.ToString().TrimEnd(",".ToCharArray()) + " WHERE {0} = {1}", _codGarantiaReal,  codGarantiaReal.ToString());
 
                             foreach (KeyValuePair<string, string> datosGarantia in listaDatosModificadosGarantias)
                             {
@@ -7152,7 +7384,7 @@ namespace BCR.GARANTIAS.Entidades
 
                                     if (listaDescripcionValoresAnterioresCombos.ContainsKey(datosGarantia.Key))
                                     {
-                                        entidadBitacoraGR.ValorAnterior = listaDescripcionValoresAnterioresCombos[datosGarantia.Key];
+                                        entidadBitacoraGR.ValorAnterior = ((listaDescripcionValoresAnterioresCombos[datosGarantia.Key].Length > 0) ? listaDescripcionValoresAnterioresCombos[datosGarantia.Key] : "-");
                                     }
                                     else
                                     {
@@ -7161,7 +7393,7 @@ namespace BCR.GARANTIAS.Entidades
 
                                     if (listaDescripcionValoresActualesCombos.ContainsKey(datosGarantia.Key))
                                     {
-                                        entidadBitacoraGR.ValorActual = listaDescripcionValoresActualesCombos[datosGarantia.Key];
+                                        entidadBitacoraGR.ValorActual = ((listaDescripcionValoresActualesCombos[datosGarantia.Key].Length > 0) ? listaDescripcionValoresActualesCombos[datosGarantia.Key] : "-");
                                     }
                                     else
                                     {
@@ -7190,12 +7422,12 @@ namespace BCR.GARANTIAS.Entidades
                             DateTime fecVencimientoAct;
                             DateTime fecPrescripcionAct;
 
-                            clsBitacora entidadBitacoraRelacion = new clsBitacora(_tablaGarOper, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraRelacion = new clsBitacora(_entidadGarantiaRealXOperacion, idUsuario, dirIP);
                             entidadBitacoraRelacion.TipoOperacion = Enumeradores.Tipos_Accion.Modificar;
                             entidadBitacoraRelacion.TipoGarantia = 2;
                             entidadBitacoraRelacion.NumeroGarantia = GarantiaRealBitacora;
                             entidadBitacoraRelacion.NumeroOperacion = Operacion;
-                            entidadBitacoraRelacion.Consulta = sentenciaActualizacionGarOper.ToString().TrimEnd(",".ToCharArray());
+                            entidadBitacoraRelacion.Consulta = string.Format(sentenciaActualizacionGarOper.ToString().TrimEnd(",".ToCharArray()) + " WHERE {0} = {1} AND {2} = {3}", _codOperacion, codOperacion.ToString(), _codGarantiaReal, codGarantiaReal.ToString()); ;
 
                             foreach (KeyValuePair<string, string> datosRelacion in listaDatosModificadosGarXOper)
                             {
@@ -7298,12 +7530,12 @@ namespace BCR.GARANTIAS.Entidades
                             DateTime fecUSAct;
                             DateTime fecConsAct;
 
-                            clsBitacora entidadBitacoraAvaluo = new clsBitacora(_tablaValuacionesReales, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraAvaluo = new clsBitacora(_entidadValuacionesReales, idUsuario, dirIP);
                             entidadBitacoraAvaluo.TipoOperacion = Enumeradores.Tipos_Accion.Modificar;
                             entidadBitacoraAvaluo.TipoGarantia = 2;
                             entidadBitacoraAvaluo.NumeroGarantia = GarantiaRealBitacora;
                             entidadBitacoraAvaluo.NumeroOperacion = Operacion;
-                            entidadBitacoraAvaluo.Consulta = sentenciaActualizacionAvaluos.ToString().TrimEnd(",".ToCharArray());
+                            entidadBitacoraAvaluo.Consulta = string.Format(sentenciaActualizacionAvaluos.ToString().TrimEnd(",".ToCharArray()) + " WHERE {0} = {1}", _codGarantiaReal, codGarantiaReal.ToString());
 
                             foreach (KeyValuePair<string, string> datosAvaluo in listaDatosModificadosGarValuacionesReales)
                             {
@@ -7352,6 +7584,10 @@ namespace BCR.GARANTIAS.Entidades
                                                     break;
                                                 //case _fechaModifico: entidadBitacoraAvaluo.ValorAnterior = DateTime.TryParse(datoInicialAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoInicialAval;
                                                 //  break;
+                                                case _avaluoActualizado:
+                                                    break;
+                                                case _semestreCalculadoCalculo:
+                                                    break;
                                                 default: entidadBitacoraAvaluo.ValorAnterior = datoInicialAval;
                                                     break;
                                             }
@@ -7389,16 +7625,20 @@ namespace BCR.GARANTIAS.Entidades
                                                 case _fechaConstruccion: entidadBitacoraAvaluo.ValorActual = DateTime.TryParseExact(datoActualAval, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecConsAct) ? fecConsAct.ToString("dd/MM/yyyy") : datoActualAval;
                                                     break;
                                                 //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
-                                                case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoActualAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerreno: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoActualAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoActualAval).ToString("N2");
                                                     break;
-                                                case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoInicialAval).ToString("N2");
+                                                case _porcentajeAceptacionNoTerrenoCalculado: entidadBitacoraAvaluo.ValorActual = Convert.ToDecimal(datoActualAval).ToString("N2");
                                                     break;
                                                 //case _fechaModifico: entidadBitacoraAvaluo.ValorActual = DateTime.TryParse(datoActualAval, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoActualAval;
                                                 //    break;
+                                                case _avaluoActualizado:
+                                                    break;
+                                                case _semestreCalculadoCalculo:
+                                                    break;
                                                 default: entidadBitacoraAvaluo.ValorActual = datoActualAval;
                                                     break;
                                             }
@@ -7423,7 +7663,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         if (polizaInsertada)
                         {
-                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_tablaPolizasRelaciondas, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_entidadPolizasRelaciondas, idUsuario, dirIP);
                             entidadBitacoraPoliza.TipoOperacion = Enumeradores.Tipos_Accion.Insertar;
                             entidadBitacoraPoliza.TipoGarantia = 2;
                             entidadBitacoraPoliza.NumeroGarantia = GarantiaRealBitacora;
@@ -7487,12 +7727,12 @@ namespace BCR.GARANTIAS.Entidades
                         {
                             //no se agrega el campo fecha_modificacion porque no se tiene el dato anterior 
 
-                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_tablaPolizasRelaciondas, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_entidadPolizasRelaciondas, idUsuario, dirIP);
                             entidadBitacoraPoliza.TipoOperacion = Enumeradores.Tipos_Accion.Modificar;
                             entidadBitacoraPoliza.TipoGarantia = 2;
                             entidadBitacoraPoliza.NumeroGarantia = GarantiaRealBitacora;
                             entidadBitacoraPoliza.NumeroOperacion = Operacion;
-                            entidadBitacoraPoliza.Consulta = sentenciaActualizacionPoliza.ToString().TrimEnd(",".ToCharArray());
+                            entidadBitacoraPoliza.Consulta = string.Format(sentenciaActualizacionPoliza.ToString().TrimEnd(",".ToCharArray()) + " WHERE Codigo_SAP = {0} AND cod_operacion = {1} AND cod_garantia_real = {2}", polizaSapAsociada.CodigoPolizaSap.ToString(), codOperacion.ToString(), codGarantiaReal.ToString());
                             entidadBitacoraPoliza.NombreCampoAfectado = _montoAcreencia;
                             entidadBitacoraPoliza.ValorAnterior = polizaSeleccionadaInicial.MontoAcreenciaPolizaSap.ToString("N2");
                             entidadBitacoraPoliza.ValorActual = polizaSapAsociada.MontoAcreenciaPolizaSap.ToString("N2");
@@ -7504,9 +7744,9 @@ namespace BCR.GARANTIAS.Entidades
 
                         if (existePolizaEliminada)
                         {
-                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_tablaPolizasRelaciondas, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraPoliza = new clsBitacora(_entidadPolizasRelaciondas, idUsuario, dirIP);
                             entidadBitacoraPoliza.TipoOperacion = Enumeradores.Tipos_Accion.Borrar;
-                            entidadBitacoraPoliza.TipoGarantia = 3;
+                            entidadBitacoraPoliza.TipoGarantia = 2;
                             entidadBitacoraPoliza.NumeroGarantia = GarantiaRealBitacora;
                             entidadBitacoraPoliza.NumeroOperacion = Operacion;
                             entidadBitacoraPoliza.Consulta = sentenciaEliminacionPoliza.ToString().TrimEnd(",".ToCharArray());
@@ -7701,7 +7941,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         if (listaDatosModificadosGarValuacionesReales.Count > 0)
                         {
-                            clsBitacora entidadBitacoraAvaluo = new clsBitacora(_tablaValuacionesReales, idUsuario, dirIP);
+                            clsBitacora entidadBitacoraAvaluo = new clsBitacora(_entidadValuacionesReales, idUsuario, dirIP);
                             entidadBitacoraAvaluo.TipoOperacion = Enumeradores.Tipos_Accion.Modificar;
                             entidadBitacoraAvaluo.TipoGarantia = 2;
                             entidadBitacoraAvaluo.NumeroGarantia = GarantiaRealBitacora;
@@ -9358,6 +9598,7 @@ namespace BCR.GARANTIAS.Entidades
 
             return valorRetornado;
         }
+
 
         #endregion  Métodos Privados
         
