@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
-using System.Xml;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
+using BCRGarantias.Contenedores;
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -23,6 +21,10 @@ namespace BCRGARANTIAS.Negocios
         #region Variables
 
         bool procesoNormalizacion = false;
+        int nFilasAfectadas = 0;
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+        DateTime fechaBase = new DateTime(1900, 01, 01);
 
         #endregion Variables
 
@@ -2266,6 +2268,14 @@ namespace BCRGARANTIAS.Negocios
                     //Se revisa que la entidad haya sido creada
                     if (garantiaRealNormalizar != null)
                     {
+                        //Se establecen los datos de la operación que será normalizada
+                        garantiaRealNormalizar.Contabilidad = GarOperActualizar.Contabilidad;
+                        garantiaRealNormalizar.Oficina = GarOperActualizar.Oficina;
+                        garantiaRealNormalizar.MonedaOper = GarOperActualizar.Moneda;
+                        garantiaRealNormalizar.Producto = GarOperActualizar.Producto;
+                        garantiaRealNormalizar.NumeroOperacion = GarOperActualizar.Operacion;
+                        garantiaRealNormalizar.TipoOperacion = GarOperActualizar.TipoOperacion;
+
                         //Se procede a modificar la información de la garantía y la relación de esta con la operación/contrato
                         garantiaRealNormalizar.CodTipoBien = datosGarantiaReal.CodTipoBien;
                         garantiaRealNormalizar.CodTipoMitigador = datosGarantiaReal.CodTipoMitigador;
@@ -2291,6 +2301,9 @@ namespace BCRGARANTIAS.Negocios
                         garantiaRealNormalizar.PorcentajeAceptacionTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionTerrenoCalculado;
                         garantiaRealNormalizar.PorcentajeAceptacionNoTerrenoCalculado = datosGarantiaReal.PorcentajeAceptacionNoTerrenoCalculado;
 
+                        //Se desliga cualquier póliza.
+                        garantiaRealNormalizar.PolizaSapAsociada = null;
+
                         //Se procede a modificar la información de la póliza, sólo si dicha póliza está asociada a la operación replicada
                         List<clsPolizaSap> listaPolizas = garantiaRealNormalizar.PolizasSap.ObtenerPolizasPorTipoBien(garantiaRealNormalizar.CodTipoBien);
 
@@ -2310,9 +2323,9 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Se utilizan los mismos datos las pistas de auditoria 
-                        garantiaRealNormalizar.UsuarioModifico = datosGarantiaReal.UsuarioModifico;
-                        garantiaRealNormalizar.FechaModifico = datosGarantiaReal.FechaModifico;
-                        garantiaRealNormalizar.FechaInserto = datosGarantiaReal.FechaInserto;
+                        garantiaRealNormalizar.UsuarioModifico = strUsuario;
+                        garantiaRealNormalizar.FechaModifico = DateTime.Today;
+                        garantiaRealNormalizar.FechaInserto = DateTime.Today;
 
                         //Se procede a modificar la operación respaldada por la garantía
                         procesoNormalizacion = true;
@@ -2342,95 +2355,6 @@ namespace BCRGARANTIAS.Negocios
                 {
                     throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, sbOperacionesSinNormalizar.ToString(), Mensajes.ASSEMBLY));
                 }
-
-                #region Obsoleto
-
-                //try
-                //{
-                //    SqlParameter[] parametrosNormalizarAvaluos = new SqlParameter[] { 
-                //        new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psIP", SqlDbType.VarChar, 20),
-                //        new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),
-                //        new SqlParameter("piConsecutivo_Garantia_Real", SqlDbType.BigInt),
-                //        new SqlParameter("psFecha_Valuacion", SqlDbType.VarChar, 10),
-                //        new SqlParameter("piTipo_Bien", SqlDbType.SmallInt),
-                //        new SqlParameter("piTipo_Mitigador", SqlDbType.SmallInt),
-                //        new SqlParameter("psCodigo_Bien", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psCodigo_Operacion", SqlDbType.VarChar, 30),
-                //        new SqlParameter("psListaCodigosOperaciones", SqlDbType.VarChar, 1000),
-                //        new SqlParameter("psRespuesta", SqlDbType.VarChar, 1000)
-                //    };
-
-
-                //    parametrosNormalizarAvaluos[0].Value = strUsuario;
-                //    parametrosNormalizarAvaluos[1].Value = strIP;
-                //    parametrosNormalizarAvaluos[2].Value = datosGarantiaReal.CodOperacion;
-                //    parametrosNormalizarAvaluos[3].Value = datosGarantiaReal.CodGarantiaReal;
-                //    parametrosNormalizarAvaluos[4].Value = datosGarantiaReal.FechaValuacion.ToString("yyyyMMdd");
-                //    parametrosNormalizarAvaluos[5].Value = datosGarantiaReal.CodTipoBien;
-                //    parametrosNormalizarAvaluos[6].Value = datosGarantiaReal.CodTipoMitigador;
-                //    parametrosNormalizarAvaluos[7].Value = datosGarantiaReal.GarantiaRealBitacora;
-                //    parametrosNormalizarAvaluos[8].Value = strOperacionCrediticia;
-                //    parametrosNormalizarAvaluos[9].Value = datosGarantiaReal.OperacionesRelacionadas.ListaConsecutivosOperaciones();
-                //    parametrosNormalizarAvaluos[10].Direction = ParameterDirection.Output;
-
-                //    using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-                //    {
-                //        oConexion.Open();
-
-                //        AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Normalizar_Avaluo_Garantias_Reales", parametrosNormalizarAvaluos);
-
-                //        respuestaObtenida = parametrosNormalizarAvaluos[10].Value.ToString();
-                //    }
-
-                //    if (respuestaObtenida.Length > 0)
-                //    {
-                //        strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
-
-                //        if (strMensajeObtenido[0].CompareTo("0") != 0)
-                //        {
-                //            throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, Mensajes.ASSEMBLY));
-                //        }
-                //    }
-                //}
-                //catch (Exception ex)
-                //{
-                //    string errorBitacora = string.Empty;
-                //    string errorUsuario = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluo, Mensajes.ASSEMBLY);
-                //    ExcepcionBase errorUI = new ExcepcionBase(errorUsuario);
-
-                //    if ((strMensajeObtenido != null) && (strMensajeObtenido.Length > 1))
-                //    {
-                //        string detalleError = ((strMensajeObtenido[0] != null) && (strMensajeObtenido[0].Trim().Length > 0)) ? ("Código del error: " + strMensajeObtenido[0] + ". ") : "Código del error: N/A. ";
-                //        detalleError += ((strMensajeObtenido[1] != null) && (strMensajeObtenido[1].Trim().Length > 0)) ? ("Mensaje del error: " + strMensajeObtenido[1] + ". ") : "Mensaje del error: N/A. ";
-                //        detalleError += ((strMensajeObtenido[2] != null) && (strMensajeObtenido[2].Trim().Length > 0)) ? ("Detalle del error: " + strMensajeObtenido[2] + ". ") : "Detalle del error: N/A. ";
-                //        detalleError += "Detalle Técnico: " + ex.Message;
-
-                //        errorBitacora = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluoDetalle, strGarantia, detalleError, Mensajes.ASSEMBLY);
-
-                //        if ((strMensajeObtenido[0].Trim().Length > 0) && (strMensajeObtenido[1].Trim().Length > 0))
-                //        {
-                //            if ((strMensajeObtenido[0].CompareTo("-1") == 0) || (strMensajeObtenido[0].CompareTo("-2") == 0) ||
-                //               (strMensajeObtenido[0].CompareTo("-3") == 0) || (strMensajeObtenido[0].CompareTo("-4") == 0) ||
-                //               (strMensajeObtenido[0].CompareTo("-5") == 0))
-                //            {
-                //                errorUsuario += " Detalle:" + strMensajeObtenido[1];
-                //                errorUI = new ExcepcionBase(errorUsuario);
-                //                errorUI.Source = strMensajeObtenido[0];
-                //            }
-                //        }
-
-                //    }
-                //    else
-                //    {
-                //        errorBitacora = Mensajes.Obtener(Mensajes._errorNormalizandoAvaluoDetalle, strGarantia, ex.Message, Mensajes.ASSEMBLY);
-                //    }
-
-                //    UtilitariosComun.RegistraEventLog(errorBitacora, EventLogEntryType.Error);
-                //    throw errorUI;
-                //}
-
-                #endregion Obsoleto
             }
         }
 
