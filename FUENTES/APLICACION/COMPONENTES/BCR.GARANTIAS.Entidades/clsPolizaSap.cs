@@ -2,16 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 using System.Globalization;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -19,14 +13,14 @@ namespace BCR.GARANTIAS.Entidades
     {
         #region Constantes
 
-        private const string _codigoSap = "Codigo_SAP";
+        public const string _codigoSap = "Codigo_SAP";
         private const string _tipoPoliza = "Tipo_Poliza";
         private const string _montoPoliza = "Monto_Poliza";
         private const string _monedaMontoPoliza = "Moneda_Monto_Poliza";
         private const string _fechaVencimientoPoliza = "Fecha_Vencimiento";
         private const string _cedulaAcreedorPoliza = "Cedula_Acreedor";
         private const string _nombreAcreedorPoliza = "Nombre_Acreedor";
-        private const string _montoAcreencia = "Monto_Acreencia";
+        public const string _montoAcreencia = "Monto_Acreencia";
         private const string _detallePoliza = "Detalle_Poliza";
         private const string _polizaSeleccionada = "Poliza_Seleccionada";
         private const string _montoPolizaColonizado = "Monto_Poliza_Colonizado";
@@ -38,6 +32,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _nombreAcreedorAnterior = "Nombre_Acreedor_Anterior";
         private const string _tipoBienPoliza = "Tipo_Bien_Poliza";
         private const string _polizaAsociada = "Poliza_Asociada";
+        public const string _codigoEstadoRegistro = "Estado_Registro";
 
         private const string _cedulaBCR = "4000000019";
         private const string _descripcionBCR = "BANCODECOSTARICA";
@@ -55,7 +50,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _tagCoberturasPorAsignar = "POR_ASIGNAR";
         private const string _tagCoberturasAsignadas = "ASIGNADAS";
         private const string _tagCobertura = "COBERTURA";
-
+        public const string _tagPolizasRelacionadas = "GAR_POLIZAS_RELACIONADAS";
 
         #endregion Constantes
 
@@ -952,7 +947,7 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             
             //Se revisa que la lista posea coberturas
-            if ((this.listaCoberturasPoliza != null) && (this.listaCoberturasPoliza.Count > 0))
+            if ((listaCoberturasPoliza != null) && (listaCoberturasPoliza.Count > 0))
             {
                 formatoJSON.Append(",");
 
@@ -969,7 +964,7 @@ namespace BCR.GARANTIAS.Entidades
                 formatoJSON.Append("Cobertura");
                 formatoJSON.Append('"');
                 formatoJSON.Append(':');
-                formatoJSON.Append(this.listaCoberturasPoliza.ObtenerJSON());
+                formatoJSON.Append(listaCoberturasPoliza.ObtenerJSON());
             }
             else
             {
