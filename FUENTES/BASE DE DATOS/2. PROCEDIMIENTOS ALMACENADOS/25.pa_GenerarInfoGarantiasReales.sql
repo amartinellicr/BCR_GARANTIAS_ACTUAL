@@ -149,6 +149,14 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Creación de Tablas para SICAD, No. 2016012710534870</Requerimiento>
+			<Fecha>16/02/2016</Fecha>
+			<Descripción>
+				Se realiza un ajuste con el fin de contemplar la carga de algunas de las estructuras creadas para SICAD. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -160,25 +168,24 @@ BEGIN
 
 SET NOCOUNT ON
 
-DECLARE 
-	@nOperacion2			BIGINT,
-	@nGarantia				BIGINT,
-	@nTipoGarantiaReal		TINYINT,
-	@strFinca				VARCHAR(25),
-	@strGrado				VARCHAR(2),
-	@strPlacaBien			VARCHAR(25),
-	@nTipoDocumentoLegal	SMALLINT,
-	@strFincaAnterior		VARCHAR(25),
-	@strGradoAnterior		VARCHAR(2),
-	@strPlacaBienAnterior	VARCHAR(25),
-	@nOperacionAnterior		BIGINT,
-	@lid					UNIQUEIDENTIFIER,
-	@lfecHoySinHora			DATETIME,
-	@lintFechaEntero		INT
+DECLARE	@viCodigo_Operacion		BIGINT,
+		@viCodigo_Garantia		BIGINT,
+		@viTipo_Garantia_Real	TINYINT,
+		@vsFinca				VARCHAR(25),
+		@vcGrado				CHAR(2),
+		@vsPlaca_Bien			VARCHAR(25),
+		@viTipo_Documento_Legal	SMALLINT,
+		@vsFinca_Anterior		VARCHAR(25),
+		@vcGrado_Anterior		CHAR(2),
+		@vsPlaca_Bien_Anterior	VARCHAR(25),
+		@viCodigo_Operacion_Anterior BIGINT,
+		@vuiId					UNIQUEIDENTIFIER,
+		@vdtFecha_Actual_Sin_Hora DATETIME,
+		@viFecha_Actual_Entera	INT
 
 	/*Se inicializan las variables globales*/
-	SET @lfecHoySinHora	= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
-	SET @lintFechaEntero = CONVERT(INT, CONVERT(VARCHAR(8), @lfecHoySinHora, 112))
+	SET @vdtFecha_Actual_Sin_Hora	= CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+	SET @viFecha_Actual_Entera = CONVERT(INT, CONVERT(VARCHAR(8), @vdtFecha_Actual_Sin_Hora, 112))
 
 
 	IF(@piEjecutarParte = 0)
@@ -191,7 +198,7 @@ DECLARE
 
 		/*Se carga la variable tabla con los datos requeridos sobre las operaciones y giros*/
 		INSERT	#TEMP_PRMOC (cod_operacion)
-		SELECT	DISTINCT GO1.cod_operacion
+		SELECT	GO1.cod_operacion
 		FROM	dbo.GAR_OPERACION GO1 
 			INNER JOIN dbo.GAR_SICC_PRMOC MOC 
 			ON	MOC.prmoc_pnu_oper = GO1.num_operacion
@@ -200,13 +207,14 @@ DECLARE
 			AND MOC.prmoc_pco_produ = GO1.cod_producto
 			AND MOC.prmoc_pco_conta	= GO1.cod_contabilidad
 			AND MOC.prmoc_pnu_contr = GO1.num_contrato
-		WHERE	MOC.prmoc_pse_proces = 1 
+		WHERE	COALESCE(GO1.num_operacion, 0) > 0 
+			AND MOC.prmoc_pse_proces = 1 
 			AND MOC.prmoc_estado = 'A'
 			AND ((MOC.prmoc_pcoctamay < 815)
 				OR (MOC.prmoc_pcoctamay > 815))
 			AND ((MOC.prmoc_psa_actual < 0)
 				OR (MOC.prmoc_psa_actual > 0))
-			AND GO1.num_operacion IS NOT NULL 
+			
 			
 
 
@@ -225,7 +233,7 @@ DECLARE
 				cod_tipo_garantia_real, numero_finca, num_placa_bien, cod_clase_bien, cedula_deudor, cod_estado, 
 				Porcentaje_Aceptacion_Terreno, Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, 
 				Porcentaje_Aceptacion_No_Terreno_Calculado)
-		SELECT	DISTINCT 
+		SELECT	 
 			GO1.cod_contabilidad, 
 			GO1.cod_oficina, 
 			GO1.cod_moneda, 
@@ -235,7 +243,8 @@ DECLARE
 			CASE 
 				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
 				WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
-				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia >= 30) AND (GGR.cod_clase_garantia <= 37) 
+					AND (GGR.cod_clase_garantia >= 39) AND (GGR.cod_clase_garantia <= 42) AND (GGR.cod_clase_garantia >= 44) AND (GGR.cod_clase_garantia <= 69)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
 				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
 			END	AS cod_bien, 
 			GRO.cod_tipo_mitigador, 
@@ -324,9 +333,52 @@ DECLARE
 			AND GVR.fecha_valuacion = (SELECT MAX(fecha_valuacion) FROM dbo.GAR_VALUACIONES_REALES WHERE cod_garantia_real = GGR.cod_garantia_real) 
 			LEFT OUTER JOIN dbo.GAR_PERITO GPE 
 			ON GVR.cedula_perito = GPE.cedula_perito 
-		WHERE	GO1.num_operacion IS NOT NULL 
+		WHERE	COALESCE(GO1.num_operacion, 0) > 0 
 			AND GRO.cod_estado = 1
-			
+		GROUP BY GO1.cod_contabilidad, 
+				GO1.cod_oficina, 
+				GO1.cod_moneda, 
+				GO1.cod_producto, 
+				GO1.num_operacion, 
+				GGR.cod_tipo_bien, 
+				GGR.cod_tipo_garantia_real, 
+				GRO.cod_tipo_mitigador, 
+				cod_tipo_documento_legal,
+				GRO.monto_mitigador, 
+				GRO.fecha_presentacion,
+				GRO.cod_inscripcion, 
+				GRO.porcentaje_responsabilidad, 
+				GRO.fecha_constitucion, 
+				GRO.cod_grado_gravamen, 
+				GRO.cod_tipo_acreedor, 
+				GRO.cedula_acreedor, 
+				GRO.fecha_vencimiento , 
+				GRO.cod_operacion_especial, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GPE.cod_tipo_persona, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.fecha_construccion,
+				GGR.cod_grado,
+				GGR.cedula_hipotecaria,
+				GGR.cod_clase_garantia,
+				GO1.cod_operacion,
+				GGR.cod_garantia_real,
+				GGR.cod_tipo_garantia_real,
+				GGR.numero_finca,
+				GGR.num_placa_bien,
+				GGR.cod_clase_bien,
+				GO1.cedula_deudor,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado 
+
 
 
 
@@ -350,58 +402,58 @@ DECLARE
 			cod_tipo_documento_legal DESC
 
 		OPEN Garantias_Cursor
-		FETCH NEXT FROM Garantias_Cursor INTO @nOperacion2, @nGarantia, @nTipoGarantiaReal, @strFinca, 
-			@strGrado, @strPlacaBien, @nTipoDocumentoLegal, @lid
+		FETCH NEXT FROM Garantias_Cursor INTO @viCodigo_Operacion, @viCodigo_Garantia, @viTipo_Garantia_Real, @vsFinca, 
+			@vcGrado, @vsPlaca_Bien, @viTipo_Documento_Legal, @vuiId
 
-		SET @strFincaAnterior = ''
-		SET @strGradoAnterior = ''
-		SET @strPlacaBienAnterior = ''
-		SET @nOperacionAnterior = -1
+		SET @vsFinca_Anterior = ''
+		SET @vcGrado_Anterior = ''
+		SET @vsPlaca_Bien_Anterior = ''
+		SET @viCodigo_Operacion_Anterior = -1
 
 		WHILE @@FETCH_STATUS = 0 
 		BEGIN
 				--Hipotecas
-				IF (@nTipoGarantiaReal = 1) 
+				IF (@viTipo_Garantia_Real = 1) 
 				BEGIN
-					IF (@nOperacionAnterior = @nOperacion2) 
+					IF (@viCodigo_Operacion_Anterior = @viCodigo_Operacion) 
 					BEGIN
-						IF (@strFincaAnterior = @strFinca) 
+						IF (@vsFinca_Anterior = @vsFinca) 
 						BEGIN
 							
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 2
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 							
 						END
 					END
 				END
 				--Cédulas 
-				IF (@nTipoGarantiaReal = 2) 
+				IF (@viTipo_Garantia_Real = 2) 
 				BEGIN
-					IF (@nOperacionAnterior = @nOperacion2) 
+					IF (@viCodigo_Operacion_Anterior = @viCodigo_Operacion) 
 					BEGIN
-						IF (@strFincaAnterior != @strFinca) 
+						IF (@vsFinca_Anterior != @vsFinca) 
 						BEGIN
 						
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 1
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 
 						END
-						ELSE IF ((@strFincaAnterior = @strFinca) AND (@strGradoAnterior != @strGrado)) 
+						ELSE IF ((@vsFinca_Anterior = @vsFinca) AND (@vcGrado_Anterior != @vcGrado)) 
 						BEGIN
 						
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 1
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 							
 						END
-						ELSE IF ((@strFincaAnterior = @strFinca) AND (@strGradoAnterior = @strGrado)) 
+						ELSE IF ((@vsFinca_Anterior = @vsFinca) AND (@vcGrado_Anterior = @vcGrado)) 
 						BEGIN
 						
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 2
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 							
 						END
 					END
@@ -410,21 +462,21 @@ DECLARE
 					
 						UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 						SET		cod_estado = 1
-						WHERE	cod_llave = @lid
+						WHERE	cod_llave = @vuiId
 						
 					END
 				END
 				--Prendas
-				ELSE IF (@nTipoGarantiaReal = 3) 
+				ELSE IF (@viTipo_Garantia_Real = 3) 
 				BEGIN
-					IF (@nOperacionAnterior = @nOperacion2) 
+					IF (@viCodigo_Operacion_Anterior = @viCodigo_Operacion) 
 					BEGIN
-						IF (@strPlacaBienAnterior != @strPlacaBien) 
+						IF (@vsPlaca_Bien_Anterior != @vsPlaca_Bien) 
 						BEGIN
 						
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 1
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 							
 						END
 						ELSE 
@@ -432,7 +484,7 @@ DECLARE
 						
 							UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 							SET		cod_estado = 2
-							WHERE	cod_llave = @lid
+							WHERE	cod_llave = @vuiId
 							
 						END	
 					END
@@ -441,26 +493,33 @@ DECLARE
 					
 						UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES 
 						SET		cod_estado = 1
-						WHERE	cod_llave = @lid
+						WHERE	cod_llave = @vuiId
 						
 					END
 				END 
 						
-				SET @strFincaAnterior = @strFinca
-				SET @strGradoAnterior = @strGrado
-				SET @strPlacaBienAnterior = @strPlacaBien
-				SET @nOperacionAnterior = @nOperacion2
+				SET @vsFinca_Anterior = @vsFinca
+				SET @vcGrado_Anterior = @vcGrado
+				SET @vsPlaca_Bien_Anterior = @vsPlaca_Bien
+				SET @viCodigo_Operacion_Anterior = @viCodigo_Operacion
 			      
-				FETCH NEXT FROM Garantias_Cursor INTO @nOperacion2, @nGarantia, @nTipoGarantiaReal, 
-				@strFinca, @strGrado, @strPlacaBien, @nTipoDocumentoLegal, @lid
+				FETCH NEXT FROM Garantias_Cursor INTO @viCodigo_Operacion, @viCodigo_Garantia, @viTipo_Garantia_Real, 
+				@vsFinca, @vcGrado, @vsPlaca_Bien, @viTipo_Documento_Legal, @vuiId
 		END
 
 		CLOSE Garantias_Cursor
 		DEALLOCATE Garantias_Cursor
 	
+		--Se eliminan los registros que fueron seteados a 2
+		DELETE	FROM dbo.GAR_GIROS_GARANTIAS_REALES
+		WHERE	cod_estado = 2
+
+		DROP TABLE #TEMP_PRMOC
+
 	END
 	IF(@piEjecutarParte = 1)
 	BEGIN
+
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
 		WHERE	cod_usuario	= @psCedula_Usuario 
 	
@@ -473,230 +532,211 @@ DECLARE
 		DELETE	FROM dbo.TMP_VALUACIONES_REALES 
 		WHERE	cod_usuario	= @psCedula_Usuario 
 
+		/*Esta tabla servirá para almacenar los datos de la estructura PRMOC*/
+		CREATE TABLE #TTEMP_PRMOC (cod_operacion BIGINT, Indicador_Es_Giro BIT)
 
-		/*Variable que servirá para almacenar los datos de la estructura PRMOC*/
-		DECLARE	@ptPRMOC TABLE(	prmoc_pco_conta  TINYINT,
-								prmoc_pco_ofici  SMALLINT,
-								prmoc_pco_moned  TINYINT,
-								prmoc_pco_produ  TINYINT,
-								prmoc_pnu_oper   INT,
-								prmoc_pnu_contr  INT,
-								prmoc_pco_oficon SMALLINT,
-								prmoc_pcomonint  SMALLINT,
-								cod_operacion    BIGINT
-								PRIMARY KEY (prmoc_pco_conta, 
-											 prmoc_pco_ofici, 
-											 prmoc_pco_moned, 
-											 prmoc_pco_produ, 
-											 prmoc_pnu_oper, 
-											 prmoc_pnu_contr,
-											 prmoc_pco_oficon,
-											 prmoc_pcomonint,
-											 cod_operacion)
-							  )
+		CREATE INDEX TEMP_PRMOC_IX_01 ON #TTEMP_PRMOC (cod_operacion, Indicador_Es_Giro)
 
+		/*Esta tabla almacenará los contratos vigentes según el SICC*/
+		CREATE TABLE #TEMP_CONTRATOS_VIGENTES (Cod_Operacion_Contrato BIGINT, Cod_Operacion_Giro BIGINT)
+		 
+		CREATE INDEX TEMP_CONTRATOS_VIGENTES_IX_01 ON #TEMP_CONTRATOS_VIGENTES (Cod_Operacion_Contrato, Cod_Operacion_Giro)
 
-		/*Variable que servirá para almacenar los datos de la estructura PRMCA*/
-		DECLARE	@ptPRMCA TABLE(	prmca_pco_ofici  SMALLINT,
-								prmca_pco_moned  TINYINT,
-								prmca_pco_produc TINYINT,
-								prmca_pnu_contr  INT,
-								cod_operacion    BIGINT
-								PRIMARY KEY (prmca_pco_ofici, 
-											 prmca_pco_moned, 
-											 prmca_pco_produc, 
-											 prmca_pnu_contr, 
-											 cod_operacion)
-							  )
+		/*Esta tabla almacenará los contratos vencidos con giros activos según el SICC*/
+		CREATE TABLE #TEMP_CONTRATOS_VENCIDOS_GA (Cod_Operacion_Contrato BIGINT, Cod_Operacion_Giro BIGINT)
+
+		CREATE INDEX TEMP_CONTRATOS_VENCIDOS_GA_IX_01 ON #TEMP_CONTRATOS_VENCIDOS_GA (Cod_Operacion_Contrato, Cod_Operacion_Giro)
 		
+		/*Esta tabla almacenará los giros activos según el SICC*/
+		CREATE TABLE #TEMP_GIROS_ACTIVOS (	prmoc_pco_oficon SMALLINT,
+											prmoc_pcomonint SMALLINT,
+											prmoc_pnu_contr INT,
+											cod_operacion BIGINT)
 		
-	/***************************************************************************************************************************************************/
+		CREATE INDEX TEMP_GIROS_ACTIVOS_IX_01 ON #TEMP_GIROS_ACTIVOS (prmoc_pco_oficon, prmoc_pcomonint, prmoc_pnu_contr)
 
-		--Se eliminan los registros que fueron seteados a 2
-		DELETE	FROM dbo.GAR_GIROS_GARANTIAS_REALES
-		WHERE	cod_estado = 2
 		
 		/*Se carga la variable tabla con los datos requeridos sobre las operaciones y giros*/
-		INSERT	@ptPRMOC
-		SELECT	DISTINCT MOC.prmoc_pco_conta, 
-						 MOC.prmoc_pco_ofici, 
-						 MOC.prmoc_pco_moned, 
-						 MOC.prmoc_pco_produ, 
-						 MOC.prmoc_pnu_oper, 
-						 MOC.prmoc_pnu_contr,
-						 MOC.prmoc_pco_oficon,
-						 MOC.prmoc_pcomonint,
-						 GO1.cod_operacion
+		INSERT	#TTEMP_PRMOC (cod_operacion, Indicador_Es_Giro)
+		SELECT	GO1.cod_operacion,
+				CASE 
+					WHEN GO1.num_contrato = 0 THEN 0
+					ELSE 1
+				END AS Indicador_Es_Giro
 		FROM	dbo.GAR_OPERACION GO1 
-			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA	
-			ON GO1.cod_operacion = GRA.cod_operacion 
 			INNER JOIN dbo.GAR_SICC_PRMOC MOC 
-			ON	MOC.prmoc_pco_conta	= GO1.cod_contabilidad
+			ON	MOC.prmoc_pnu_oper = GO1.num_operacion
 			AND MOC.prmoc_pco_ofici = GO1.cod_oficina
 			AND MOC.prmoc_pco_moned = GO1.cod_moneda
 			AND MOC.prmoc_pco_produ = GO1.cod_producto
-			AND MOC.prmoc_pnu_oper = GO1.num_operacion
-		WHERE	MOC.prmoc_pse_proces = 1 
+			AND MOC.prmoc_pco_conta	= GO1.cod_contabilidad
+			AND MOC.prmoc_pnu_contr = GO1.num_contrato
+		WHERE	COALESCE(GO1.num_operacion, 0) > 0  
+			AND MOC.prmoc_pse_proces = 1 
 			AND MOC.prmoc_estado = 'A'
 			AND ((MOC.prmoc_pcoctamay < 815)
 				OR (MOC.prmoc_pcoctamay > 815))
-			AND GO1.num_operacion IS NOT NULL 
-			AND GO1.cod_estado = 1 
+			AND ((MOC.prmoc_psa_actual < 0)
+				OR (MOC.prmoc_psa_actual > 0))
 
-			/*Se obtienen los contratos que poseen giros activos*/
-			INSERT	@ptPRMCA
-			SELECT	DISTINCT 
-				MCA.prmca_pco_ofici,
+
+
+		--Se carga la tabla temporal de giros activos
+		INSERT	#TEMP_GIROS_ACTIVOS (prmoc_pco_oficon, prmoc_pcomonint, prmoc_pnu_contr, cod_operacion)
+		SELECT	MOC.prmoc_pco_oficon, MOC.prmoc_pcomonint, MOC.prmoc_pnu_contr, GO1.cod_operacion
+		FROM	dbo.GAR_OPERACION GO1 
+			INNER JOIN dbo.GAR_SICC_PRMOC MOC 
+			ON	MOC.prmoc_pnu_oper = GO1.num_operacion
+			AND MOC.prmoc_pco_ofici = GO1.cod_oficina
+			AND MOC.prmoc_pco_moned = GO1.cod_moneda
+			AND MOC.prmoc_pco_produ = GO1.cod_producto
+			AND MOC.prmoc_pco_conta	= GO1.cod_contabilidad
+			AND MOC.prmoc_pnu_contr = GO1.num_contrato
+		WHERE	COALESCE(GO1.num_operacion, 0) > 0 
+			AND GO1.num_contrato > 0
+			AND MOC.prmoc_pse_proces = 1 
+			AND MOC.prmoc_estado = 'A'
+			AND ((MOC.prmoc_pcoctamay < 815)
+				OR (MOC.prmoc_pcoctamay > 815))
+			AND ((MOC.prmoc_psa_actual < 0)
+				OR (MOC.prmoc_psa_actual > 0))
+			
+		
+
+		--Se carga la tabla temporal de contratos vigentes con giros activos
+		INSERT	#TEMP_CONTRATOS_VIGENTES (Cod_Operacion_Contrato, Cod_Operacion_Giro)
+		SELECT	GO1.cod_operacion AS Cod_Operacion_Contrato, TGA.cod_operacion AS Cod_Operacion_Giro
+		FROM	dbo.GAR_OPERACION GO1 
+				INNER JOIN dbo.GAR_SICC_PRMCA MCA
+			ON GO1.cod_contabilidad = MCA.prmca_pco_conta
+			AND GO1.cod_oficina = MCA.prmca_pco_ofici 
+				AND GO1.cod_moneda = MCA.prmca_pco_moned
+				AND GO1.num_contrato = MCA.prmca_pnu_contr
+			INNER JOIN #TEMP_GIROS_ACTIVOS TGA
+			ON TGA.prmoc_pnu_contr = MCA.prmca_pnu_contr
+			AND TGA.prmoc_pco_oficon = MCA.prmca_pco_ofici
+			AND TGA.prmoc_pcomonint = MCA.prmca_pco_moned
+		WHERE	GO1.num_operacion IS NULL 
+			AND GO1.num_contrato > 0
+				AND MCA.prmca_estado = 'A'
+			AND MCA.prmca_pfe_defin >= @viFecha_Actual_Entera 
+        GROUP BY MCA.prmca_pco_ofici,
 				MCA.prmca_pco_moned,
 				MCA.prmca_pco_produc,
 				MCA.prmca_pnu_contr,
 				GO1.cod_operacion
-			FROM	@ptPRMOC MOC
-				INNER JOIN dbo.GAR_SICC_PRMCA MCA
-				ON MCA.prmca_pco_ofici = MOC.prmoc_pco_oficon
-				AND MCA.prmca_pco_moned = MOC.prmoc_pcomonint
-				AND MCA.prmca_pnu_contr = MOC.prmoc_pnu_contr
-				INNER JOIN dbo.GAR_OPERACION GO1
-				ON GO1.cod_oficina = MCA.prmca_pco_ofici
-				AND GO1.cod_moneda = MCA.prmca_pco_moned
-				AND GO1.cod_producto = MCA.prmca_pco_produc
-				AND GO1.num_contrato = MCA.prmca_pnu_contr
-				INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
-				ON GO1.cod_operacion = GRA.cod_operacion 
-			WHERE	MOC.prmoc_pnu_oper IS NOT NULL 
-				AND MOC.prmoc_pnu_contr > 0
-				AND MCA.prmca_estado = 'A'
+
+		--Se carga la tabla temporal de contratos vencidos (con giros activos)
+		INSERT	#TEMP_CONTRATOS_VENCIDOS_GA (Cod_Operacion_Contrato, Cod_Operacion_Giro)
+		SELECT	GO1.cod_operacion AS Cod_Operacion_Contrato, TGA.cod_operacion AS Cod_Operacion_Giro
+		FROM	dbo.GAR_OPERACION GO1 
+			INNER JOIN dbo.GAR_SICC_PRMCA MCA
+			ON GO1.cod_contabilidad = MCA.prmca_pco_conta
+			AND GO1.cod_oficina = MCA.prmca_pco_ofici 
+			AND GO1.cod_moneda = MCA.prmca_pco_moned
+			AND GO1.num_contrato = MCA.prmca_pnu_contr
+			INNER JOIN #TEMP_GIROS_ACTIVOS TGA
+			ON MCA.prmca_pnu_contr = TGA.prmoc_pnu_contr
+			AND MCA.prmca_pco_ofici = TGA.prmoc_pco_oficon
+			AND MCA.prmca_pco_moned = TGA.prmoc_pcomonint
+		WHERE	GO1.num_operacion IS NULL 
 				AND GO1.num_contrato > 0
-				AND GO1.num_operacion IS NULL
-		   
+			AND MCA.prmca_estado = 'A'
+			AND MCA.prmca_pfe_defin < @viFecha_Actual_Entera 
+		GROUP BY MCA.prmca_pco_ofici,
+				MCA.prmca_pco_moned,
+				MCA.prmca_pco_produc,
+				MCA.prmca_pnu_contr,
+				GO1.cod_operacion
+
 			/*Se obtienen las operaciones activas que posean una garantía real asociada*/	
-			INSERT	INTO dbo.TMP_OPERACIONES (
-				cod_operacion,
-				cod_garantia,
-				cod_tipo_garantia,
-				cod_tipo_operacion,
-				ind_contrato_vencido,
-				ind_contrato_vencido_giros_activos,
-				cod_oficina,
-				cod_moneda,
-				cod_producto,
-				num_operacion,
-				num_contrato,
-				cod_usuario)
-			SELECT	DISTINCT 
-				MOC.cod_operacion, 
+		INSERT	INTO dbo.TMP_OPERACIONES (cod_operacion, cod_garantia, cod_tipo_garantia,
+										  cod_tipo_operacion, ind_contrato_vencido,
+										  ind_contrato_vencido_giros_activos, cod_usuario)
+		SELECT	GRA.cod_operacion, 
 				GRA.cod_garantia_real,
 				2 AS cod_tipo_garantia,
-				CASE 
-					WHEN MOC.prmoc_pnu_contr > 0 THEN 3
-					ELSE 1
-				END AS cod_tipo_operacion, 
-				NULL AS ind_contrato_vencido,
-				NULL AS ind_contrato_vencido_giros_activos,
-				MOC.prmoc_pco_ofici,
-				MOC.prmoc_pco_moned,
-				MOC.prmoc_pco_produ,
-				MOC.prmoc_pnu_oper,
-				MOC.prmoc_pnu_contr,
+				1 AS cod_tipo_operacion, 
+				0 AS ind_contrato_vencido,
+				0 AS ind_contrato_vencido_giros_activos,
 				@psCedula_Usuario AS cod_usuario
-			FROM	@ptPRMOC MOC
+		FROM	#TTEMP_PRMOC MOC
 				INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
 				ON MOC.cod_operacion = GRA.cod_operacion
-			WHERE	GRA.cod_estado	=	CASE	
-											WHEN MOC.prmoc_pnu_contr > 0 THEN GRA.cod_estado
-											ELSE 1
-										END
+		WHERE	MOC.Indicador_Es_Giro = 0
+			AND GRA.cod_estado = 1 
+        GROUP BY GRA.cod_operacion, 
+				GRA.cod_garantia_real
 
-			/*Se obtienen los contratos y las garantías relacionadas a estos*/
-			INSERT	INTO dbo.TMP_OPERACIONES(
-				cod_operacion,
-				cod_garantia,
-				cod_tipo_garantia,
-				cod_tipo_operacion,
-				ind_contrato_vencido,
-				ind_contrato_vencido_giros_activos,
-				cod_oficina,
-				cod_moneda,
-				cod_producto,
-				num_operacion,
-				num_contrato,
-				cod_usuario)
-			SELECT	DISTINCT 
-				MCA.cod_operacion, 
+
+		/*Se obtienen los contratos vigentes y las garantías relacionadas a estos*/
+		INSERT	INTO dbo.TMP_OPERACIONES(cod_operacion, cod_garantia, cod_tipo_garantia,
+										 cod_tipo_operacion, ind_contrato_vencido,
+										 ind_contrato_vencido_giros_activos, cod_usuario)
+		SELECT	MCA.Cod_Operacion_Contrato, 
 				GRA.cod_garantia_real,
 				2 AS cod_tipo_garantia,
 				2 AS cod_tipo_operacion, 
-				NULL AS ind_contrato_vencido,
-				NULL AS ind_contrato_vencido_giros_activos,
-				MCA.prmca_pco_ofici,
-				MCA.prmca_pco_moned,
-				MCA.prmca_pco_produc,
-				NULL AS num_operacion,
-				MCA.prmca_pnu_contr,
+				0 AS ind_contrato_vencido,
+				0 AS ind_contrato_vencido_giros_activos,
 				@psCedula_Usuario AS cod_usuario
-			FROM	@ptPRMCA MCA
-				INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
-				ON GRA.cod_operacion = MCA.cod_operacion
+		FROM	#TEMP_CONTRATOS_VIGENTES MCA
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
+			ON GRA.cod_operacion = MCA.Cod_Operacion_Contrato
+		GROUP BY MCA.Cod_Operacion_Contrato, 
+				GRA.cod_garantia_real
 
-			/*Se obtienen los giros asociados a los contratos y se les asigna las garantías relacionadas a este último*/
-			INSERT	INTO dbo.TMP_OPERACIONES(
-				cod_operacion,
-				cod_garantia,
-				cod_tipo_garantia,
-				cod_tipo_operacion,
-				ind_contrato_vencido,
-				ind_contrato_vencido_giros_activos,
-				cod_oficina,
-				cod_moneda,
-				cod_producto,
-				num_operacion,
-				num_contrato,
-				cod_oficina_contrato, 
-				cod_moneda_contrato, 
-				cod_producto_contrato,
-				cod_usuario)
-			SELECT	DISTINCT 
-				GO1.cod_operacion, 
-				TMP.cod_garantia,
+		/*Se obtienen las garantías de los contratos vencidos con giros activos y sus garantías reales*/
+		INSERT	INTO dbo.TMP_OPERACIONES(cod_operacion, cod_garantia, cod_tipo_garantia,
+										 cod_tipo_operacion, ind_contrato_vencido,
+										 ind_contrato_vencido_giros_activos, cod_usuario)
+		SELECT	MCA.Cod_Operacion_Contrato, 
+				GRA.cod_garantia_real,
 				2 AS cod_tipo_garantia,
-				CASE 
-					WHEN PRM.prmoc_pnu_contr > 0 THEN 3
-					ELSE 1
-				END AS cod_tipo_operacion, 
-				NULL AS ind_contrato_vencido,
-				NULL AS ind_contrato_vencido_giros_activos,
-				GO1.cod_oficina,
-				GO1.cod_moneda,
-				GO1.cod_producto,
-				GO1.num_operacion,
-				GO1.num_contrato,
-				TMP.cod_oficina AS cod_oficina_contrato,
-				TMP.cod_moneda AS cod_moneda_contrato,
-				TMP.cod_producto AS cod_producto_contrato,
+				2 AS cod_tipo_operacion, 
+				1 AS ind_contrato_vencido,
+				1 AS ind_contrato_vencido_giros_activos,
 				@psCedula_Usuario AS cod_usuario
-			FROM	@ptPRMOC PRM
-				INNER JOIN dbo.GAR_OPERACION GO1 
-				ON	GO1.cod_contabilidad = PRM.prmoc_pco_conta
-				AND GO1.cod_oficina = PRM.prmoc_pco_ofici
-				AND GO1.cod_moneda = PRM.prmoc_pco_moned
-				AND GO1.cod_producto = PRM.prmoc_pco_produ
-				AND GO1.num_operacion = PRM.prmoc_pnu_oper
-				INNER JOIN dbo.TMP_OPERACIONES TMP 
-				ON TMP.cod_oficina = PRM.prmoc_pco_oficon
-				AND TMP.cod_moneda = PRM.prmoc_pcomonint
-				AND TMP.num_contrato = PRM.prmoc_pnu_contr
-			WHERE	PRM.prmoc_pnu_contr > 0
-				AND GO1.cod_estado = 1 
-				AND GO1.num_contrato > 0
-				AND TMP.cod_tipo_garantia = 2
-				AND TMP.cod_tipo_operacion = 2
-				AND TMP.cod_usuario = @psCedula_Usuario
+		FROM	#TEMP_CONTRATOS_VENCIDOS_GA MCA
+				INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
+			ON GRA.cod_operacion = MCA.Cod_Operacion_Contrato
+		GROUP BY MCA.Cod_Operacion_Contrato, 
+				GRA.cod_garantia_real
 
-			/*Se eliminan los contratos que fueron cargados*/
-			DELETE	FROM dbo.TMP_OPERACIONES 
-			WHERE	cod_tipo_garantia = 2 
-				AND cod_tipo_operacion = 2
-				AND cod_usuario = @psCedula_Usuario 
+		/*Se obtienen los giros activos de contratos vigentes y las garantías relacionadas a estos*/
+		INSERT	INTO dbo.TMP_OPERACIONES(cod_operacion, cod_garantia, cod_tipo_garantia,
+										 cod_tipo_operacion, ind_contrato_vencido,
+										 ind_contrato_vencido_giros_activos, cod_usuario)
+		SELECT	MCA.Cod_Operacion_Giro, 
+				GRA.cod_garantia_real,
+				2 AS cod_tipo_garantia,
+				3 AS cod_tipo_operacion, 
+				0 AS ind_contrato_vencido,
+				1 AS ind_contrato_vencido_giros_activos,
+				@psCedula_Usuario AS cod_usuario
+		FROM	#TEMP_CONTRATOS_VIGENTES MCA
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
+			ON GRA.cod_operacion = MCA.Cod_Operacion_Contrato
+		GROUP BY MCA.Cod_Operacion_Giro, 
+				GRA.cod_garantia_real
+
+		/*Se obtienen las garantías de los contratos vencidos con giros activos y se les asignan a estos giros las garantías reales de sus contratos*/
+		INSERT	INTO dbo.TMP_OPERACIONES(cod_operacion, cod_garantia, cod_tipo_garantia,
+										 cod_tipo_operacion, ind_contrato_vencido,
+										 ind_contrato_vencido_giros_activos, cod_usuario)
+		SELECT	MCA.Cod_Operacion_Giro, 
+				GRA.cod_garantia_real,
+				2 AS cod_tipo_garantia,
+				3 AS cod_tipo_operacion, 
+				1 AS ind_contrato_vencido,
+				1 AS ind_contrato_vencido_giros_activos,
+				@psCedula_Usuario AS cod_usuario
+		FROM	#TEMP_CONTRATOS_VENCIDOS_GA MCA
+			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRA
+			ON GRA.cod_operacion = MCA.Cod_Operacion_Contrato
+		GROUP BY MCA.Cod_Operacion_Giro, 
+				GRA.cod_garantia_real
+
 		END
 	IF(@piEjecutarParte = 2)
 	BEGIN
@@ -798,7 +838,7 @@ DECLARE
 		SELECT	prmca_pco_ofici, prmca_pco_moned, 10 AS prmca_pco_produc, prmca_pnu_contr
 		FROM	dbo.GAR_SICC_PRMCA 
 		WHERE	prmca_estado = 'A'
-			AND prmca_pfe_defin >= @lintFechaEntero
+			AND prmca_pfe_defin >= @viFecha_Actual_Entera
 	
 		/*Se obtienen todos los contratos vencidos con giros activos*/
 		
@@ -810,7 +850,7 @@ DECLARE
 			AND MOC.prmoc_pcomonint = MCA.prmca_pco_moned
 			AND MOC.prmoc_pnu_contr = MCA.prmca_pnu_contr
 		WHERE	MCA.prmca_estado = 'A'
-			AND MCA.prmca_pfe_defin < @lintFechaEntero
+			AND MCA.prmca_pfe_defin < @viFecha_Actual_Entera
 			AND MOC.prmoc_pse_proces = 1
 			AND MOC.prmoc_estado = 'A'
 			AND MOC.prmoc_pnu_contr > 0
@@ -835,7 +875,7 @@ DECLARE
 				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
 				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
 			WHERE	MG1.prmgt_estado = 'A'
-				AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+				AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
@@ -852,7 +892,7 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
 		WHERE	MG1.prmgt_estado = 'A'
-			AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+			AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_HIPOTECAS(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
@@ -869,7 +909,7 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 		WHERE	MG1.prmgt_estado = 'A'
-			AND MG1.prmgt_pcoclagar IN (10, 12, 13, 14, 15, 16, 17)
+			AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
 		
 		/*Se obtiene la fecha que es mayor*/
@@ -900,7 +940,7 @@ DECLARE
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-		WHERE	GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
+		WHERE	((GGR.cod_clase_garantia = 10) OR ((GGR.cod_clase_garantia >= 12) AND (GGR.cod_clase_garantia <= 17))) 
 					
 		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
 		/*Se obtienen los avalúos de las garantías de hipoteca común relacionadas a las operaciones*/
@@ -928,29 +968,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -965,7 +1004,26 @@ DECLARE
 		WHERE	TMP.cod_tipo_garantia = 2
 			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
-			AND GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
+			AND ((GGR.cod_clase_garantia = 10) OR ((GGR.cod_clase_garantia >= 12) AND (GGR.cod_clase_garantia <= 17))) 
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 		/*Se obtienen los valúos de las garantías de hipoteca común relacionadas a los contratos*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
@@ -992,29 +1050,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1029,7 +1086,26 @@ DECLARE
 		WHERE	TMP.cod_tipo_garantia = 2
 			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
-			AND GGR.cod_clase_garantia IN (10, 12, 13, 14, 15, 16, 17)
+			AND ((GGR.cod_clase_garantia = 10) OR ((GGR.cod_clase_garantia >= 12) AND (GGR.cod_clase_garantia <= 17))) 
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 
 
@@ -1149,29 +1225,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1187,6 +1262,25 @@ DECLARE
 			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND GGR.cod_clase_garantia = 11
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 		/*Se obtienen los valúos de las garantías de hipoteca común alfanuméricas relacionadas a los contratos*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
@@ -1213,29 +1307,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1251,6 +1344,25 @@ DECLARE
 			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND GGR.cod_clase_garantia = 11
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 
 
@@ -1324,7 +1436,8 @@ DECLARE
 				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
 				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
 			WHERE	MG1.prmgt_estado = 'A'
-				AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+				AND MG1.prmgt_pcoclagar >= 20 
+				AND MG1.prmgt_pcoclagar <= 29
 				AND MG1.prmgt_pcotengar = 1
 				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
@@ -1342,7 +1455,8 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
 		WHERE	MG1.prmgt_estado = 'A'
-			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+			AND MG1.prmgt_pcoclagar >= 20 
+			AND MG1.prmgt_pcoclagar <= 29
 			AND MG1.prmgt_pcotengar = 1
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
@@ -1360,7 +1474,8 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 		WHERE	MG1.prmgt_estado = 'A'
-			AND MG1.prmgt_pcoclagar BETWEEN 20 AND 29
+			AND MG1.prmgt_pcoclagar >= 20 
+			AND MG1.prmgt_pcoclagar <= 29
 			AND MG1.prmgt_pcotengar = 1
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 		
@@ -1395,7 +1510,7 @@ DECLARE
 			ON GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
 		WHERE	GGR.cod_clase_garantia = 18
-			OR  GGR.cod_clase_garantia BETWEEN 20 AND 29
+			OR  ((GGR.cod_clase_garantia >= 20) AND (GGR.cod_clase_garantia <= 29))
 				
 					
 		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
@@ -1424,29 +1539,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1462,7 +1576,26 @@ DECLARE
 			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia = 18)
-				OR  (GGR.cod_clase_garantia BETWEEN 20 AND 29))
+				OR ((GGR.cod_clase_garantia >= 20) AND (GGR.cod_clase_garantia <= 29)))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 		/*Se obtienen los valúos de las garantías de cédula hipotecaria no alfanuméricas relacionadas a los contratos*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
@@ -1489,29 +1622,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1527,7 +1659,26 @@ DECLARE
 			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia = 18)
-				OR  (GGR.cod_clase_garantia BETWEEN 20 AND 29))
+				OR ((GGR.cod_clase_garantia >= 20) AND (GGR.cod_clase_garantia <= 29)))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 
 		/*Se obtienen las prendas no alfanuméricas relacionadas a operaciones y contratos*/
@@ -1538,17 +1689,17 @@ DECLARE
 				MG1.prmgt_pfeavaing,
 				0 AS Indicador_Fecha_Mayor,
 				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_estado = 'A'
-				AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-						OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-						OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
-				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND (((MG1.prmgt_pcoclagar >= 30) AND (MG1.prmgt_pcoclagar <= 37))
+				OR ((MG1.prmgt_pcoclagar >= 39) AND (MG1.prmgt_pcoclagar <= 42))
+				OR ((MG1.prmgt_pcoclagar >= 44) AND (MG1.prmgt_pcoclagar <= 69)))
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
 		SELECT	MG1.prmgt_pcoclagar,
@@ -1563,9 +1714,9 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
 		WHERE	MG1.prmgt_estado = 'A'
-			AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
+			AND (((MG1.prmgt_pcoclagar >= 30) AND (MG1.prmgt_pcoclagar <= 37))
+				OR ((MG1.prmgt_pcoclagar >= 39) AND (MG1.prmgt_pcoclagar <= 42))
+				OR ((MG1.prmgt_pcoclagar >= 44) AND (MG1.prmgt_pcoclagar <= 69)))
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_PRENDAS(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
@@ -1581,9 +1732,9 @@ DECLARE
 			AND MCA.prmca_pco_produc = MG1.prmgt_pco_produ
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 		WHERE	MG1.prmgt_estado = 'A'
-			AND ((MG1.prmgt_pcoclagar BETWEEN 30 AND 37)
-					OR (MG1.prmgt_pcoclagar BETWEEN 39 AND 42)
-					OR (MG1.prmgt_pcoclagar BETWEEN 44 AND 69))
+			AND (((MG1.prmgt_pcoclagar >= 30) AND (MG1.prmgt_pcoclagar <= 37))
+				OR ((MG1.prmgt_pcoclagar >= 39) AND (MG1.prmgt_pcoclagar <= 42))
+				OR ((MG1.prmgt_pcoclagar >= 44) AND (MG1.prmgt_pcoclagar <= 69)))
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
 		
 		/*Se obtiene la fecha que es mayor*/
@@ -1616,9 +1767,9 @@ DECLARE
 			INNER JOIN 	#TEMP_GAR_PRENDAS TMP
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-		WHERE	GGR.cod_clase_garantia BETWEEN 30 AND 37
-			OR GGR.cod_clase_garantia BETWEEN 39 AND 42
-			OR GGR.cod_clase_garantia BETWEEN 44 AND 69
+		WHERE	(((GGR.cod_clase_garantia >= 30) AND (GGR.cod_clase_garantia <= 37))
+				OR ((GGR.cod_clase_garantia >= 39) AND (GGR.cod_clase_garantia <= 42))
+				OR ((GGR.cod_clase_garantia >= 44) AND (GGR.cod_clase_garantia <= 69)))
 					
 		/* El grado completo se refiere a que tan completo se encuentra un avalúo, siendo 0 = completo, 1 = incompleto*/
 		/*Se obtienen los avalúos de las garantías de prenda relacionadas a las operaciones*/
@@ -1646,29 +1797,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1683,9 +1833,28 @@ DECLARE
 		WHERE	TMP.cod_tipo_garantia = 2
 			AND TMP.cod_tipo_operacion = 1
 			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-				OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-				OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
+			AND (((GGR.cod_clase_garantia >= 30) AND (GGR.cod_clase_garantia <= 37))
+				OR ((GGR.cod_clase_garantia >= 39) AND (GGR.cod_clase_garantia <= 42))
+				OR ((GGR.cod_clase_garantia >= 44) AND (GGR.cod_clase_garantia <= 69)))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 		/*Se obtienen los valúos de las garantías de prenda relacionadas a los contratos*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
@@ -1712,29 +1881,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1749,9 +1917,28 @@ DECLARE
 		WHERE	TMP.cod_tipo_garantia = 2
 			AND TMP.cod_tipo_operacion = 2
 			AND TMP.cod_usuario = @psCedula_Usuario
-			AND ((GGR.cod_clase_garantia BETWEEN 30 AND 37)
-				OR (GGR.cod_clase_garantia BETWEEN 39 AND 42)
-				OR (GGR.cod_clase_garantia BETWEEN 44 AND 69))
+			AND (((GGR.cod_clase_garantia >= 30) AND (GGR.cod_clase_garantia <= 37))
+				OR ((GGR.cod_clase_garantia >= 39) AND (GGR.cod_clase_garantia <= 42))
+				OR ((GGR.cod_clase_garantia >= 44) AND (GGR.cod_clase_garantia <= 69)))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
 
 
 
@@ -1763,16 +1950,16 @@ DECLARE
 				MG1.prmgt_pfeavaing,
 				0 AS Indicador_Fecha_Mayor,
 				CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion
-			FROM	dbo.GAR_SICC_PRMGT MG1
-				INNER JOIN #TEMP_MOC_OPERACIONES MOC
-				ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
-				AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
-				AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
-				AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
-			WHERE	MG1.prmgt_estado = 'A'
-				AND ((MG1.prmgt_pcoclagar = 38)
-						OR (MG1.prmgt_pcoclagar = 43))
-				AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+		FROM	dbo.GAR_SICC_PRMGT MG1
+			INNER JOIN #TEMP_MOC_OPERACIONES MOC
+			ON MOC.prmoc_pco_ofici = MG1.prmgt_pco_ofici
+			AND MOC.prmoc_pco_moned = MG1.prmgt_pco_moned
+			AND MOC.prmoc_pco_produ = MG1.prmgt_pco_produ
+			AND MOC.prmoc_pnu_oper = MG1.prmgt_pnu_oper
+		WHERE	MG1.prmgt_estado = 'A'
+			AND ((MG1.prmgt_pcoclagar = 38)
+				OR (MG1.prmgt_pcoclagar = 43))
+			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
 		SELECT  MG1.prmgt_pcoclagar,
@@ -1789,7 +1976,7 @@ DECLARE
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper
 		WHERE	MG1.prmgt_estado = 'A'
 			AND ((MG1.prmgt_pcoclagar = 38)
-					OR (MG1.prmgt_pcoclagar = 43))
+				OR (MG1.prmgt_pcoclagar = 43))
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
 
 		INSERT	INTO #TEMP_GAR_PRENDAS_ALF(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, Indicador_Fecha_Mayor, Fecha_Valuacion)
@@ -1807,7 +1994,7 @@ DECLARE
 			AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 		WHERE	MG1.prmgt_estado = 'A'
 			AND ((MG1.prmgt_pcoclagar = 38)
-					OR (MG1.prmgt_pcoclagar = 43))
+				OR (MG1.prmgt_pcoclagar = 43))
 			AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
 		
 		/*Se obtiene la fecha que es mayor*/
@@ -1870,29 +2057,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1909,6 +2095,26 @@ DECLARE
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia = 38)
 				OR (GGR.cod_clase_garantia = 43))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+
 
 		/*Se obtienen los valúos de las garantías de prenda alfanuméricas relacionadas a los contratos*/
 		INSERT INTO dbo.TMP_VALUACIONES_REALES(
@@ -1935,29 +2141,28 @@ DECLARE
 			Porcentaje_Aceptacion_No_Terreno_Calculado
 			--FIN RQ: RQ_MANT_2015062410418218_00090
 			)
-		SELECT	DISTINCT 
-			GVR.cod_garantia_real, 
-			GVR.fecha_valuacion, 
-			GVR.cedula_empresa, 
-			GVR.cedula_perito, 
-			GVR.monto_ultima_tasacion_terreno, 
-			GVR.monto_ultima_tasacion_no_terreno, 
-			GVR.monto_tasacion_actualizada_terreno, 
-			GVR.monto_tasacion_actualizada_no_terreno, 
-			GVR.fecha_ultimo_seguimiento, 
-			GVR.monto_total_avaluo, 
-			GVR.cod_recomendacion_perito, 
-			GVR.cod_inspeccion_menor_tres_meses, 
-			GVR.fecha_construccion,
-			GGR.cod_tipo_bien, 
-			1 AS grado_completo,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			GVR.Porcentaje_Aceptacion_Terreno,
-			GVR.Porcentaje_Aceptacion_No_Terreno,
-			GVR.Porcentaje_Aceptacion_Terreno_Calculado,
-			GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				1 AS grado_completo,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_VALUACIONES_REALES GVR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = GVR.cod_garantia_real
@@ -1974,105 +2179,125 @@ DECLARE
 			AND TMP.cod_usuario = @psCedula_Usuario
 			AND ((GGR.cod_clase_garantia = 38)
 					OR (GGR.cod_clase_garantia = 43))
+		GROUP BY GVR.cod_garantia_real, 
+				GVR.fecha_valuacion, 
+				GVR.cedula_empresa, 
+				GVR.cedula_perito, 
+				GVR.monto_ultima_tasacion_terreno, 
+				GVR.monto_ultima_tasacion_no_terreno, 
+				GVR.monto_tasacion_actualizada_terreno, 
+				GVR.monto_tasacion_actualizada_no_terreno, 
+				GVR.fecha_ultimo_seguimiento, 
+				GVR.monto_total_avaluo, 
+				GVR.cod_recomendacion_perito, 
+				GVR.cod_inspeccion_menor_tres_meses, 
+				GVR.fecha_construccion,
+				GGR.cod_tipo_bien, 
+				TMP.cod_usuario,
+				GVR.Porcentaje_Aceptacion_Terreno,
+				GVR.Porcentaje_Aceptacion_No_Terreno,
+				GVR.Porcentaje_Aceptacion_Terreno_Calculado,
+				GVR.Porcentaje_Aceptacion_No_Terreno_Calculado
+
 					
 					
 		/*Se selecciona la información de la garantía real asociada a los contratos*/
 		INSERT	INTO dbo.TMP_GARANTIAS_REALES
-		SELECT	DISTINCT 
-			GO1.cod_contabilidad, 
-			GO1.cod_oficina, 
-			GO1.cod_moneda, 
-			GO1.cod_producto, 
-			GO1.num_operacion AS operacion, 
-			GGR.cod_tipo_bien, 
-			CASE 
-				WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
-				WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
-				WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia <> 38) AND (GGR.cod_clase_garantia <> 43)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
-				WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
-			END	AS cod_bien, 
-			GRO.cod_tipo_mitigador, 
-			GRO.cod_tipo_documento_legal, 
-			GRO.monto_mitigador, 
-			CASE 
-				WHEN CONVERT(VARCHAR(10),GRO.fecha_presentacion,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),GRO.fecha_presentacion,103)
-			END AS fecha_presentacion,
-			GRO.cod_inscripcion, 
-			GRO.porcentaje_responsabilidad, 
-			CASE 
-				WHEN CONVERT(VARCHAR(10),GRO.fecha_constitucion,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),GRO.fecha_constitucion,103)
-			END AS fecha_constitucion, 
-			GRO.cod_grado_gravamen, 
-			GRO.cod_tipo_acreedor, 
-			GRO.cedula_acreedor, 
-			CASE 
-				WHEN CONVERT(VARCHAR(10),GRO.fecha_vencimiento,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),GRO.fecha_vencimiento,103)
-			END AS fecha_vencimiento, 
-			GRO.cod_operacion_especial, 
-			CASE 
-				WHEN VGR.fecha_valuacion IS NULL THEN ''
-				WHEN CONVERT(VARCHAR(10),VGR.fecha_valuacion,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),VGR.fecha_valuacion,103)
-			END AS fecha_valuacion, 
-			VGR.cedula_empresa, 
-			CASE 
-				WHEN VGR.cedula_empresa IS NULL THEN NULL 
-				ELSE 2 END 
-			AS cod_tipo_empresa, 
-			VGR.cedula_perito, 
-			GPR.cod_tipo_persona AS cod_tipo_perito, 
-			VGR.monto_ultima_tasacion_terreno, 
-			VGR.monto_ultima_tasacion_no_terreno, 
-			VGR.monto_tasacion_actualizada_terreno, 
-			VGR.monto_tasacion_actualizada_no_terreno, 
-			CASE 
-				WHEN  VGR.fecha_ultimo_seguimiento IS NULL THEN ''
-				WHEN CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103)
-			END AS fecha_ultimo_seguimiento, 
-			COALESCE(VGR.monto_tasacion_actualizada_terreno,0) + COALESCE(VGR.monto_tasacion_actualizada_no_terreno,0) AS monto_total_avaluo,
-			CASE 
-				WHEN  VGR.fecha_construccion IS NULL THEN ''
-				WHEN CONVERT(VARCHAR(10),VGR.fecha_construccion,103) = '01/01/1900' THEN ''
-				ELSE CONVERT(VARCHAR(10),VGR.fecha_construccion,103)
-			END AS fecha_construccion,
-			GGR.cod_grado,
-			GGR.cedula_hipotecaria,
-			GGR.cod_clase_garantia,
-			GO1.cod_operacion,
-			GGR.cod_garantia_real,
-			GGR.cod_tipo_garantia_real,
-			COALESCE(GGR.numero_finca,'') AS numero_finca,
-			COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
-			COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
-			GO1.cedula_deudor,
-			1 AS cod_estado,
-			NULL AS cod_liquidez,
-			NULL AS cod_tenencia,
-			NULL AS cod_moneda,
-			NULL AS cod_partido,
-			NULL AS cod_tipo_garantia,
-			NULL AS Garantia_Real,
-			NULL AS fecha_prescripcion,
-			TMP.cod_tipo_operacion,
-			TMP.ind_contrato_vencido,
-			1 AS ind_duplicidad,
-			TMP.cod_usuario,
-			--INICIO RQ: RQ_MANT_2015062410418218_00090
-			VGR.Porcentaje_Aceptacion_Terreno,
-			VGR.Porcentaje_Aceptacion_No_Terreno,
-			VGR.Porcentaje_Aceptacion_Terreno_Calculado,
-			VGR.Porcentaje_Aceptacion_No_Terreno_Calculado,
-			NULL AS Codigo_SAP,
-			NULL AS Monto_Poliza_Colonizado,
-			NULL AS Fecha_Vencimiento_Poliza,
-			NULL AS Codigo_Tipo_Poliza_Sugef,
-			'N' AS Indicador_Poliza,
-			NULL AS Indicador_Coberturas_Obligatorias
-			--FIN RQ: RQ_MANT_2015062410418218_00090
+		SELECT	GO1.cod_contabilidad, 
+				GO1.cod_oficina, 
+				GO1.cod_moneda, 
+				GO1.cod_producto, 
+				GO1.num_operacion AS operacion, 
+				GGR.cod_tipo_bien, 
+				CASE 
+					WHEN GGR.cod_tipo_garantia_real = 1 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')  
+					WHEN GGR.cod_tipo_garantia_real = 2 THEN COALESCE(CONVERT(VARCHAR(2), GGR.cod_partido),'') + COALESCE(GGR.numero_finca,'')
+					WHEN ((GGR.cod_tipo_garantia_real = 3) AND (GGR.cod_clase_garantia >= 30) AND (GGR.cod_clase_garantia <= 37) 
+							AND (GGR.cod_clase_garantia >= 39) AND (GGR.cod_clase_garantia <= 42) AND (GGR.cod_clase_garantia >= 44) AND (GGR.cod_clase_garantia <= 69)) THEN COALESCE(GGR.cod_clase_bien,'') + COALESCE(GGR.num_placa_bien,'') 
+					WHEN ((GGR.cod_tipo_garantia_real = 3) AND ((GGR.cod_clase_garantia = 38) OR (GGR.cod_clase_garantia = 43))) THEN COALESCE(GGR.num_placa_bien,'') 
+				END	AS cod_bien, 
+				GRO.cod_tipo_mitigador, 
+				GRO.cod_tipo_documento_legal, 
+				GRO.monto_mitigador, 
+				CASE 
+					WHEN CONVERT(VARCHAR(10),GRO.fecha_presentacion,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),GRO.fecha_presentacion,103)
+				END AS fecha_presentacion,
+				GRO.cod_inscripcion, 
+				GRO.porcentaje_responsabilidad, 
+				CASE 
+					WHEN CONVERT(VARCHAR(10),GRO.fecha_constitucion,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),GRO.fecha_constitucion,103)
+				END AS fecha_constitucion, 
+				GRO.cod_grado_gravamen, 
+				GRO.cod_tipo_acreedor, 
+				GRO.cedula_acreedor, 
+				CASE 
+					WHEN CONVERT(VARCHAR(10),GRO.fecha_vencimiento,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),GRO.fecha_vencimiento,103)
+				END AS fecha_vencimiento, 
+				GRO.cod_operacion_especial, 
+				CASE 
+					WHEN VGR.fecha_valuacion IS NULL THEN ''
+					WHEN CONVERT(VARCHAR(10),VGR.fecha_valuacion,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),VGR.fecha_valuacion,103)
+				END AS fecha_valuacion, 
+				VGR.cedula_empresa, 
+				CASE 
+					WHEN VGR.cedula_empresa IS NULL THEN NULL 
+					ELSE 2 END 
+				AS cod_tipo_empresa, 
+				VGR.cedula_perito, 
+				GPR.cod_tipo_persona AS cod_tipo_perito, 
+				VGR.monto_ultima_tasacion_terreno, 
+				VGR.monto_ultima_tasacion_no_terreno, 
+				VGR.monto_tasacion_actualizada_terreno, 
+				VGR.monto_tasacion_actualizada_no_terreno, 
+				CASE 
+					WHEN  VGR.fecha_ultimo_seguimiento IS NULL THEN ''
+					WHEN CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103)
+				END AS fecha_ultimo_seguimiento, 
+				COALESCE(VGR.monto_tasacion_actualizada_terreno,0) + COALESCE(VGR.monto_tasacion_actualizada_no_terreno,0) AS monto_total_avaluo,
+				CASE 
+					WHEN  VGR.fecha_construccion IS NULL THEN ''
+					WHEN CONVERT(VARCHAR(10),VGR.fecha_construccion,103) = '01/01/1900' THEN ''
+					ELSE CONVERT(VARCHAR(10),VGR.fecha_construccion,103)
+				END AS fecha_construccion,
+				GGR.cod_grado,
+				GGR.cedula_hipotecaria,
+				GGR.cod_clase_garantia,
+				GO1.cod_operacion,
+				GGR.cod_garantia_real,
+				GGR.cod_tipo_garantia_real,
+				COALESCE(GGR.numero_finca,'') AS numero_finca,
+				COALESCE(GGR.num_placa_bien,'') AS num_placa_bien,
+				COALESCE(GGR.cod_clase_bien,'') AS cod_clase_bien,
+				GO1.cedula_deudor,
+				1 AS cod_estado,
+				NULL AS cod_liquidez,
+				NULL AS cod_tenencia,
+				NULL AS cod_moneda,
+				NULL AS cod_partido,
+				NULL AS cod_tipo_garantia,
+				NULL AS Garantia_Real,
+				NULL AS fecha_prescripcion,
+				TMP.cod_tipo_operacion,
+				TMP.ind_contrato_vencido,
+				1 AS ind_duplicidad,
+				TMP.cod_usuario,
+				--INICIO RQ: RQ_MANT_2015062410418218_00090
+				VGR.Porcentaje_Aceptacion_Terreno,
+				VGR.Porcentaje_Aceptacion_No_Terreno,
+				VGR.Porcentaje_Aceptacion_Terreno_Calculado,
+				VGR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+				NULL AS Codigo_SAP,
+				NULL AS Monto_Poliza_Colonizado,
+				NULL AS Fecha_Vencimiento_Poliza,
+				NULL AS Codigo_Tipo_Poliza_Sugef,
+				'N' AS Indicador_Poliza,
+				NULL AS Indicador_Coberturas_Obligatorias
+				--FIN RQ: RQ_MANT_2015062410418218_00090
 		FROM	dbo.GAR_OPERACION GO1 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
 			ON GO1.cod_operacion = GRO.cod_operacion 
@@ -2088,297 +2313,122 @@ DECLARE
 		WHERE GRO.cod_estado = 1
 			AND VGR.cod_usuario = @psCedula_Usuario
 			AND TMP.cod_tipo_garantia = 2
-			AND TMP.cod_tipo_operacion IN (1, 3)
+			AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
 			AND TMP.cod_usuario = @psCedula_Usuario
 
 	END
 	IF(@piEjecutarParte = 3)
 	BEGIN
-		/*Se obtienen las operaciones duplicadas*/
-		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-		SELECT	cod_oficina, 
-				cod_moneda, 
-				cod_producto, 
-				operacion,
-				cod_tipo_operacion, 
-				cod_bien AS cod_garantia_sicc,
-				2 AS cod_tipo_garantia,
-				@psCedula_Usuario AS cod_usuario,
-				MAX(cod_garantia_real) AS cod_garantia,
-				NULL AS cod_grado
 
-		FROM	dbo.TMP_GARANTIAS_REALES
-		WHERE	cod_usuario	= @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3)
-		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, cod_bien, cod_tipo_operacion
-		HAVING	COUNT(1) > 1
-
-		/*Se cambia el código del campo ind_duplicidad a 2, indicando con esto que la operación se encuentra duplicada.
-		  Se toma en cuenta el valor de varios campos para poder determinar si el registro se encuentra duplicado.*/
-		UPDATE	dbo.TMP_GARANTIAS_REALES 
-		SET		ind_duplicidad = 2
-		FROM	dbo.TMP_GARANTIAS_REALES GR
-		WHERE	GR.cod_usuario = @psCedula_Usuario
-			AND GR.cod_tipo_operacion IN (1, 3)
-			AND EXISTS (SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TGR
-						WHERE	COALESCE(TGR.cod_usuario, '') = COALESCE(GR.cod_usuario, '')
-							AND TGR.cod_tipo_garantia = 2
-							AND TGR.cod_tipo_operacion IN (1, 3)
-							AND TGR.cod_oficina = GR.cod_oficina
-							AND TGR.cod_moneda = GR.cod_moneda
-							AND TGR.cod_producto = GR.cod_producto
-							AND TGR.operacion = GR.operacion
-							AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR.cod_bien, '')
-							AND GR.cod_tipo_documento_legal IS NULL
-							AND GR.fecha_presentacion IS NULL
-							AND GR.cod_tipo_mitigador IS NULL
-							AND GR.cod_inscripcion IS NULL)
-		
-
-		/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
+		/*Se eliminan los registros incompletos*/
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
 		WHERE	cod_usuario	= @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3) 
-			AND ind_duplicidad = 2 
+			AND ((cod_tipo_operacion = 1) OR (cod_tipo_operacion = 3)) 
+			AND cod_tipo_garantia = 2
+			AND COALESCE(cod_tipo_documento_legal, -1) = -1
+			AND LEN(fecha_presentacion) = 0
+			AND COALESCE(cod_tipo_mitigador, -1) = -1
+			AND COALESCE(cod_inscripcion, -1) = -1
 			 
-		/*Se eliminan los duplicados obtenidos*/
-		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
+		/*Se eliminan los registros de hipotecas comunes duplicadas*/
+		WITH CTE (cod_clase_garantia, cod_partido, numero_finca, cantidadRegistrosDuplicados)
+		AS
+		(
+			SELECT	cod_clase_garantia, cod_partido, numero_finca,
+					ROW_NUMBER() OVER(PARTITION BY cod_clase_garantia, cod_partido, numero_finca  ORDER BY cod_clase_garantia, cod_partido, numero_finca) AS cantidadRegistrosDuplicados
+			FROM	dbo.TMP_GARANTIAS_REALES
 		WHERE	cod_usuario = @psCedula_Usuario  
-			AND cod_tipo_operacion IN (1, 3)
+			AND ((cod_tipo_operacion = 1) OR (cod_tipo_operacion = 3))
+				AND cod_tipo_garantia = 2
+				AND cod_clase_garantia >= 10 
+				AND cod_clase_garantia <= 17
+		)
+		DELETE
+		FROM CTE
+		WHERE cantidadRegistrosDuplicados > 1
 
-		/*Se obtienen las garantías reales de hipoteca común duplicadas*/
-		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-		SELECT	cod_oficina, 
-				cod_moneda, 
-				cod_producto, 
-				operacion,
-				cod_tipo_operacion, 
-				numero_finca AS cod_garantia_sicc,
-				2 AS cod_tipo_garantia,
-				@psCedula_Usuario AS cod_usuario,
-				MAX(cod_garantia_real) AS cod_garantia,
-				NULL AS cod_grado
+		/*Se eliminan los registros de cédulas hipotecarias con clase 18 duplicadas*/
+		WITH CTE (cod_clase_garantia, cod_partido, numero_finca, cod_grado, cantidadRegistrosDuplicados)
+		AS
+		(
+			SELECT	cod_clase_garantia, cod_partido, numero_finca, cod_grado,
+					ROW_NUMBER() OVER(PARTITION BY cod_clase_garantia, cod_partido, numero_finca, cod_grado  ORDER BY cod_clase_garantia, cod_partido, numero_finca, cod_grado) AS cantidadRegistrosDuplicados
 		FROM	dbo.TMP_GARANTIAS_REALES
 		WHERE	cod_usuario = @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3)
-			AND cod_tipo_garantia_real = 1 
-		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_tipo_operacion
-		HAVING	COUNT(1) > 1
-
-		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-		SET		cod_garantia = TM2.cod_llave
-		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
-			INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
-			ON	TM2.cod_oficina = TM1.cod_oficina
-			AND TM2.cod_moneda = TM1.cod_moneda
-			AND TM2.cod_producto = TM1.cod_producto
-			AND TM2.operacion = TM1.operacion
-			AND TM2.cod_tipo_garantia_real = 1
-			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
-			AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-		WHERE	TM1.cod_usuario = @psCedula_Usuario
-			AND TM1.cod_tipo_garantia = 2
-			AND TM1.cod_tipo_operacion IN (1, 3)
-			AND TM2.cod_usuario = @psCedula_Usuario
-			AND TM2.cod_tipo_operacion IN (1, 3)
-			AND TM2.cod_tipo_garantia = 2
-			AND TM2.cod_tipo_garantia_real = 1
-			AND TM2.cod_llave	= (	SELECT	MIN(TM3.cod_llave)
-									FROM	dbo.TMP_GARANTIAS_REALES TM3
-									WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
-										AND TM3.cod_tipo_operacion IN (1, 3)
-										AND TM3.cod_tipo_garantia_real = 1
-										AND TM3.cod_oficina = TM1.cod_oficina
-										AND TM3.cod_moneda = TM1.cod_moneda
-										AND TM3.cod_producto = TM1.cod_producto
-										AND TM3.operacion = TM1.operacion
-										AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, ''))
-
-		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-		UPDATE	dbo.TMP_GARANTIAS_REALES
-		SET		ind_duplicidad = 2
-		FROM	dbo.TMP_GARANTIAS_REALES GR1
-		WHERE	GR1.cod_usuario = @psCedula_Usuario
-			AND GR1.cod_tipo_operacion IN (1, 3)
-			AND GR1.cod_tipo_garantia_real = 1
-			AND EXISTS (	SELECT 1 
-							FROM dbo.TMP_OPERACIONES_DUPLICADAS TGR
-							WHERE COALESCE(TGR.cod_usuario, '') = COALESCE(GR1.cod_usuario, '')
-								AND TGR.cod_tipo_garantia = 2
-								AND TGR.cod_tipo_operacion IN (1, 3)
-								AND TGR.cod_oficina	= GR1.cod_oficina
-								AND TGR.cod_moneda = GR1.cod_moneda
-								AND TGR.cod_producto = GR1.cod_producto
-								AND TGR.operacion = GR1.operacion
-								AND COALESCE(TGR.cod_garantia_sicc, '') = COALESCE(GR1.numero_finca, '') 
-								AND TGR.cod_garantia <> GR1.cod_llave)
+			AND ((cod_tipo_operacion = 1) OR (cod_tipo_operacion = 3))
+				AND cod_tipo_garantia = 2
+				AND cod_clase_garantia = 18
+		)
+		DELETE
+		FROM CTE
+		WHERE cantidadRegistrosDuplicados > 1
 
 
-		/*Se eliminan los duplicados obtenidos*/
-		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-		WHERE	cod_usuario	= @psCedula_Usuario  
+		/*Se eliminan los registros de cédulas hipotecarias con clase diferente 18 duplicadas*/
+		WITH CTE (cod_clase_garantia, cod_partido, numero_finca, cod_grado, cantidadRegistrosDuplicados)
+		AS
+		(
+			SELECT	cod_clase_garantia, cod_partido, numero_finca, cod_grado,
+					ROW_NUMBER() OVER(PARTITION BY cod_clase_garantia, cod_partido, numero_finca, cod_grado  ORDER BY cod_clase_garantia, cod_partido, numero_finca, cod_grado) AS cantidadRegistrosDuplicados
+		FROM	dbo.TMP_GARANTIAS_REALES
+		WHERE	cod_usuario = @psCedula_Usuario
+			AND ((cod_tipo_operacion = 1) OR (cod_tipo_operacion = 3))
 			AND cod_tipo_garantia = 2
-			AND cod_tipo_operacion IN (1, 3)
+				AND cod_clase_garantia >= 20 
+				AND cod_clase_garantia <= 29
+		)
+		DELETE
+		FROM CTE
+		WHERE cantidadRegistrosDuplicados > 1
 
-		/*Se obtienen las garantías reales de cédulas hipotecarias duplicadas*/
-		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-		SELECT	cod_oficina, 
-				cod_moneda, 
-				cod_producto, 
-				operacion,
-				cod_tipo_operacion, 
-				numero_finca AS cod_garantia_sicc,
-				2 AS cod_tipo_garantia,
-				@psCedula_Usuario AS cod_usuario,
-				MAX(cod_garantia_real) AS cod_garantia,
-				cod_grado
+		/*Se eliminan los registros de prendas duplicadas*/
+		WITH CTE (cod_clase_garantia, num_placa_bien, cantidadRegistrosDuplicados)
+		AS
+		(
+			SELECT	cod_clase_garantia, num_placa_bien,
+					ROW_NUMBER() OVER(PARTITION BY cod_clase_garantia, num_placa_bien  ORDER BY cod_clase_garantia, num_placa_bien) AS cantidadRegistrosDuplicados
 		FROM	dbo.TMP_GARANTIAS_REALES
 		WHERE	cod_usuario = @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3)
-			AND cod_tipo_garantia_real = 2
-		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, numero_finca, cod_grado, cod_tipo_operacion
-		HAVING	COUNT(1) > 1
+			AND ((cod_tipo_operacion = 1) OR (cod_tipo_operacion = 3))
+				AND cod_tipo_garantia = 2
+				AND cod_clase_garantia >= 30 
+				AND cod_clase_garantia <= 69
+		)
+		DELETE
+		FROM CTE
+		WHERE cantidadRegistrosDuplicados > 1
 
-		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-		SET		cod_garantia	= TM2.cod_llave
-		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
-		INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
-		ON	TM2.cod_oficina = TM1.cod_oficina
-			AND TM2.cod_moneda = TM1.cod_moneda
-			AND TM2.cod_producto = TM1.cod_producto
-			AND TM2.operacion = TM1.operacion
-			AND TM2.cod_tipo_garantia_real = 2
-			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
-			AND COALESCE(TM2.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-			AND TM2.cod_grado = TM1.cod_grado
-		WHERE	TM1.cod_usuario = @psCedula_Usuario
-			AND TM1.cod_tipo_garantia = 2
-			AND TM1.cod_tipo_operacion IN (1, 3)
-			AND TM2.cod_usuario = @psCedula_Usuario
-			AND TM2.cod_tipo_operacion IN (1, 3)
-			AND TM2.cod_tipo_garantia_real = 2
-			AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
-									FROM	dbo.TMP_GARANTIAS_REALES TM3
-									WHERE	COALESCE(TM3.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
-										AND TM3.cod_tipo_operacion IN (1, 3)
-										AND TM3.cod_oficina = TM1.cod_oficina
-										AND TM3.cod_moneda = TM1.cod_moneda
-										AND TM3.cod_producto = TM1.cod_producto
-										AND TM3.operacion = TM1.operacion
-										AND COALESCE(TM3.numero_finca, '') = COALESCE(TM1.cod_garantia_sicc, '')
-										AND TM3.cod_grado = TM1.cod_grado
-										AND TM3.cod_tipo_garantia_real = 2)
-
-		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-		UPDATE	dbo.TMP_GARANTIAS_REALES
-		SET		ind_duplicidad = 2
-		FROM	dbo.TMP_GARANTIAS_REALES TM1
-		WHERE	TM1.cod_usuario = @psCedula_Usuario
-			AND TM1.cod_tipo_operacion IN (1, 3)
-			AND TM1.cod_tipo_garantia_real = 2
-			AND EXISTS (	SELECT 1 
-							FROM dbo.TMP_OPERACIONES_DUPLICADAS TOD
-							WHERE	COALESCE(TOD.cod_usuario, '') = COALESCE(TM1.cod_usuario, '')
-								AND TOD.cod_tipo_garantia = 2
-								AND TOD.cod_tipo_operacion IN (1, 3)
-								AND TOD.cod_oficina = TM1.cod_oficina
-								AND TOD.cod_moneda = TM1.cod_moneda
-								AND TOD.cod_producto = TM1.cod_producto
-								AND TOD.operacion = TM1.operacion
-								AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.numero_finca, '')
-								AND TOD.cod_grado = TM1.cod_grado
-								AND TOD.cod_garantia <> TM1.cod_llave)
-
-		/*Se eliminan los duplicados obtenidos*/
-		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-		WHERE	cod_usuario = @psCedula_Usuario  
-			AND cod_tipo_garantia = 2
-			AND cod_tipo_operacion IN (1, 3)
-
-		/*Se obtienen las garantías reales de prenda duplicadas*/
-		INSERT	INTO dbo.TMP_OPERACIONES_DUPLICADAS
-		SELECT	cod_oficina, 
-				cod_moneda, 
-				cod_producto, 
-				operacion,
-				cod_tipo_operacion, 
-				num_placa_bien AS cod_garantia_sicc,
-				2 AS cod_tipo_garantia,
-				@psCedula_Usuario AS cod_usuario,
-				MAX(cod_garantia_real) AS cod_garantia,
-				NULL AS cod_grado
-		FROM	dbo.TMP_GARANTIAS_REALES
-		WHERE	cod_usuario = @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3)
-			AND cod_tipo_garantia_real = 3
-		GROUP	BY cod_oficina, cod_moneda, cod_producto, operacion, num_placa_bien, cod_tipo_operacion
-		HAVING	COUNT(1) > 1
-
-		/*Al estar ordenados los registros, se toma el que posee el valor autogenerado menor, ya que esto es lo que haría el 
-			cursor, tomaría el primer registro que encuentre y los demás los descarta.*/
-		UPDATE	dbo.TMP_OPERACIONES_DUPLICADAS
-		SET		cod_garantia = TM2.cod_llave
-		FROM	dbo.TMP_OPERACIONES_DUPLICADAS TM1
-		INNER JOIN dbo.TMP_GARANTIAS_REALES TM2
-			ON	TM2.cod_oficina = TM1.cod_oficina
-			AND TM2.cod_moneda = TM1.cod_moneda
-			AND TM2.cod_producto = TM1.cod_producto
-			AND TM2.operacion = TM1.operacion
-			AND TM2.cod_tipo_garantia_real = 3
-			AND TM2.cod_tipo_operacion = TM1.cod_tipo_operacion
-			AND COALESCE(TM2.num_placa_bien, '') = COALESCE(TM1.cod_garantia_sicc, '')
-		WHERE	TM1.cod_tipo_garantia = 2
-			AND TM2.cod_usuario = @psCedula_Usuario
-			AND TM2.cod_tipo_operacion IN (1, 3)
-			AND TM2.cod_tipo_garantia_real = 3
-			AND TM2.cod_llave = (	SELECT	MIN(TM3.cod_llave)
-									FROM	dbo.TMP_GARANTIAS_REALES TM3
-									WHERE	COALESCE(TM3.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
-										AND TM3.cod_tipo_operacion IN (1, 3)
-										AND TM3.cod_oficina	= TM1.cod_oficina
-										AND TM3.cod_moneda = TM1.cod_moneda
-										AND TM3.cod_producto = TM1.cod_producto
-										AND TM3.operacion = TM1.operacion
-										AND COALESCE(TM3.num_placa_bien, '')	= COALESCE(TM1.cod_garantia_sicc, '')
-										AND TM3.cod_tipo_garantia_real = 3)
-
-
-		/*Se eliminan los duplicados que sean diferentes al código de garantía actualizado anteriormente*/
-		UPDATE	dbo.TMP_GARANTIAS_REALES
-		SET		ind_duplicidad = 2
-		FROM	dbo.TMP_GARANTIAS_REALES TM1
-		WHERE	TM1.cod_usuario	 = @psCedula_Usuario
-			AND TM1.cod_tipo_operacion IN (1, 3)
-			AND TM1.cod_tipo_garantia_real = 3
-			AND EXISTS (SELECT	1 
-						FROM	dbo.TMP_OPERACIONES_DUPLICADAS TOD
-						WHERE	COALESCE(TOD.cod_usuario, '')	= COALESCE(TM1.cod_usuario, '')
-							AND TOD.cod_tipo_garantia = 2
-							AND TOD.cod_tipo_operacion IN (1, 3)
-							AND TOD.cod_oficina = TM1.cod_oficina
-							AND TOD.cod_moneda = TM1.cod_moneda
-							AND TOD.cod_producto = TM1.cod_producto
-							AND TOD.operacion = TM1.operacion
-							AND COALESCE(TOD.cod_garantia_sicc, '') = COALESCE(TM1.num_placa_bien, '')
-							AND TOD.cod_garantia <> TM1.cod_llave)
-
-		/*Se eliminan los registros que se encuentran duplicados, esto para el usuario que genera la información*/
-		DELETE	FROM dbo.TMP_GARANTIAS_REALES 
-		WHERE	cod_usuario	= @psCedula_Usuario
-			AND cod_tipo_operacion IN (1, 3)
-			AND ind_duplicidad = 2 
 
 	END
 	IF(@piEjecutarParte = 4)
 	BEGIN
 	
-		DECLARE @vdFechaActualSinHora	DATETIME  
+		DECLARE @vdFechaActualSinHora	DATETIME,
+				@vbIndicador_Borrar_Registros BIT,
+				@vdtFecha_Actual DATE 
+  
 		SET @vdFechaActualSinHora = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+
+		--INICIO RQ: 2016012710534870
+
+		SET	@vdtFecha_Actual = GETDATE()
+
+		--Se define si se debe eliminar el contenido de las estructuras para SICAD involucradas
+		SET	@vbIndicador_Borrar_Registros = (SELECT	CASE	
+														WHEN FECHA_PROCESO IS NULL THEN 1
+														WHEN FECHA_PROCESO < @vdtFecha_Actual THEN 1
+														ELSE 0
+													END
+											 FROM	dbo.SICAD_GAROPER
+											 GROUP BY FECHA_PROCESO)
+	
+		DELETE FROM dbo.SICAD_REALES WHERE @vbIndicador_Borrar_Registros = 1
+		DELETE FROM dbo.SICAD_REALES_POLIZA WHERE @vbIndicador_Borrar_Registros = 1
+		DELETE FROM dbo.SICAD_GAROPER WHERE  @vbIndicador_Borrar_Registros = 1
+		DELETE FROM dbo.SICAD_GAROPER_LISTA WHERE TIPO_GARANTIA = 2 AND @vbIndicador_Borrar_Registros = 1
+		DELETE FROM dbo.SICAD_GAROPER_GRAVAMEN WHERE @vbIndicador_Borrar_Registros = 1
+
+		--FIN RQ: 2016012710534870
 	
 		--INICIO RQ: RQ_MANT_2015062410418218_00090
 
@@ -2420,19 +2470,17 @@ DECLARE
 
 		/*Se insertan todos los porcentajes de aceptacion con el monto original del catalogo*/      
 
-		 SELECT DISTINCT    
-			 TGR.cod_operacion,
-			 TGR.cod_garantia_real,
-			 CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  
-			 CPA.Porcentaje_Aceptacion AS Porcentaje_Calculado_Original,
-			 COALESCE(TGR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
-			 COALESCE(TGR.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento,
-			 TGR.cod_tipo_garantia_real,
-			 TGR.cod_tipo_bien,
-			 COALESCE(TGR.monto_ultima_tasacion_no_terreno, 0) AS Monto_Ultima_Tasacion_No_Terreno,
-			 @psCedula_Usuario,
-			 GGR.Indicador_Vivienda_Habitada_Deudor
-		     
+		 SELECT	TGR.cod_operacion,
+				TGR.cod_garantia_real,
+				CPA.Porcentaje_Aceptacion AS Porcentaje_Aceptacion,  
+				CPA.Porcentaje_Aceptacion AS Porcentaje_Calculado_Original,
+				COALESCE(TGR.fecha_valuacion, '19000101') AS Fecha_Valuacion,
+				COALESCE(TGR.fecha_ultimo_seguimiento, '19000101') AS Fecha_Ultimo_Seguimiento,
+				TGR.cod_tipo_garantia_real,
+				TGR.cod_tipo_bien,
+				COALESCE(TGR.monto_ultima_tasacion_no_terreno, 0) AS Monto_Ultima_Tasacion_No_Terreno,
+				@psCedula_Usuario,
+				GGR.Indicador_Vivienda_Habitada_Deudor
 		 FROM	dbo.TMP_GARANTIAS_REALES TGR   
 			INNER JOIN  dbo.CAT_PORCENTAJE_ACEPTACION CPA
 			ON CPA.Codigo_Tipo_Garantia = 2 
@@ -2440,8 +2488,19 @@ DECLARE
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR
 			ON GGR.cod_garantia_real = TGR.cod_garantia_real 
 		 WHERE	TGR.cod_usuario =  @psCedula_Usuario	   
-			AND TGR.cod_tipo_operacion IN (1,3)
-			AND TGR.cod_tipo_bien BETWEEN 1 AND 4
+			AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+			AND TGR.cod_tipo_bien >= 1 
+			AND TGR.cod_tipo_bien <= 4
+		GROUP BY  TGR.cod_operacion,
+				 TGR.cod_garantia_real,
+				 CPA.Porcentaje_Aceptacion,  
+				 CPA.Porcentaje_Aceptacion,
+				 TGR.fecha_valuacion,
+				 TGR.fecha_ultimo_seguimiento,
+				 TGR.cod_tipo_garantia_real,
+				 TGR.cod_tipo_bien,
+				 TGR.monto_ultima_tasacion_no_terreno, 
+				 GGR.Indicador_Vivienda_Habitada_Deudor
 		 
 					
 		---------------------------------------------------------------------------------
@@ -2460,8 +2519,8 @@ DECLARE
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
 				WHERE	TMGR.cod_usuario = @psCedula_Usuario
-					AND TMGR.cod_tipo_operacion	IN (1, 3)
-					AND TMGR.fecha_presentacion	IS NOT NULL
+					AND ((TMGR.cod_tipo_operacion = 1) OR (TMGR.cod_tipo_operacion = 3))
+					AND COALESCE(TMGR.fecha_presentacion, '19000101') > '19000101'
 					AND TMGR.cod_inscripcion IS NULL
 			
 
@@ -2476,10 +2535,9 @@ DECLARE
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
 				WHERE	TMGR.cod_usuario = @psCedula_Usuario
-					AND TMGR.cod_tipo_operacion	IN (1, 3)
-					AND TMGR.fecha_constitucion	IS NOT NULL
-					AND TMGR.cod_inscripcion IS NOT NULL
-					AND TMGR.cod_inscripcion = 2 
+					AND ((TMGR.cod_tipo_operacion = 1) OR (TMGR.cod_tipo_operacion = 3))
+					AND COALESCE(TMGR.fecha_constitucion, '19000101') > '19000101'
+					AND COALESCE(TMGR.cod_inscripcion, -1) = 2
 					AND @vdFechaActualSinHora > DATEADD(DAY, 60, TMGR.fecha_constitucion)
 
 
@@ -2494,10 +2552,9 @@ DECLARE
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
 				WHERE	TMGR.cod_usuario = @psCedula_Usuario
-					AND TMGR.cod_tipo_operacion	IN (1, 3)
-					AND TMGR.fecha_constitucion	IS NOT NULL
-					AND TMGR.cod_inscripcion IS NOT NULL
-					AND TMGR.cod_inscripcion = 1 
+					AND ((TMGR.cod_tipo_operacion = 1) OR (TMGR.cod_tipo_operacion = 3))
+					AND COALESCE(TMGR.fecha_constitucion, '19000101') > '19000101'
+					AND COALESCE(TMGR.cod_inscripcion, -1) = 1
 					AND @vdFechaActualSinHora >= DATEADD(DAY, 30, TMGR.fecha_constitucion)
 
 
@@ -2512,10 +2569,9 @@ DECLARE
 					ON TPAC.Cod_Garantia_Real = TMGR.cod_garantia_real
 					AND TPAC.Cod_Operacion = TMGR.cod_operacion	
 				WHERE	TMGR.cod_usuario = @psCedula_Usuario
-					AND TMGR.cod_tipo_operacion	IN (1, 3)
-					AND TMGR.cod_inscripcion IS NOT NULL
-					AND TMGR.cod_inscripcion = 0 
-					AND TMGR.cod_tipo_bien <> 14								
+					AND ((TMGR.cod_tipo_operacion = 1) OR (TMGR.cod_tipo_operacion = 3))
+					AND COALESCE(TMGR.cod_inscripcion, -1) = 0
+					AND ((TMGR.cod_tipo_bien < 14) OR (TMGR.cod_tipo_bien > 14))								
 
 		------------------------------
 		--FIN INDICADOR DE INSCRIPCION
@@ -2542,7 +2598,7 @@ DECLARE
 						INNER JOIN dbo.GAR_POLIZAS GPO
 						ON GPO.Codigo_SAP = GPR.Codigo_SAP
 						AND GPO.cod_operacion = GPR.cod_operacion				
-					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					WHERE	((TPAC.Cod_Tipo_Garantia_Real = 1) OR (TPAC.Cod_Tipo_Garantia_Real = 2))	
 						AND TPAC.Cod_Tipo_Bien = 1	
 						AND GPO.Estado_Registro = 1
 						AND GPR.Estado_Registro = 1
@@ -2595,7 +2651,7 @@ DECLARE
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
 					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
-					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					WHERE	((TPAC.Cod_Tipo_Garantia_Real = 1) OR (TPAC.Cod_Tipo_Garantia_Real = 2))
 						AND TPAC.Cod_Tipo_Bien = 1									
 						AND DATEDIFF(YEAR, TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1   	            
 						AND TPAC.Porcentaje_Aceptacion > 0     
@@ -2610,7 +2666,7 @@ DECLARE
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)	
 					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
-					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					WHERE	((TPAC.Cod_Tipo_Garantia_Real = 1) OR (TPAC.Cod_Tipo_Garantia_Real = 2))
 						AND TPAC.Cod_Tipo_Bien = 1						
 						AND DATEDIFF(YEAR, TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5	
 						AND TPAC.Porcentaje_Aceptacion > 0   
@@ -2623,43 +2679,12 @@ DECLARE
 				--VALUACION
 				--------------
 				
-					--FECHA VALUACION MAYOR A 18 MESES FECHA SISTEMA, MIENTAS EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA, PERO EL DEUDOR NO HABITA LA VIVIENDA 				
-					
-					--UPDATE  TPAC
-					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
-					--WHERE 
-					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
-					--AND TPAC.Cod_Tipo_Bien = 2	
-					--AND  DATEDIFF(MONTH,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 18
-					--AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 3
-					--AND TPAC.Deudor_Habita_Vivienda = 0
-					--AND TPAC.Porcentaje_Aceptacion > 0 
-					--AND TPAC.Cod_Usuario =  @psCedula_Usuario	 
-					
-					
-					
-					--FECHA VALUACION MAYOR A 18 MESES FECHA SISTEMA, MIENTAS NO EXISTA DIFERENCIA MAYOR A 3 MESES ENTRE FECHA SEGUIMIENTO Y FECHA DEL SISTEMA Y EL DEUDOR HABITA LA VIVIENDA				
-					
-					--UPDATE  TPAC
-					--SET TPAC.Porcentaje_Aceptacion =  (TPAC.Porcentaje_Calculado_Original / 2)
-					--FROM dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
-					--WHERE 
-					--TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
-					--AND TPAC.Cod_Tipo_Bien = 2	
-					--AND  DATEDIFF(MONTH,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 18
-					--AND DATEDIFF(MONTH,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) <= 3
-					--AND TPAC.Deudor_Habita_Vivienda = 1
-					--AND TPAC.Porcentaje_Aceptacion > 0 
-					--AND TPAC.Cod_Usuario =  @psCedula_Usuario	
-					
-					
 					--FECHA VALUACION MAYOR A 5 AÑOS FECHA SISTEMA				
 					
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)
 					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC			
-					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					WHERE	((TPAC.Cod_Tipo_Garantia_Real = 1) OR (TPAC.Cod_Tipo_Garantia_Real = 2)) 
 						AND TPAC.Cod_Tipo_Bien = 2	
 						AND  DATEDIFF(YEAR,TPAC.Fecha_Valuacion, @vdFechaActualSinHora) > 5
 						AND TPAC.Porcentaje_Aceptacion > 0 
@@ -2673,7 +2698,7 @@ DECLARE
 					UPDATE  TPAC
 					SET		TPAC.Porcentaje_Aceptacion = (TPAC.Porcentaje_Calculado_Original / 2)		
 					FROM	dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO TPAC					
-					WHERE	TPAC.Cod_Tipo_Garantia_Real IN (1,2) 
+					WHERE	((TPAC.Cod_Tipo_Garantia_Real = 1) OR (TPAC.Cod_Tipo_Garantia_Real = 2))
 						AND TPAC.Cod_Tipo_Bien = 2
 						AND DATEDIFF(YEAR,TPAC.Fecha_Ultimo_Seguimiento, @vdFechaActualSinHora) > 1 
 						AND COALESCE(TPAC.Deudor_Habita_Vivienda, 0) = 0
@@ -2909,7 +2934,7 @@ DECLARE
 			SET		TGR.porcentaje_responsabilidad = 
 						(
 							CASE 
-								WHEN COALESCE(TGR.porcentaje_responsabilidad ,0)= 0 THEN TPAC.Porcentaje_Aceptacion
+								WHEN COALESCE(TGR.porcentaje_responsabilidad ,0) = 0 THEN TPAC.Porcentaje_Aceptacion
 								WHEN TGR.porcentaje_responsabilidad >  TPAC.Porcentaje_Aceptacion THEN TPAC.Porcentaje_Aceptacion
 								WHEN TPAC.Porcentaje_Aceptacion > TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad
 								WHEN TPAC.Porcentaje_Aceptacion = TGR.porcentaje_responsabilidad  THEN TGR.porcentaje_responsabilidad														
@@ -2920,7 +2945,7 @@ DECLARE
 				ON TGR.cod_operacion = TPAC.Cod_Operacion
 				AND TGR.cod_garantia_real = TPAC.Cod_Garantia_Real	
 			WHERE	TGR.cod_usuario = @psCedula_Usuario
-				AND TGR.cod_tipo_operacion IN (1,3)
+				AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
 
 
 	/***************************************************************************************************************************************************/
@@ -2944,7 +2969,7 @@ DECLARE
 		ON TPB.Codigo_Tipo_Poliza_Sap = GPO.Tipo_Poliza
 		AND TPB.Codigo_Tipo_Bien = TGR.cod_tipo_bien
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
 		AND GPO.Estado_Registro = 1
 		AND GPR.Estado_Registro = 1
 
@@ -2989,108 +3014,324 @@ DECLARE
 														WHEN CP1.Cantidad_Coberturas_Obligatorias = CP2.Cantidad_Coberturas_Obligatorias THEN 'SI'
 														ELSE 'NO'
 													END
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 		INNER JOIN #TEMP_COBERTURAS_POR_ASIGNAR CP1
 		ON CP1.Codigo_SAP = TGR.Codigo_SAP
 		LEFT OUTER JOIN #TEMP_COBERTURAS_ASIGNADAS CP2
 		ON CP2.Codigo_SAP = TGR.Codigo_SAP
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
 		
-	--SE ASIGNA EL VLAOR NULL A LOS CAMPOS DE LOS PORCENTAJES QUE SEAN IGULA A -1
+	--SE ASIGNA EL VALOR NULL A LOS CAMPOS DE LOS PORCENTAJES QUE SEAN MENORES O IGUALES A -1
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
-		AND TGR.Porcentaje_Aceptacion_Terreno = -1
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+		AND TGR.Porcentaje_Aceptacion_Terreno <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
-		AND TGR.Porcentaje_Aceptacion_No_Terreno = -1
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+		AND TGR.Porcentaje_Aceptacion_No_Terreno <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_Terreno_Calculado = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
-		AND TGR.Porcentaje_Aceptacion_Terreno_Calculado = -1
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+		AND TGR.Porcentaje_Aceptacion_Terreno_Calculado <= -1
 
 	UPDATE	TGR
 	SET		TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = NULL
-	FROM	TMP_GARANTIAS_REALES TGR
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
-		AND TGR.cod_tipo_operacion IN (1,3)
-		AND TGR.Porcentaje_Aceptacion_No_Terreno_Calculado = -1
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+		AND TGR.Porcentaje_Aceptacion_No_Terreno_Calculado <= -1
 
 	--FIN RQ: RQ_MANT_2015062410418218_00090
 
+	UPDATE	TGR
+	SET		TGR.porcentaje_responsabilidad = NULL
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
+	WHERE	TGR.cod_usuario = @psCedula_Usuario
+		AND ((TGR.cod_tipo_operacion = 1) OR (TGR.cod_tipo_operacion = 3))
+		AND TGR.porcentaje_responsabilidad <= -1
+
 	/***************************************************************************************************************************************************/
 
-	SELECT	DISTINCT
-		GGR.cod_contabilidad AS CONTABILIDAD,
-		GGR.cod_oficina AS OFICINA,
-		GGR.cod_moneda AS MONEDA,
-		GGR.cod_producto AS PRODUCTO,
-		GGR.operacion AS OPERACION,
-		GGR.cod_tipo_bien AS TIPO_BIEN,
-		GGR.cod_bien AS CODIGO_BIEN,
-		GGR.cod_tipo_mitigador AS TIPO_MITIGADOR,
-		GGR.cod_tipo_documento_legal AS TIPO_DOCUMENTO_LEGAL,
-		MAX(GGR.monto_mitigador) AS MONTO_MITIGADOR,
-		GGR.fecha_presentacion AS FECHA_PRESENTACION,
-		CASE 
-			WHEN TMP.cod_inscripcion IS NULL THEN GGR.cod_inscripcion
-			ELSE TMP.cod_inscripcion
-		END AS INDICADOR_INSCRIPCION,		
-		CASE 
-			WHEN TMP.porcentaje_responsabilidad IS NULL THEN GGR.porcentaje_responsabilidad
-			ELSE TMP.porcentaje_responsabilidad
-		END AS PORCENTAJE_ACEPTACION,		
-		GGR.fecha_constitucion AS FECHA_CONSTITUCION,
-		GGR.cod_grado_gravamen AS GRADO_GRAVAMEN,
-		GGR.cod_tipo_acreedor AS TIPO_PERSONA_ACREEDOR,
-		GGR.cedula_acreedor AS CEDULA_ACREEDOR,
-		MAX(GGR.fecha_vencimiento) AS FECHA_VENCIMIENTO,
-		GGR.cod_operacion_especial AS OPERACION_ESPECIAL,
-		COALESCE(TMP.fecha_valuacion, '') AS FECHA_VALUACION,
-		COALESCE(TMP.cedula_empresa, '') AS CEDULA_EMPRESA,
-		COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_empresa)), '') AS TIPO_PERSONA_EMPRESA,
-		COALESCE(TMP.cedula_perito, '') AS CEDULA_PERITO,
-		COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_perito)), '') AS TIPO_PERSONA_PERITO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_terreno)), '') AS MONTO_ULTIMA_TASACION_TERRENO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_no_terreno)), '') AS MONTO_ULTIMA_TASACION_NO_TERRENO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_TERRENO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_no_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_NO_TERRENO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.fecha_ultimo_seguimiento)), '') AS FECHA_ULTIMO_SEGUIMIENTO,
-		COALESCE((CONVERT(VARCHAR(50),TMP.monto_total_avaluo)), '0') AS MONTO_TOTAL_AVALUO,
-		COALESCE(TMP.fecha_construccion, '') AS FECHA_CONSTRUCCION,
-		GGR.cod_grado AS COD_GRADO,
-		GGR.cedula_hipotecaria AS CEDULA_HIPOTECARIA,
-		GGR.cedula_deudor AS CEDULA_DEUDOR,
-		GGR.cod_clase_garantia AS TIPO_GARANTIA,
-		GD1.nombre_deudor AS NOMBRE_DEUDOR,
-		MPC.bsmpc_dco_ofici AS OFICINA_DEUDOR,
-		CASE
-			WHEN GO1.num_contrato > 0 THEN 1
-			ELSE 0
-		END AS ES_GIRO,
-		TMP.cod_garantia_real,
-		--INICIO RQ: RQ_MANT_2015062410418218_00090
-		COALESCE((CONVERT(VARCHAR(100), TMP.Codigo_SAP)), '') AS CODIGO_SAP,
-		COALESCE((CONVERT(VARCHAR(100), TMP.Monto_Poliza_Colonizado)), '') AS MONTO_POLIZA,
-		COALESCE((CONVERT(VARCHAR(10), TMP.Fecha_Vencimiento, 103)), '') AS FECHA_VENCIMIENTO_POLIZA,
-		COALESCE((CONVERT(VARCHAR(5), TMP.Codigo_Tipo_Poliza_Sugef)), '') AS TIPO_POLIZA_SUGEF,
-		TMP.Indicador_Poliza AS INDICADOR_POLIZA,
-		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_Terreno)), '') AS '%_ACEPTACION_TERRENO',
-		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno)), '') AS '%_ACEPTACION_NO_TERRENO',
-		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_Terreno_Calculado)), '') AS '%_ACEPTACION_TERRENO_CALCULADO',
-		COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno_Calculado)), '') AS '%_ACEPTACION_NO_TERRENO_CALCULADO',
-		COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN		
-		--FIN RQ: RQ_MANT_2015062410418218_00090
+
+	--INICIO RQ: 2016012710534870
+
+	INSERT INTO dbo.SICAD_REALES (	ID_GARANTIA_REAL, TIPO_BIEN_GARANTIA_REAL, ID_BIEN, MONTO_ULTIMA_TASACION_TERRENO, MONTO_ULTIMA_TASACION_NO_TERRENO, 
+									FECHA_ULTIMA_TASACION_GARANTIA, MONTO_TASACION_ACTUALIZADA_TERRENO, MONTO_TASACION_ACTUALIZADA_NO_TERRENO, 
+									FECHA_ULTIMO_SEGUIMIENTO_GARANTIA, FECHA_CONSTRUCCION, TIPO_PERSONA_TASADOR, ID_TASADOR, TIPO_PERSONA_EMPRESA_TASADORA, 
+									ID_EMPRESA_TASADORA)
+	SELECT	GGR.cod_bien,
+			GGR.cod_tipo_bien,
+			GGR.cod_bien,
+			TMP.monto_ultima_tasacion_terreno,
+			TMP.monto_ultima_tasacion_no_terreno,
+			TMP.fecha_valuacion,
+			TMP.monto_tasacion_actualizada_terreno,
+			TMP.monto_tasacion_actualizada_no_terreno,
+			COALESCE(TMP.fecha_ultimo_seguimiento, TMP.fecha_valuacion) AS FECHA_ULTIMO_SEGUIMIENTO_GARANTIA,
+			TMP.fecha_construccion,
+			TMP.cod_tipo_perito, 
+			TMP.cedula_perito,
+			TMP.cod_tipo_empresa,
+			TMP.cedula_empresa
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = GD1.Identificacion_Sicc
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		INNER JOIN dbo.TMP_GARANTIAS_REALES TMP
+		ON TMP.cod_oficina = GGR.cod_oficina
+		AND TMP.cod_moneda = GGR.cod_moneda
+		AND TMP.cod_producto = GGR.cod_producto
+		AND TMP.operacion = GGR.operacion
+		AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
+		AND TMP.cod_bien = GGR.cod_bien  
+		LEFT OUTER JOIN dbo.SICAD_REALES SR1
+		ON SR1.ID_GARANTIA_REAL = GGR.cod_bien
+		AND SR1.TIPO_BIEN_GARANTIA_REAL = GGR.cod_tipo_bien
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
+		AND GGR.cod_estado = 1
+		AND MPC.bsmpc_estado = 'A'
+		AND TMP.cod_usuario = @psCedula_Usuario
+		AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
+		AND	SR1.ID_GARANTIA_REAL IS NULL
+		AND SR1.TIPO_BIEN_GARANTIA_REAL IS NULL
+
+
+	INSERT INTO dbo.SICAD_GAROPER (ID_OPERACION, FECHA_PROCESO)
+	SELECT  CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)),
+			GETDATE() 
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = GD1.Identificacion_Sicc
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		LEFT OUTER JOIN dbo.SICAD_GAROPER SG1
+		ON SG1.ID_OPERACION = (CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)))
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
+		AND GGR.cod_estado = 1
+		AND MPC.bsmpc_estado = 'A'
+		AND SG1.ID_OPERACION IS NULL
+
+	
+	INSERT INTO dbo.SICAD_GAROPER_LISTA (ID_OPERACION, TIPO_GARANTIA, ID_GARANTIA, TIPO_MITIGADOR, TIPO_DOCUMENTO_LEGAL, MONTO_MITIGADOR, 
+										 INDICADOR_INSCRIPCION_GARANTIA, FECHA_PRESENTACION_REGISTRO_GARANTIA, VALOR_NOMINAL_GARANTIA, 
+										 TIPO_MONEDA_VALOR_NOMINAL_GARANTIA, PORCENTAJE_ACEPTACION, FECHA_CONSTITUCION_GARANTIA, FECHA_VENCIMIENTO_GARANTIA)
+	SELECT  CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)),
+			2,
+			GGR.cod_bien,
+			GGR.cod_tipo_mitigador,
+			GGR.cod_tipo_documento_legal, 
+			GGR.monto_mitigador,
+			CASE 
+				WHEN TMP.cod_inscripcion IS NULL THEN GGR.cod_inscripcion
+				ELSE TMP.cod_inscripcion
+			END AS INDICADOR_INSCRIPCION_GARANTIA,
+			GGR.fecha_presentacion,
+			TMP.monto_total_avaluo,
+			1,
+			CASE 
+				WHEN TMP.porcentaje_responsabilidad IS NULL THEN GGR.porcentaje_responsabilidad
+				ELSE TMP.porcentaje_responsabilidad
+			END AS PORCENTAJE_ACEPTACION,
+			GGR.fecha_constitucion,
+			MAX(GGR.fecha_vencimiento) AS FECHA_VENCIMIENTO_GARANTIA
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = GD1.Identificacion_Sicc
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		LEFT OUTER JOIN dbo.TMP_GARANTIAS_REALES TMP
+		ON TMP.cod_oficina = GGR.cod_oficina
+		AND TMP.cod_moneda = GGR.cod_moneda
+		AND TMP.cod_producto = GGR.cod_producto
+		AND TMP.operacion = GGR.operacion
+		AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
+		AND TMP.cod_bien = GGR.cod_bien  
+		LEFT OUTER JOIN dbo.SICAD_GAROPER_LISTA SGL
+		ON SGL.ID_OPERACION = (CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)))
+		AND SGL.ID_GARANTIA = GGR.cod_bien
+		AND SGL.TIPO_GARANTIA = 2
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
+		AND GGR.cod_estado = 1
+		AND MPC.bsmpc_estado = 'A'
+		AND TMP.cod_usuario = @psCedula_Usuario
+		AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
+		AND SGL.ID_OPERACION IS NULL
+		AND SGL.ID_GARANTIA IS NULL
+		AND SGL.TIPO_GARANTIA IS NULL
+	GROUP BY
+		GGR.cod_oficina, 
+		GGR.cod_moneda, 
+		GGR.cod_producto, 
+		GGR.operacion, 
+		GGR.cod_bien,
+		GGR.cod_tipo_mitigador, 
+		GGR.cod_tipo_documento_legal, 
+		GGR.monto_mitigador,
+		GGR.fecha_presentacion, 
+		GGR.cod_inscripcion, 
+		GGR.fecha_constitucion, 
+		GGR.porcentaje_responsabilidad,
+		TMP.cod_inscripcion,
+		TMP.porcentaje_responsabilidad,
+		TMP.monto_total_avaluo
+		
+
+	INSERT INTO dbo.SICAD_REALES_POLIZA (ID_GARANTIA_REAL, TIPO_POLIZA_GARANTIA_REAL, MONTO_POLIZA_GARANTIA_REAL, FECHA_VENCIMIENTO_POLIZA_GARANTIA_REAL, 
+										 IND_COBERTURA_POLIZA)
+	SELECT	GGR.cod_bien,
+			TMP.Codigo_Tipo_Poliza_Sugef,
+			TMP.Monto_Poliza_Colonizado,
+			TMP.Fecha_Vencimiento_Poliza,
+			TMP.Indicador_Coberturas_Obligatorias
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = GD1.Identificacion_Sicc
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		INNER JOIN dbo.TMP_GARANTIAS_REALES TMP
+		ON TMP.cod_oficina = GGR.cod_oficina
+		AND TMP.cod_moneda = GGR.cod_moneda
+		AND TMP.cod_producto = GGR.cod_producto
+		AND TMP.operacion = GGR.operacion
+		AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
+		AND TMP.cod_bien = GGR.cod_bien  
+		LEFT OUTER JOIN dbo.SICAD_REALES_POLIZA SRP
+		ON SRP.ID_GARANTIA_REAL = GGR.cod_bien
+		AND SRP.TIPO_POLIZA_GARANTIA_REAL = TMP.Codigo_Tipo_Poliza_Sugef
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
+		AND GGR.cod_estado = 1
+		AND MPC.bsmpc_estado = 'A'
+		AND TMP.cod_usuario = @psCedula_Usuario
+		AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
+		AND COALESCE(TMP.Codigo_SAP, -1) > -1
+		AND	SRP.ID_GARANTIA_REAL IS NULL
+		AND SRP.TIPO_POLIZA_GARANTIA_REAL IS NULL
+
+
+	INSERT INTO dbo.SICAD_GAROPER_GRAVAMEN (ID_OPERACION, ID_GARANTIA, TIPO_MITIGADOR, TIPO_DOCUMENTO_LEGAL, GRADO_GRAVAMENES, TIPO_PERSONA_ACREEDOR, 
+											ID_ACREEDOR, MONTO_GRADO_GRAVAMEN, TIPO_MONEDA_MONTO_GRADO_GRAVAMEN)
+	SELECT  CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)),
+			GGR.cod_bien,
+			GGR.cod_tipo_mitigador,
+			GGR.cod_tipo_documento_legal, 
+			GGR.cod_grado_gravamen,
+			GGR.cod_tipo_acreedor,
+			GGR.cedula_acreedor,
+			TMP.monto_total_avaluo,
+			1
+	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
+		INNER JOIN dbo.GAR_DEUDOR GD1 
+		ON GGR.cedula_deudor = GD1.cedula_deudor
+		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
+		ON MPC.bsmpc_sco_ident = GD1.Identificacion_Sicc
+		INNER JOIN dbo.GAR_OPERACION GO1
+		ON GO1.cod_operacion = GGR.cod_operacion
+		LEFT OUTER JOIN dbo.TMP_GARANTIAS_REALES TMP
+		ON TMP.cod_oficina = GGR.cod_oficina
+		AND TMP.cod_moneda = GGR.cod_moneda
+		AND TMP.cod_producto = GGR.cod_producto
+		AND TMP.operacion = GGR.operacion
+		AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
+		AND TMP.cod_bien = GGR.cod_bien  
+		LEFT OUTER JOIN dbo.SICAD_GAROPER_GRAVAMEN SGG
+		ON SGG.ID_OPERACION = (CAST(GGR.cod_oficina AS VARCHAR(5)) + CAST(GGR.cod_moneda AS VARCHAR(5)) + CAST(GGR.cod_producto AS VARCHAR(5)) + CAST(GGR.operacion AS VARCHAR(20)))
+		AND SGG.ID_GARANTIA = GGR.cod_bien
+		AND SGG.TIPO_DOCUMENTO_LEGAL = GGR.cod_tipo_documento_legal
+		AND SGG.GRADO_GRAVAMENES = GGR.cod_grado_gravamen
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
+		AND GGR.cod_estado = 1
+		AND MPC.bsmpc_estado = 'A'
+		AND TMP.cod_usuario = @psCedula_Usuario
+		AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
+		AND SGG.ID_OPERACION IS NULL
+		AND SGG.ID_GARANTIA IS NULL
+		AND SGG.TIPO_DOCUMENTO_LEGAL IS NULL
+		AND SGG.GRADO_GRAVAMENES IS NULL
+
+	--FIN RQ: 2016012710534870
+
+
+	/***************************************************************************************************************************************************/
+
+	SELECT	GGR.cod_contabilidad AS CONTABILIDAD,
+			GGR.cod_oficina AS OFICINA,
+			GGR.cod_moneda AS MONEDA,
+			GGR.cod_producto AS PRODUCTO,
+			GGR.operacion AS OPERACION,
+			GGR.cod_tipo_bien AS TIPO_BIEN,
+			GGR.cod_bien AS CODIGO_BIEN,
+			GGR.cod_tipo_mitigador AS TIPO_MITIGADOR,
+			GGR.cod_tipo_documento_legal AS TIPO_DOCUMENTO_LEGAL,
+			MAX(GGR.monto_mitigador) AS MONTO_MITIGADOR,
+			GGR.fecha_presentacion AS FECHA_PRESENTACION,
+			CASE 
+				WHEN TMP.cod_inscripcion IS NULL THEN GGR.cod_inscripcion
+				ELSE TMP.cod_inscripcion
+			END AS INDICADOR_INSCRIPCION,		
+			CASE 
+				WHEN TMP.porcentaje_responsabilidad IS NULL THEN GGR.porcentaje_responsabilidad
+				ELSE TMP.porcentaje_responsabilidad
+			END AS PORCENTAJE_ACEPTACION,		
+			GGR.fecha_constitucion AS FECHA_CONSTITUCION,
+			GGR.cod_grado_gravamen AS GRADO_GRAVAMEN,
+			GGR.cod_tipo_acreedor AS TIPO_PERSONA_ACREEDOR,
+			GGR.cedula_acreedor AS CEDULA_ACREEDOR,
+			MAX(GGR.fecha_vencimiento) AS FECHA_VENCIMIENTO,
+			GGR.cod_operacion_especial AS OPERACION_ESPECIAL,
+			COALESCE(TMP.fecha_valuacion, '') AS FECHA_VALUACION,
+			COALESCE(TMP.cedula_empresa, '') AS CEDULA_EMPRESA,
+			COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_empresa)), '') AS TIPO_PERSONA_EMPRESA,
+			COALESCE(TMP.cedula_perito, '') AS CEDULA_PERITO,
+			COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_perito)), '') AS TIPO_PERSONA_PERITO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_terreno)), '') AS MONTO_ULTIMA_TASACION_TERRENO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_no_terreno)), '') AS MONTO_ULTIMA_TASACION_NO_TERRENO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_TERRENO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_no_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_NO_TERRENO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.fecha_ultimo_seguimiento)), '') AS FECHA_ULTIMO_SEGUIMIENTO,
+			COALESCE((CONVERT(VARCHAR(50),TMP.monto_total_avaluo)), '0') AS MONTO_TOTAL_AVALUO,
+			COALESCE(TMP.fecha_construccion, '') AS FECHA_CONSTRUCCION,
+			GGR.cod_grado AS COD_GRADO,
+			GGR.cedula_hipotecaria AS CEDULA_HIPOTECARIA,
+			GGR.cedula_deudor AS CEDULA_DEUDOR,
+			GGR.cod_clase_garantia AS TIPO_GARANTIA,
+			GD1.nombre_deudor AS NOMBRE_DEUDOR,
+			MPC.bsmpc_dco_ofici AS OFICINA_DEUDOR,
+			CASE
+				WHEN GO1.num_contrato > 0 THEN 1
+				ELSE 0
+			END AS ES_GIRO,
+			TMP.cod_garantia_real,
+			--INICIO RQ: RQ_MANT_2015062410418218_00090
+			COALESCE((CONVERT(VARCHAR(100), TMP.Codigo_SAP)), '') AS CODIGO_SAP,
+			COALESCE((CONVERT(VARCHAR(100), TMP.Monto_Poliza_Colonizado)), '') AS MONTO_POLIZA,
+			COALESCE((CONVERT(VARCHAR(10), TMP.Fecha_Vencimiento, 103)), '') AS FECHA_VENCIMIENTO_POLIZA,
+			COALESCE((CONVERT(VARCHAR(5), TMP.Codigo_Tipo_Poliza_Sugef)), '') AS TIPO_POLIZA_SUGEF,
+			TMP.Indicador_Poliza AS INDICADOR_POLIZA,
+			COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_Terreno)), '') AS '%_ACEPTACION_TERRENO',
+			COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno)), '') AS '%_ACEPTACION_NO_TERRENO',
+			COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_Terreno_Calculado)), '') AS '%_ACEPTACION_TERRENO_CALCULADO',
+			COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno_Calculado)), '') AS '%_ACEPTACION_NO_TERRENO_CALCULADO',
+			COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN		
+			--FIN RQ: RQ_MANT_2015062410418218_00090
 	FROM	dbo.GAR_GIROS_GARANTIAS_REALES GGR 
 		INNER JOIN dbo.GAR_SICC_BSMPC MPC 
 		ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
@@ -3105,11 +3346,11 @@ DECLARE
 			AND TMP.operacion = GGR.operacion
 			AND TMP.cod_clase_garantia = GGR.cod_clase_garantia
 			AND TMP.cod_bien = GGR.cod_bien  
-	WHERE	GGR.cod_tipo_documento_legal IS NOT NULL
+	WHERE	COALESCE(GGR.cod_tipo_documento_legal, -1) > -1
 		AND GGR.cod_estado = 1
 		AND MPC.bsmpc_estado = 'A'
 		AND TMP.cod_usuario = @psCedula_Usuario
-		AND TMP.cod_tipo_operacion IN (1, 3)
+		AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
 	GROUP BY
 		GGR.cod_contabilidad, 
 		GGR.cod_oficina, 
