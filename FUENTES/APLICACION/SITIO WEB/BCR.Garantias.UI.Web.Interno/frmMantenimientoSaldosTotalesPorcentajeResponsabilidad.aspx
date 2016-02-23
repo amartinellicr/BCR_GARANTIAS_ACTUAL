@@ -85,12 +85,16 @@
                                              </div>
                                              
                                            </div>--%>
-                                        <TABLE><TBODY>
-<TR>
-<TD><A id=A1 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">1-401640971 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD>
-<TD><A id=A2 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">2-3994 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD></TR></TBODY></TABLE>          
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><a id=A1 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">1-401640971 </a></td>
+                                                    <td width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                    <td><a id=A2 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">2-3994 </a></td>
+                                                    <td width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>          
 						            </td>
 						        </tr>
                                 <tr>
@@ -112,14 +116,16 @@
                                              
                                            </div>   --%>    
                                         
-<TABLE><TBODY>
-<TR>
-<TD><A id=ctl00_cphPrincipal_261645 title="Grado:  - Cédula Hipotecaria " style="COLOR: red" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">1-109795 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD>
-<TD><A id=ctl00_cphPrincipal_261646 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">4-100899 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD></TR></TBODY></TABLE>                              
-                                     
-                                            
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><a id=ctl00_cphPrincipal_261645 title="Grado:  - Cédula Hipotecaria " style="COLOR: red" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">1-109795 </a></td>
+                                                    <td width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                    <td><a id=ctl00_cphPrincipal_261646 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">4-100899 </a></td>
+                                                    <td width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </td>
 						        </tr>
 						        <tr>
@@ -134,13 +140,16 @@
                                              </div>
                                              
                                            </div>--%>
-                                        <TABLE><TBODY>
-<TR>
-<TD><A id=A3 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">3101403350 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD>
-<TD><A id=A4 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">61822100 </A></TD>
-<TD width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</TD></TR></TBODY></TABLE>          
-                                     
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><a id=A3 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261645','')" runat="Server">3101403350 </a></td>
+                                                    <td width=12>&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                    <td><a id=A4 title="Grado:  - Cédula Hipotecaria " style="COLOR: blue" href="javascript:__doPostBack('ctl00$cphPrincipal$261646','')" runat="Server">61822100 </a></td>
+                                                    <td width="12">&nbsp;&nbsp;/&nbsp;&nbsp;</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>                                              
 						            </td>
 						        </tr>
 						        <tr>
@@ -199,19 +208,19 @@
 
 
                                         
-<TABLE id=ctl00_cphPrincipal_gdvValuacionesHistoricas class=gridview style="BORDER-TOP-COLOR: black; WIDTH: 730px; BORDER-COLLAPSE: collapse; BORDER-LEFT-COLOR: black; COLOR: #333333; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" cellSpacing=0 cellPadding=4 rules=all border=1><TBODY>
-<TR style="FONT-WEIGHT: bold; COLOR: white; BACKGROUND-COLOR: #507cd1">
-<TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Operaciones o Contratos Relacionados</TH>
-<TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Saldo</TH>
-<TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>% Responsabilidad Calculado</TH>
-<TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Cta. Contable</TH>
-<TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Tipo Operación</TH></TR>
-<TR style="FONT-WEIGHT: bold; COLOR: #333333; BACKGROUND-COLOR: #d1ddf1">
-<TD style="BORDER-TOP-COLOR: black; WIDTH: 200px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" href="javascript:__doPostBack('ctl00$cphPrincipal$gdvValuacionesHistoricas','SelectedValuacionesHistoricas$0')">1-220-1-2-5904248</A></TD>
-<TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >20,687,180.64</A></TD>
-<TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >80.00</A></TD>
-<TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >131</A></TD>
-<TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >Operaci&#243;n</A></TD></TR></TBODY></TABLE>
+                                        <TABLE id=ctl00_cphPrincipal_gdvValuacionesHistoricas class=gridview style="BORDER-TOP-COLOR: black; WIDTH: 730px; BORDER-COLLAPSE: collapse; BORDER-LEFT-COLOR: black; COLOR: #333333; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" cellSpacing=0 cellPadding=4 rules=all border=1><TBODY>
+                                        <TR style="FONT-WEIGHT: bold; COLOR: white; BACKGROUND-COLOR: #507cd1">
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Operaciones o Contratos Relacionados</TH>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Saldo</TH>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>% Responsabilidad Calculado</TH>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Cta. Contable</TH>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Tipo Operación</TH></TR>
+                                        <TR style="FONT-WEIGHT: bold; COLOR: #333333; BACKGROUND-COLOR: #d1ddf1">
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 200px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" href="javascript:__doPostBack('ctl00$cphPrincipal$gdvValuacionesHistoricas','SelectedValuacionesHistoricas$0')">1-220-1-2-5904248</A></TD>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >20,687,180.64</A></TD>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >80.00</A></TD>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >131</A></TD>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >Operaci&#243;n</A></TD></TR></TBODY></TABLE>
 
 							        </td>
 						        </tr>
@@ -221,43 +230,52 @@
 								        rowSpan="1"><asp:label id="lblDetalle" runat="server">Ajustes</asp:label></td>
 						        </tr>
 						        <tr>
-                                    <td>
-                                    <table id="tblDetalleInfo" width="70%" align="center" border="1" runat="server">
-						            <tr>
-						                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
-						                  Número Operación o Contrato:
-						                </th>
-						                <td style="width: 180px">
-                                            <asp:Label ID="lblFechaValuacion" runat="server">1-220-1-2-5904248</asp:Label>
-						                </td>
-						            </tr>
-						            <tr>
-						                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
-						                  Saldo Ajustado:
-						                </th>
-						                <td style="width: 260px">
-                                            <asp:Label ID="lblCedulaPeritoEmpresa" runat="server">18,687,181.64</asp:Label>
-						                </td>
-						            </tr>
-						            <tr>
-						                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
-						                  % Responsabilidad Ajustado:
-						                </th>
-						                <td style="width: 180px">
-                                            <asp:Label ID="lblUltimaTasacionTerreno" runat="server">75.65</asp:Label>
-						                </td>
-						            </tr>
-						            <tr>
-										<td>
-										</td>
-                                        <td class="td_Texto" colspan="2">
-										    <asp:button id="btnLimpiar" tabIndex="24" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
-										    <asp:button id="btnModificar" tabIndex="26" runat="server" ToolTip="Modificar Garantía" Text="Modificar"></asp:button>
-										    <asp:button id="btnEliminar" tabIndex="27" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar"></asp:button>
-										</td>
-									</tr>				            
-						              
-						            </table>   
+                                    <td valign="middle">
+                                        <div style="width:100%;">
+                                            <div style="float:left; height: 150px; vertical-align:middle;">
+                                                <button id="Anterior" type="button" style="height:100%; text-decoration:solid; font-weight:bolder; width:20px;"><</button>
+                                            </div>
+                                            <div style="float:left; height:150px; width:690px;">
+                                                <table id="tblDetalleInfo" align="center" border="1" runat="server" style="width:70%;">
+ 						                            <tr>
+                                            
+						                                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
+						                                  Número Operación o Contrato:
+						                                </th>
+						                                <td style="width: 180px">
+                                                            <asp:Label ID="lblFechaValuacion" runat="server">1-220-1-2-5904248</asp:Label>
+						                                </td>
+						                            </tr>
+						                            <tr>
+						                                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
+						                                  Saldo Ajustado:
+						                                </th>
+						                                <td style="width: 260px">
+                                                            <asp:Label ID="lblCedulaPeritoEmpresa" runat="server">18,687,181.64</asp:Label>
+						                                </td>
+						                            </tr>
+						                            <tr>
+						                                <th style="width: 215px" bgcolor= "#F5F5F5" align="left">
+						                                  % Responsabilidad Ajustado:
+						                                </th>
+						                                <td style="width: 180px">
+                                                            <asp:Label ID="lblUltimaTasacionTerreno" runat="server">75.65</asp:Label>
+						                                </td>
+						                            </tr>
+						                            <tr>
+										               <td  colspan="2" align="center">
+										                    <asp:button id="btnLimpiar" tabIndex="24" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
+										                    <asp:button id="btnModificar" tabIndex="26" runat="server" ToolTip="Modificar Garantía" Text="Modificar"></asp:button>
+										                    <asp:button id="btnEliminar" tabIndex="27" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar"></asp:button>
+										                </td>
+									                </tr>				            
+						                            
+						                        </table>                                     
+                                            </div>
+                                            <div style="float:left; height:150px;">
+                                                <button id="Siguiente" type="button" style="height:100%; text-decoration:solid; font-weight:bolder; width:20px;">></button>
+                                            </div>
+                                        </div>
                                     </td>						        
                                 </tr>
 					        </table> <!--DEFINE BOTONERA-->
