@@ -10,6 +10,7 @@ using System.Globalization;
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
+using BCRGarantias.Contenedores;
 
 namespace BCRGARANTIAS.Negocios
 {

@@ -1056,8 +1056,6 @@ namespace BCR.GARANTIAS.Entidades
         public const string _codEstado = "cod_estado";
         public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
         public const string _cedulaAcreedor = "cedula_acreedor";
-
-
         private const string _desTipoBien = "des_tipo_bien";
         private const string _desTipoMitigador = "des_tipo_mitigador";
         private const string _desTipoDocumento = "des_tipo_documento";
@@ -1227,7 +1225,7 @@ namespace BCR.GARANTIAS.Entidades
         //Tags referentes a la parte del avalúo del SICC
         private const string _prmgtFechaValuacion = "prmgt_pfeavaing";
         private const string _prmgtMontoTotalAvaluo = "prmgt_pmoavaing";
-                
+
         //Tags referentes a los parámetros usados para el cálculo del monto de la tasación actualizada del no terreno
         private const string _porcentajeLimiteInferior = "porcentaje_limite_inferior";
         private const string _porcentajeLimiteIntermedio = "porcentaje_limite_intermedio";
@@ -6588,7 +6586,6 @@ namespace BCR.GARANTIAS.Entidades
 
             string porcentajeAceptCalculadoOriginal = string.Empty;
             DateTime fechaBase = new DateTime(1900,01,01);
-
             DateTime fecModifico;            
 
             if ((tramaInicial.Length > 0) && (tramaDatosActuales.Length > 0))
@@ -6651,6 +6648,8 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         existenCamposModificados = true;
                         polizaInsertada = true;
+
+                        existePolizaEliminada = ((polizaRelacionada != null) ? true : false);
 
                         DateTime fechaInsercion = DateTime.Now;
 
@@ -6810,7 +6809,7 @@ namespace BCR.GARANTIAS.Entidades
                                                     porcentajeAceptacionInicial = 0;
                                                     valorInicial = "0.00";
                                                 }
-                                                    
+
                                                 if (porcentajeAceptacionInicial != porcentajeAceptacionActual)
                                                 {
                                                     sentenciaActualizacionGarOper.Append((string.Format("{0} = {1},", nodoActual.Name, ((porcentajeAceptacionActual != -1) ? nodoActual.InnerText : "NULL"))));
@@ -7131,6 +7130,7 @@ namespace BCR.GARANTIAS.Entidades
                     }
                                         
 
+
                     if (existenCamposModificados)
                     {
                         #region Nodo de Garantías
@@ -7438,7 +7438,7 @@ namespace BCR.GARANTIAS.Entidades
 
                     //Final del tag MODIFICADOS
                     objEscritor.WriteEndElement();
-
+                    
                     #endregion  Datos Modificados
 
                     #region Datos Eliminados
@@ -7448,6 +7448,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         polizaSap = ((polizaSap != null) ? polizaSap : polizaRelacionada);
                         polizaSeleccionadaInicial = ((polizaSeleccionadaInicial != null) ? polizaSeleccionadaInicial : polizaRelacionada);
+
 
                         if (polizaSap != null)
                         {
@@ -7483,7 +7484,7 @@ namespace BCR.GARANTIAS.Entidades
 
                             //Final del tag ELIMINADOS
                             objEscritor.WriteEndElement();
-                        }
+                         }
                     }
 
                     #endregion Datos Eliminados
@@ -9700,7 +9701,7 @@ namespace BCR.GARANTIAS.Entidades
 
             return cantidadAnnos;
         }
-
+        
         /// <summary>
         /// Obtiene el código SAP relacionado a la operación y a la garantía
         /// </summary>
@@ -9745,7 +9746,7 @@ namespace BCR.GARANTIAS.Entidades
 
 
         #endregion  Métodos Privados
-
+        
         #endregion Métodos
     }
 }
