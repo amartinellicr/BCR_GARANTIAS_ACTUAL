@@ -214,14 +214,19 @@
                                         <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Saldo</TH>
                                         <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>% Responsabilidad Calculado</TH>
                                         <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Cta. Contable</TH>
-                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Tipo Operación</TH></TR>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Tipo Operación</TH>
+                                        <TH style="BORDER-TOP-COLOR: black; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" scope=col>Excluida</TH></TR>
                                         <TR style="FONT-WEIGHT: bold; COLOR: #333333; BACKGROUND-COLOR: #d1ddf1">
                                         <TD style="BORDER-TOP-COLOR: black; WIDTH: 200px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" href="javascript:__doPostBack('ctl00$cphPrincipal$gdvValuacionesHistoricas','SelectedValuacionesHistoricas$0')">1-220-1-2-5904248</A></TD>
                                         <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >20,687,180.64</A></TD>
                                         <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >80.00</A></TD>
                                         <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >131</A></TD>
-                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >Operaci&#243;n</A></TD></TR></TBODY></TABLE>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" >Operaci&#243;n</A></TD>
+                                        <TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" ><input type="checkbox"/></A></TD>
+                                        <%--<TD style="BORDER-TOP-COLOR: black; WIDTH: 500px; BORDER-LEFT-COLOR: black; BORDER-BOTTOM-COLOR: black; BORDER-RIGHT-COLOR: black" align=center><A style="COLOR: #333333" ><input type="checkbox" checked="checked"/></A></TD>--%>
 
+                                        </TR></TBODY></TABLE>
+                                       
 							        </td>
 						        </tr>
 						        
@@ -265,6 +270,7 @@
 						                            <tr>
 										               <td  colspan="2" align="center">
 										                    <asp:button id="btnLimpiar" tabIndex="24" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
+										                   <%-- <asp:button id="btnInsertcar" tabIndex="25" runat="server" ToolTip="Incluir una operación excluída de la distribución" Text="Incluir"></asp:button>--%>
 										                    <asp:button id="btnModificar" tabIndex="26" runat="server" ToolTip="Modificar Garantía" Text="Modificar"></asp:button>
 										                    <asp:button id="btnEliminar" tabIndex="27" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar"></asp:button>
 										                </td>
