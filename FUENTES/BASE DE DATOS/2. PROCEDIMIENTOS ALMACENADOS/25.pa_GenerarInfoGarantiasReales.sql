@@ -3521,6 +3521,7 @@ DECLARE	@viCodigo_Operacion		BIGINT,
 		GGR.porcentaje_responsabilidad,
 		TMP.cod_inscripcion,
 		TMP.porcentaje_responsabilidad,
+		TMP.Porcentaje_Aceptacion,
 		TMP.monto_total_avaluo;
 		
 
