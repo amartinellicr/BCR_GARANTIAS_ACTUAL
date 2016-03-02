@@ -3564,3 +3564,433 @@ GO
 EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda asignado al tipo de póliza.' , 'user' , 'dbo' , 'table' , 'TMP_SAP_SGRTIPOS_POLIZA', 'column' , 'Codigo_Moneda'
 GO
 
+
+CREATE TABLE dbo.SAP_VWSGRPOLIZA_HST(
+	conpoliza NUMERIC(8, 0) NULL,
+	cocpolizains VARCHAR(30) NULL,
+	cocnumeropoliza VARCHAR(30) NULL,
+	concliente NUMERIC(7, 0)  NULL,
+	indcolectiva NUMERIC(1, 0)  NULL,
+	cocgrupopoliza VARCHAR(1) NULL,
+	cocpolizasola VARCHAR(30) NULL,
+	conclasepoliza NUMERIC(3,0) NOT NULL,
+	contipopoliza NUMERIC(3, 0) NULL,
+	cocsimbologia VARCHAR(4) NULL,
+	indnumanterior NUMERIC(1, 0) NULL,
+	nummodulo NUMERIC(3, 0) NULL,
+	numsucursal NUMERIC(3, 0) NULL,
+	conregion NUMERIC(2, 0) NULL,
+	conagencia NUMERIC(4, 0) NULL,
+	conagente NUMERIC(4, 0) NULL,
+	conformapago NUMERIC(3, 0) NULL,
+	conperiodicidadpoliza NUMERIC(2, 0) NULL,
+	concanalizacioncobro NUMERIC(3, 0)  NULL,
+	conmotivocancela NUMERIC(3, 0) NULL,
+	fecemision DATETIME NULL,
+	fecvigencia DATETIME NULL,
+	fecvence DATETIME NULL,
+	feccancelacion DATETIME NULL,
+	fecproximopago DATETIME NULL,
+	mtoasegurado NUMERIC(16, 2) NULL,
+	mtoprimatotal NUMERIC(16, 2) NULL,
+	mtoultimopago NUMERIC(16, 2) NULL,
+	mtodeducible NUMERIC(10, 2) NULL,
+	mtopagoperiodico NUMERIC(16,4) NULL,
+	usrcancelo VARCHAR(35) NULL,
+	memobservacion VARCHAR(250) NULL,
+	desubicacionbien VARCHAR(250) NULL,
+	desdetallebien VARCHAR(250) NULL,
+	indexterna NUMERIC(1, 0) NULL,
+	estpoliza VARCHAR(3)  NULL,
+	codsenal NUMERIC(2, 0) NULL,
+	conpolizamadre NUMERIC(8, 0) NULL,
+	mtoprima NUMERIC(16, 2) NULL,
+	concreditobancarioprincipal NUMERIC(10, 0) NULL,
+	nummespoliza NUMERIC(2, 0) NULL,
+	indrevisada NUMERIC(1, 0)  NULL,
+	descoberturasasociadas VARCHAR(60) NULL,
+	cocformacobropoliza VARCHAR(5) NULL,
+	cocintencionalidad VARCHAR(20) NULL,
+	desclasepoliza VARCHAR(60) NULL,
+	destipopoliza VARCHAR(60) NULL,
+	conmoneda NUMERIC(3, 0) NULL,
+	indcobraimpuestorenta NUMERIC(1, 0) NULL, 
+	nommoneda VARCHAR(30) NULL,
+	monsigno VARCHAR(5) NULL,
+	desformapago VARCHAR(60) NULL,
+	nummeses NUMERIC(3, 0) NULL,
+	dessiglas VARCHAR(30) NULL,
+	contipocobertura NUMERIC(3, 0) NULL,
+	codtiposiic VARCHAR(2) NULL,
+	indesdesempleo NUMERIC(1, 0) NULL, 
+	desunidadejecutora VARCHAR(60) NULL,
+	cocpolizasicc VARCHAR(15) NULL,
+	concanalventa SMALLINT NULL,
+	cocestadopoliza VARCHAR(3) NULL,
+	feccambioestadopoliza DATETIME NULL,
+	conaseguradora TINYINT NULL,
+	nomaseguradora VARCHAR(60) NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de las pólizas de la tabla TMP_SAP_VWSGRPOLIZA.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRPOLIZA_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_VWSGRPOLIZACREDITOBANCARIO_HST(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	concreditobancario NUMERIC(10, 0) NOT NULL,
+	codsenalcredito NUMERIC(2, 0) NOT NULL,
+	cocfrecuenciacobrosicc VARCHAR(1)  NULL,
+	indcodeudor NUMERIC(1, 0) NOT NULL,
+	estpolizacreditobancario VARCHAR(3) NOT NULL,
+	feccancelacioncredito DATETIME NULL,
+	fecatraso DATETIME NULL,
+	fecpagadohasta DATETIME NULL,
+	fecvencecredito DATETIME NULL,
+	indprimadevuelta NUMERIC(1, 0) NOT NULL,
+	fecdevolucionprima DATETIME NULL,
+	usrdevolvioprima VARCHAR(35) NULL,
+	codcontabilidad NUMERIC(2, 0) NOT NULL,
+	codue NUMERIC(4, 0) NOT NULL,
+	conmoneda NUMERIC(3, 0) NOT NULL,
+	codproducto NUMERIC(2, 0) NOT NULL,
+	numoperacion NUMERIC(7, 0) NOT NULL,
+	concontratocredito NUMERIC(10, 0) NULL,
+	estcreditobancario VARCHAR(3) NOT NULL,
+	coccreditobancario VARCHAR(55) NULL,
+	Es_Giro BIT NOT NULL,
+	Consecutivo_Contrato BIGINT NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_VWSGRPOLIZACREDITOBANCARIO.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRPOLIZACREDITOBANCARIO_HST'
+GO
+
+CREATE TABLE dbo.SAP_VWSGRPOLIZACONTRATOCREDITO_HST(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	concontratocredito NUMERIC(10, 0)  NOT NULL,
+	estpolizacontratocredito VARCHAR(3)  NOT NULL,
+	feccancelacioncontrato DATETIME NULL,
+	fecpagadohasta DATETIME NULL,
+	codsenal NUMERIC(2, 0)  NULL,
+	cocfrecuenciacobrosicc VARCHAR(1)  NULL,
+	fecvencecredito DATETIME NULL,
+	codue NUMERIC(4, 0)  NOT NULL,
+	codcontabilidad NUMERIC(2, 0)  NOT NULL,
+	conmoneda NUMERIC(3, 0)  NOT NULL,
+	coccontratocredito VARCHAR(10) NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_VWSGRPOLIZACONTRATOCREDITO.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRPOLIZACONTRATOCREDITO_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_POLIZASEXTERNAS_HST(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	Fecha_Replica DATETIME NULL
+) ON [PRIMARY]
+
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_POLIZASEXTERNAS.' , 'user' , 'dbo' , 'table' , 'SAP_POLIZASEXTERNAS_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_VWSGRPOLIZAAUTO_HST(
+	conpoliza NUMERIC(8, 0) NOT NULL,
+	cocplaca VARCHAR(15) NOT NULL,
+	conestiloauto NUMERIC(3,0) NULL,
+	conmarcaauto NUMERIC(3,0) NULL,
+	contipocombustion NUMERIC(2,0) NOT NULL,
+	desmodelo VARCHAR(35) NULL,
+	descolor VARCHAR(20) NULL,
+	numpeso NUMERIC(9,2) NULL,
+	numcubicaje NUMERIC(4,0) NULL,
+	numcapacidad NUMERIC(3,0) NULL,
+	numcilindros NUMERIC(2,0) NULL,
+	desnumeromotor VARCHAR(20) NULL,
+	desnumerochasis VARCHAR(20) NOT NULL,
+	mtovalorauto NUMERIC(16,2) NULL,
+	porrecargobonificacion NUMERIC(7,4) NULL,
+	contipovehiculo NUMERIC(6,0) NULL,
+	desestadobien VARCHAR(3000) NULL,
+	numanoauto NUMERIC(4,0) NULL,
+	tipmodalidadaseguramiento NUMERIC(10,0) NULL,
+	codestilocarroceria NUMERIC(2,0) NULL,
+	indplacatemporal TINYINT NOT NULL,
+	concliente NUMERIC(7,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	mtoasegurado NUMERIC(16,2) NULL,
+	contipopoliza NUMERIC(3,0) NULL,
+	desestiloauto VARCHAR(60) NULL,
+	desmarcaauto VARCHAR(60) NULL,
+	mtoprimatotal NUMERIC(16,2) NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	desestilocarroceria VARCHAR(60) NOT NULL,
+	destipovehiculo VARCHAR(80) NOT NULL,
+	destipocombustion VARCHAR(60) NOT NULL,
+	desmodalidadaseguramiento VARCHAR(11) NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_VWSGRPOLIZAAUTO.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRPOLIZAAUTO_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_SGRPOLIZAOTRO_HST(
+	conpoliza NUMERIC(8,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	concliente NUMERIC(7,0) NOT NULL,
+	contipopoliza NUMERIC(3, 0) NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	mtoasegurado NUMERIC(16, 2) NULL,
+	mtoprimatotal NUMERIC(16, 2) NULL,
+	desobservacion VARCHAR(1500) NULL,
+	cocplaca VARCHAR(15) NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO 
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_SGRPOLIZAOTRO.' , 'user' , 'dbo' , 'table' , 'SAP_SGRPOLIZAOTRO_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_SGRPOLIZAPATRIMONIAL_HST(
+	concliente NUMERIC(7,0) NOT NULL,
+	cocpolizains VARCHAR(30) NULL,
+	mtoaseguradototal NUMERIC(16,2) NULL,
+	mtoprimatotal NUMERIC(16,2) NULL,
+	contipopoliza NUMERIC(3,0) NULL,
+	conpoliza NUMERIC(8,0) NOT NULL,
+	conzonariesgo SMALLINT NOT NULL,
+	conprovincia NUMERIC(1,0) NULL,
+	concanton NUMERIC(2,0) NULL,
+	condistrito NUMERIC(2,0) NULL,
+	desnumerofinca VARCHAR(20) NULL,
+	mtoasegurado NUMERIC(16,2) NULL,
+	porparticipacion NUMERIC(7,4) NULL,
+	pordeducible NUMERIC(7,4) NULL,
+	mtodeduccibleminimo NUMERIC(16,2) NULL,
+	memobservacion VARCHAR(200) NULL,
+	desocupacion VARCHAR(20) NULL,
+	cococupacionrobo VARCHAR(3) NULL,
+	codclasetarifaria NUMERIC(2,0) NULL,
+	codrecargoprr NUMERIC(3,0) NULL,
+	conclaseconstruccion NUMERIC(8,0) NULL,
+	conporcentajepci NUMERIC(2,0) NULL,
+	contipocomercio NUMERIC(8,0) NULL,
+	desdireccioninmuble VARCHAR(250) NULL,
+	desfolioreal VARCHAR(20) NULL,
+	mtoconstruccion NUMERIC(16,4) NULL,
+	mtogarantia NUMERIC(16,4) NULL,
+	numgradohipoteca NUMERIC(2,0) NULL,
+	numpisos NUMERIC(3,0) NULL,
+	portarifa NUMERIC(7,4) NULL,
+	portarifab NUMERIC(7,4) NULL,
+	mtovalorterreno NUMERIC(16,4) NULL,
+	mtoaseguradomenaje NUMERIC(16,4) NULL,
+	codparticipacionasegurado TINYINT NULL,
+	concreditobancario NUMERIC(10,0) NULL,
+	mtoprimaparcial NUMERIC(16,2) NOT NULL,
+	tiptramiteregistro TINYINT NOT NULL,
+	mtoprimaparcialsicc NUMERIC(10,2) NOT NULL,
+	cochorizontal CHAR(1) NULL,
+	desprovincia VARCHAR(35) NOT NULL,
+	descanton VARCHAR(45) NOT NULL,
+	desdistrito VARCHAR(45) NOT NULL,
+	destipopoliza VARCHAR(60) NOT NULL,
+	Fecha_Replica DATETIME NULL,
+	usringreso  VARCHAR(35)  NULL,
+	fecingreso	DATETIME NULL,
+    usrmodifico VARCHAR(35) NULL,
+    fecmodificacion DATETIME NULL
+) ON [PRIMARY]
+
+GO 
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_SGRPOLIZAPATRIMONIAL.' , 'user' , 'dbo' , 'table' , 'SAP_SGRPOLIZAPATRIMONIAL_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_VWSGRCONTRATOCREDITO_HST(
+	concontratocredito NUMERIC(10,0) NOT NULL,
+	codcontabilidad NUMERIC(2,0) NOT NULL,
+	codue NUMERIC(4,0) NOT NULL,
+	conmoneda NUMERIC(3,0) NOT NULL,
+	coccontratocredito VARCHAR(10) NOT NULL,
+	coccontratocreditolargo VARCHAR(55) NULL,
+	Fecha_Replica DATETIME NULL
+) ON [PRIMARY]
+
+GO 
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_VWSGRCONTRATOCREDITO.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRCONTRATOCREDITO_HST'
+GO
+
+
+CREATE TABLE dbo.SAP_VWSGRCREDITOBANCARIO_HST(
+	concreditobancario NUMERIC(10,0) NOT NULL,
+	codcontabilidad NUMERIC(2,0) NOT NULL,
+	codue NUMERIC(4,0) NOT NULL,
+	conmoneda NUMERIC(3,0) NOT NULL,
+	codproducto NUMERIC(2,0) NOT NULL,
+	numoperacion NUMERIC(7,0) NOT NULL,
+	indrequierepoliza NUMERIC(1,0) NULL,
+	concreditobancarioprincipal NUMERIC(10,0) NOT NULL,
+	estcreditobancario VARCHAR(3) NOT NULL,
+	coccreditobancario VARCHAR(55) NULL,
+	fecconstitucion DATETIME NULL,
+	mtoprincipal NUMERIC(16,2) NULL,
+	Es_Giro BIT NOT NULL,
+	Consecutivo_Contrato BIGINT NOT NULL,
+	Fecha_Replica DATETIME NULL
+) ON [PRIMARY]
+
+GO 
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacenará el histórico de la información de la tabla TMP_SAP_VWSGRCREDITOBANCARIO.' , 'user' , 'dbo' , 'table' , 'SAP_VWSGRCREDITOBANCARIO_HST'
+GO
+
+
+CREATE TABLE dbo.POLIZAS_HST
+(
+	Codigo_SAP            numeric(8,0)  NOT NULL ,
+	Tipo_Poliza           numeric(3,0)  NOT NULL ,
+	Codigo_Oficina_Operacion  numeric(4,0)  NOT NULL ,
+	Codigo_Moneda_Operacion  numeric(3,0)  NOT NULL ,
+	Codigo_Producto_Operacion  numeric(2,0)  NOT NULL ,
+	Numero_Operacion      numeric(7,0)  NOT NULL ,
+	Numero_Contrato       varchar(10)  NOT NULL ,
+	Consecutivo_Operacion_Garantias  bigint  NOT NULL,
+	Monto_Poliza          numeric(16,2)  NOT NULL ,
+	Moneda_Monto_Poliza   numeric(3,0)  NOT NULL ,
+	Estado_Poliza         char(3)  NOT NULL ,
+	Simbolo_Moneda        char(5)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL ,
+	Fecha_Vencimiento     datetime  NULL ,
+	Descripcion_Moneda_Monto_Poliza  varchar(30)  COLLATE SQL_Latin1_General_CP850_CS_AS NOT NULL ,
+	Detalle_Poliza        varchar(250)  COLLATE SQL_Latin1_General_CP850_CS_AS NULL,
+	Fecha_Replica datetime NULL,
+	Indicador_Poliza_Externa bit NULL,
+	Codigo_Partido numeric(1, 0) NULL,
+	Identificacion_Bien varchar(25) NULL,
+	Codigo_Tipo_Cobertura numeric(3, 0) NULL,
+	Codigo_Aseguradora tinyint NULL
+)
+ ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Esta tabla almacena el histórico de la información de las pólizas registradas en la tabla TMP_POLIZAS.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST'
+GO
+
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la póliza dentro del sistema de pólizas (SAP).' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Codigo_SAP'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del tipo de póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Tipo_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Monto asegurado.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Descripción del código de la moneda del monto de la póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Descripcion_Moneda_Monto_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Símbolo asignado a la moneda del monto del a póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Simbolo_Moneda'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Fecha de vencimiento de la póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Fecha_Vencimiento'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Observaciones que puede poseer la póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Detalle_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del estado de la póliza.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Estado_Poliza'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la moneda de la operación o contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Codigo_Moneda_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código de la oficina de la operación o contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Codigo_Oficina_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Código del producto de la operación, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Codigo_Producto_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número de la operación, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Numero_Operacion'
+GO
+
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Número del contrato, dentro del sistema de pólizas.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Numero_Contrato'
+GO
+
+EXEC sp_addextendedproperty 'MS_Description' , 'Consecutivo de la operación, registrada en el sistema de garantías.' , 'user' , 'dbo' , 'table' , 'POLIZAS_HST', 'column' , 'Consecutivo_Operacion_Garantias'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Fecha en que el registro fue replicado.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Fecha_Replica'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Indica si la póliza es externa (1) o no (0).' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Indicador_Poliza_Externa'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Código del partido.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Codigo_Partido'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Identificación del bien.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Identificacion_Bien'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Código del tipo de cobertura.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Codigo_Tipo_Cobertura'
+GO
+
+EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Código de la aseguradora.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Codigo_Aseguradora'
+GO
+
+
