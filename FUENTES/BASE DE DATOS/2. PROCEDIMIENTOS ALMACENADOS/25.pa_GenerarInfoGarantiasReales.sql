@@ -3380,6 +3380,16 @@ DECLARE	@viCodigo_Operacion		BIGINT,
 	WHERE	TGR.cod_usuario = @psCedula_Usuario
 		AND TGR.fecha_ultimo_seguimiento IS NULL
 
+	UPDATE	dbo.GAR_GIROS_GARANTIAS_REALES
+	SET		porcentaje_responsabilidad = NULL
+	WHERE	porcentaje_responsabilidad <= -1;
+
+	UPDATE	TGR
+	SET		TGR.porcentaje_responsabilidad = NULL
+	FROM	dbo.TMP_GARANTIAS_REALES TGR
+	WHERE	TGR.cod_usuario = @psCedula_Usuario
+		AND TGR.porcentaje_responsabilidad <= -1
+
 
 	INSERT INTO dbo.SICAD_REALES (	ID_GARANTIA_REAL, TIPO_BIEN_GARANTIA_REAL, ID_BIEN, MONTO_ULTIMA_TASACION_TERRENO, MONTO_ULTIMA_TASACION_NO_TERRENO, 
 									FECHA_ULTIMA_TASACION_GARANTIA, MONTO_TASACION_ACTUALIZADA_TERRENO, MONTO_TASACION_ACTUALIZADA_NO_TERRENO, 
@@ -3521,6 +3531,7 @@ DECLARE	@viCodigo_Operacion		BIGINT,
 		GGR.porcentaje_responsabilidad,
 		TMP.cod_inscripcion,
 		TMP.porcentaje_responsabilidad,
+		TMP.Porcentaje_Aceptacion,
 		TMP.monto_total_avaluo;
 		
 
