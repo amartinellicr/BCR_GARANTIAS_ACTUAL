@@ -553,6 +553,7 @@ namespace BCRGARANTIAS.Negocios
 
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
 
+<<<<<<< HEAD
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
                     oConexion.Open();
@@ -562,13 +563,28 @@ namespace BCRGARANTIAS.Negocios
                     oConexion.Close();
                     oConexion.Dispose();
                 }
+=======
+                //using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                //{
+                //    oConexion.Open();
+                    dsDatosPorcentajeAceptacion = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Porcentaje_Aceptacion", parameters, 0);
+                //}
+            }
+            catch (SqlException sqlEx)
+            {
+                string parametros = string.Format("Consecutivo Porcentaje Acept.: {0}. Tipo Mitigador: {1}. Acción: {2}. El error se da al obtener la información de la base de datos: {3}", codigoPorcentajeAceptacion.ToString(), codigoTipoMitigador.ToString(), accion.ToString(), sqlEx.Message);
+   
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorCargaPorcentajeAceptacionDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                dsDatosPorcentajeAceptacion = null;
+>>>>>>> refs/remotes/origin/master
             }
             catch (Exception ex)
             {
-                StringCollection parametros = new StringCollection();
-                parametros.Add(codigoPorcentajeAceptacion.ToString());
+                string parametros = string.Format("Consecutivo Porcentaje Acept.: {0}. Tipo Mitigador: {1}. Acción: {2}. El error se da al obtener la información de la base de datos: {3}", codigoPorcentajeAceptacion.ToString(), codigoTipoMitigador.ToString(), accion.ToString(), ex.Message);
+                //parametros.Add(codigoPorcentajeAceptacion.ToString());
               
-                parametros.Add(("El error se da al obtener la información de la base de datos: " + ex.Message));
+                //parametros.Add(("El error se da al obtener la información de la base de datos: " + ex.Message));
 
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorCargaPorcentajeAceptacionDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
@@ -612,26 +628,39 @@ namespace BCRGARANTIAS.Negocios
                 parameters[4].Direction = ParameterDirection.Output;
 
 
+
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
 
-                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-                {
-                    oConexion.Open();
-                    object datoRetornado = AccesoBD.ExecuteScalar(CommandType.StoredProcedure,"Consultar_Porcentaje_Aceptacion",parameters);
+                //using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                //{
+                //    oConexion.Open();
+                object datoRetornado = AccesoBD.ExecuteScalar(CommandType.StoredProcedure,"Consultar_Porcentaje_Aceptacion",parameters);
 
+<<<<<<< HEAD
                     oConexion.Close();
                     oConexion.Dispose();
 
                     porcentajeAceptacionCalculado = (Decimal.TryParse(datoRetornado.ToString(), out porAcepCal) ? porAcepCal : 0);
+=======
+                porcentajeAceptacionCalculado = (Decimal.TryParse(datoRetornado.ToString(), out porAcepCal) ? porAcepCal : 0);
+>>>>>>> refs/remotes/origin/master
                        
-                }
+                //}
+            }
+            catch (SqlException sqlEx)
+            {
+                string parametros = string.Format("Tipo de Mitigador: {0}. Acción: {1}. El error se da al obtener la información de la base de datos: {2}", codigoTipoMitigador.ToString(), accion.ToString(), sqlEx.Message);
+
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorCargaPorcentajeAceptacionDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                porcentajeAceptacionCalculado = 0;
             }
             catch (Exception ex)
             {
-                StringCollection parametros = new StringCollection();
-                parametros.Add(codigoTipoMitigador.ToString());
-                parametros.Add(accion.ToString());
-                parametros.Add(("El error se da al obtener la información de la base de datos: " + ex.Message));
+                string parametros = string.Format("Tipo de Mitigador: {0}. Acción: {1}. El error se da al obtener la información de la base de datos: {2}", codigoTipoMitigador.ToString(), accion.ToString(), ex.Message);
+                //parametros.Add(codigoTipoMitigador.ToString());
+                //parametros.Add(accion.ToString());
+                //parametros.Add(("El error se da al obtener la información de la base de datos: " + ex.Message));
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorCargaPorcentajeAceptacionDetalle, parametros, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
