@@ -88,7 +88,13 @@ namespace BCRGARANTIAS.Negocios
                                 }
                             }
  						}
-						catch(Exception ex)
+                        catch (SqlException sqlEx)
+                        {
+                            bErrorRegistrado = true;
+                            Utilitarios.RegistraEventLog("Error al consultar la BD. Error: " + sqlEx.Message + ". Detalle: " + sqlEx.StackTrace, System.Diagnostics.EventLogEntryType.Error);
+                            throw sqlEx;
+                        }
+                        catch (Exception ex)
 						{
 							bErrorRegistrado = true;
 							Utilitarios.RegistraEventLog("Error al consultar la BD. Error: " + ex.Message + ". Detalle: " + ex.StackTrace, System.Diagnostics.EventLogEntryType.Error);
@@ -102,17 +108,20 @@ namespace BCRGARANTIAS.Negocios
 						else
 						{
 							bRespuesta = false;
-						}
+                            Utilitarios.RegistraEventLog("El usuario no exsite en la BD.",  System.Diagnostics.EventLogEntryType.Error);
+                        }
 					}
 					else
 					{
 						bRespuesta = false;
-					}
+                        Utilitarios.RegistraEventLog("El usuario tiene problemas al autenticar contra el AD.", System.Diagnostics.EventLogEntryType.Error);
+                    }
 				}
 				else
 				{
 					bRespuesta = false;
-				}
+                    Utilitarios.RegistraEventLog("El usuario no existe en el AD.", System.Diagnostics.EventLogEntryType.Error);
+                }
 
 				return bRespuesta;
 			}

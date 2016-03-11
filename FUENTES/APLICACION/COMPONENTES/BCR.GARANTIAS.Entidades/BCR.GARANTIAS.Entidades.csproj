@@ -86,6 +86,8 @@
     <Compile Include="clsRegistrosBitacoras.cs" />
     <Compile Include="clsRol.cs" />
     <Compile Include="clsRolXPerfil.cs" />
+    <Compile Include="clsSaldosTotalesPorcentajeResponsabilidad.cs" />
+    <Compile Include="clsSaldoTotalPorcentajeResponsabilidad.cs" />
     <Compile Include="clsSemestre.cs" />
     <Compile Include="clsSemestres.cs" />
     <Compile Include="clsTarjeta.cs" />

@@ -40,7 +40,7 @@ BEGIN
 	<Autor>Javier Chaves Alvarado, BCR</Autor>
 	<Fecha>N/A</Fecha>
 	<Requerimiento></Requerimiento>
-	<Versión>1.4</Versión>
+	<Versión>1.6</Versión>
 	<Historial>
 		<Cambio>
 			<Autor>Arnoldo Martinelli Marín, Lidersoft Internacional S.A.</Autor>
@@ -88,6 +88,14 @@ BEGIN
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00615, Mantenimiento de Saldos Totales y Procentajes de Responsabilidad</Requerimiento>
+			<Fecha>10/03/2016</Fecha>
+			<Descripción>
+				El cambio es referente a la extracción de nuevos campos necesarios.
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -121,6 +129,8 @@ BEGIN
 													cod_tipo_operacion			TINYINT,
 													ind_duplicidad				TINYINT			DEFAULT (1)	,
 													cod_usuario					VARCHAR (30)	COLLATE DATABASE_DEFAULT,
+													Indicador_Porcentaje_Responsabilidad_Maximo BIT, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
+													Indicador_Cuenta_Contable_Especial  BIT, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 													cod_llave					BIGINT			IDENTITY(1,1)
 													PRIMARY KEY (cod_llave)
 										)
@@ -230,7 +240,9 @@ BEGIN
 			END	AS Garantia_Real,
 			2 AS cod_tipo_operacion,
 			1 AS ind_duplicidad,
-			@psCedula_Usuario AS cod_usuario
+			@psCedula_Usuario AS cod_usuario,
+			GRO.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.		
+			0 AS Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.	
 	FROM	dbo.GAR_OPERACION GO1 
 		INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
 		ON GO1.cod_operacion = GRO.cod_operacion 
@@ -342,7 +354,9 @@ BEGIN
 				GRC.cod_garantias_listado,
 				GRC.Garantia_Real, 
 				GRC.cod_grado, 
-				GRC.cedula_hipotecaria
+				GRC.cedula_hipotecaria,
+				GRC.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
+				GRC.Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 		FROM	@TMP_GARANTIAS_REALES_CONTRATOS GRC
 			INNER JOIN CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRC.cod_tipo_garantia_real

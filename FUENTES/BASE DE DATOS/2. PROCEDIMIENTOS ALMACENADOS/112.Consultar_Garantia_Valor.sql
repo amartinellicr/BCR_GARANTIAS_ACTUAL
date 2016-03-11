@@ -35,7 +35,7 @@ AS
 	<Autor>Ing. Leonardo Cortes Mora, Lidersoft Internacional S.A.</Autor>
 	<Fecha>24/06/2014</Fecha>
 	<Requerimiento>N/A</Requerimiento>
-	<Versión>1.0</Versión>
+	<Versión>1.2</Versión>
 	<Historial>
 		<Cambio>
 			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
@@ -45,6 +45,14 @@ AS
 				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
 				crear el campo referente al porcentaje de aceptación, este campo reemplazará al camp oporcentaje de responsabilidad dentro de 
 				cualquier lógica existente. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00615, Mantenimiento de Saldos Totales y Procentajes de Responsabilidad</Requerimiento>
+			<Fecha>10/03/2016</Fecha>
+			<Descripción>
+				El cambio es referente a la extracción de nuevos campos necesarios.
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -109,7 +117,12 @@ BEGIN
 			CONVERT(VARCHAR(10), (COALESCE(GVA.Fecha_Modifico,'1900-01-01')), 103) AS Fecha_Modifico,
 			CONVERT(VARCHAR(10), (COALESCE(GVA.Fecha_Inserto,'1900-01-01')), 103) AS Fecha_Inserto,
 			CONVERT(VARCHAR(10), (COALESCE(GVA.Fecha_Replica,'1900-01-01')), 103) AS Fecha_Replica,
-			COALESCE(GVP.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+			COALESCE(GVP.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+			CASE 
+				WHEN ((GOP.num_contrato = 0) AND (GOP.Cuenta_Contable = 814)) THEN 1
+				WHEN ((GOP.num_contrato = 0) AND (GOP.Cuenta_Contable = 619)) THEN 1
+				ELSE 0
+			END AS Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.	
 	FROM	GAR_OPERACION GOP 
 		INNER JOIN GAR_GARANTIAS_VALOR_X_OPERACION  GVP 
 		ON GOP.cod_operacion = GVP.cod_operacion 
