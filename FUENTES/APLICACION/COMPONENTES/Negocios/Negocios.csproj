@@ -97,6 +97,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="RolesXPerfil.cs" />
+    <Compile Include="SaldosTotalesPorcentajesResponsabilidad.cs" />
     <Compile Include="Seguridad.cs" />
     <Compile Include="Tarjetas.cs" />
     <Compile Include="TiposBienRelacionados.cs" />

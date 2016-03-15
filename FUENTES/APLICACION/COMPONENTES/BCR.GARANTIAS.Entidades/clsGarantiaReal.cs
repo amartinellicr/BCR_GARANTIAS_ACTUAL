@@ -1076,6 +1076,8 @@ namespace BCR.GARANTIAS.Entidades
         private const string _desTipoLiquidezAnterior = "des_tipo_liquidez_anterior";
         private const string _desTipoTenenciaAnterior = "des_tipo_tenencia_anterior";
         private const string _desTipoMonedaAnterior = "des_tipo_moneda_anterior";
+        private const string _indicadorPorcentajeResponsabilidadMaximo = "Indicador_Porcentaje_Responsabilidad_Maximo";
+        private const string _indicadorCuentaContableEspecial = "Porcentaje_Aceptacion";
 
         public const string _usuarioInserto = "Usuario_Inserto";
         public const string _usuarioModifico = "Usuario_Modifico";
@@ -1368,11 +1370,14 @@ namespace BCR.GARANTIAS.Entidades
 
             porcentajeAceptacion = 0;
 
-            #endregion Garantía
+            IndicadorPorcentajeResponsabilidadMaximo = false;
+            IndicadorCuentaContableEspecial = false;
 
-            #region Avalúos
+        #endregion Garantía
 
-            fechaValuacion = new DateTime(1900, 01, 01);
+        #region Avalúos
+
+        fechaValuacion = new DateTime(1900, 01, 01);
             cedulaEmpresa = string.Empty;
             cedulaPerito = string.Empty;
             montoUltimaTasacionTerreno = 0;
@@ -1756,6 +1761,9 @@ namespace BCR.GARANTIAS.Entidades
             indicadorViviendaHabitadaDeudor = false;
 
             porcentajeAceptacion = 0;
+
+            IndicadorPorcentajeResponsabilidadMaximo = false;
+            IndicadorCuentaContableEspecial = false;
 
             #endregion Garantía
 
@@ -2200,6 +2208,11 @@ namespace BCR.GARANTIAS.Entidades
 
                             //////////////////
 
+                            IndicadorPorcentajeResponsabilidadMaximo = ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo).InnerText.CompareTo("0") == 0) ? false : true) : false);
+                            IndicadorCuentaContableEspecial =  ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial).InnerText.CompareTo("0") == 0) ? false : true) : false);
+
+
+                            /////////////////
 
                             listaDescripcionValoresAnterioresCombos.Add(_codTipoBien, ((desTipoBienAnterior.Length > 0) ? desTipoBienAnterior : desTipoBien));
                             listaDescripcionValoresAnterioresCombos.Add(_codTipoMitigador, ((desTipoMitigadorAnterior.Length > 0) ? desTipoMitigadorAnterior : desTipoMitigador));
@@ -3348,6 +3361,9 @@ namespace BCR.GARANTIAS.Entidades
             get { return porcentajeAceptacion; }
             set { porcentajeAceptacion = value; }
         }
+
+        public bool IndicadorPorcentajeResponsabilidadMaximo { get; set; }
+        public bool IndicadorCuentaContableEspecial { get; set; }
 
         #endregion Garantía
 

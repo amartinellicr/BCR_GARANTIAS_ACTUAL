@@ -243,6 +243,20 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorObteniendoTipoCambioBCCR                                      = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR";
         public const string _errorObteniendoTipoCambioBCCRFechas                                = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR_FECHAS";
 
+        public const string _errorInsertandoSaldoTotalPr                                        = "ERROR_INSERTANDO_SALDO_TOTAL_PR";
+        public const string _errorInsertandoSaldoTotalPrDetalle                                 = "ERROR_INSERTANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorModificandoSaldoTotalPr                                       = "ERROR_MODIFICANDO_SALDO_TOTAL_PR";
+        public const string _errorModificandoSaldoTotalPrDetalle                                = "ERROR_MODIFICANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorEliminandoSaldoTotalPr                                        = "ERROR_ELIMINANDO_SALDO_TOTAL_PR";
+        public const string _errorEliminandoSaldoTotalPrDetalle                                 = "ERROR_ELIMINANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorConsultandoSaldoTotalPrDetalle                                = "ERROR_CONSULTANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorConsultandoOperacionesRelacionadasGarantiaDetalle             = "ERROR_CONSULTANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE";
+        public const string _errorNormalizandoOperacionesRelacionadasAGarantia                  = "ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA";
+        public const string _errorNormalizandoOperacionesRelacionadasAGarantiaDetalle           = "ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE";
+
+        public const string _errorAplicandoCalculoDistribucionPrDetalle                         = "ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR_DETALLE";
+
+
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>

@@ -630,4 +630,37 @@
   <data name="ERROR_INTERFAZ_SISTAR_DETALLE" xml:space="preserve">
     <value>Se ha producido un error al intentar utilizar la interfaz con SISTAR. Detalle Técnico: @1</value>
   </data>
+  <data name="ERROR_CONSULTANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE" xml:space="preserve">
+    <value>No se pudo consultar la información del saldo total y porcentaje de responsabilidad de la garantía @1. Detalle Técnico: @2</value>
+  </data>
+  <data name="ERROR_CONSULTANDO_SALDO_TOTAL_PR_DETALLE" xml:space="preserve">
+    <value>No se pudo consultar la información del saldo total y porcentaje de responsabilidad de la garantía @1, relacionada a la operación @2. Detalle Técnico: @3</value>
+  </data>
+  <data name="ERROR_ELIMINANDO_SALDO_TOTAL_PR" xml:space="preserve">
+    <value>No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía.</value>
+  </data>
+  <data name="ERROR_ELIMINANDO_SALDO_TOTAL_PR_DETALLE" xml:space="preserve">
+    <value>No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía @1, relacionada a la operación @2. Detalle Técnico: @3</value>
+  </data>
+  <data name="ERROR_INSERTANDO_SALDO_TOTAL_PR" xml:space="preserve">
+    <value>No se pudo insertar la información del saldo total y porcentaje de responsabilidad de la garantía.</value>
+  </data>
+  <data name="ERROR_INSERTANDO_SALDO_TOTAL_PR_DETALLE" xml:space="preserve">
+    <value>No se pudo insertar la información del saldo total y porcentaje de responsabilidad de la garantía @1, relacionada a la operación @2. Detalle Técnico: @3</value>
+  </data>
+  <data name="ERROR_MODIFICANDO_SALDO_TOTAL_PR" xml:space="preserve">
+    <value>No se pudo modificar la información del saldo total y porcentaje de responsabilidad de la garantía.</value>
+  </data>
+  <data name="ERROR_MODIFICANDO_SALDO_TOTAL_PR_DETALLE" xml:space="preserve">
+    <value>No se pudo modificar la información del saldo total y porcentaje de responsabilidad de la garantía @1, relacionada a la operación @2. Detalle Técnico: @3</value>
+  </data>
+  <data name="ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA" xml:space="preserve">
+    <value>No se pudo normalizar el porcentaje de responsabilidad entre las operaciones y la misma garantía.</value>
+  </data>
+  <data name="ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE" xml:space="preserve">
+    <value>No se pudo normalizar el porcentaje de responsabilidad entre las operaciones y la misma garantía. Detalle Técnico: @1</value>
+  </data>
+  <data name="ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR_DETALLE" xml:space="preserve">
+    <value>Se ha presnetado un error al aplicar el cálculo de la distribución del porcentanje de responsabilidad. Detalle Técnico: @1</value>
+  </data>
 </root>

@@ -34,6 +34,10 @@ namespace BCR.GARANTIAS.Entidades
         public const string _cedulaAcreedor = "cedula_acreedor";
         public const string _indicadorEstadoRegistro = "cod_estado";
         public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
+        public const string _indicadorPorcentajeResponsabilidadMaximo = "Indicador_Porcentaje_Responsabilidad_Maximo";
+        public const string _indicadorCuentaContableEspecial = "Porcentaje_Aceptacion";
+
+
 
         //Campos comunes entre las tablas
         public const string _consecutivoGarantiaFiduciaria = "cod_garantia_fiduciaria";
@@ -80,6 +84,8 @@ namespace BCR.GARANTIAS.Entidades
         public string CedulaAcreedor { get; set; }
         public int IndicadorEstadoRegistro { get; set; }
         public decimal PorcentajeAceptacion { get; set; }
+        public bool IndicadorPorcentajeResponsabilidadMaximo { get; set; }
+        public bool IndicadorCuentaContableEspecial { get; set; }
 
         //Datos de la tarjeta
         public DateTime FechaExpiracion { get; set; }

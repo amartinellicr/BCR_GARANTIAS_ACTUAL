@@ -76,6 +76,7 @@ namespace BCR.GARANTIAS.Comun
 
         public enum Tipos_Operaciones
         {
+            Ninguno     = -1,
             Directa     = 1,
             Contrato    = 2,
             Tarjeta     = 3,

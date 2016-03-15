@@ -46,6 +46,8 @@ namespace BCR.GARANTIAS.Entidades
         public const string _cedulaAcreedor = "cedula_acreedor";
         public const string _codigoEstadoRegistro = "cod_estado";
         public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
+        public const string _indicadorPorcentajeResponsabilidadMaximo = "Indicador_Porcentaje_Responsabilidad_Maximo";
+        public const string _indicadorCuentaContableEspecial = "Porcentaje_Aceptacion";
 
         //Campos comunes entre las tablas
         public const string _consecutivoGarantiaValor = "cod_garantia_valor";
@@ -106,6 +108,8 @@ namespace BCR.GARANTIAS.Entidades
         public DateTime FechaModifico { get; set; }
         public DateTime FechaInserto { get; set; }
         public DateTime FechaReplica { get; set; }
+        public bool IndicadorPorcentajeResponsabilidadMaximo { get; set; }
+        public bool IndicadorCuentaContableEspecial { get; set; }
 
         #endregion Propiedades
 
