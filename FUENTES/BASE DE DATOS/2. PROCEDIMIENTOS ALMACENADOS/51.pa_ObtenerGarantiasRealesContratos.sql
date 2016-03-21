@@ -128,6 +128,8 @@ BEGIN
 													Garantia_Real				VARCHAR (150)	COLLATE DATABASE_DEFAULT,
 													cod_tipo_operacion			TINYINT,
 													ind_duplicidad				TINYINT			DEFAULT (1)	,
+													Identificacion_Bien			DECIMAL(12,0),
+													Idendificacion_Alfanumerica_Bien VARCHAR(25) COLLATE DATABASE_DEFAULT,
 													cod_usuario					VARCHAR (30)	COLLATE DATABASE_DEFAULT,
 													Indicador_Porcentaje_Responsabilidad_Maximo BIT, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 													Indicador_Cuenta_Contable_Especial  BIT, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
@@ -240,6 +242,8 @@ BEGIN
 			END	AS Garantia_Real,
 			2 AS cod_tipo_operacion,
 			1 AS ind_duplicidad,
+			GGR.Identificacion_Sicc,
+			GGR.Identificacion_Alfanumerica_Sicc,
 			@psCedula_Usuario AS cod_usuario,
 			GRO.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.		
 			0 AS Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.	
@@ -355,6 +359,14 @@ BEGIN
 				GRC.Garantia_Real, 
 				GRC.cod_grado, 
 				GRC.cedula_hipotecaria,
+				GRC.cod_clase_garantia,
+				GRC.cod_partido,
+				CASE 
+					WHEN GRC.cod_clase_garantia = 11 THEN GRC.Idendificacion_Alfanumerica_Bien
+					WHEN GRC.cod_clase_garantia = 38 THEN GRC.Idendificacion_Alfanumerica_Bien
+					WHEN GRC.cod_clase_garantia = 43 THEN GRC.Idendificacion_Alfanumerica_Bien
+					ELSE GRC.Identificacion_Bien
+				END	AS Identificacion_Bien,
 				GRC.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 				GRC.Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 		FROM	@TMP_GARANTIAS_REALES_CONTRATOS GRC

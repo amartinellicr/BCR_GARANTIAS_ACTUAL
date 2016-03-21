@@ -337,6 +337,31 @@ namespace BCRGARANTIAS.Negocios
 
         }
 
+        public string[] ObtenerPerfilUsuario(string strIdentificacion)
+        {
+            string[] perfilUsuarioObtenido = { string.Empty, string.Empty };
+
+            string strConsultarUsuarioExiste = string.Format("SELECT SEU.COD_PERFIL, SEP.DES_PERFIL FROM dbo.SEG_USUARIO SEU INNER JOIN dbo.SEG_PERFIL SEP ON SEP.COD_PERFIL = SEU.COD_PERFIL WHERE SEU.COD_USUARIO = '{0}'", strIdentificacion);
+            
+            try
+            {
+                DataSet DatosUsuario = AccesoBD.ejecutarConsulta(strConsultarUsuarioExiste);
+
+                if ((DatosUsuario != null) && (DatosUsuario.Tables.Count > 0) && (DatosUsuario.Tables[0].Rows.Count > 0))
+                {
+                    perfilUsuarioObtenido[0] = ((!DatosUsuario.Tables[0].Rows[0].IsNull("COD_PERFIL")) ? DatosUsuario.Tables[0].Rows[0]["COD_PERFIL"].ToString() : "-1");
+                    perfilUsuarioObtenido[1] = ((!DatosUsuario.Tables[0].Rows[0].IsNull("DES_PERFIL")) ? DatosUsuario.Tables[0].Rows[0]["DES_PERFIL"].ToString() : string.Empty);
+                }
+            }
+            catch
+            {
+                throw;
+            }
+
+            return perfilUsuarioObtenido;
+
+        }
+
         #endregion Métodos Públicos
     }
 }

@@ -1372,41 +1372,43 @@ namespace BCR.GARANTIAS.Entidades
 
             IndicadorPorcentajeResponsabilidadMaximo = false;
             IndicadorCuentaContableEspecial = false;
+            IdentificacionGarantia = -1;
+            IdentificacionAlfanumericaGarantia = string.Empty;
 
-        #endregion Garantía
+            #endregion Garantía
 
-        #region Avalúos
+            #region Avalúos
 
-        fechaValuacion = new DateTime(1900, 01, 01);
-            cedulaEmpresa = string.Empty;
-            cedulaPerito = string.Empty;
-            montoUltimaTasacionTerreno = 0;
-            montoUltimaTasacionNoTerreno = 0;
-            montoTasacionActualizadaTerreno = 0;
-            montoTasacionActualizadaNoTerreno = 0;
-            fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
-            montoTotalAvaluo = 0;
-            fechaConstruccion = new DateTime(1900, 01, 01);
-            fechaValuacionSICC = new DateTime(1900, 01, 01);
-            fechaAvaluoSICC = new DateTime(1900, 01, 01);
-            montoTotalAvaluoSICC = 0;
-            fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
-            fechaActualBD = new DateTime(1900, 01, 01);
-            avaluoActualizado = false;
-            fechaSemestreCalculado = new DateTime(1900, 01, 01);
-            montoTasacionActualizadaTerrenoCalculado = null;
-            montoTasacionActualizadaNoTerrenoCalculado = null;
+            fechaValuacion = new DateTime(1900, 01, 01);
+                cedulaEmpresa = string.Empty;
+                cedulaPerito = string.Empty;
+                montoUltimaTasacionTerreno = 0;
+                montoUltimaTasacionNoTerreno = 0;
+                montoTasacionActualizadaTerreno = 0;
+                montoTasacionActualizadaNoTerreno = 0;
+                fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
+                montoTotalAvaluo = 0;
+                fechaConstruccion = new DateTime(1900, 01, 01);
+                fechaValuacionSICC = new DateTime(1900, 01, 01);
+                fechaAvaluoSICC = new DateTime(1900, 01, 01);
+                montoTotalAvaluoSICC = 0;
+                fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
+                fechaActualBD = new DateTime(1900, 01, 01);
+                avaluoActualizado = false;
+                fechaSemestreCalculado = new DateTime(1900, 01, 01);
+                montoTasacionActualizadaTerrenoCalculado = null;
+                montoTasacionActualizadaNoTerrenoCalculado = null;
 
-            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
-            porcentajeAceptacionTerreno = 0;
-            porcentajeAceptacionNoTerreno = 0;
-            porcentajeAceptacionTerrenoCalculado = 0;
-            porcentajeAceptacionNoTerrenoCalculado = 0;
+                porcentajeAceptacionTerreno = 0;
+                porcentajeAceptacionNoTerreno = 0;
+                porcentajeAceptacionTerrenoCalculado = 0;
+                porcentajeAceptacionNoTerrenoCalculado = 0;
 
-            #endregion
+                #endregion
 
-            #endregion Avalúos
+                #endregion Avalúos
 
             #region Inconsistencias
 
@@ -1764,6 +1766,8 @@ namespace BCR.GARANTIAS.Entidades
 
             IndicadorPorcentajeResponsabilidadMaximo = false;
             IndicadorCuentaContableEspecial = false;
+            IdentificacionGarantia = -1;
+            IdentificacionAlfanumericaGarantia = string.Empty;
 
             #endregion Garantía
 
@@ -3364,6 +3368,8 @@ namespace BCR.GARANTIAS.Entidades
 
         public bool IndicadorPorcentajeResponsabilidadMaximo { get; set; }
         public bool IndicadorCuentaContableEspecial { get; set; }
+        public long IdentificacionGarantia { get; set; }
+        public string IdentificacionAlfanumericaGarantia { get; set; }
 
         #endregion Garantía
 

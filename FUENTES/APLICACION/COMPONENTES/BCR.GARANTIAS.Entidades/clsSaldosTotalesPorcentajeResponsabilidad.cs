@@ -191,8 +191,7 @@ namespace BCR.GARANTIAS.Entidades
             //Se retorna la cadena generada
             return listaRegistrosJSON.ToString();
         }
-
-
+        
         /// <summary>
         /// Aplica el cálculo de la redistribución del porcentaje de responsabilidad entre las operaciones participantes.
         /// </summary>
@@ -207,11 +206,9 @@ namespace BCR.GARANTIAS.Entidades
 
             try
             {
-
                 if ((InnerList != null) && (InnerList.Count > 0))
                 {
                     //Se obtienen los datos del saldo y porcentaje ajustados
-
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroAjustado in InnerList)
                     {
                         if ((registroAjustado.IndicadorAjusteCampoSaldo) || (registroAjustado.IndicadorAjusteCampoPorcentaje))

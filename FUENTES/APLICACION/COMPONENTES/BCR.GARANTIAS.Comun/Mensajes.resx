@@ -661,6 +661,15 @@
     <value>No se pudo normalizar el porcentaje de responsabilidad entre las operaciones y la misma garantía. Detalle Técnico: @1</value>
   </data>
   <data name="ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR_DETALLE" xml:space="preserve">
-    <value>Se ha presnetado un error al aplicar el cálculo de la distribución del porcentanje de responsabilidad. Detalle Técnico: @1</value>
+    <value>Se ha presentado un error al aplicar el cálculo de la distribución del porcentanje de responsabilidad. Detalle Técnico: @1</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_OPERACIONES_GARANTIAS" xml:space="preserve">
+    <value>Se ha presentado un error al obtener las operaciones relacionadas a la garantía '@1'.</value>
+  </data>
+  <data name="ERROR_OBTENIENDO_OPERACIONES_GARANTIAS_DETALLE" xml:space="preserve">
+    <value>Se ha presentado un error al obtener las operaciones relacionadas a la garantía '@1'. Detalle Técnico: @2</value>
+  </data>
+  <data name="ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR" xml:space="preserve">
+    <value>Se ha presentado un error al aplicar el cálculo de la distribución del porcentanje de responsabilidad. </value>
   </data>
 </root>

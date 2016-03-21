@@ -1,8 +1,16 @@
 ﻿using System;
+using System.Text;
+using System.IO;
+using System.Web.UI;
+using System.Web;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.Web.UI.HtmlControls;
+using System.Collections.Generic;
+using System.Web.UI.WebControls;
+using System.Drawing;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
@@ -171,8 +179,7 @@ namespace BCRGARANTIAS.Negocios
             #endregion
 
         }
-
-
+        
         /// <summary>
         /// Modifica un registro del saldo total y porcentaje de responsabilidad
         /// </summary>
@@ -329,8 +336,7 @@ namespace BCRGARANTIAS.Negocios
                 #endregion
             }
         }
-
-
+        
         /// <summary>
         /// Elimina un registro del tipo de saldo total y porcentaje de responsabilidad
         /// </summary>
@@ -496,8 +502,7 @@ namespace BCRGARANTIAS.Negocios
 
             return entidadRetornada;
         }
-
-
+        
         /// <summary>
         /// Obtiene el saldo total y porcentaje de responsabilidad de las operaciones relacionadas a una determinada garantía fiduciaria
         /// </summary>
@@ -560,8 +565,7 @@ namespace BCRGARANTIAS.Negocios
 
             return entidadRetornada;
         }
-
-
+        
         /// <summary>
         /// Obtiene el saldo total y porcentaje de responsabilidad de las operaciones relacionadas a una determinada garantía real
         /// </summary>
@@ -585,7 +589,7 @@ namespace BCRGARANTIAS.Negocios
                     };
 
 
-                parameters[0].Value = ((entidadGarantiaReal.CodTipoGarantiaReal == ((short) Enumeradores.Tipos_Garantia_Real.Prenda)) ? entidadGarantiaReal.NumPlacaBien : entidadGarantiaReal.NumeroFinca);
+                parameters[0].Value = entidadGarantiaReal.IdentificacionAlfanumericaGarantia;
                 parameters[1].Value = entidadGarantiaReal.CodClaseGarantia;
                 parameters[2].IsNullable = true;
                 parameters[2].Value = ((entidadGarantiaReal.CodTipoGarantiaReal != ((short)Enumeradores.Tipos_Garantia_Real.Prenda)) ? entidadGarantiaReal.CodPartido : ((object) DBNull.Value));
@@ -636,7 +640,7 @@ namespace BCRGARANTIAS.Negocios
         /// <param name="entidadGarantiaValor">Entidad del tipo garantía valor que posee los datos a consultar</param>
         /// <param name="usuario">Usuario que realiza la consulta el registro</param>
         /// <returns>Enditad del tipo lista de entidades del tipo saldo total y porcentaje de responsabilidad</returns>
-        public clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ObtenerOperacionesPorGarantiaReal(clsGarantiaValor entidadGarantiaValor, string usuario)
+        public clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ObtenerOperacionesPorGarantiaValor(clsGarantiaValor entidadGarantiaValor, string usuario)
         {
             DataSet dsDatosObtenidos = new DataSet();
             clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> entidadRetornada = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
@@ -691,8 +695,7 @@ namespace BCRGARANTIAS.Negocios
 
             return entidadRetornada;
         }
-
-
+        
         /// <summary>
         /// Replica el porcentaje de responsabilidad de una misma garantía entre las operaciones relacionadas a la misma
         /// </summary>
@@ -757,7 +760,257 @@ namespace BCRGARANTIAS.Negocios
             return procesoExitoso;
         }
 
+        /// <summary>
+        /// Método que obtiene el listado de las garantías reales asociadas a una operación o contrato
+        /// </summary>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="cedulaUsuario">Identificación del usuario que realiza la consulta</param>
+        /// <param name="tipoGarantia">Código del tipo de garantía</param>
+        /// <returns>Lista de garantías relacionadas</returns>
+        public HtmlTable ObtenerListaGarantiasPorOperacion(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario, int tipoGarantia)
+        {
+            HtmlTable tablaDinamica = new HtmlTable();
+            List<LinkButton> listadoEnlaces = new List<LinkButton>();
+
+            DataSet datosObtenidos = new DataSet();
+
+            string numeroCompletoOperacion = string.Empty;
+            string consultaGarantia = string.Empty;
+
+            numeroCompletoOperacion = ((codigoProducto != -1) ? (codigoContabilidad.ToString() + "-" + codigoOficina.ToString() + "-" + codigoMoneda.ToString() + "-" + codigoProducto.ToString() + "-" + numeroOperacion.ToString()) : (codigoContabilidad.ToString() + "-" + codigoOficina.ToString() + "-" + codigoMoneda.ToString() + "-" + numeroOperacion.ToString()));
+
+            long consecutivoOperacionGarantia = ((consecutivoOperacion > 0) ? consecutivoOperacion : -1);
+            long consecOper;
+
+            int tipoGarantiaReal = -1;
+            int tipoGarReal;
+
+            //Se obtiene la lista de garantías
+            try
+            {
+                switch (tipoGarantia)   
+                {
+                    case 1:
+                        datosObtenidos = Gestor.ObtenerListaGarantiasFiduciarias(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario);
+
+                        if ((datosObtenidos != null) && (datosObtenidos.Tables.Count > 0) && (datosObtenidos.Tables[0].Rows.Count > 0))
+                        {
+                            foreach (DataRow fila in datosObtenidos.Tables[0].Rows)
+                            {
+                                consecutivoOperacionGarantia = ((consecutivoOperacionGarantia > 0) ? consecutivoOperacionGarantia : (long.TryParse(fila["cod_operacion"].ToString(), out consecOper) ? consecOper : 0));
+                                LinkButton enlaceNuevo = new LinkButton();
+                                enlaceNuevo.ID = fila["cod_garantia_fiduciaria"].ToString();
+                                enlaceNuevo.Text = string.Format("{0}-{1}", fila["tipo_persona"].ToString(), fila["cedula_fiador"].ToString());
+                                enlaceNuevo.Attributes.Add("runat", "Server");
+                                enlaceNuevo.CommandName = "1";
+                                enlaceNuevo.CommandArgument = fila["cod_garantia_fiduciaria"].ToString();
+                                enlaceNuevo.OnClientClick = string.Format("ConsultarGarantiaFiduciaria({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["tipo_persona"].ToString(), fila["cedula_fiador"].ToString());
+                                enlaceNuevo.ToolTip = string.Empty;
+
+                                listadoEnlaces.Add(enlaceNuevo);
+                            }
+
+                            tablaDinamica = GenerarTablaGarantias(listadoEnlaces);
+                        }
+
+                        break;
+                    case 2:
+                        datosObtenidos = Gestor.ObtenerListaGarantiasReales(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario);
+
+                        if ((datosObtenidos != null) && (datosObtenidos.Tables.Count > 0) && (datosObtenidos.Tables[0].Rows.Count > 0))
+                        {
+                            foreach (DataRow fila in datosObtenidos.Tables[0].Rows)
+                            {
+                                consecutivoOperacionGarantia = ((consecutivoOperacionGarantia > 0) ? consecutivoOperacionGarantia : (long.TryParse(fila["cod_operacion"].ToString(), out consecOper) ? consecOper : 0));
+                                tipoGarantiaReal = (int.TryParse(fila["cod_tipo_garantia_real"].ToString(), out tipoGarReal) ? tipoGarReal : 0);
+
+                                LinkButton enlaceNuevo = new LinkButton();
+                                enlaceNuevo.ID = fila["cod_garantia_real"].ToString();
+                                enlaceNuevo.Text = fila["cod_garantias_listado"].ToString();
+                                enlaceNuevo.Attributes.Add("runat", "Server");
+                                enlaceNuevo.CommandName = "2";
+                                enlaceNuevo.CommandArgument = fila["cod_garantia_real"].ToString();
+                                if (tipoGarantiaReal == 2)
+                                {
+                                    enlaceNuevo.ToolTip = string.Format("Grado: {0} - Cédula Hipotecaria: {1}", fila["cod_grado"].ToString(), fila["cedula_hipotecaria"].ToString());
+                                }
+
+                                //enlaceNuevo.Attributes.Add("onclick", (string.Format("javascript:ConsultarGarantiaReal({0}, {1}, {2}, {3});", fila["Identificacion_Bien"].ToString(), fila["cod_clase_garantia"].ToString(), fila["cod_partido"].ToString(), ((fila["cod_grado"].ToString().Length > 0 ? fila["cod_grado"].ToString() : "-1")))));
+                                enlaceNuevo.OnClientClick = string.Format("javascript:ConsultarGarantiaReal({0}, {1}, {2}, {3}); InicializarClaseTablasGarantias($(this));", fila["Identificacion_Bien"].ToString(), fila["cod_clase_garantia"].ToString(), fila["cod_partido"].ToString(), ((fila["cod_grado"].ToString().Length > 0 ? fila["cod_grado"].ToString() : "-1")));
+                               // enlaceNuevo.CssClass = "hyperlink";
+
+                                listadoEnlaces.Add(enlaceNuevo);
+                            }
+
+                            tablaDinamica = GenerarTablaGarantias(listadoEnlaces);
+                        }
+
+
+                        break;
+                    case 3:
+                        datosObtenidos = Gestor.ObtenerListaGarantiasValor(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario);
+
+                        if ((datosObtenidos != null) && (datosObtenidos.Tables.Count > 0) && (datosObtenidos.Tables[0].Rows.Count > 0))
+                        {
+                            foreach (DataRow fila in datosObtenidos.Tables[0].Rows)
+                            {
+                                consecutivoOperacionGarantia = ((consecutivoOperacionGarantia > 0) ? consecutivoOperacionGarantia : (long.TryParse(fila["cod_operacion"].ToString(), out consecOper) ? consecOper : 0));
+                                LinkButton enlaceNuevo = new LinkButton();
+                                enlaceNuevo.ID = fila["cod_garantia_valor"].ToString();
+                                enlaceNuevo.Text = fila["numero_seguridad"].ToString();
+                                enlaceNuevo.Attributes.Add("runat", "Server");
+                                enlaceNuevo.CommandName = "3";
+                                enlaceNuevo.CommandArgument = fila["cod_garantia_valor"].ToString();
+                                enlaceNuevo.ToolTip = string.Empty;
+                                enlaceNuevo.OnClientClick = string.Format("ConsultarGarantiaValor({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["numero_seguridad"].ToString(), fila["cod_clase_garantia"].ToString());
+
+                                listadoEnlaces.Add(enlaceNuevo);
+                            }
+
+                            tablaDinamica = GenerarTablaGarantias(listadoEnlaces);
+                        }
+
+                        break;
+                    default:
+                        break;
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                string detalleError = string.Format("Tipo Garantía: {0}. Error: {1}. Descripción: {2}", tipoGarantia.ToString(), ex.Message, ex.StackTrace);
+                Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_DATOS_DETALLE, (" '" + numeroCompletoOperacion + "'"), detalleError, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            }
+
+            //Se genera la tabla html
+
+
+
+                return tablaDinamica;
+        }
 
         #endregion  //FIN METODOS PUBLICOS
+
+        #region Metodos Privados
+
+        private HtmlTable GenerarTablaGarantias(List<LinkButton> listadoEnlacesGarantias)
+        {
+            //HtmlGenericControl contenedorTabla = new HtmlGenericControl("div");
+
+            string enlaceSeleccionado = string.Empty;
+            string consultaGarantia = string.Empty;
+
+            int contadorColumnas = 0;
+
+            HtmlTable tablaEnlaces = new HtmlTable();
+            HtmlTable datosRetornados = new HtmlTable();
+
+            HtmlTableRow nuevaFila = new HtmlTableRow();
+
+            //contenedor de las garantías reales
+            //contenedorTabla.Controls.Clear();
+            //contenedorTabla.Controls.Add(tablaEnlaces);
+
+            //StringBuilder sb = new StringBuilder();
+            //StringWriter tw = new StringWriter(sb);
+            //HtmlTextWriter hw = new HtmlTextWriter(tw);
+
+            //datosRetornados.RenderControl(hw);
+            String funcionAdicional = HttpUtility.HtmlEncode("javascript:InicializarClaseTablasGarantias(); $(this.celdaNormal).toggleClass(\"celdaSeleccionada\");");
+
+            foreach (LinkButton button in listadoEnlacesGarantias)
+            {
+                if (contadorColumnas == 7)
+                {
+                    nuevaFila = new HtmlTableRow();
+                    contadorColumnas = 0;
+                }
+
+                //if (button.ID == enlaceSeleccionado)
+                //{
+                //    button.ForeColor = Color.Red;
+                //}
+                //else
+                //{
+                //    button.ForeColor = Color.Blue;
+                //}
+
+                switch (button.CommandName)
+                {
+                    //Fiduciaria
+                    case "1":
+
+                        HtmlTableCell nuevaCelda = new HtmlTableCell();
+                        HtmlTableCell celdaEspacio = new HtmlTableCell();
+                        celdaEspacio.Width = "12px";
+                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        nuevaCelda.Controls.Add(button);
+                        nuevaCelda.Attributes.Add("class", "celdaNormal");
+                        //nuevaCelda.Attributes.Add("onclick", funcionAdicional);
+                        nuevaFila.Cells.Add(nuevaCelda);
+                        nuevaFila.Cells.Add(celdaEspacio);
+                        nuevaFila.Cells.Add(celdaEspacio);
+                        
+                        tablaEnlaces.Rows.Add(nuevaFila);
+                        break;
+
+                        
+
+                    //Real
+                    case "2":
+
+                        nuevaCelda = new HtmlTableCell();
+                        celdaEspacio = new HtmlTableCell();
+                        celdaEspacio.Width = "12px";
+                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        nuevaCelda.Controls.Add(button);
+                        nuevaCelda.Attributes.Add("class", "celdaNormal");
+                        //nuevaCelda.Attributes.Add("onclick", funcionAdicional);
+                        nuevaFila.Cells.Add(nuevaCelda);
+                        nuevaFila.Cells.Add(celdaEspacio);
+                        nuevaFila.Cells.Add(celdaEspacio);
+
+                        tablaEnlaces.Rows.Add(nuevaFila);
+                        break;
+
+
+                    //Valor
+                    case "3":
+                        nuevaCelda = new HtmlTableCell();
+                        celdaEspacio = new HtmlTableCell();
+                        celdaEspacio.Width = "12px";
+                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        nuevaCelda.Controls.Add(button);
+                        nuevaCelda.Attributes.Add("class", "celdaNormal");
+                       // nuevaCelda.Attributes.Add("onclick", funcionAdicional);
+                        nuevaFila.Cells.Add(nuevaCelda);
+                        nuevaFila.Cells.Add(celdaEspacio);
+                        nuevaFila.Cells.Add(celdaEspacio);
+
+                        tablaEnlaces.Rows.Add(nuevaFila);
+                        break;
+                }
+
+                contadorColumnas++;
+            }
+
+            //contenedorTabla.Controls.Add(tablaEnlaces);
+ 
+
+            return tablaEnlaces;
+        }
+
+
+        #endregion  //FIN METODOS PRIVADOS
     }
 }

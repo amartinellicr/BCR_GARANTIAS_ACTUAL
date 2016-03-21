@@ -255,7 +255,9 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorNormalizandoOperacionesRelacionadasAGarantiaDetalle           = "ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE";
 
         public const string _errorAplicandoCalculoDistribucionPrDetalle                         = "ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR_DETALLE";
-
+        public const string _errorAplicandoCalculoDistribucionPr                                = "ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR";
+        public const string _errorObteniendoOperacionesGarantias                                = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS";
+        public const string _errorObteniendoOperacionesGarantiasDetalle                         = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS_DETALLE";
 
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico

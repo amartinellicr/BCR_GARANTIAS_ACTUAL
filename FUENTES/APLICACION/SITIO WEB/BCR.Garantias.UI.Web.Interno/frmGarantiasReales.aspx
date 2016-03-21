@@ -238,7 +238,7 @@
 									        <tr>
 										        <td colspan="4" style="clear:both;" valign="top" >
 										            <div id="accordion" style="width:100%;">
-                                                        <h3>Detalle del Avalúo</h3>
+                                                        <h3 style="margin-bottom:0px;">Detalle del Avalúo</h3>
                                                         <div style="text-align:left;">
                                                             <table width="95%" style="text-align:left; height:300px;">
 													            <tr>
@@ -406,7 +406,7 @@
 									        <tr>
 										        <td colspan="4" style="clear:both; width:100%; height:100%;" valign="top" >
 										            <div id="accPoliza" style="width:100%; height:100%;">
-                                                        <h3>Póliza de la Garantía</h3>
+                                                        <h3 style="margin-bottom:0px;">Póliza de la Garantía</h3>
                                                         <div style="text-align:left;">
                                                             <table width="95%" style="text-align:left; height:500px;">
 													            <tr>

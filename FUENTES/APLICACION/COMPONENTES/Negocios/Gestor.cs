@@ -1,8 +1,10 @@
 using System;
 using System.Data;
+using System.Web.UI.HtmlControls;
 
 using BCR.GARANTIAS.Entidades;
 using BCR.GARANTIAS.Comun;
+
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -29,9 +31,15 @@ namespace BCRGARANTIAS.Negocios
             Seguridad oSeguridad = new Seguridad();
             return oSeguridad.IsInRol(strUsuario, nRol);
         }
+
+        public static string[] ObtenerPerfilUsuario(string strIdentificacion)
+        {
+            Usuarios oUsuario = new Usuarios();
+            return oUsuario.ObtenerPerfilUsuario(strIdentificacion);
+        }
         #endregion
 
-        #region Mantenimiento de clsUsuario
+            #region Mantenimiento de clsUsuario
         public static clsUsuario CrearUsuario(string strIdentificacion, string strNuevoUsuario, int nPerfil, string strUsuario, string strIP)
         {
             Usuarios oUsuario = new Usuarios();
@@ -146,7 +154,7 @@ namespace BCRGARANTIAS.Negocios
 
         #endregion
 
-            #region Mantenimiento de Deudores
+        #region Mantenimiento de Deudores
         public static void ModificarDeudor(int nTipoPersona, string strCedula, string strNombre,
                                            int nCondicionEspecial, int nTipoAsignacion,
                                            int nGeneradorDivisas, int nVinculadoEntidad, string strUsuario, string strIP,
@@ -369,7 +377,7 @@ namespace BCRGARANTIAS.Negocios
                             dFechaConstitucion, dFechaVencimiento, nTipoAcreedor, strCedulaAcreedor, nLiquidez,
                             nTenencia, nMoneda, dFechaPrescripcion, strUsuario, strIP, strOperacionCrediticia, strGarantia, porcentajeAceptacion);
         }
-         
+
         public static void ModificarGarantiaReal(clsGarantiaReal datosGarantiaReal, string strUsuario, string strIP,
                             string strOperacionCrediticia, string strGarantia)
         {
@@ -418,7 +426,7 @@ namespace BCRGARANTIAS.Negocios
             return oGarantia.ObtenerDatosGarantiaReal(idOperacion, idGarantia, desOperacion, desGarantia, identificacionUsuario,
                                                       annosCalculoPrescripcion);
         }
-                
+
         /// <summary>
         /// Obtiene la lista de valuadores del mantenimiento de garantías reales
         /// </summary>
@@ -1322,7 +1330,7 @@ namespace BCRGARANTIAS.Negocios
         public static void InsertarPorcentajeAceptacion(clsPorcentajeAceptacion entidadPorcentajeAceptacion, string usuario, string ip)
         {
             PorcentajeAceptacion ePorcentajeAceptacion = new PorcentajeAceptacion();
-            ePorcentajeAceptacion.Insertar(entidadPorcentajeAceptacion,usuario, ip);
+            ePorcentajeAceptacion.Insertar(entidadPorcentajeAceptacion, usuario, ip);
         }
 
         /// <summary>
@@ -1361,7 +1369,7 @@ namespace BCRGARANTIAS.Negocios
         public static DataSet ObtenerDatosPorcentajeAceptacion(int? codigoPorcentajeAceptacion, int? codigoTipoGarantia, int? codigoTipoMitigador, int accion)
         {
             PorcentajeAceptacion ePorcentajeAceptacion = new PorcentajeAceptacion();
-            return ePorcentajeAceptacion.ObtenerDatosPorcentajeAceptacion(codigoPorcentajeAceptacion,codigoTipoGarantia,codigoTipoMitigador,accion );
+            return ePorcentajeAceptacion.ObtenerDatosPorcentajeAceptacion(codigoPorcentajeAceptacion, codigoTipoGarantia, codigoTipoMitigador, accion);
         }
 
         public static Decimal ObtenerValorPorcentajeAceptacion(int? codigoPorcentajeAceptacion, int? codigoTipoGarantia, int? codigoTipoMitigador, int accion)
@@ -1381,5 +1389,125 @@ namespace BCRGARANTIAS.Negocios
         }
 
         #endregion
+
+        #region Mantenimiento de Saldos Totales y Porcentajes de Responsabilidad
+
+        /// <summary>
+        /// Inserta un registro de saldo total y porcentaje de responsabilidad
+        /// </summary>
+        /// <param name="entidadSaldoTotalPorcentajeResp">Entidad de saldo total y porcentaje de responsabilidad.</param>
+        /// <param name="usuario">Usuario que inserta el registro</param>
+        /// <param name="ip">Dirección desde donde se ingresa el registro</param>
+        public static void Insertar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            oSaldos.Insertar(entidadSaldoTotalPorcentajeResponsabilidad, usuario, ip);
+        }
+
+        /// <summary>
+        /// Modifica un registro del saldo total y porcentaje de responsabilidad
+        /// </summary>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidad">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos a modificar</param>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidadAnterior">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos originales</param>
+        /// <param name="usuario">Usuario que inserta el registro</param>
+        /// <param name="ip">Dirección desde donde se ingresa el registro</param>
+        public static void Modificar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidadAnterior, string usuario, string ip)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            oSaldos.Modificar(entidadSaldoTotalPorcentajeResponsabilidad, entidadSaldoTotalPorcentajeResponsabilidadAnterior, usuario, ip);
+        }
+
+        /// <summary>
+        /// Elimina un registro del tipo de saldo total y porcentaje de responsabilidad
+        /// </summary>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidad">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos a eliminar</param>
+        /// <param name="usuario">Usuario que elimina el registro</param>
+        /// <param name="ip">Dirección desde donde se elimina el registro</param>
+        public static void Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            oSaldos.Eliminar(entidadSaldoTotalPorcentajeResponsabilidad, usuario, ip);
+        }
+
+        /// <summary>
+        /// Obtiene el saldo total y porcentaje de responsabilidad
+        /// </summary>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidad">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos a consultar</param>
+        /// <param name="usuario">Usuario que realiza la consulta el registro</param>
+        /// <returns>Enditad del tipo saldo total y porcentaje de responsabilidad</returns>
+        public static clsSaldoTotalPorcentajeResponsabilidad ObtenerDatosSaldoTotalPorcentajeResponsabilidad(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.ObtenerDatosSaldoTotalPorcentajeResponsabilidad(entidadSaldoTotalPorcentajeResponsabilidad, usuario);
+        }
+
+        /// <summary>
+        /// Obtiene el saldo total y porcentaje de responsabilidad de las operaciones relacionadas a una determinada garantía fiduciaria
+        /// </summary>
+        /// <param name="entidadGarantiaFiduciaria">Entidad del tipo garantía fiduciaria que posee los datos a consultar</param>
+        /// <param name="usuario">Usuario que realiza la consulta el registro</param>
+        /// <returns>Enditad del tipo lista de entidades del tipo saldo total y porcentaje de responsabilidad</returns>
+        public static clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ObtenerOperacionesPorGarantiaFiduciaria(clsGarantiaFiduciaria entidadGarantiaFiduciaria, string usuario)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.ObtenerOperacionesPorGarantiaFiduciaria(entidadGarantiaFiduciaria, usuario);
+        }
+
+        /// <summary>
+        /// Obtiene el saldo total y porcentaje de responsabilidad de las operaciones relacionadas a una determinada garantía real
+        /// </summary>
+        /// <param name="entidadGarantiaReal">Entidad del tipo garantía real que posee los datos a consultar</param>
+        /// <param name="usuario">Usuario que realiza la consulta el registro</param>
+        /// <returns>Enditad del tipo lista de entidades del tipo saldo total y porcentaje de responsabilidad</returns>
+        public static clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ObtenerOperacionesPorGarantiaReal(clsGarantiaReal entidadGarantiaReal, string usuario)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.ObtenerOperacionesPorGarantiaReal(entidadGarantiaReal, usuario);
+        }
+
+        /// <summary>
+        /// Obtiene el saldo total y porcentaje de responsabilidad de las operaciones relacionadas a una determinada garantía valor
+        /// </summary>
+        /// <param name="entidadGarantiaValor">Entidad del tipo garantía valor que posee los datos a consultar</param>
+        /// <param name="usuario">Usuario que realiza la consulta el registro</param>
+        /// <returns>Enditad del tipo lista de entidades del tipo saldo total y porcentaje de responsabilidad</returns>
+        public static clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ObtenerOperacionesPorGarantiaValor(clsGarantiaValor entidadGarantiaValor, string usuario)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.ObtenerOperacionesPorGarantiaValor(entidadGarantiaValor, usuario);
+        }
+
+        /// <summary>
+        /// Replica el porcentaje de responsabilidad de una misma garantía entre las operaciones relacionadas a la misma
+        /// </summary>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidad">Entidad del tipo saldo total y porcentaje de responsabilidad que posee los datos a normalizar</param>
+        /// <returns>Enditad del tipo lista de entidades del tipo saldo total y porcentaje de responsabilidad</returns>
+        public static bool NormalizarPorcentajeResponsabilidad(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.NormalizarPorcentajeResponsabilidad(entidadSaldoTotalPorcentajeResponsabilidad);
+        }
+
+        /// <summary>
+        /// Método que obtiene el listado de las garantías reales asociadas a una operación o contrato
+        /// </summary>
+        /// <param name="tipoOperacion">Tipo de operación</param>
+        /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+        /// <param name="codigoContabilidad">Código de la contabilidad</param>
+        /// <param name="codigoOficina">Código de la oficina</param>
+        /// <param name="codigoMoneda">Código de la moneda</param>
+        /// <param name="codigoProducto">Código del producto</param>
+        /// <param name="numeroOperacion">Número de la operación o contrato</param>
+        /// <param name="cedulaUsuario">Identificación del usuario que realiza la consulta</param>
+        /// <param name="tipoGarantia">Código del tipo de garantía</param>
+        /// <returns>Lista de garantías relacionadas</returns>
+        public static HtmlTable ObtenerListaGarantiasPorOperacion(int tipoOperacion, long consecutivoOperacion, int codigoContabilidad, int codigoOficina, int codigoMoneda, int codigoProducto, long numeroOperacion, string cedulaUsuario, int tipoGarantia)
+        {
+            SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
+            return oSaldos.ObtenerListaGarantiasPorOperacion(tipoOperacion, consecutivoOperacion, codigoContabilidad, codigoOficina, codigoMoneda, codigoProducto, numeroOperacion, cedulaUsuario, tipoGarantia);
+        }
+
+
+        #endregion Mantenimiento de Saldos Totales y Porcentajes de Aceptación
     }
 }

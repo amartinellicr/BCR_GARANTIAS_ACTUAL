@@ -3485,6 +3485,7 @@ function MostrarPoliza(habilitarControl) {
     }
 }
 
+
 //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
 function HabilitarAvaluoReal(habiltarControl) {
     if (habiltarControl) {
@@ -3508,6 +3509,8 @@ function HabilitarPoliza(habiltarControl) {
         $("#accPoliza").accordion("option", "disabled", true);
     }
 }
+
+
 
 //DESHABILITA Y RETRAE EL CONTROL ACORDEON DEL AVALUO DE GARANTIAS REALES
 function ContraerAvaluo() {
@@ -4616,6 +4619,7 @@ function MostrarMensajesPorAceptAvaluo(mostrar) {
     $MostrarMensajesPorAceptAvaluo = mostrar;
     return true;
 }
+
 
  
 

@@ -1,8 +1,10 @@
 using System;
 using System.Xml;
 using System.Diagnostics;
+using System.Text;
 
 using BCR.GARANTIAS.Comun;
+
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -232,6 +234,36 @@ namespace BCR.GARANTIAS.Entidades
         #endregion Constructores
 
         #region Métodos Públicos
+
+        /// <summary>
+        /// Método que permite generar el contenido de la clase en formato JSON
+        /// </summary>
+        /// <returns>Cadena de texto en formato JSON</returns>
+        public string ConvertirJSON()
+        {
+            StringBuilder formatoJSON = new StringBuilder("{");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(clsElemento._consecutivoElemento);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(codElemento.ToString());
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(clsElemento._descripcionElemento);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(DescripcionCodigoElemento);
+            formatoJSON.Append('"');
+
+            formatoJSON.Append('}');
+
+            return formatoJSON.ToString();
+        }
 
         #endregion Métodos Públicos
 

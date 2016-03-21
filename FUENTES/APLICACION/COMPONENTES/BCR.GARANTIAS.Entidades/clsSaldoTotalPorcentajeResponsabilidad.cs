@@ -35,8 +35,8 @@ namespace BCR.GARANTIAS.Entidades
         public const string _identificacionGarantia             = "IdentificacionGarantia";
         public const string _indicadorAjusteCampoSaldo          = "Indicador_Ajuste_Campo_Saldo";
         public const string _indicadorAjusteCampoPorcentaje     = "Indicador_Ajuste_Campo_Porcentaje";
-        public const string _porcentajeResponsabilidadCalculado = "PorcentajeResponsabilidadCalculado";
-
+        public const string _porcentajeResponsabilidadCalculado = "Porcentaje_Responsabilidad_Calculado";
+        public const string _numeroRegistro                     = "Numero_Registro";
 
         #endregion Constantes
 
@@ -60,7 +60,12 @@ namespace BCR.GARANTIAS.Entidades
         public bool IndicadorAjusteCampoSaldo { get; set; }
         public bool IndicadorAjusteCampoPorcentaje { get; set; }
         public decimal PorcentajeResponsabilidadCalculado { get; set; }
-        
+        public long NumeroRegistro { get; set; }
+
+        public int CodigoError { get; set; }
+        public string DescripcionError { get; set; }
+
+        public string SaldoActualTexto { get { return SaldoActual.ToString("N2"); } }
 
         #endregion Propiedades
 
@@ -75,7 +80,7 @@ namespace BCR.GARANTIAS.Entidades
             ConsecutivoGarantia = -1;
             CodigoTipoGarantia = ((short)-1);
             SaldoActual = 0;
-            CuentaContable = ((short) -1);
+            CuentaContable = ((short)-1);
             TipoOperacion = string.Empty;
             CodigoTipoOperacion = Enumeradores.Tipos_Operaciones.Ninguno;
             OperacionLarga = string.Empty;
@@ -88,6 +93,9 @@ namespace BCR.GARANTIAS.Entidades
             IndicadorAjusteCampoPorcentaje = false;
             IdentificacionGarantia = string.Empty;
             PorcentajeResponsabilidadCalculado = -1;
+            CodigoError = -1;
+            DescripcionError = string.Empty;
+            NumeroRegistro = -1;
         }
 
         /// <summary>
@@ -115,6 +123,9 @@ namespace BCR.GARANTIAS.Entidades
             IndicadorAjusteCampoPorcentaje = false;
             IdentificacionGarantia = string.Empty;
             PorcentajeResponsabilidadCalculado = -1;
+            CodigoError = -1;
+            DescripcionError = string.Empty;
+            NumeroRegistro = -1;
 
             #endregion Inicialización
 
@@ -125,6 +136,7 @@ namespace BCR.GARANTIAS.Entidades
             {
                 long consecutivoOperacion;
                 long consecutivoGarantia;
+                long numReg;
                 decimal saldoActual;
                 decimal saldoActualAjustado;
                 decimal porcentajeResponsabilidadAjustado;
@@ -136,6 +148,7 @@ namespace BCR.GARANTIAS.Entidades
                 
                 ConsecutivoOperacion = ((!datosCargar.Tables[0].Rows[0].IsNull(_consecutivoOperacion) && (long.TryParse(datosCargar.Tables[0].Rows[0][_consecutivoOperacion].ToString(), out consecutivoOperacion))) ? consecutivoOperacion : ((long) -1));
                 ConsecutivoGarantia = ((!datosCargar.Tables[0].Rows[0].IsNull(_consecutivoGarantia) && (long.TryParse(datosCargar.Tables[0].Rows[0][_consecutivoGarantia].ToString(), out consecutivoGarantia))) ? consecutivoGarantia : ((long)-1));
+                NumeroRegistro = ((!datosCargar.Tables[0].Rows[0].IsNull(_numeroRegistro) && (long.TryParse(datosCargar.Tables[0].Rows[0][_numeroRegistro].ToString(), out numReg))) ? numReg : ((long)-1));
 
                 SaldoActual = ((!datosCargar.Tables[0].Rows[0].IsNull(_saldoActual) && (decimal.TryParse(datosCargar.Tables[0].Rows[0][_saldoActual].ToString(), out saldoActual))) ? saldoActual : 0);
                 SaldoActualAjustado = ((!datosCargar.Tables[0].Rows[0].IsNull(_saldoActualAjustado) && (decimal.TryParse(datosCargar.Tables[0].Rows[0][_saldoActualAjustado].ToString(), out saldoActualAjustado))) ? saldoActualAjustado : -1);
@@ -186,6 +199,9 @@ namespace BCR.GARANTIAS.Entidades
             IndicadorAjusteCampoPorcentaje = false;
             IdentificacionGarantia = string.Empty;
             PorcentajeResponsabilidadCalculado = -1;
+            CodigoError = -1;
+            DescripcionError = string.Empty;
+            NumeroRegistro = -1;
 
             #endregion Inicialización
 
@@ -196,6 +212,7 @@ namespace BCR.GARANTIAS.Entidades
             {
                 long consecutivoOperacion;
                 long consecutivoGarantia;
+                long numReg;
                 decimal saldoActual;
                 decimal saldoActualAjustado;
                 decimal porcentajeResponsabilidadAjustado;
@@ -207,6 +224,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 ConsecutivoOperacion = ((!datosCargar.IsNull(_consecutivoOperacion) && (long.TryParse(datosCargar[_consecutivoOperacion].ToString(), out consecutivoOperacion))) ? consecutivoOperacion : ((long)-1));
                 ConsecutivoGarantia = ((!datosCargar.IsNull(_consecutivoGarantia) && (long.TryParse(datosCargar[_consecutivoGarantia].ToString(), out consecutivoGarantia))) ? consecutivoGarantia : ((long)-1));
+                NumeroRegistro = ((!datosCargar.IsNull(_numeroRegistro) && (long.TryParse(datosCargar[_numeroRegistro].ToString(), out numReg))) ? numReg : ((long)-1));
 
                 SaldoActual = ((!datosCargar.IsNull(_saldoActual) && (decimal.TryParse(datosCargar[_saldoActual].ToString(), out saldoActual))) ? saldoActual : 0);
                 SaldoActualAjustado = ((!datosCargar.IsNull(_saldoActualAjustado) && (decimal.TryParse(datosCargar[_saldoActualAjustado].ToString(), out saldoActualAjustado))) ? saldoActualAjustado : -1);
@@ -258,6 +276,9 @@ namespace BCR.GARANTIAS.Entidades
             IndicadorAjusteCampoPorcentaje = false;
             IdentificacionGarantia = string.Empty;
             PorcentajeResponsabilidadCalculado = -1;
+            CodigoError = -1;
+            DescripcionError = string.Empty;
+            NumeroRegistro = -1;
 
             #endregion Inicialización
 
@@ -268,6 +289,7 @@ namespace BCR.GARANTIAS.Entidades
             {
                 long consecutivoOperacion;
                 long consecutivoGarantia;
+                long numReg;
                 decimal saldoActual;
                 decimal saldoActualAjustado;
                 decimal porcentajeResponsabilidadAjustado;
@@ -308,7 +330,7 @@ namespace BCR.GARANTIAS.Entidades
                                         ConsecutivoGarantia = ((long.TryParse(llaveValor[1], out consecutivoGarantia)) ? consecutivoGarantia : -1);
                                         break;
                                     case _codigoTipoGarantia:
-                                        CodigoTipoGarantia = ((short.TryParse(llaveValor[1], out codigoTipoGarantia)) ? codigoTipoGarantia : ((short) -1));
+                                        CodigoTipoGarantia = ((short.TryParse(llaveValor[1], out codigoTipoGarantia)) ? codigoTipoGarantia : ((short)-1));
                                         break;
                                     case _saldoActual:
                                         SaldoActual = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out saldoActual)) ? saldoActual : 0);
@@ -323,7 +345,7 @@ namespace BCR.GARANTIAS.Entidades
                                         CuentaContable = ((short.TryParse(llaveValor[1], out cuentaContable)) ? cuentaContable : ((short)-1));
                                         break;
                                     case _codigoTipoOperacion:
-                                        CodigoTipoOperacion = ((int.TryParse(llaveValor[1], out codigoTipoOperacion)) ? ((Enumeradores.Tipos_Operaciones) codigoTipoOperacion) : Enumeradores.Tipos_Operaciones.Ninguno);
+                                        CodigoTipoOperacion = ((int.TryParse(llaveValor[1], out codigoTipoOperacion)) ? ((Enumeradores.Tipos_Operaciones)codigoTipoOperacion) : Enumeradores.Tipos_Operaciones.Ninguno);
                                         break;
                                     case _tipoOperacion:
                                         TipoOperacion = llaveValor[1];
@@ -332,7 +354,7 @@ namespace BCR.GARANTIAS.Entidades
                                         OperacionLarga = llaveValor[1];
                                         break;
                                     case _indicadorAjusteSaldoActual:
-                                        IndicadorAjusteSaldoActual = ((llaveValor[1].CompareTo("0") == 0)  ? false : true);
+                                        IndicadorAjusteSaldoActual = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _indicadorAjustePorcentaje:
                                         IndicadorAjustePorcentaje = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
@@ -351,6 +373,9 @@ namespace BCR.GARANTIAS.Entidades
                                         break;
                                     case _porcentajeResponsabilidadCalculado:
                                         PorcentajeResponsabilidadCalculado = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out porcentajeResponsabilidadCalculado)) ? porcentajeResponsabilidadCalculado : -1);
+                                        break;
+                                    case _numeroRegistro:
+                                        NumeroRegistro = ((long.TryParse(llaveValor[1], out numReg)) ? numReg: -1);
                                         break;
                                     default:
                                         break;
@@ -527,7 +552,16 @@ namespace BCR.GARANTIAS.Entidades
             formatoJSON.Append('"');
             formatoJSON.Append(IdentificacionGarantia);
             formatoJSON.Append('"');
+            formatoJSON.Append(",");
 
+            formatoJSON.Append('"');
+            formatoJSON.Append(_numeroRegistro);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(NumeroRegistro.ToString());
+            formatoJSON.Append('"');
+            
 
             formatoJSON.Append('}');
 
@@ -536,6 +570,5 @@ namespace BCR.GARANTIAS.Entidades
 
 
         #endregion Métodos
-
     }
 }

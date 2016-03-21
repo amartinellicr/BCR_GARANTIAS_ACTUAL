@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Xml;
 using System.Diagnostics;
+using System.Text;
 
 using BCR.GARANTIAS.Comun;
 
@@ -66,7 +67,7 @@ namespace BCR.GARANTIAS.Entidades
             get { return descripcionError; }
             set { descripcionError = value; }
         }
-	
+
         #endregion Propiedades
 
         #region Construtores
@@ -187,7 +188,48 @@ namespace BCR.GARANTIAS.Entidades
             return listaItems;
         }
 
-        #endregion Métodos Públicos
+        /// <summary>
+        /// Convierte la lista de elementos en una cadena JSON
+        /// </summary>
+        public string ObtenerJSON()
+        {
+            StringBuilder listaRegistrosJSON = new StringBuilder();
 
+            List<clsCatalogo> listaItems = new List<clsCatalogo>();
+
+            foreach (clsCatalogo entidadCatalogo in InnerList)
+            {
+                listaItems.Add(entidadCatalogo);
+            }
+
+            listaItems.Sort(new clsComparadorGenerico<clsCatalogo>("IDElemento", clsComparadorGenerico<clsCatalogo>.SortOrder.Ascending));
+
+           
+
+            //Se revisa que la lista posea elementos
+            if (listaItems.Count > 0)
+            {
+                //Se agrega la llave de inicio
+                listaRegistrosJSON.Append("[");
+
+                //Se recorren los elementos y se genera la cedena JSON de cada uno
+                foreach (clsCatalogo convertirRegistro in listaItems)
+                {
+                       listaRegistrosJSON.Append(convertirRegistro.ConvertirJSON());
+                       listaRegistrosJSON.Append(",");
+                }
+
+                //Se agrega la llave final
+                listaRegistrosJSON.Append("]");
+
+                //Se elimina la coma (,) final
+                listaRegistrosJSON.Replace(",]", "]");
+            }
+
+            //Se retorna la cadena generada
+            return listaRegistrosJSON.ToString();
+        }
+
+        #endregion Métodos Públicos
     }
 }
