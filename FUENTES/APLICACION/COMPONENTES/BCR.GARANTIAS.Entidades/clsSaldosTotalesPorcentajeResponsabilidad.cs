@@ -24,9 +24,9 @@ namespace BCR.GARANTIAS.Entidades
 
         public clsSaldosTotalesPorcentajeResponsabilidad()
         {
-            clsSaldoTotalPorcentajeResponsabilidad registroCargar = new clsSaldoTotalPorcentajeResponsabilidad();
+            //clsSaldoTotalPorcentajeResponsabilidad registroCargar = new clsSaldoTotalPorcentajeResponsabilidad();
 
-            InnerList.Add(registroCargar);
+            //InnerList.Add(registroCargar);
         }
 
         public clsSaldosTotalesPorcentajeResponsabilidad(DataSet datosCargar)
@@ -40,7 +40,7 @@ namespace BCR.GARANTIAS.Entidades
                 {
                     registroCargar = new clsSaldoTotalPorcentajeResponsabilidad(registroSaldo);
 
-                    if (registroCargar != null)
+                    if ((registroCargar != null) && (registroCargar.ConsecutivoOperacion > 0) && (registroCargar.ConsecutivoGarantia > 0) && (registroCargar.CodigoTipoGarantia > 0))
                     {
                         InnerList.Add(registroCargar);
                     }
@@ -225,9 +225,9 @@ namespace BCR.GARANTIAS.Entidades
                     //Se obteiene el saldo parcial
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
                     {
-                        if (!registroActual.IndicadorExcluido)
+                        if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje))
                         {
-                            saldoParcial += ((registroActual.SaldoActualAjustado == -1) ? registroActual.SaldoActual : 0);
+                            saldoParcial += ((registroActual.SaldoActualAjustado <= 0) ? registroActual.SaldoActual : registroActual.SaldoActualAjustado);
                         }
                     }
 
@@ -236,7 +236,7 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje))
                         {
-                            registroActual.PorcentajeResponsabilidadCalculado = ((registroActual.SaldoActual / saldoParcial) * (porcentajePorDistribuir / 100));
+                            registroActual.PorcentajeResponsabilidadCalculado = (((registroActual.SaldoActual / saldoParcial) * (porcentajePorDistribuir / 100)) * 100);
                         }
                     }
                 }

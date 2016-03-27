@@ -39,7 +39,7 @@ namespace BCRGARANTIAS.Negocios
         }
         #endregion
 
-            #region Mantenimiento de clsUsuario
+        #region Mantenimiento de clsUsuario
         public static clsUsuario CrearUsuario(string strIdentificacion, string strNuevoUsuario, int nPerfil, string strUsuario, string strIP)
         {
             Usuarios oUsuario = new Usuarios();
@@ -1396,12 +1396,13 @@ namespace BCRGARANTIAS.Negocios
         /// Inserta un registro de saldo total y porcentaje de responsabilidad
         /// </summary>
         /// <param name="entidadSaldoTotalPorcentajeResp">Entidad de saldo total y porcentaje de responsabilidad.</param>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidadAnterior">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos originales</param>
         /// <param name="usuario">Usuario que inserta el registro</param>
         /// <param name="ip">Dirección desde donde se ingresa el registro</param>
-        public static void Insertar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
+        public static void InsertarSaldoTotalPr(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidadAnterior, string usuario, string ip)
         {
             SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
-            oSaldos.Insertar(entidadSaldoTotalPorcentajeResponsabilidad, usuario, ip);
+            oSaldos.Insertar(entidadSaldoTotalPorcentajeResponsabilidad, entidadSaldoTotalPorcentajeResponsabilidadAnterior, usuario, ip);
         }
 
         /// <summary>
@@ -1411,7 +1412,7 @@ namespace BCRGARANTIAS.Negocios
         /// <param name="entidadSaldoTotalPorcentajeResponsabilidadAnterior">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos originales</param>
         /// <param name="usuario">Usuario que inserta el registro</param>
         /// <param name="ip">Dirección desde donde se ingresa el registro</param>
-        public static void Modificar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidadAnterior, string usuario, string ip)
+        public static void ModificarSaldoTotalPr(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidadAnterior, string usuario, string ip)
         {
             SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
             oSaldos.Modificar(entidadSaldoTotalPorcentajeResponsabilidad, entidadSaldoTotalPorcentajeResponsabilidadAnterior, usuario, ip);
@@ -1423,7 +1424,7 @@ namespace BCRGARANTIAS.Negocios
         /// <param name="entidadSaldoTotalPorcentajeResponsabilidad">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos a eliminar</param>
         /// <param name="usuario">Usuario que elimina el registro</param>
         /// <param name="ip">Dirección desde donde se elimina el registro</param>
-        public static void Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
+        public static void EliminarSaldoTotalPr(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
         {
             SaldosTotalesPorcentajesResponsabilidad oSaldos = new SaldosTotalesPorcentajesResponsabilidad();
             oSaldos.Eliminar(entidadSaldoTotalPorcentajeResponsabilidad, usuario, ip);

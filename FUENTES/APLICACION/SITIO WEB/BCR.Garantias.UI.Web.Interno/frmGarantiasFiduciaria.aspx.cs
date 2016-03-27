@@ -4,8 +4,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Web.UI.WebControls;
 using System.Configuration;
-using System.Data.OleDb;
+using System.Web.UI;
 using System.Collections.Generic;
+using System.Web;
 
 using BCRGARANTIAS.Datos;
 using BCRGARANTIAS.Negocios;
@@ -199,6 +200,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             btnValidarTarjeta.Click += new EventHandler(btnValidarTarjeta_Click);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
+            imgCalculadoraGF.Click += new ImageClickEventHandler(ImageButton_Click); 
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -290,7 +292,8 @@ namespace BCRGARANTIAS.Forms
                             }
                             else if ((Session["Accion"] != null) &&
                                      ((Session["Accion"].ToString() == "DEUDOR_MOD") ||
-                                     (Session["Accion"].ToString() == "FIADOR_MOD")))
+                                     (Session["Accion"].ToString() == "FIADOR_MOD") ||
+                                     (Session["Accion"].ToString() == "PR_MOD")))
                             {
                                 BloquearCampos(true);
                                 CargarDatosSession();
@@ -1180,6 +1183,39 @@ namespace BCRGARANTIAS.Forms
                                                 "&strNombre=" + txtNombreFiador.Text.Trim() +
                                                 "&nGarantiaFiduciaria=" + Session["GarantiaFiduciaria"].ToString());
         }
+
+        private void ImageButton_Click(object sender, ImageClickEventArgs e)
+        {
+            string tipoPersona = cbTipoFiador.SelectedItem.Value;
+            string cedulaFiador = txtCedulaFiador.Text;
+
+            lblMensaje3.Text = string.Empty;
+            lblMensaje.Text = string.Empty;
+
+            if (btnModificar.Enabled)
+                Session["Accion"] = "PR_MOD";
+            else
+                Session["Accion"] = "";
+
+            GuardarDatosSession();
+
+            if ((tipoPersona.Length > 0) && (tipoPersona.CompareTo("-1") != 0) && (cedulaFiador.Length > 0))
+            {
+                string url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=1&tipofiador=" + Server.HtmlEncode(tipoPersona) + "&idfiador=" + Server.HtmlEncode(cedulaFiador);
+                Response.Redirect(url);
+            }
+            else {
+                if ((tipoPersona.Length > 0) && (tipoPersona.CompareTo("-1") != 0))
+                {
+                    lblMensaje.Text = "El tipo de persona es requerido";
+                }
+                else if (cedulaFiador.Length > 0)
+                {
+                    lblMensaje.Text = "La cédula del fiador es requerido";
+                }
+            }
+        }
+                        
         #endregion
 
         #region Métodos GridView
@@ -1654,7 +1690,7 @@ namespace BCRGARANTIAS.Forms
 
                 oGarantia.MontoMitigador = Convert.ToDecimal(((txtMontoMitigador.Text.Trim().Length > 0) ? txtMontoMitigador.Text : "0"));
 
-                oGarantia.PorcentajeResponsabilidad = -1;
+                oGarantia.PorcentajeResponsabilidad = Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "-1"));
 
                 oGarantia.PorcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
 
@@ -1932,6 +1968,8 @@ namespace BCRGARANTIAS.Forms
                 //Mensajes
                 lblMensaje.Text = "";
                 lblMensaje3.Text = "";
+
+                imgCalculadoraGF.Enabled = bBloqueado;
             }
             catch (Exception ex)
             {

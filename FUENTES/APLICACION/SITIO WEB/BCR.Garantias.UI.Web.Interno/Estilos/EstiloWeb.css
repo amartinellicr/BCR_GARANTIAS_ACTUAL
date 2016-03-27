@@ -413,6 +413,43 @@ table tr td .celdaNormal a:active
 }
 
 
+.enlaceRetorno 
+{
+    clear:both;
+	font-family: Arial, Sans-Serif;
+	font-size: 12px;
+}
+
+
+.enlaceRetorno:link
+{
+	color:blue;
+    text-decoration:none;
+    cursor: pointer;
+}
+
+.enlaceRetorno:visited
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.enlaceRetorno:hover
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.enlaceRetorno:focus
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+
 
 
 

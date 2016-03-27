@@ -1782,6 +1782,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
             cbTipoGarantiaReal.SelectedIndexChanged += new EventHandler(cbTipoGarantiaReal_SelectedIndexChanged);
+            imgCalculadoraGR.Click += new ImageClickEventHandler(ImageButton_Click);
 
             if (!IsPostBack)
             {
@@ -3071,8 +3072,61 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        private void ImageButton_Click(object sender, ImageClickEventArgs e)
+        {
+            string claseGarantia = cbClase.SelectedItem.Value;
+            string tipoGarantiaReal = cbTipoGarantiaReal.SelectedItem.Value;
+            string partido = txtPartido.Text;
+            string numeroFinca = txtNumFinca.Text;
+            string grado = ((tipoGarantiaReal.CompareTo("2") == 0) ? txtGrado.Text : "-1");
+
+            lblMensaje3.Text = string.Empty;
+            lblMensaje.Text = string.Empty;
+
+            if (btnModificar.Enabled)
+                Session["Accion"] = "MODIFICAR";
+            else
+                Session["Accion"] = "";
+
+            GuardarDatosSession();
+
+            if ((claseGarantia.Length > 0) && (claseGarantia.CompareTo("-1") != 0)
+                && (tipoGarantiaReal.Length > 0) && (tipoGarantiaReal.CompareTo("-1") != 0)
+                && (partido.Length > 0) && (numeroFinca.Length > 0) && (grado.Length > 0))
+            {
+                string url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=2&tipogarantiareal=" + Server.HtmlEncode(tipoGarantiaReal) + "&clase=" + Server.HtmlEncode(claseGarantia) + "&partido=" + Server.HtmlEncode(partido) + "&idgarantia=" + Server.HtmlEncode(numeroFinca) + "&grado=" + Server.HtmlEncode(grado);
+                Response.Redirect(url, true);
+            }
+            else {
+                if ((tipoGarantiaReal.Length > 0) && (tipoGarantiaReal.CompareTo("-1") != 0))
+                {
+                    lblMensaje.Text = "El tipo de garantía real es requerido";
+                }
+                else if((claseGarantia.Length > 0) && (claseGarantia.CompareTo("-1") != 0))
+                {
+                    lblMensaje.Text = "La clase de garantía es requerida";
+                }
+                else if ((tipoGarantiaReal.CompareTo("3") != 0) && (partido.Length > 0))
+                {
+                    lblMensaje.Text = "El código del partido es requerido";
+                }
+                else if ((tipoGarantiaReal.CompareTo("3") != 0) && (numeroFinca.Length > 0))
+                {
+                    lblMensaje.Text = "El número de finca es requerido";
+                }
+                else if ((tipoGarantiaReal.CompareTo("3") == 0) && (numeroFinca.Length > 0))
+                {
+                    lblMensaje.Text = "La identificación del bien es requerida";
+                }
+                else if ((tipoGarantiaReal.CompareTo("2") == 0) && (grado.Length > 0))
+                {
+                    lblMensaje.Text = "El c{odigo de grado es requerido";
+                }
+            }        
+        }
+
         #endregion
-        
+
         #region Métodos GridView
 
         protected void gdvGarantiasReales_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -3417,7 +3471,7 @@ namespace BCRGARANTIAS.Forms
                 txtPorcentajeAceptacionNoTerreno.Enabled = ((bloqueoInicial) ? false : bBloqueado);
                 filaPorAcep.Visible = ((bloqueoInicial) ? false : bBloqueado);
                 filaPorAcepCalc.Visible = ((bloqueoInicial) ? false : bBloqueado);
-
+                imgCalculadoraGR.Enabled = ((bloqueoInicial) ? false : bBloqueado);
 
 
                 //Pólizas
@@ -3580,6 +3634,7 @@ namespace BCRGARANTIAS.Forms
 
                 Dictionary<string, string> listaDescripcionValoresActualesCombos = new Dictionary<string, string>();
                 decimal porcentajeAceptacion;
+                decimal porcentajeResponsabilidad;
                 int nTipoDocumento;
                 DateTime dFechaPresentacion;
                 DateTime dFechaVencimiento;
@@ -3657,7 +3712,7 @@ namespace BCRGARANTIAS.Forms
                     dFechaPresentacion = DateTime.Parse("1900-01-01");
 
                 porcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
-
+                porcentajeResponsabilidad = Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "-1"));
 
                 DateTime dFechaConstitucion = DateTime.Parse(((txtFechaConstitucion.Text.Length > 0) ? txtFechaConstitucion.Text : "1900-01-01"));
                 int nGradoGravamen = int.Parse(cbGravamen.SelectedValue.ToString());
@@ -3749,7 +3804,7 @@ namespace BCRGARANTIAS.Forms
                 entidadGarantia.MontoMitigador = nMontoMitigador;
                 entidadGarantia.CodInscripcion = ((short)nInscripcion);
                 entidadGarantia.FechaPresentacion = dFechaPresentacion;
-                entidadGarantia.PorcentajeResponsabilidad = -1;
+                entidadGarantia.PorcentajeResponsabilidad = porcentajeResponsabilidad;
                 entidadGarantia.CodGradoGravamen = ((short)nGradoGravamen);
                 entidadGarantia.FechaConstitucion = dFechaConstitucion;
                 entidadGarantia.FechaVencimiento = dFechaVencimiento;

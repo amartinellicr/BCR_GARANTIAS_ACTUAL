@@ -4,6 +4,8 @@ using System.Web.UI.WebControls;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Web.UI;
+using System.Web;
 
 using BCRGARANTIAS.Negocios;
 using BCR.GARANTIAS.Comun;
@@ -196,6 +198,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             cbClasificacion.SelectedIndexChanged += new EventHandler(cbClasificacion_SelectedIndexChanged);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
+            imgCalculadoraGV.Click += new ImageClickEventHandler(ImageButton_Click);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -904,6 +907,34 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        private void ImageButton_Click(object sender, ImageClickEventArgs e)
+        {
+            string claseGarantia = cbClaseGarantia.SelectedItem.Value;
+            string numeroSeguridad = txtSeguridad.Text;
+
+            lblMensaje.Text = string.Empty;
+
+            Session["Accion"] = "MODIFICAR";
+            GuardarDatosSession(false);
+
+
+            if ((claseGarantia.Length > 0) && (claseGarantia.CompareTo("-1") != 0) && (numeroSeguridad.Length > 0))
+            {
+                string url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=3&clase=" + Server.HtmlEncode(claseGarantia) + "&numseguridad=" + Server.HtmlEncode(numeroSeguridad);
+                Response.Redirect(url);
+            }
+            else {
+                if ((claseGarantia.Length > 0) && (claseGarantia.CompareTo("-1") != 0))
+                {
+                    lblMensaje.Text = "La clase de garantía es requerida";
+                }
+                else if (numeroSeguridad.Length > 0)
+                {
+                    lblMensaje.Text = "El número de seguridad es requerido";
+                }
+            }
+        }
+
         #endregion
 
         #region Métodos GridView
@@ -1316,7 +1347,7 @@ namespace BCRGARANTIAS.Forms
 
                 oGarantia.CodigoIndicadorInscripcion = int.Parse(cbInscripcion.SelectedValue.ToString());
 
-                oGarantia.PorcentajeResponsabilidad = -1; // Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "-1"));
+                oGarantia.PorcentajeResponsabilidad = Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "-1"));
 
                 oGarantia.PorcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
 
@@ -1511,6 +1542,7 @@ namespace BCRGARANTIAS.Forms
                 btnModificar.Enabled = bBloqueado;
                 btnEliminar.Enabled = bBloqueado;
                 btnLimpiar.Enabled = bBloqueado;
+                imgCalculadoraGV.Enabled = bBloqueado;
                 //Mensajes
                 lblMensaje.Text = string.Empty;
                 lblMensaje2.Text = string.Empty;

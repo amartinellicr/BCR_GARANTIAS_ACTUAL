@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
+using System.Collections.Specialized;
 
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
@@ -43,12 +44,14 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
     protected override void OnInit(EventArgs e)
     {
         txtSaldoAjustado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-        txtSaldoAjustado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
+        txtSaldoAjustado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false);");
         txtSaldoAjustado.Attributes.Add("onchange", "javascript:FormatNumber(this,this.value,2,true,true,false)");
         txtPorcentajeResponsabilidad.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
-        txtPorcentajeResponsabilidad.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true);");
+        txtPorcentajeResponsabilidad.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true); ValidarPorcentajeResponsabilidad();");
         txtPorcentajeResponsabilidad.Attributes.Add("onchange", "javascript:FormatNumber(this,this.value,2,true,true,true)");
 
+        //txtCedulaFiador.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+        //txtPartido.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
 
         if (!IsPostBack)
         {
@@ -86,13 +89,47 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
             }
         }
     }
-    
+
+    protected override void OnLoadComplete(EventArgs e)
+    {
+        base.OnLoadComplete(e);
+
+        if (!IsPostBack)
+        {
+            int tipoGarantia = int.Parse(((Request.QueryString != null) && (Request.QueryString["tipogarantia"] != null) && (Request.QueryString["tipogarantia"].ToString().Length > 0)) ? Request.QueryString["tipogarantia"].ToString() : "-1");
+            if (tipoGarantia > 0)
+            {
+                string cadenaJson = CargarQueryString(Request.QueryString, tipoGarantia);
+                Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                            Guid.NewGuid().ToString(),
+                                                            "<script type=\"text/javascript\" language=\"javascript\">$(document).ready(function () { CargarPaginaSTPR(" + cadenaJson + ");});</script>",
+                                                            false);
+            }
+        }
+    }
+
     protected void Page_Load(object sender, EventArgs e)
     {
         if (!IsPostBack)
         {
+            int tipoGarantia = int.Parse(((Request.QueryString != null) && (Request.QueryString["tipogarantia"] != null) && (Request.QueryString["tipogarantia"].ToString().Length > 0)) ? Request.QueryString["tipogarantia"].ToString() : "-1");
             CargarGridVacio();
             gdvOperaciones.Style.Add("display", "none");
+
+            switch (tipoGarantia)
+            {
+                case 1:
+                    lknRetornar.HRef = "frmGarantiasFiduciaria.aspx";
+                    break;
+                case 2:
+                    lknRetornar.HRef = "frmGarantiasReales.aspx";
+                    break;
+                case 3:
+                    lknRetornar.HRef = "frmGarantiasValor.aspx";
+                    break;
+                default:
+                    break;
+            }
         }
 
         try
@@ -102,6 +139,10 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                 //El usuario no tiene acceso a esta página
                 throw new Exception("ACCESO DENEGADO");
             }
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_CARGANDO_PAGINA_DETALLE, "del mantenimiento de saldos totales y porcentaje de responsabilidad", ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
         }
         catch (Exception ex)
         {
@@ -154,6 +195,123 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         gdvOperaciones.DataBind();
     }
 
+    private string CargarQueryString(NameValueCollection queryString, int tipoGarantia)
+    {
+        StringBuilder formatoJSON = new StringBuilder("{");
+
+        if ((queryString != null) && (queryString.Count > 0))
+        {
+            foreach (string llave in queryString.Keys)
+            {
+                //tipogarantia=1&tipofiador=" + encodeURIComponent(tipoPersona) + "&idfiador=" + encodeURIComponent(cedulaFiador);
+                if (llave.CompareTo("tipogarantia") == 0)
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("tipogarantia");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 1) && (llave.CompareTo("tipofiador") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("tipofiador");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 1) && (llave.CompareTo("idfiador") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("idfiador");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(",");
+
+                }
+                //tipogarantia=2&tipogarantiareal=" + encodeURIComponent(tipoGarantiaReal) + "&clase=" + encodeURIComponent(claseGarantia) + "&partido=" + encodeURIComponent(partido) + "&idgarantia=" + encodeURIComponent(numeroFinca) + "&grado=" + encodeURIComponent(grado);
+                else if ((tipoGarantia == 2) && (llave.CompareTo("tipogarantiareal") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("tipogarantiareal");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 2) && (llave.CompareTo("clase") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("clase");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 2) && (llave.CompareTo("partido") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("partido");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 2) && (llave.CompareTo("idgarantia") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("idgarantia");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 2) && (llave.CompareTo("grado") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("grado");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                //tipogarantia=3&claser=" + encodeURIComponent(claseGarantia) + "&numseguridad=" + encodeURIComponent(numeroSeguridad);
+                else if ((tipoGarantia == 3) && (llave.CompareTo("idgarantia") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("clase");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append(",");
+                }
+                else if ((tipoGarantia == 3) && (llave.CompareTo("numseguridad") == 0))
+                {
+                    formatoJSON.Append('"');
+                    formatoJSON.Append("numseguridad");
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(':');
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(Server.HtmlDecode(queryString[llave]));
+                    formatoJSON.Append('"');
+                    formatoJSON.Append(",");
+                }
+
+            }
+        }
+
+        formatoJSON.Append('}');
+        string datoRetornado = string.Format("'[{0}]'", formatoJSON.ToString().Replace(",}", "}"));
+        return datoRetornado;
+    }
+
     #endregion Métodos
 
     #region Métodos AJAX
@@ -190,8 +348,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
         return usuarioTienePermiso;
     }
-
-
+    
     /// <summary>
     /// Se encarga de extraer la lista de datos del catálogo indicado.
     /// </summary>
@@ -264,10 +421,10 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
             datosRetornados = string.Format("0|{0}", operacionValidada.ConsecutivoOperacion.ToString());
  
 
-            if (operacionValidada.EsGiro)
-            {
-                datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes._errorConsultaGiro, operacionValidada.FormatoLargoContrato, Mensajes.ASSEMBLY));
-             }
+            //if (operacionValidada.EsGiro)
+            //{
+            //    datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes._errorConsultaGiro, operacionValidada.FormatoLargoContrato, Mensajes.ASSEMBLY));
+            // }
 
             if (!operacionValidada.EsValida)
             {
@@ -364,11 +521,13 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         string datosDeudor = string.Empty;
 
         string identificacionGarantia = string.Empty;
+        decimal idFiador;
 
 
         try
         {
             garantiaFiduciariaConsultada.CedulaFiador = identificacionFiador;
+            garantiaFiduciariaConsultada.IndentificacionSicc = ((decimal.TryParse(identificacionFiador, out idFiador)) ? idFiador : -1);
             garantiaFiduciariaConsultada.CodigoTipoPersonaFiador = ((int.TryParse(tipoPersona, out tipoPerson)) ? tipoPerson : -1);
 
             identificacionGarantia = string.Format("[F] {0}-{1}", tipoPersona, identificacionFiador).Replace("-1-", string.Empty).Replace("-", string.Empty);
@@ -377,17 +536,17 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
             if ((ListaGarantia != null) && (ListaGarantia.Count > 0))
             {
-                datosRetornado.CodigoError = 0;
-
                 foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
                 {
+                    garantia.CodigoError = 0;
                     listaDatosRetornados.Add(garantia);
                 }
             }
             else
             {
-                datosRetornado.CodigoError = 0;
                 datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                datosRetornado.CodigoError = 2;
+                datosRetornado.DescripcionError = "La garantía consultada no existe en el sistema";
                 listaDatosRetornados.Add(datosRetornado);
             }
         }
@@ -467,7 +626,8 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
             else
             {
                 datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
-                datosRetornado.CodigoError = 0;
+                datosRetornado.CodigoError = 2;
+                datosRetornado.DescripcionError = "La garantía consultada no existe en el sistema";
                 listaDatosRetornados.Add(datosRetornado);
             }
         }
@@ -517,17 +677,17 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
             if ((ListaGarantia != null) && (ListaGarantia.Count > 0))
             {
-                datosRetornado.CodigoError = 0;
-
-                foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
+               foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
                 {
+                    garantia.CodigoError = 0;
                     listaDatosRetornados.Add(garantia);
                 }
             }
             else
             {
-                datosRetornado.CodigoError = 0;
                 datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                datosRetornado.CodigoError = 2;
+                datosRetornado.DescripcionError = "La garantía consultada no existe en el sistema";
                 listaDatosRetornados.Add(datosRetornado);
             }
         }
@@ -560,70 +720,515 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
     {
         List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
         clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosInsertar = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosInsertarAnterior = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosBusqueda = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
+
         bool resultadoCalculo = false;
 
         string identificacionGarantia = string.Empty;
+        decimal saldoIngresado;
         decimal porcentajeIngresado;
         decimal porcentajePorDistribuir = 0;
         decimal limiteInferior;
         decimal limiteSuperior;
+        long consecutivoOper;
+        long consecutivoGar;
+        short tipoGar;
+
         try
         {
 
-            porcentajeIngresado = ((decimal.TryParse(porcentajeRespAjustado, out porcentajeIngresado)) ? porcentajeIngresado : 0);
-            limiteInferior = ((decimal.TryParse("0.00010", out limiteInferior)) ? limiteInferior : 0);
-            limiteSuperior = ((decimal.TryParse("0.01000", out limiteSuperior)) ? limiteSuperior : 0);
+            saldoIngresado = ((decimal.TryParse(saldoActualAjustado, out saldoIngresado)) ? saldoIngresado : -1);
+            porcentajeIngresado = ((decimal.TryParse(porcentajeRespAjustado, out porcentajeIngresado)) ? porcentajeIngresado : -1);
+            limiteInferior = ((decimal)(((decimal.TryParse("0.00010", out limiteInferior)) ? limiteInferior : 0) * 100));
+            limiteSuperior = ((decimal)(((decimal.TryParse("0.01000", out limiteSuperior)) ? limiteSuperior : 0) * 100));
+
+            consecutivoOper = ((long.TryParse(consecutivoOperacion, out consecutivoOper)) ? consecutivoOper : -1);
+            consecutivoGar = ((long.TryParse(consecutivoGarantia, out consecutivoGar)) ? consecutivoGar : -1);
+            tipoGar = ((short.TryParse(tipoGarantia, out tipoGar)) ? tipoGar : ((short)-1));
 
             porcentajePorDistribuir = ((100 - porcentajeIngresado) / 100);
-
-            //identificacionGarantia = string.Format("[V] {0}-{1}", claseGarantia, numeroSeguridad);
-
+                        
             clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatos = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>(arregloElementos);
-
-            if ((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior))
+            
+            if ((listaDatos != null) && (listaDatos.Count > 0))
             {
-                resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                datosRetornado.CodigoError = 0;
 
-                if (resultadoCalculo)
+                foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
                 {
-
-                    if ((listaDatos != null) && (listaDatos.Count > 0))
+                    if ((consecutivoOper == garantia.ConsecutivoOperacion) && (consecutivoGar == garantia.ConsecutivoGarantia) && (tipoGar == garantia.CodigoTipoGarantia))
                     {
-                        datosRetornado.CodigoError = 0;
+                        datosInsertarAnterior = garantia;
 
-                        foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
-                        {
-                            listaDatosRetornados.Add(garantia);
-                        }
+                        garantia.IndicadorAjusteCampoSaldo = (((saldoIngresado >= 0) && (saldoIngresado != garantia.SaldoActual)) ? true : false);
+                        garantia.IndicadorAjusteCampoPorcentaje = (((porcentajeIngresado >= 0) && (porcentajeIngresado != garantia.PorcentajeResponsabilidadAjustado)) ? true : false);
+                        garantia.SaldoActualAjustado = ((saldoIngresado >= 0) ? saldoIngresado : garantia.SaldoActual);
+                        garantia.PorcentajeResponsabilidadAjustado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
+                        garantia.PorcentajeResponsabilidadCalculado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
+                        garantia.IndicadorExcluido = false;
+
+                        datosInsertar = garantia;
+                        datosBusqueda = garantia;
                     }
-                    else
+                }
+
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosInsertar.IndicadorAjusteCampoSaldo))
+                {
+                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
                     {
-                        datosRetornado.CodigoError = 0;
-                        datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
-                        listaDatosRetornados.Add(datosRetornado);
+                        datosInsertarAnterior = garantia;
+                        datosInsertar = garantia;
+
+                        if ((garantia.ConsecutivoOperacion > 0) && (garantia.ConsecutivoGarantia > 0) && (garantia.CodigoTipoGarantia > 0) && (!garantia.IndicadorExcluido))
+                        {
+                            Gestor.InsertarSaldoTotalPr(datosInsertar, datosInsertarAnterior, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                        }
                     }
                 }
                 else
                 {
-                    datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
-                    datosRetornado.CodigoError = 1;
-                    datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorObteniendoOperacionesGarantias, identificacionGarantia, Mensajes.ASSEMBLY);
-                    listaDatosRetornados.Add(datosRetornado);
+                    resultadoCalculo = true;
+
+                    if ((consecutivoOper > 0) && (consecutivoGar > 0) && (tipoGar > 0))
+                    {
+                        Gestor.InsertarSaldoTotalPr(datosInsertar, datosInsertarAnterior, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                    }
                 }
+            }
+            else
+            {
+                datosRetornado.CodigoError = 0;
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
+            }
+
+            if (resultadoCalculo)
+            {
+                if ((datosBusqueda.ConsecutivoOperacion > 0) && (datosBusqueda.ConsecutivoGarantia > 0) && (datosBusqueda.CodigoTipoGarantia > 0))
+                {
+                    switch (datosBusqueda.CodigoTipoGarantia)
+                    {
+                        case 1:
+                            clsGarantiaFiduciaria datoBusquedaGF = new clsGarantiaFiduciaria();
+                            datoBusquedaGF.ConsecutivoGarantiaFiduciaria = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaFiduciaria(datoBusquedaGF, Global.UsuarioSistema);
+                            break;
+                        case 2:
+                            clsGarantiaReal datoBusquedaGR = new clsGarantiaReal();
+                            datoBusquedaGR.CodGarantiaReal = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaReal(datoBusquedaGR, Global.UsuarioSistema);
+                            break;
+                        case 3:
+                            clsGarantiaValor datoBusquedaGV = new clsGarantiaValor();
+                            datoBusquedaGV.ConsecutivoGarantia = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaValor(datoBusquedaGV, Global.UsuarioSistema);
+                            break;
+                        default:
+                            datosRetornado.CodigoError = 0;
+                            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                            listaDatosRetornados.Clear();
+                            listaDatosRetornados.Add(datosRetornado);
+                            break;
+                    }
+
+                    if ((listaDatosActualizados != null) && (listaDatosActualizados.Count > 0))
+                    {
+                        listaDatosRetornados.Clear();
+
+                        foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatosActualizados)
+                        {
+                            garantia.CodigoError = 0;
+                            listaDatosRetornados.Add(garantia);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                datosRetornado.CodigoError = 1;
+                datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorObteniendoOperacionesGarantias, identificacionGarantia, Mensajes.ASSEMBLY);
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
             }            
         }
-        catch 
+        catch (ExcepcionBase ex)
         {
             datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
             datosRetornado.CodigoError = 1;
+            datosRetornado.DescripcionError = ex.Message;
+            listaDatosRetornados.Clear();
+            listaDatosRetornados.Add(datosRetornado);
+        }
+        catch (Exception ex)
+        {            
+            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+            datosRetornado.CodigoError = 1;
             datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPr, Mensajes.ASSEMBLY);
+            listaDatosRetornados.Clear();
             listaDatosRetornados.Add(datosRetornado);
         }
 
         return listaDatosRetornados.ToArray();
     }
+    
+    /// <summary>
+    /// Se encarga de realizar la modificación del registro consultado.
+    /// </summary>
+    /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+    /// <param name="consecutivoGarantia">Consecutivo de la garantía</param>
+    /// <param name="tipoGarantia">Código del tip ode garantía</param>
+    /// <param name="saldoActualAjustado">Saldo actual ajustado</param>
+    /// <param name="porcentajeRespAjustado">Porcentaje de responsabilidad ajustado</param>
+    /// <param name="arregloElementos">Arreglo de elementos manipulados desde el cliente</param>
+    /// <returns>La lista con las operaciones que respalda la garantía con el porcentaje de responsabilidad calculado</returns>
+    [System.Web.Services.WebMethod]
+    public static clsSaldoTotalPorcentajeResponsabilidad[] ModificarRegistro(string consecutivoOperacion, string consecutivoGarantia, string tipoGarantia, string saldoActualAjustado,
+                                            string porcentajeRespAjustado, string arregloElementos)
+    {
+        List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
+        clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosModificar = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosModificarAnterior = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosBusqueda = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
 
+        bool resultadoCalculo = false;
 
+        string identificacionGarantia = string.Empty;
+        decimal saldoIngresado;
+        decimal porcentajeIngresado;
+        decimal porcentajePorDistribuir = 0;
+        decimal limiteInferior;
+        decimal limiteSuperior;
+        long consecutivoOper;
+        long consecutivoGar;
+        short tipoGar;
+
+        try
+        {
+
+            saldoIngresado = ((decimal.TryParse(saldoActualAjustado, out saldoIngresado)) ? saldoIngresado : -1);
+            porcentajeIngresado = ((decimal.TryParse(porcentajeRespAjustado, out porcentajeIngresado)) ? porcentajeIngresado : -1);
+            limiteInferior = ((decimal)(((decimal.TryParse("0.00010", out limiteInferior)) ? limiteInferior : 0) * 100));
+            limiteSuperior = ((decimal)(((decimal.TryParse("0.01000", out limiteSuperior)) ? limiteSuperior : 0) * 100));
+
+            consecutivoOper = ((long.TryParse(consecutivoOperacion, out consecutivoOper)) ? consecutivoOper : -1);
+            consecutivoGar = ((long.TryParse(consecutivoGarantia, out consecutivoGar)) ? consecutivoGar : -1);
+            tipoGar = ((short.TryParse(tipoGarantia, out tipoGar)) ? tipoGar : ((short)-1));
+
+            porcentajePorDistribuir = ((100 - porcentajeIngresado) / 100);
+
+            clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatos = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>(arregloElementos);
+           
+            if ((listaDatos != null) && (listaDatos.Count > 0))
+            {
+                foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
+                {
+                    garantia.CodigoError = 0;
+                    listaDatosRetornados.Add(garantia);
+
+                    if ((consecutivoOper == garantia.ConsecutivoOperacion) && (consecutivoGar == garantia.ConsecutivoGarantia) && (tipoGar == garantia.CodigoTipoGarantia))
+                    {
+                        datosModificarAnterior = garantia;
+
+                        garantia.IndicadorAjusteCampoSaldo = (((saldoIngresado >= 0) && (saldoIngresado != garantia.SaldoActual)) ? true : false);
+                        garantia.IndicadorAjusteCampoPorcentaje = (((porcentajeIngresado >= 0) && (porcentajeIngresado != garantia.PorcentajeResponsabilidadAjustado)) ? true : false);
+                        garantia.SaldoActualAjustado = ((saldoIngresado >= 0) ? saldoIngresado : garantia.SaldoActual);
+                        garantia.PorcentajeResponsabilidadAjustado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
+                        garantia.PorcentajeResponsabilidadCalculado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
+                        
+                        datosModificar = garantia;
+                        datosBusqueda = garantia;
+                    }
+                }
+
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosModificar.IndicadorAjusteCampoSaldo))
+                {
+                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    listaDatosRetornados.Clear();
+
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
+                    {
+                        listaDatosRetornados.Add(garantia);
+
+                        datosModificarAnterior = garantia;
+                        datosModificar = garantia;
+
+                        if ((garantia.ConsecutivoOperacion > 0) && (garantia.ConsecutivoGarantia > 0) && (garantia.CodigoTipoGarantia > 0) && (!garantia.IndicadorExcluido))
+                        {
+                            Gestor.ModificarSaldoTotalPr(datosModificar, datosModificarAnterior, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                        }
+                    }
+                }
+                else
+                {
+                    resultadoCalculo = true;
+
+                    if ((consecutivoOper > 0) && (consecutivoGar > 0) && (tipoGar > 0))
+                    {
+                        Gestor.ModificarSaldoTotalPr(datosModificar, datosModificarAnterior, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                    }
+                }
+            }
+            else
+            {
+                datosRetornado.CodigoError = 0;
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
+            }
+
+            if (resultadoCalculo)
+            {
+                if ((datosBusqueda.ConsecutivoOperacion > 0) && (datosBusqueda.ConsecutivoGarantia > 0) && (datosBusqueda.CodigoTipoGarantia > 0))
+                {
+                    switch (datosBusqueda.CodigoTipoGarantia)
+                    {
+                        case 1:
+                            clsGarantiaFiduciaria datoBusquedaGF = new clsGarantiaFiduciaria();
+                            datoBusquedaGF.ConsecutivoGarantiaFiduciaria = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaFiduciaria(datoBusquedaGF, Global.UsuarioSistema);
+                            break;
+                        case 2:
+                            clsGarantiaReal datoBusquedaGR = new clsGarantiaReal();
+                            datoBusquedaGR.CodGarantiaReal = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaReal(datoBusquedaGR, Global.UsuarioSistema);
+                            break;
+                        case 3:
+                            clsGarantiaValor datoBusquedaGV = new clsGarantiaValor();
+                            datoBusquedaGV.ConsecutivoGarantia = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaValor(datoBusquedaGV, Global.UsuarioSistema);
+                            break;
+                        default:
+                            datosRetornado.CodigoError = 0;
+                            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                            listaDatosRetornados.Clear();
+                            listaDatosRetornados.Add(datosRetornado);
+                            break;
+                    }
+
+                    if ((listaDatosActualizados != null) && (listaDatosActualizados.Count > 0))
+                    {
+                        listaDatosRetornados.Clear();
+
+                        foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatosActualizados)
+                        {
+                            garantia.CodigoError = 0;
+                            listaDatosRetornados.Add(garantia);
+                        }
+                    }
+                }
+            }
+            else
+            {                
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                datosRetornado.CodigoError = 1;
+                datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorObteniendoOperacionesGarantias, identificacionGarantia, Mensajes.ASSEMBLY);
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
+            }            
+        }
+        catch (ExcepcionBase ex)
+        {
+            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+            datosRetornado.CodigoError = 1;
+            datosRetornado.DescripcionError = ex.Message;
+            listaDatosRetornados.Clear();
+            listaDatosRetornados.Add(datosRetornado);
+        }
+        catch (Exception ex)
+        {
+            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+            datosRetornado.CodigoError = 1;
+            datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPr, Mensajes.ASSEMBLY);
+            listaDatosRetornados.Clear();
+            listaDatosRetornados.Add(datosRetornado);
+        }
+
+        return listaDatosRetornados.ToArray();
+    }
+    
+    /// <summary>
+    /// Se encarga de realizar la modificación del registro consultado.
+    /// </summary>
+    /// <param name="consecutivoOperacion">Consecutivo de la operación</param>
+    /// <param name="consecutivoGarantia">Consecutivo de la garantía</param>
+    /// <param name="tipoGarantia">Código del tip ode garantía</param>
+    /// <param name="saldoActualAjustado">Saldo actual ajustado</param>
+    /// <param name="porcentajeRespAjustado">Porcentaje de responsabilidad ajustado</param>
+    /// <param name="arregloElementos">Arreglo de elementos manipulados desde el cliente</param>
+    /// <returns>La lista con las operaciones que respalda la garantía con el porcentaje de responsabilidad calculado</returns>
+    [System.Web.Services.WebMethod]
+    public static clsSaldoTotalPorcentajeResponsabilidad[] EliminarRegistro(string consecutivoOperacion, string consecutivoGarantia, string tipoGarantia, string saldoActualAjustado,
+                                            string porcentajeRespAjustado, string arregloElementos)
+    {
+        List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
+        clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosEliminar = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosEliminarAnterior = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldoTotalPorcentajeResponsabilidad datosBusqueda = new clsSaldoTotalPorcentajeResponsabilidad();
+        clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
+
+        bool resultadoCalculo = false;
+
+        string identificacionGarantia = string.Empty;
+        decimal saldoIngresado;
+        decimal porcentajeIngresado;
+        decimal porcentajePorDistribuir = 0;
+        decimal limiteInferior;
+        decimal limiteSuperior;
+        long consecutivoOper;
+        long consecutivoGar;
+        short tipoGar;
+
+        try
+        {
+
+            saldoIngresado = ((decimal.TryParse(saldoActualAjustado, out saldoIngresado)) ? saldoIngresado : -1);
+            porcentajeIngresado = ((decimal.TryParse(porcentajeRespAjustado, out porcentajeIngresado)) ? porcentajeIngresado : -1);
+            limiteInferior = ((decimal)(((decimal.TryParse("0.00010", out limiteInferior)) ? limiteInferior : 0) * 100));
+            limiteSuperior = ((decimal)(((decimal.TryParse("0.01000", out limiteSuperior)) ? limiteSuperior : 0) * 100));
+
+            consecutivoOper = ((long.TryParse(consecutivoOperacion, out consecutivoOper)) ? consecutivoOper : -1);
+            consecutivoGar = ((long.TryParse(consecutivoGarantia, out consecutivoGar)) ? consecutivoGar : -1);
+            tipoGar = ((short.TryParse(tipoGarantia, out tipoGar)) ? tipoGar : ((short)-1));
+
+            porcentajePorDistribuir = ((100 - porcentajeIngresado) / 100);
+
+            clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatos = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>(arregloElementos);
+
+            if ((listaDatos != null) && (listaDatos.Count > 0))
+            {
+                datosRetornado.CodigoError = 0;
+
+                foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
+                {
+                    listaDatosRetornados.Add(garantia);
+
+                    if ((consecutivoOper == garantia.ConsecutivoOperacion) && (consecutivoGar == garantia.ConsecutivoGarantia) && (tipoGar == garantia.CodigoTipoGarantia))
+                    {
+                        datosEliminarAnterior = garantia;
+
+                        garantia.IndicadorAjusteCampoSaldo = (((saldoIngresado >= 0) && (saldoIngresado != garantia.SaldoActual)) ? true : false);
+                        garantia.IndicadorAjusteCampoPorcentaje = (((porcentajeIngresado >= 0) && (porcentajeIngresado != garantia.PorcentajeResponsabilidadAjustado)) ? true : false);
+                        garantia.SaldoActualAjustado = ((saldoIngresado >= 0) ? saldoIngresado : garantia.SaldoActual);
+                        garantia.PorcentajeResponsabilidadAjustado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
+                        garantia.PorcentajeResponsabilidadCalculado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
+                        
+                        datosEliminar = garantia;
+                        datosBusqueda = garantia;
+                    }
+                }
+
+                if ((consecutivoOper > 0) && (consecutivoGar > 0) && (tipoGar > 0))
+                {
+                    resultadoCalculo = true;
+
+                    Gestor.EliminarSaldoTotalPr(datosEliminar, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                }
+
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosEliminar.IndicadorAjusteCampoSaldo))
+                {
+                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
+                    {
+                        listaDatosRetornados.Add(garantia);
+
+                        datosEliminarAnterior = garantia;
+                        datosEliminar = garantia;
+
+                        if ((garantia.ConsecutivoOperacion > 0) && (garantia.ConsecutivoGarantia > 0) && (garantia.CodigoTipoGarantia > 0) && (!garantia.IndicadorExcluido))
+                        {
+                            Gestor.ModificarSaldoTotalPr(datosEliminar, datosEliminarAnterior, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                datosRetornado.CodigoError = 0;
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
+            }
+
+            if (resultadoCalculo)
+            {
+                if ((datosBusqueda.ConsecutivoOperacion > 0) && (datosBusqueda.ConsecutivoGarantia > 0) && (datosBusqueda.CodigoTipoGarantia > 0))
+                {
+                    switch (datosBusqueda.CodigoTipoGarantia)
+                    {
+                        case 1:
+                            clsGarantiaFiduciaria datoBusquedaGF = new clsGarantiaFiduciaria();
+                            datoBusquedaGF.ConsecutivoGarantiaFiduciaria = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaFiduciaria(datoBusquedaGF, Global.UsuarioSistema);
+                            break;
+                        case 2:
+                            clsGarantiaReal datoBusquedaGR = new clsGarantiaReal();
+                            datoBusquedaGR.CodGarantiaReal = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaReal(datoBusquedaGR, Global.UsuarioSistema);
+                            break;
+                        case 3:
+                            clsGarantiaValor datoBusquedaGV = new clsGarantiaValor();
+                            datoBusquedaGV.ConsecutivoGarantia = datosBusqueda.ConsecutivoGarantia;
+                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaValor(datoBusquedaGV, Global.UsuarioSistema);
+                            break;
+                        default:
+                            datosRetornado.CodigoError = 0;
+                            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                            listaDatosRetornados.Clear();
+                            listaDatosRetornados.Add(datosRetornado);
+                            break;
+                    }
+
+                    if ((listaDatosActualizados != null) && (listaDatosActualizados.Count > 0))
+                    {
+                        listaDatosRetornados.Clear();
+
+                        foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatosActualizados)
+                        {
+                            garantia.CodigoError = 0;
+                            listaDatosRetornados.Add(garantia);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+                datosRetornado.CodigoError = 1;
+                datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorObteniendoOperacionesGarantias, identificacionGarantia, Mensajes.ASSEMBLY);
+                listaDatosRetornados.Clear();
+                listaDatosRetornados.Add(datosRetornado);
+            }            
+        }
+        catch (ExcepcionBase ex)
+        {
+            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+            datosRetornado.CodigoError = 1;
+            datosRetornado.DescripcionError = ex.Message;
+            listaDatosRetornados.Clear();
+            listaDatosRetornados.Add(datosRetornado);
+        }
+        catch (Exception ex)
+        {
+            datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
+            datosRetornado.CodigoError = 1;
+            datosRetornado.DescripcionError = Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPr, Mensajes.ASSEMBLY);
+            listaDatosRetornados.Clear();
+            listaDatosRetornados.Add(datosRetornado);
+        }
+
+        return listaDatosRetornados.ToArray();
+    }
 
     #endregion
 

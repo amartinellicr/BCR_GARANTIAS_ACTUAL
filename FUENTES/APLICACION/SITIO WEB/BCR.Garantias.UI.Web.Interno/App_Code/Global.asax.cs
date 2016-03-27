@@ -205,6 +205,12 @@ public class Global : System.Web.HttpApplication
             Application["PERFILES_PERMISO_EDICION_STPR"] = ConfigurationManager.AppSettings.Get("PERFILES_PERMISO_EDICION_STPR");
             
         }
+        catch (ConfigurationErrorsException ex)
+        {
+            UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_DATOS_ARCHIVO_CONFIGURACION_DETALLE, ex.Message, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
+
+            throw ex;
+        }
         catch (Exception ex)
         {
             string strRutaActual = HttpContext.Current.Request.Path.Substring(0, HttpContext.Current.Request.Path.LastIndexOf("/"));

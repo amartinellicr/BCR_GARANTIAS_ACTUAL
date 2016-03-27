@@ -34,9 +34,10 @@ namespace BCRGARANTIAS.Negocios
         /// Inserta un registro de saldo total y porcentaje de responsabilidad
         /// </summary>
         /// <param name="entidadSaldoTotalPorcentajeResp">Entidad de saldo total y porcentaje de responsabilidad.</param>
+        /// <param name="entidadSaldoTotalPorcentajeResponsabilidadAnterior">Entidad del tipo de saldo total y porcentaje de responsabilidad que posee los datos originales</param>
         /// <param name="usuario">Usuario que inserta el registro</param>
         /// <param name="ip">Dirección desde donde se ingresa el registro</param>
-        public void Insertar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, string usuario, string ip)
+        public void Insertar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidadAnterior, string usuario, string ip)
         {
             string respuestaObtenida = string.Empty;
             string[] strMensajeObtenido = new string[] { string.Empty };
@@ -77,12 +78,20 @@ namespace BCRGARANTIAS.Negocios
                     {
                         if (strMensajeObtenido[0].CompareTo("1") == 0)
                         {
+                            Modificar(entidadSaldoTotalPorcentajeResponsabilidad, entidadSaldoTotalPorcentajeResponsabilidadAnterior, usuario, ip);
+                        }
+                        else if((strMensajeObtenido[0].CompareTo("2") == 0) || (strMensajeObtenido[0].CompareTo("3") == 0))
+                        {
                             throw new ExcepcionBase(strMensajeObtenido[2]);
                         }
                         else
                         {
                             throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorInsertandoSaldoTotalPr, Mensajes.ASSEMBLY));
                         }
+                    }
+                    else if ((strMensajeObtenido[0].CompareTo("0") == 0) || (strMensajeObtenido[0].CompareTo("1") == 0))
+                    {
+                        NormalizarPorcentajeResponsabilidad(entidadSaldoTotalPorcentajeResponsabilidad);
                     }
                 }
             }
@@ -229,7 +238,11 @@ namespace BCRGARANTIAS.Negocios
 
                         if (strMensajeObtenido[0].CompareTo("0") != 0)
                         {
-                            if (strMensajeObtenido[0].CompareTo("1") == 0)
+                            if (strMensajeObtenido[0].CompareTo("1") == 0) 
+                            {
+                                Insertar(entidadSaldoTotalPorcentajeResponsabilidad, entidadSaldoTotalPorcentajeResponsabilidadAnterior, usuario, ip);
+                            }
+                            else if((strMensajeObtenido[0].CompareTo("2") == 0) || (strMensajeObtenido[0].CompareTo("3") == 0))
                             {
                                 throw new ExcepcionBase(strMensajeObtenido[2]);
                             }
@@ -238,8 +251,10 @@ namespace BCRGARANTIAS.Negocios
                                 throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorModificandoSaldoTotalPr, Mensajes.ASSEMBLY));
                             }
                         }
-
-
+                        else if ((strMensajeObtenido[0].CompareTo("0") == 0) || (strMensajeObtenido[0].CompareTo("1") == 0))
+                        {
+                            NormalizarPorcentajeResponsabilidad(entidadSaldoTotalPorcentajeResponsabilidad);
+                        }
                     }
                 }
                 catch (ExcepcionBase ex)
@@ -376,11 +391,34 @@ namespace BCRGARANTIAS.Negocios
                     {
                         strMensajeObtenido = UtilitariosComun.ObtenerCodigoMensaje(respuestaObtenida);
 
-                        if (strMensajeObtenido[0].CompareTo("0") != 0)
+                        if (strMensajeObtenido[0].CompareTo("0") == 0) 
+                        {
+                            NormalizarPorcentajeResponsabilidad(entidadSaldoTotalPorcentajeResponsabilidad);
+                        }
+                        else if ((strMensajeObtenido[0].CompareTo("1") == 0) || (strMensajeObtenido[0].CompareTo("2") == 0))
+                        {
+                            throw new ExcepcionBase(strMensajeObtenido[2]);
+                        }
+                        else
                         {
                             throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorEliminandoSaldoTotalPr, Mensajes.ASSEMBLY));
                         }
                     }
+                }
+                catch (ExcepcionBase ex)
+                {
+                    string datoGarantia = string.Format("{0}, Tipo Garantia: {1}", entidadSaldoTotalPorcentajeResponsabilidad.IdentificacionGarantia, entidadSaldoTotalPorcentajeResponsabilidad.CodigoTipoGarantia.ToString());
+
+                    string detalleTecnico = string.Format("Error: {0}, Descripción: {1}", ex.Message, ex.StackTrace);
+
+                    StringCollection parametro = new StringCollection();
+                    parametro.Add(datoGarantia);
+                    parametro.Add(entidadSaldoTotalPorcentajeResponsabilidad.OperacionLarga);
+                    parametro.Add(detalleTecnico);
+
+                    UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorEliminandoSaldoTotalPrDetalle, parametro, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+                    throw ex;
                 }
                 catch (SqlException ex)
                 {
@@ -518,15 +556,20 @@ namespace BCRGARANTIAS.Negocios
             {
 
                 SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("piConsecutivo_Garantia", SqlDbType.BigInt),
                         new SqlParameter("pdIdentificacion_Fiador", SqlDbType.Decimal),
                         new SqlParameter("piTipo_Persona_Fiador", SqlDbType.SmallInt),
                         new SqlParameter("psCedula_Usuario", SqlDbType.VarChar,30)
                     };
 
-  
-                parameters[0].Value = entidadGarantiaFiduciaria.IndentificacionSicc;
-                parameters[1].Value = entidadGarantiaFiduciaria.CodigoTipoPersonaFiador;
-                parameters[2].Value = usuario;
+
+                parameters[0].IsNullable = true;
+                parameters[0].Value = ((entidadGarantiaFiduciaria.ConsecutivoGarantiaFiduciaria > 0) ? entidadGarantiaFiduciaria.ConsecutivoGarantiaFiduciaria : ((object) DBNull.Value));
+                parameters[1].IsNullable = true;
+                parameters[1].Value = ((entidadGarantiaFiduciaria.IndentificacionSicc > 0) ? entidadGarantiaFiduciaria.IndentificacionSicc : ((object)DBNull.Value));
+                parameters[2].IsNullable = true;
+                parameters[2].Value = ((entidadGarantiaFiduciaria.CodigoTipoPersonaFiador > 0) ? entidadGarantiaFiduciaria.CodigoTipoPersonaFiador : ((object)DBNull.Value));
+                parameters[3].Value = usuario;
 
 
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
@@ -581,6 +624,7 @@ namespace BCRGARANTIAS.Negocios
             {
 
                 SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("piConsecutivo_Garantia", SqlDbType.BigInt),
                         new SqlParameter("psIdentificacion_Bien", SqlDbType.VarChar,25),
                         new SqlParameter("piCodigo_Clase_Garantia", SqlDbType.SmallInt),
                         new SqlParameter("piCodigo_Partido", SqlDbType.SmallInt),
@@ -588,14 +632,17 @@ namespace BCRGARANTIAS.Negocios
                         new SqlParameter("psCedula_Usuario", SqlDbType.VarChar,30)
                     };
 
-
-                parameters[0].Value = entidadGarantiaReal.IdentificacionAlfanumericaGarantia;
-                parameters[1].Value = entidadGarantiaReal.CodClaseGarantia;
+                parameters[0].IsNullable = true;
+                parameters[0].Value = ((entidadGarantiaReal.CodGarantiaReal > 0) ? entidadGarantiaReal.CodGarantiaReal : ((object)DBNull.Value));
+                parameters[1].IsNullable = true;
+                parameters[1].Value = ((entidadGarantiaReal.IdentificacionAlfanumericaGarantia.Length > 0) ? entidadGarantiaReal.IdentificacionAlfanumericaGarantia : ((object)DBNull.Value));
                 parameters[2].IsNullable = true;
-                parameters[2].Value = ((entidadGarantiaReal.CodTipoGarantiaReal != ((short)Enumeradores.Tipos_Garantia_Real.Prenda)) ? entidadGarantiaReal.CodPartido : ((object) DBNull.Value));
+                parameters[2].Value = ((entidadGarantiaReal.CodClaseGarantia > 0) ? entidadGarantiaReal.CodClaseGarantia : ((object)DBNull.Value));
                 parameters[3].IsNullable = true;
-                parameters[3].Value = ((entidadGarantiaReal.CodTipoGarantiaReal == ((short)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria)) ? entidadGarantiaReal.CodGrado : ((object)DBNull.Value));
-                parameters[4].Value = usuario;
+                parameters[3].Value = ((entidadGarantiaReal.CodTipoGarantiaReal != ((short)Enumeradores.Tipos_Garantia_Real.Prenda)) ? entidadGarantiaReal.CodPartido : ((object) DBNull.Value));
+                parameters[4].IsNullable = true;
+                parameters[4].Value = ((entidadGarantiaReal.CodTipoGarantiaReal == ((short)Enumeradores.Tipos_Garantia_Real.Cedula_Hipotecaria)) ? entidadGarantiaReal.CodGrado : ((object)DBNull.Value));
+                parameters[5].Value = usuario;
 
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
 
@@ -649,15 +696,19 @@ namespace BCRGARANTIAS.Negocios
             {
 
                 SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("piConsecutivo_Garantia", SqlDbType.BigInt),
                         new SqlParameter("psNumero_Seguridad", SqlDbType.VarChar,25),
                         new SqlParameter("piCodigo_Clase_Garantia", SqlDbType.SmallInt),
                         new SqlParameter("psCedula_Usuario", SqlDbType.VarChar,30)
                     };
 
-
-                parameters[0].Value = entidadGarantiaValor.NumeroSeguridad;
-                parameters[1].Value = entidadGarantiaValor.CodigoClaseGarantia;
-                parameters[4].Value = usuario;
+                parameters[0].IsNullable = true;
+                parameters[0].Value = ((entidadGarantiaValor.ConsecutivoGarantia > 0) ? entidadGarantiaValor.ConsecutivoGarantia : ((object)DBNull.Value));
+                parameters[1].IsNullable = true;
+                parameters[1].Value = ((entidadGarantiaValor.NumeroSeguridad.Length > 0) ? entidadGarantiaValor.NumeroSeguridad : ((object)DBNull.Value));
+                parameters[2].IsNullable = true;
+                parameters[2].Value = ((entidadGarantiaValor.CodigoClaseGarantia > 0) ? entidadGarantiaValor.CodigoClaseGarantia : ((object)DBNull.Value));
+                parameters[3].Value = usuario;
 
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
 
@@ -726,7 +777,7 @@ namespace BCRGARANTIAS.Negocios
 
                 AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Normalizar_Datos_Porcentaje_Responsabilidad", parameters);
 
-                respuestaObtenida = parameters[4].Value.ToString();
+                respuestaObtenida = parameters[3].Value.ToString();
 
 
                 if (respuestaObtenida.Length > 0)
@@ -806,7 +857,7 @@ namespace BCRGARANTIAS.Negocios
                                 consecutivoOperacionGarantia = ((consecutivoOperacionGarantia > 0) ? consecutivoOperacionGarantia : (long.TryParse(fila["cod_operacion"].ToString(), out consecOper) ? consecOper : 0));
                                 LinkButton enlaceNuevo = new LinkButton();
                                 enlaceNuevo.ID = fila["cod_garantia_fiduciaria"].ToString();
-                                enlaceNuevo.Text = string.Format("{0}-{1}", fila["tipo_persona"].ToString(), fila["cedula_fiador"].ToString());
+                                enlaceNuevo.Text = string.Format("{0}-{1}", fila["cod_tipo_fiador"].ToString(), fila["cedula_fiador"].ToString());
                                 enlaceNuevo.Attributes.Add("runat", "Server");
                                 enlaceNuevo.CommandName = "1";
                                 enlaceNuevo.CommandArgument = fila["cod_garantia_fiduciaria"].ToString();

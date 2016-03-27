@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Pagina Maestra/mtpMenuPrincipal.master" AutoEventWireup="true" CodeFile="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx.cs" Inherits="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad" Title="BCR GARANTIAS - Mantenimiento Saldos Totales y Porcentaje Responsabilidad" %>
+﻿<%@ Page Language="C#" MasterPageFile="~/Pagina Maestra/mtpMenuPrincipal.master"  EnableEventValidation="false" AutoEventWireup="true" CodeFile="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx.cs" Inherits="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad" Title="BCR GARANTIAS - Mantenimiento Saldos Totales y Porcentaje Responsabilidad" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="cphPrincipal" Runat="Server">
     <div>
@@ -31,6 +31,9 @@
 									<asp:ListItem Value="2">Contrato</asp:ListItem>
                                     <asp:ListItem Value="3">Garant&#237;a</asp:ListItem>
 						        </asp:dropdownlist>
+                            </div>
+                            <div id="filaRetorno" class="Contenedor_Agrupado" style="display:none;">
+                                <a id="lknRetornar" class="enlaceRetorno" runat="server" href="#">Retornar al Mantenimiento de Garantías</a>
                             </div>
                         </div>
                         <div class="Contenedor_Separador"></div>
@@ -95,12 +98,12 @@
                                     <asp:label id="lblPartido" CssClass="Etiqueta_ID_Garantia" runat="server">Partido:</asp:label>
                                     <asp:textbox id="txtPartido" CssClass="Campo_Normal" tabIndex="14" runat="server" Width="42px" MaxLength="3"></asp:textbox>
                                     <asp:label id="lblFinca" CssClass="Etiqueta_ID_Garantia" runat="server">Número Finca:</asp:label>
-                                    <asp:textbox id="txtNumFinca" CssClass="Campo_Normal" tabIndex="15" runat="server" Width="100px" MaxLength="25"></asp:textbox>
+                                    <asp:textbox id="txtNumFinca" CssClass="Campo_Normal" tabIndex="15" runat="server" Width="150px" MaxLength="25"></asp:textbox>
                                     <div id="filaGradoCedula" style="display:none;">
                                         <asp:label id="lblGrado" CssClass="Etiqueta_ID_Garantia" runat="server">Grado:</asp:label>
                                         <asp:textbox id="txtGrado" CssClass="Campo_Normal" tabIndex="16" runat="server" Width="42px" MaxLength="3"></asp:textbox>
-                                        <asp:label id="lblCedula"  CssClass="Etiqueta_ID_Garantia" runat="server">Cédula Hipotecaria:</asp:label>
-                                        <asp:textbox id="txtCedulaHipotecaria" CssClass="Campo_Normal " tabIndex="17" runat="server" Width="42px" MaxLength="2"></asp:textbox>
+                                        <%--<asp:label id="lblCedula"  CssClass="Etiqueta_ID_Garantia" runat="server">Cédula Hipotecaria:</asp:label>
+                                        <asp:textbox id="txtCedulaHipotecaria" CssClass="Campo_Normal " tabIndex="17" runat="server" Width="42px" MaxLength="2"></asp:textbox>--%>
                                     </div>     
                                     <asp:button id="btnValidarGarantiaReal" tabIndex="18" runat="server" ToolTip="Verifica que la garantía real sea valida" Text="Validar" UseSubmitBehavior="false" OnClientClick="return ValidarGarantia();"></asp:button>
                                 </div>
@@ -264,9 +267,9 @@
                                         <div class="Contenedor_Distribuido" style="text-align:left; padding-left:0px; margin-left:27px;"> 
                                             <div class="Contenedor_Agrupado_Derecho">
                                                 <asp:button id="btnLimpiar" tabIndex="25" runat="server" ToolTip="Limpiar" Text="Limpiar" UseSubmitBehavior="false" OnClientClick="return LimpiarCampos();"></asp:button>
-								                <asp:button id="btnInsertar" tabIndex="26" runat="server" ToolTip="Modificar Garantía" Text="Insertar" UseSubmitBehavior="false"></asp:button>
-								                <asp:button id="btnModificar" tabIndex="27" runat="server" ToolTip="Modificar Garantía" Text="Modificar" UseSubmitBehavior="false"></asp:button>
-								                <asp:button id="btnEliminar" tabIndex="28" runat="server" ToolTip="Eliminar Garantía" Text="Eliminar" UseSubmitBehavior="false"></asp:button>
+								                <asp:button id="btnInsertar" tabIndex="26" runat="server" ToolTip="Incluir Registro" Text="Incluir" UseSubmitBehavior="false" OnClientClick="return ConfirmarInsertar();"></asp:button>
+								                <asp:button id="btnModificar" tabIndex="27" runat="server" ToolTip="Modificar Registro" Text="Modificar" UseSubmitBehavior="false" OnClientClick="return ConfirmarModificar();"></asp:button>
+								                <asp:button id="btnEliminar" tabIndex="28" runat="server" ToolTip="Eliminar Registro" Text="Eliminar" UseSubmitBehavior="false" OnClientClick="return ConfirmarEliminar();"></asp:button>
                                             </div>    
                                         </div>                                                   
                                     </div>

@@ -66,6 +66,11 @@ namespace BCR.GARANTIAS.Entidades
         public string DescripcionError { get; set; }
 
         public string SaldoActualTexto { get { return SaldoActual.ToString("N2"); } }
+        public string PorcentajeResponsabilidadTexto {
+            get {
+                return ((PorcentajeResponsabilidadAjustado >= 0) ? PorcentajeResponsabilidadAjustado.ToString("N2") : ((PorcentajeResponsabilidadCalculado >= 0) ? PorcentajeResponsabilidadCalculado.ToString("N2") : "0.00"));
+            } 
+        }
 
         #endregion Propiedades
 
@@ -220,7 +225,7 @@ namespace BCR.GARANTIAS.Entidades
                 short cuentaContable;
                 short codigoTipoGarantia;
                 int codigoTipoOperacion;
-
+                string indicadorFalso = "0,false,False";
 
                 ConsecutivoOperacion = ((!datosCargar.IsNull(_consecutivoOperacion) && (long.TryParse(datosCargar[_consecutivoOperacion].ToString(), out consecutivoOperacion))) ? consecutivoOperacion : ((long)-1));
                 ConsecutivoGarantia = ((!datosCargar.IsNull(_consecutivoGarantia) && (long.TryParse(datosCargar[_consecutivoGarantia].ToString(), out consecutivoGarantia))) ? consecutivoGarantia : ((long)-1));
@@ -237,9 +242,9 @@ namespace BCR.GARANTIAS.Entidades
 
                 CodigoTipoOperacion = ((!datosCargar.IsNull(_codigoTipoOperacion) && (int.TryParse(datosCargar[_codigoTipoOperacion].ToString(), out codigoTipoOperacion))) ? ((Enumeradores.Tipos_Operaciones)codigoTipoOperacion) : Enumeradores.Tipos_Operaciones.Ninguno);
 
-                IndicadorAjusteSaldoActual = ((!datosCargar.IsNull(_indicadorAjusteSaldoActual) && (datosCargar[_indicadorAjusteSaldoActual].ToString().CompareTo("0") == 0)) ? false : true);
-                IndicadorAjustePorcentaje = ((!datosCargar.IsNull(_indicadorAjustePorcentaje) && (datosCargar[_indicadorAjustePorcentaje].ToString().CompareTo("0") == 0)) ? false : true);
-                IndicadorExcluido = ((!datosCargar.IsNull(_indicadorExcluido) && (datosCargar[_operacionLarga].ToString().CompareTo("0") == 0)) ? false : true);
+                IndicadorAjusteSaldoActual = ((!datosCargar.IsNull(_indicadorAjusteSaldoActual) && (indicadorFalso.Contains(datosCargar[_indicadorAjusteSaldoActual].ToString()))) ? false : true);
+                IndicadorAjustePorcentaje = ((!datosCargar.IsNull(_indicadorAjustePorcentaje) && (indicadorFalso.Contains(datosCargar[_indicadorAjustePorcentaje].ToString()))) ? false : true);
+                IndicadorExcluido = ((!datosCargar.IsNull(_indicadorExcluido) && (indicadorFalso.Contains(datosCargar[_indicadorExcluido].ToString()))) ? false : true);
 
 
                 TipoOperacion = ((!datosCargar.IsNull(_tipoOperacion)) ? datosCargar[_tipoOperacion].ToString() : string.Empty);
@@ -320,62 +325,63 @@ namespace BCR.GARANTIAS.Entidades
                             //Se verifica que se haya obtenido el arereglo deseado
                             if (llaveValor.Length == 2)
                             {
+                                string valor = (llaveValor[1].Replace('"', ' ').Trim());
                                 //En base al valor de la llave, se convierte y se asigna el dato del valor
                                 switch ((llaveValor[0].Replace('"', ' ').Trim()))
                                 {
                                     case _consecutivoOperacion:
-                                        ConsecutivoOperacion = ((long.TryParse(llaveValor[1], out consecutivoOperacion)) ? consecutivoOperacion : -1);
+                                        ConsecutivoOperacion = ((long.TryParse(valor, out consecutivoOperacion)) ? consecutivoOperacion : -1);
                                         break;
                                     case _consecutivoGarantia:
-                                        ConsecutivoGarantia = ((long.TryParse(llaveValor[1], out consecutivoGarantia)) ? consecutivoGarantia : -1);
+                                        ConsecutivoGarantia = ((long.TryParse(valor, out consecutivoGarantia)) ? consecutivoGarantia : -1);
                                         break;
                                     case _codigoTipoGarantia:
-                                        CodigoTipoGarantia = ((short.TryParse(llaveValor[1], out codigoTipoGarantia)) ? codigoTipoGarantia : ((short)-1));
+                                        CodigoTipoGarantia = ((short.TryParse(valor, out codigoTipoGarantia)) ? codigoTipoGarantia : ((short)-1));
                                         break;
                                     case _saldoActual:
-                                        SaldoActual = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out saldoActual)) ? saldoActual : 0);
+                                        SaldoActual = ((valor.CompareTo("null") != 0) && (decimal.TryParse(valor, out saldoActual)) ? saldoActual : 0);
                                         break;
                                     case _saldoActualAjustado:
-                                        SaldoActualAjustado = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out saldoActualAjustado)) ? saldoActualAjustado : -1);
+                                        SaldoActualAjustado = ((valor.CompareTo("null") != 0) && (decimal.TryParse(valor, out saldoActualAjustado)) ? saldoActualAjustado : -1);
                                         break;
                                     case _porcentajeResponsabilidadAjustado:
-                                        PorcentajeResponsabilidadAjustado = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out porcentajeResponsabilidadAjustado)) ? porcentajeResponsabilidadAjustado : -1);
+                                        PorcentajeResponsabilidadAjustado = ((valor.CompareTo("null") != 0) && (decimal.TryParse(valor, out porcentajeResponsabilidadAjustado)) ? porcentajeResponsabilidadAjustado : -1);
                                         break;
                                     case _cuentaContable:
-                                        CuentaContable = ((short.TryParse(llaveValor[1], out cuentaContable)) ? cuentaContable : ((short)-1));
+                                        CuentaContable = ((short.TryParse(valor, out cuentaContable)) ? cuentaContable : ((short)-1));
                                         break;
                                     case _codigoTipoOperacion:
-                                        CodigoTipoOperacion = ((int.TryParse(llaveValor[1], out codigoTipoOperacion)) ? ((Enumeradores.Tipos_Operaciones)codigoTipoOperacion) : Enumeradores.Tipos_Operaciones.Ninguno);
+                                        CodigoTipoOperacion = ((int.TryParse(valor, out codigoTipoOperacion)) ? ((Enumeradores.Tipos_Operaciones)codigoTipoOperacion) : Enumeradores.Tipos_Operaciones.Ninguno);
                                         break;
                                     case _tipoOperacion:
-                                        TipoOperacion = llaveValor[1];
+                                        TipoOperacion = valor;
                                         break;
                                     case _operacionLarga:
-                                        OperacionLarga = llaveValor[1];
+                                        OperacionLarga = valor;
                                         break;
                                     case _indicadorAjusteSaldoActual:
-                                        IndicadorAjusteSaldoActual = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
+                                        IndicadorAjusteSaldoActual = ((valor.CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _indicadorAjustePorcentaje:
-                                        IndicadorAjustePorcentaje = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
+                                        IndicadorAjustePorcentaje = ((valor.CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _indicadorExcluido:
-                                        IndicadorExcluido = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
+                                        IndicadorExcluido = ((valor.CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _identificacionGarantia:
-                                        IdentificacionGarantia = llaveValor[1];
+                                        IdentificacionGarantia = valor;
                                         break;
                                     case _indicadorAjusteCampoSaldo:
-                                        IndicadorAjusteCampoSaldo = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
+                                        IndicadorAjusteCampoSaldo = ((valor.CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _indicadorAjusteCampoPorcentaje:
-                                        IndicadorAjusteCampoPorcentaje = ((llaveValor[1].CompareTo("0") == 0) ? false : true);
+                                        IndicadorAjusteCampoPorcentaje = ((valor.CompareTo("0") == 0) ? false : true);
                                         break;
                                     case _porcentajeResponsabilidadCalculado:
-                                        PorcentajeResponsabilidadCalculado = ((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out porcentajeResponsabilidadCalculado)) ? porcentajeResponsabilidadCalculado : -1);
+                                        PorcentajeResponsabilidadCalculado = ((valor.CompareTo("null") != 0) && (decimal.TryParse(valor, out porcentajeResponsabilidadCalculado)) ? porcentajeResponsabilidadCalculado : -1);
                                         break;
                                     case _numeroRegistro:
-                                        NumeroRegistro = ((long.TryParse(llaveValor[1], out numReg)) ? numReg: -1);
+                                        NumeroRegistro = ((long.TryParse(valor, out numReg)) ? numReg: -1);
                                         break;
                                     default:
                                         break;

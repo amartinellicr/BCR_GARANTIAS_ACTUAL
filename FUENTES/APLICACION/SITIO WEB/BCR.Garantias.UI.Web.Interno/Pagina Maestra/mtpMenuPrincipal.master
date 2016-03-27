@@ -13,8 +13,8 @@
     <script src="<%#ResolveUrl("~/JSLib/jquery-ui.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/jquery.mousewheel.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/moment.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/Utiles.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/SaldosTotalesPorcResp.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/Utiles.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/SaldosTotalesPorcResp.min.js")%>" type="text/javascript"></script>
        
     <script language="javascript" type="text/javascript">
         //<![CDATA[
@@ -107,16 +107,20 @@
             var $RegistroExcluido;
             var $PermisoEdicion;
             var $registroSeleccionado;
+            var $cuentaMensajes;
+            var $porcentajeCien;
+            var $datosConsulta;
+            var $arregloOperaciones;
+            var $queryString;
+
+            var $MensajePorcentajeMaximo;
 
             PageInit();
             SaldosTotalesPorcResp_PageInit();
 
             MostrarAvaluoReal(false);
             MostrarPoliza(false);
-
-            //MostrarGarantiasFiduciariasRelacionadas(true);
-            //MostrarGarantiasRealesRelacionadas(true);
-            //MostrarGarantiasValoresRelacionadas(true);
+                        
 
             if (typeof (Sys) !== 'undefined') {
                 var prm = Sys.WebForms.PageRequestManager.getInstance();
@@ -129,13 +133,16 @@
                     });
                 };
             };
+
+            
+
         }); 
             
-        //$(function () {
-        //    $("#accordionGF").accordion();
-        //    $("#accordionGR").accordion();
-        //    $("#accordionGV").accordion();
-        //});
+        (function ($) {
+            $.fn.valAndTrigger = function (element) {
+                return $(this).val(element).trigger('change');
+            };
+        }(jQuery));
 
         //]]>
     </script>

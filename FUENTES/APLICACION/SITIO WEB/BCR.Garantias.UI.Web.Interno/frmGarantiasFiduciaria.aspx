@@ -275,7 +275,9 @@
 										   <td>
 										        <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
 										                        ToolTip="Porcentaje de Responsabilidad" Enabled="False" tabIndex="20"/>
-                                                <asp:ImageButton ID="imgCalculadora" runat="server" ImageUrl="~/Images/Calculadora.png" OnClientClick="javascript: return false;" />
+                                                <div style="cursor:pointer; display:inline;">
+                                                    <asp:ImageButton ID="imgCalculadoraGF" runat="server" ImageUrl="~/Images/Calculadora.png" />
+                                                </div>
 										    </td>
                                             <td></td>
                                         </tr>
