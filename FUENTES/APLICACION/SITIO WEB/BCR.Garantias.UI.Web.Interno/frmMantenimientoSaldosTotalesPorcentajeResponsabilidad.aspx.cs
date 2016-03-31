@@ -428,7 +428,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
             if (!operacionValidada.EsValida)
             {
-                datosRetornados = string.Format("1|{0}", ((operacionValidada.TipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa)) ? "La operación crediticia no existe en el sistema o se encuentra cancelada. Por favor verifique." : ((operacionValidada.TipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Contrato)) ? "El contrato no existe en el sistema o se encuentra cancelada. Por favor verifique." : string.Empty)));
+                datosRetornados = string.Format("1|{0}", ((operacionValidada.TipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Directa)) ? "La operación crediticia no existe en el sistema o se encuentra cancelada. Por favor verifique." : ((operacionValidada.TipoOperacion == ((int)Enumeradores.Tipos_Operaciones.Contrato)) ? "El contrato no existe en el sistema o se encuentra cancelado. Por favor verifique." : string.Empty)));
             }
         }
         catch (SqlException ex)

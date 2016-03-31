@@ -17,7 +17,7 @@
 			<siteMapNode url="frmCatalogos.aspx" title="Catálogos"  description="" roles=""/>
 			<siteMapNode url="frmMantenimientoBin.aspx" title="Bin"  description="" roles=""/>
 			<siteMapNode url="frmIndicesActualizacionAvaluos.aspx" title="Indices de Actualización de Avalúos"  description="" roles=""/>
-			<siteMapNode url="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx" title="Saldos Totales y % Responsabilidad"  description="" roles=""/>
+			<siteMapNode url="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx" title="Saldos Totales y Porcentaje de Responsabilidad"  description="" roles=""/>
 		</siteMapNode>
 		<siteMapNode url="" title="Reportes"  description="" roles="">
 			<siteMapNode url="frmConsultaAvanceXGarantia.aspx" title="Avance por Oficina"  description="" roles="" />

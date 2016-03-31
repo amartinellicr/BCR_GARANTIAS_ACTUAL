@@ -861,7 +861,7 @@ namespace BCRGARANTIAS.Negocios
                                 enlaceNuevo.Attributes.Add("runat", "Server");
                                 enlaceNuevo.CommandName = "1";
                                 enlaceNuevo.CommandArgument = fila["cod_garantia_fiduciaria"].ToString();
-                                enlaceNuevo.OnClientClick = string.Format("ConsultarGarantiaFiduciaria({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["tipo_persona"].ToString(), fila["cedula_fiador"].ToString());
+                                enlaceNuevo.OnClientClick = string.Format("javascript:ConsultarGarantiaFiduciaria({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["cod_tipo_fiador"].ToString(), fila["cedula_fiador"].ToString());
                                 enlaceNuevo.ToolTip = string.Empty;
 
                                 listadoEnlaces.Add(enlaceNuevo);
@@ -893,7 +893,7 @@ namespace BCRGARANTIAS.Negocios
                                 }
 
                                 //enlaceNuevo.Attributes.Add("onclick", (string.Format("javascript:ConsultarGarantiaReal({0}, {1}, {2}, {3});", fila["Identificacion_Bien"].ToString(), fila["cod_clase_garantia"].ToString(), fila["cod_partido"].ToString(), ((fila["cod_grado"].ToString().Length > 0 ? fila["cod_grado"].ToString() : "-1")))));
-                                enlaceNuevo.OnClientClick = string.Format("javascript:ConsultarGarantiaReal({0}, {1}, {2}, {3}); InicializarClaseTablasGarantias($(this));", fila["Identificacion_Bien"].ToString(), fila["cod_clase_garantia"].ToString(), fila["cod_partido"].ToString(), ((fila["cod_grado"].ToString().Length > 0 ? fila["cod_grado"].ToString() : "-1")));
+                                enlaceNuevo.OnClientClick = string.Format("javascript:ConsultarGarantiaReal({0}, {1}, {2}, {3}); InicializarClaseTablasGarantias($(this));", fila["Identificacion_Bien"].ToString(), fila["cod_clase_garantia"].ToString(), ((fila["cod_partido"].ToString().Length > 0 ? fila["cod_partido"].ToString() : "-1")), ((fila["cod_grado"].ToString().Length > 0 ? fila["cod_grado"].ToString() : "-1")));
                                // enlaceNuevo.CssClass = "hyperlink";
 
                                 listadoEnlaces.Add(enlaceNuevo);
@@ -919,7 +919,7 @@ namespace BCRGARANTIAS.Negocios
                                 enlaceNuevo.CommandName = "3";
                                 enlaceNuevo.CommandArgument = fila["cod_garantia_valor"].ToString();
                                 enlaceNuevo.ToolTip = string.Empty;
-                                enlaceNuevo.OnClientClick = string.Format("ConsultarGarantiaValor({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["numero_seguridad"].ToString(), fila["cod_clase_garantia"].ToString());
+                                enlaceNuevo.OnClientClick = string.Format("javascript:ConsultarGarantiaValor({0}, {1}); InicializarClaseTablasGarantias($(this));", fila["numero_seguridad"].ToString(), fila["cod_clase_garantia"].ToString());
 
                                 listadoEnlaces.Add(enlaceNuevo);
                             }

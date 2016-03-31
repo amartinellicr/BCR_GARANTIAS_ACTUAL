@@ -23,7 +23,193 @@ function SaldosTotalesPorcResp_PageInit() {
 
     ValidarPermisoEdicion();
 
-    
+    $$('txtContabilidad').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    $$('txtOficina').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    $$('txtMoneda').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    $$('txtProducto').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    $$('txtOperacion').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+
+    $$('txtCedulaFiador').on("keydown", function (event) {
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+        if (isCtrl) {
+            for (i = 0; i < forbiddenKeys.length; i++) {
+                if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                    return true;
+                }
+            }
+        }
+        else if (!$.isNumeric(String.fromCharCode(event.which))) {
+            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                event.preventDefault();
+            }
+        }
+    });
+
+    $$('txtPartido').on("keydown", function (event) {
+        var codigoTipoGarantiaReal = parseInt($$('cbTipoGarantiaReal').val());
+        if (codigoTipoGarantiaReal != 3) {
+            if ((!$.isNumeric(String.fromCharCode(event.which))) || (event.which == 48) || (event.which == 56) || (event.which == 57) || (($(this).val().length) >= 1)) {
+                if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $$('txtNumFinca').on("keydown", function (event) {
+        var codigoClase = parseInt($$('cbClaseGarantiaReal').val());
+        var forbiddenKeys = new Array('c', 'x', 'v');
+        var keyCode = (event.keyCode) ? event.keyCode : event.which;
+        var isCtrl;
+        isCtrl = event.ctrlKey
+
+        if ((codigoClase >= 10) && (codigoClase <= 29) && (codigoClase != 11)) {
+            if (($(this).val().length + 1) <= 6) {
+                if (isCtrl) {
+                    for (i = 0; i < forbiddenKeys.length; i++) {
+                        if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                            return true;
+                        }
+                    }
+                }
+                else if (!$.isNumeric(String.fromCharCode(event.which))) {
+                    if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                        event.preventDefault();
+                    }
+                }
+            }
+            else {
+                if ($.isNumeric(String.fromCharCode(event.which))) {
+                    event.preventDefault();
+                }
+                else if (isCtrl) {
+                    for (i = 0; i < forbiddenKeys.length; i++) {
+                        if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                            return true;
+                        }
+                    }
+                }
+                else if (!$.isNumeric(String.fromCharCode(event.which))) {
+                    if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                        event.preventDefault();
+                    }
+                }
+            }           
+        }
+        else if ((codigoClase >= 30) && (codigoClase <= 69) && (codigoClase != 38) && (codigoClase != 43)) {
+            if (isCtrl) {
+                for (i = 0; i < forbiddenKeys.length; i++) {
+                    if (forbiddenKeys[i] == String.fromCharCode(keyCode).toLowerCase()) {
+                        return true;
+                    }
+                }
+            }
+            else if (!$.isNumeric(String.fromCharCode(event.which))) {
+                if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
+                    event.preventDefault();
+                }
+            }
+        }
+    });
+
+    $$('txtGrado').on("keydown", function (event) {
+        if ((!$.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
+            event.preventDefault();
+        }
+    });
 
     //$$('imgCalculadoraGF').click(function () {
         
@@ -366,12 +552,18 @@ function HabilitarRegionBusqueda(codigoRegion)
             $$('filaTipoGarantiaReal').hide();
             $$('filaClaseGarantiaReal').hide();
             $$('filaBusquedaGarantia').hide();
+
+            $$('lblTipoOperacion').text('Operación:');
+
             break;
         case 2: //Región de búsqueda por contrato
             $$('filaBusquedaOperacion').show();
             $$('filaTipoGarantiaReal').hide();
             $$('filaClaseGarantiaReal').hide();
             $$('filaBusquedaGarantia').hide();
+
+            $$('lblTipoOperacion').text('Contrato:');
+
             break;
         case 3: //Región de búsqueda por garantía
             $$('filaBusquedaGarantia').show();
@@ -413,6 +605,10 @@ function HabilitarCamposBusqueda()
 
     OcultarProgreso(0);
 
+    if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
+        LimpiarCamposBusqueda();
+        $$('filaRetorno').hide();
+    }
 
     switch (tipoBusqueda) {
         case 1: 
@@ -446,7 +642,11 @@ function HabilitarCamposBusquedaGarantia() {
 
     var codigoCatalogo = "-1";
     OcultarProgreso(0);
-   
+
+    if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
+        LimpiarCamposBusqueda();
+        $$('filaRetorno').hide();
+    }
 
     switch (tipoBusqueda) {
         case 1:
@@ -510,7 +710,11 @@ function HabilitarCamposBusquedaGarantiaReal() {
     var tipoBusqueda = parseInt((($$('cbTipoGarantiaReal').val() != null) ? $$('cbTipoGarantiaReal').val() : "1"));
     var codigoCatalogo = "-1";
     OcultarProgreso(0);
-    LimpiarCamposBusqueda();
+   
+    if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
+        LimpiarCamposBusqueda();
+        $$('filaRetorno').hide();
+    }
 
     codigoCatalogo = parseInt((($$('hdnCatalogoClasesGarantia').val() != null) ? $$('hdnCatalogoClasesGarantia').val() : "-1"));
 
@@ -529,7 +733,7 @@ function HabilitarCamposBusquedaGarantiaReal() {
             $$('filaGradoCedula').hide();
 
             $$('lblPartido').text('Partido:');
-            $$('lblFinca').text('Número Finca:');
+            //$$('lblFinca').text('Número Finca:');
 
             break;
         case 2:
@@ -537,14 +741,14 @@ function HabilitarCamposBusquedaGarantiaReal() {
             $$('filaGradoCedula').css("display", "inline");
 
             $$('lblPartido').text('Partido:');
-            $$('lblFinca').text('Número Finca:');
+            //$$('lblFinca').text('Número Finca:');
 
             break;
         case 3:
             $$('filaGradoCedula').hide();
 
             $$('lblPartido').text('Clase Bien:');
-            $$('lblFinca').text('Id Bien:');
+            //$$('lblFinca').text('Id Bien:');
 
             break;
         default:
@@ -615,11 +819,11 @@ function ValidarCamposGarantia() {
         return false;
     }
     else if ((tipoBusqueda === 2) && ($$('cbTipoGarantiaReal').val() != '3') && ($$('txtNumFinca').val().length === 0)) {
-        $$('lblMensaje').text('Debe ingresar el número de finca');
+        $$('lblMensaje').text('Debe ingresar el Id Garantía');
         return false;
     }
     else if ((tipoBusqueda === 2) && ($$('cbTipoGarantiaReal').val() == '3') && ($$('txtNumFinca').val().length === 0)) {
-        $$('lblMensaje').text('Debe ingresar el número de identificación del bien');
+        $$('lblMensaje').text('Debe ingresar el Id Garantía');
         return false;
     }
     else if ((tipoBusqueda === 2) && ($$('cbTipoGarantiaReal').val() == '2') && ($$('txtGrado').val().length === 0)) {
@@ -647,78 +851,6 @@ function CargarPaginaSTPR(cadenaJson) {
 
     $$('filaRetorno').hide();
 
-    $$('txtContabilidad').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtOficina').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtMoneda').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtProducto').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtOperacion').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtCedulaFiador').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
-    $$('txtPartido').on("keydown", function (event) {
-        var codigoTipoGarantiaReal = parseInt($$('cbTipoGarantiaReal').val());
-
-        if (codigoTipoGarantiaReal != 3) {
-            if ((!jQuery.isNumeric(String.fromCharCode(event.which))) || (event.which == 48) || (event.which == 56) || (event.which == 57)) {
-                if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                    event.preventDefault();
-                }
-            }
-        }
-    });
-
-    $$('txtNumFinca').on("keydown", function (event) {
-        var codigoClase = parseInt($$('cbClaseGarantiaReal').val());
-
-        if ((codigoClase >= 10) && (codigoClase <= 29) && (codigoClase != 11)) {
-            if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
-            if (($(this).val().length + 1) > 6) {
-                event.preventDefault();
-            }
-        }
-        else if ((codigoClase >= 30) && (codigoClase <= 69) && (codigoClase != 38) && (codigoClase != 43)) {
-            if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
-        }
-    });
-
-    $$('txtGrado').on("keydown", function (event) {
-        if ((!jQuery.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
-        }
-    });
-
     if (typeof ($queryString) !== 'undefined') {
         if ($queryString.length == 0) {
             if ((typeof (cadenaJson) !== 'undefined') && (cadenaJson.length > 0)) {
@@ -726,7 +858,7 @@ function CargarPaginaSTPR(cadenaJson) {
                 for (var i = 0; i < params.length; i++) {
                     var object = params[i];
                     for (var property in object) {
-                        // alert('item ' + i + ': ' + property + '=' + object[property]);
+
                         var key = property;
                         var value = object[property];
                         $queryString[key] = value;
@@ -735,7 +867,6 @@ function CargarPaginaSTPR(cadenaJson) {
 
                 if (($queryString["tipogarantia"] != null) && ($queryString["tipogarantia"] == '1')) {
 
-                    $$('filaRetorno').show();
                     $$('cbTipoBusqueda').val("3");
                     $$('cbTipoBusqueda').trigger('change');
 
@@ -748,17 +879,17 @@ function CargarPaginaSTPR(cadenaJson) {
                         $$('txtCedulaFiador').val($queryString["idfiador"]);
                         ValidarGarantia();
                     }
+
+                    $$('filaRetorno').show();
                 }
                 else if (($queryString["tipogarantia"] != null) && ($queryString["tipogarantia"] == '2')) {
 
-                    $$('filaRetorno').show();
-
                     $$('cbTipoBusqueda').val("3");
                     $$('cbTipoBusqueda').trigger('change');
-                   
+
                     $$('cbTipoGarantia').val("2");
                     $$('cbTipoGarantia').trigger('change');
-                    
+
                     if (($queryString["tipogarantiareal"] != null) && ($queryString["clase"] != null) && ($queryString["partido"] != null) && ($queryString["idgarantia"] != null) && ($queryString["grado"] != null)) {
 
                         $$('cbTipoGarantiaReal').val($queryString["tipogarantiareal"]);
@@ -774,13 +905,14 @@ function CargarPaginaSTPR(cadenaJson) {
 
                         ValidarGarantia();
                     }
+
+                    $$('filaRetorno').show();
                 }
                 else if (($queryString["tipogarantia"] != null) && ($queryString["tipogarantia"] == '3')) {
 
-                    $$('filaRetorno').show();
                     $$('cbTipoBusqueda').val("3");
                     $$('cbTipoBusqueda').trigger('change');
-                   
+
                     $$('cbTipoGarantia').val("3");
                     $$('cbTipoGarantia').trigger('change');
 
@@ -789,6 +921,8 @@ function CargarPaginaSTPR(cadenaJson) {
                         $$('txtNumeroSeguridad').val($queryString["numseguridad"]);
                         ValidarGarantia();
                     }
+
+                    $$('filaRetorno').show();
                 }
                 else {
                     $$('filaRetorno').hide();
@@ -819,6 +953,7 @@ function MostrarProgreso(mensaje) {
     textoEtiqueta.text(((mensaje.length > 0) ? mensaje : 'Procesando...'));
 
     //setTimeout(function () {
+    $(".modal").remove();
     var modal = $('<div />');
     modal.addClass("modal");
     $('body').append(modal);
@@ -1291,7 +1426,7 @@ function ValidarDatosAjustados(accion) {
         var porcentajeResponsabilidad = parseFloat(datoPorcentajeResp);
 
         var porcentajeOriginal =  parseFloat($registroSeleccionado.PorcentajeResponsabilidaAjustado);
-        var diferenciaPorcentaje = parseFloat(100 - porcentajeResponsabilidad); //.toString('N2');
+        var diferenciaPorcentaje = parseFloat(100 - porcentajeResponsabilidad); 
         $cuentaMensajes = 0;
         $porcentajeCien = false;
 
@@ -1311,9 +1446,7 @@ function ValidarDatosAjustados(accion) {
                         buttons: {
                             "Aceptar": function () {
                                 $(this).dialog("close");
-                               // ++$cuentaMensajes; 
-                                //ManipularRegistro(accion);
-                            }
+                             }
                         },
                         close: function () { ManipularRegistro(accion); }
                     });
@@ -1335,9 +1468,7 @@ function ValidarDatosAjustados(accion) {
                        buttons: {
                            "Aceptar": function () {
                                $(this).dialog("close");
-                               //++$cuentaMensajes; 
-                               //ManipularRegistro(accion);
-                           }
+                          }
                        },
                        close: function () { ManipularRegistro(accion); }
                    });
@@ -1370,9 +1501,7 @@ function ValidarDatosAjustados(accion) {
                         buttons: {
                             "Aceptar": function () {
                                 $(this).dialog("close");
-                                //++$cuentaMensajes; 
-                                //ManipularRegistro(accion);
-                            },
+                             },
                             "Cambio Manual": function () {
                                 $(this).dialog("close");                                
                             }
@@ -1409,9 +1538,7 @@ function ValidarDatosAjustados(accion) {
                 buttons: {
                     "Aceptar": function () {
                         $(this).dialog("close");
-                        //++$cuentaMensajes; 
-                       //ManipularRegistro(accion);
-                    }
+                     }
                 },
                 close: function () { ManipularRegistro(accion); }
             });
@@ -1587,6 +1714,11 @@ function ValidarOperacion() {
 
                     if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] != '0') && (datosRetornados[1].length > 0)) {
                         $$('lblMensaje').text(datosRetornados[1]);
+                         $$('accordionGF').hide();
+                        $$('accordionGR').hide();
+                        $$('accordionGV').hide();
+                        $$('filaDetalleAjuste').hide();
+                        $$('gdvOperaciones').hide();
                         return false;
                     }
                     else if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] == '0')) {
@@ -1761,6 +1893,7 @@ function ConsultarGarantiaFiduciaria(tipoPersonaFiador, cedulaFiador) {
                     }
                     else {
                         $$('lblMensaje').text(response[0].DescripcionError);
+                        $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
                 }
@@ -1768,6 +1901,7 @@ function ConsultarGarantiaFiduciaria(tipoPersonaFiador, cedulaFiador) {
             },
             failure: function (response) {
                 $$('lblMensaje').text(response);
+                $$('filaDetalleAjuste').hide();
                 $$('gdvOperaciones').hide();
             }
         });
@@ -1831,6 +1965,7 @@ function ConsultarGarantiaReal(identificacionBien, claseGarantia, partido, grado
                     }
                     else {
                         $$('lblMensaje').text(response[0].DescripcionError);
+                        $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
                 }
@@ -1838,6 +1973,7 @@ function ConsultarGarantiaReal(identificacionBien, claseGarantia, partido, grado
             },
             failure: function (response) {
                 $$('lblMensaje').text(response);
+                $$('filaDetalleAjuste').hide();
                 $$('gdvOperaciones').hide();
             }
         });
@@ -1901,6 +2037,7 @@ function ConsultarGarantiaValor(numeroSeguridad, claseGarantia) {
                     }
                     else {
                         $$('lblMensaje').text(response[0].DescripcionError);
+                        $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
                 }
@@ -1908,6 +2045,7 @@ function ConsultarGarantiaValor(numeroSeguridad, claseGarantia) {
             },
             failure: function (response) {
                 $$('lblMensaje').text(response);
+                $$('filaDetalleAjuste').hide();
                 $$('gdvOperaciones').hide();
             }
         });

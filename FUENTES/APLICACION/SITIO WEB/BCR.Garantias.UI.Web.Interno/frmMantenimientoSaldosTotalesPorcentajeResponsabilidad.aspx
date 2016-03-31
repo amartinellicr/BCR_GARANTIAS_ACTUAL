@@ -7,7 +7,7 @@
             <div class="Contenedor_Inicializar"></div>
             <div id="Contenedor_Titulo" class="Contenedor_Titulo">
                 <center>
-                    <span class="Titulo_Nivel_1">Mantenimiento de Saldos Totales y % Responsabilidad</span> 
+                    <span class="Titulo_Nivel_1">Mantenimiento de Saldos Totales y Porcentaje de Responsabilidad</span> 
 				</center>
             </div>
             <div class="Contenedor_Inicializar"></div>
@@ -27,7 +27,7 @@
                              <div class="Contenedor_Agrupado">
                                 <span class="Etiqueta">Tipo de Búsqueda:</span>
                                 <asp:dropdownlist id="cbTipoBusqueda" CssClass="Campo_Normal" tabIndex="1" runat="server" onchange="javascript:HabilitarCamposBusqueda();" BackColor="AntiqueWhite" Width="194px">
-							        <asp:ListItem Value="1">Operaci&#243;n Crediticia</asp:ListItem>
+							        <asp:ListItem Value="1">Operaci&#243;n</asp:ListItem>
 									<asp:ListItem Value="2">Contrato</asp:ListItem>
                                     <asp:ListItem Value="3">Garant&#237;a</asp:ListItem>
 						        </asp:dropdownlist>
@@ -97,11 +97,11 @@
                                 <div class="Contenedor_Agrupado">
                                     <asp:label id="lblPartido" CssClass="Etiqueta_ID_Garantia" runat="server">Partido:</asp:label>
                                     <asp:textbox id="txtPartido" CssClass="Campo_Normal" tabIndex="14" runat="server" Width="42px" MaxLength="3"></asp:textbox>
-                                    <asp:label id="lblFinca" CssClass="Etiqueta_ID_Garantia" runat="server">Número Finca:</asp:label>
+                                    <asp:label id="lblFinca" CssClass="Etiqueta_ID_Garantia" runat="server">Id Garantía:</asp:label>
                                     <asp:textbox id="txtNumFinca" CssClass="Campo_Normal" tabIndex="15" runat="server" Width="150px" MaxLength="25"></asp:textbox>
                                     <div id="filaGradoCedula" style="display:none;">
                                         <asp:label id="lblGrado" CssClass="Etiqueta_ID_Garantia" runat="server">Grado:</asp:label>
-                                        <asp:textbox id="txtGrado" CssClass="Campo_Normal" tabIndex="16" runat="server" Width="42px" MaxLength="3"></asp:textbox>
+                                        <asp:textbox id="txtGrado" CssClass="Campo_Normal" tabIndex="16" runat="server" Width="42px" MaxLength="2"></asp:textbox>
                                         <%--<asp:label id="lblCedula"  CssClass="Etiqueta_ID_Garantia" runat="server">Cédula Hipotecaria:</asp:label>
                                         <asp:textbox id="txtCedulaHipotecaria" CssClass="Campo_Normal " tabIndex="17" runat="server" Width="42px" MaxLength="2"></asp:textbox>--%>
                                     </div>     
