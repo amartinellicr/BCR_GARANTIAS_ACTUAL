@@ -283,7 +283,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                     formatoJSON.Append(",");
                 }
                 //tipogarantia=3&claser=" + encodeURIComponent(claseGarantia) + "&numseguridad=" + encodeURIComponent(numeroSeguridad);
-                else if ((tipoGarantia == 3) && (llave.CompareTo("idgarantia") == 0))
+                else if ((tipoGarantia == 3) && (llave.CompareTo("clase") == 0))
                 {
                     formatoJSON.Append('"');
                     formatoJSON.Append("clase");
@@ -433,15 +433,15 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         }
         catch (SqlException ex)
         {
-            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroCompletoOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
-            datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY));
+            datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroCompletoOperacion + "'"), Mensajes.ASSEMBLY));
         }
         catch (Exception ex)
         {
-            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroCompletoOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 
-            datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroOperacion + "'"), Mensajes.ASSEMBLY));
+            datosRetornados = string.Format("1|{0}", Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION, (" '" + numeroCompletoOperacion + "'"), Mensajes.ASSEMBLY));
         }
 
         return datosRetornados;
@@ -488,7 +488,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         }
         catch (Exception ex)
         {
-            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+            Utilitarios.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_VALIDANDO_OPERACION_DETALLE, (" '" + numeroCompletoOperacion + "'"), ex.Message, Mensajes.ASSEMBLY), EventLogEntryType.Error);
         }
 
         StringBuilder sb = new StringBuilder();
@@ -716,7 +716,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
     /// <returns>La lista con las operaciones que respalda la garantía con el porcentaje de responsabilidad calculado</returns>
     [System.Web.Services.WebMethod]
     public static clsSaldoTotalPorcentajeResponsabilidad[] InsertarRegistro(string consecutivoOperacion, string consecutivoGarantia, string tipoGarantia, string saldoActualAjustado,
-                                            string porcentajeRespAjustado, string arregloElementos)
+                                            string porcentajeRespAjustado, string arregloElementos, string cambioManual)
     {
         List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
         clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
@@ -726,6 +726,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
 
         bool resultadoCalculo = false;
+        bool ajusteManual = (((cambioManual.Length > 0) && (cambioManual.CompareTo("1") == 0)) ? true : false);
 
         string identificacionGarantia = string.Empty;
         decimal saldoIngresado;
@@ -777,7 +778,14 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
                 if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosInsertar.IndicadorAjusteCampoSaldo))
                 {
-                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    if (!ajusteManual)
+                    {
+                        resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    }
+                    else
+                    {
+                        resultadoCalculo = true;
+                    }
 
                     foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
                     {
@@ -890,7 +898,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
     /// <returns>La lista con las operaciones que respalda la garantía con el porcentaje de responsabilidad calculado</returns>
     [System.Web.Services.WebMethod]
     public static clsSaldoTotalPorcentajeResponsabilidad[] ModificarRegistro(string consecutivoOperacion, string consecutivoGarantia, string tipoGarantia, string saldoActualAjustado,
-                                            string porcentajeRespAjustado, string arregloElementos)
+                                            string porcentajeRespAjustado, string arregloElementos, string cambioManual)
     {
         List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
         clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
@@ -900,6 +908,8 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
 
         bool resultadoCalculo = false;
+        bool ajusteManual = (((cambioManual.Length > 0) && (cambioManual.CompareTo("1") == 0)) ? true : false);
+
 
         string identificacionGarantia = string.Empty;
         decimal saldoIngresado;
@@ -951,7 +961,15 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
                 if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosModificar.IndicadorAjusteCampoSaldo))
                 {
-                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    if (!ajusteManual)
+                    {
+                        resultadoCalculo = listaDatos.AplicarCalculoDistribucion();                       
+                    }
+                    else
+                    {
+                        resultadoCalculo = true;
+                    }
+
                     listaDatosRetornados.Clear();
 
                     foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
@@ -994,16 +1012,20 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                         case 1:
                             clsGarantiaFiduciaria datoBusquedaGF = new clsGarantiaFiduciaria();
                             datoBusquedaGF.ConsecutivoGarantiaFiduciaria = datosBusqueda.ConsecutivoGarantia;
+                            datoBusquedaGF.IndentificacionSicc = -1;
+                            datoBusquedaGF.CodigoTipoPersonaFiador = -1;
                             listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaFiduciaria(datoBusquedaGF, Global.UsuarioSistema);
                             break;
                         case 2:
                             clsGarantiaReal datoBusquedaGR = new clsGarantiaReal();
                             datoBusquedaGR.CodGarantiaReal = datosBusqueda.ConsecutivoGarantia;
-                            listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaReal(datoBusquedaGR, Global.UsuarioSistema);
+                           listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaReal(datoBusquedaGR, Global.UsuarioSistema);
                             break;
                         case 3:
                             clsGarantiaValor datoBusquedaGV = new clsGarantiaValor();
                             datoBusquedaGV.ConsecutivoGarantia = datosBusqueda.ConsecutivoGarantia;
+                            datoBusquedaGV.NumeroSeguridad = string.Empty;
+                            datoBusquedaGV.CodigoClaseGarantia = -1;
                             listaDatosActualizados = Gestor.ObtenerOperacionesPorGarantiaValor(datoBusquedaGV, Global.UsuarioSistema);
                             break;
                         default:
@@ -1067,7 +1089,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
     /// <returns>La lista con las operaciones que respalda la garantía con el porcentaje de responsabilidad calculado</returns>
     [System.Web.Services.WebMethod]
     public static clsSaldoTotalPorcentajeResponsabilidad[] EliminarRegistro(string consecutivoOperacion, string consecutivoGarantia, string tipoGarantia, string saldoActualAjustado,
-                                            string porcentajeRespAjustado, string arregloElementos)
+                                            string porcentajeRespAjustado, string arregloElementos, string cambioManual)
     {
         List<clsSaldoTotalPorcentajeResponsabilidad> listaDatosRetornados = new List<clsSaldoTotalPorcentajeResponsabilidad>();
         clsSaldoTotalPorcentajeResponsabilidad datosRetornado = new clsSaldoTotalPorcentajeResponsabilidad();
@@ -1077,6 +1099,8 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
         clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> listaDatosActualizados = new clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad>();
 
         bool resultadoCalculo = false;
+        bool ajusteManual = (((cambioManual.Length > 0) && (cambioManual.CompareTo("1") == 0)) ? true : false);
+
 
         string identificacionGarantia = string.Empty;
         decimal saldoIngresado;
@@ -1121,7 +1145,8 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                         garantia.SaldoActualAjustado = ((saldoIngresado >= 0) ? saldoIngresado : garantia.SaldoActual);
                         garantia.PorcentajeResponsabilidadAjustado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
                         garantia.PorcentajeResponsabilidadCalculado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
-                        
+                        garantia.IndicadorExcluido = true;
+
                         datosEliminar = garantia;
                         datosBusqueda = garantia;
                     }
@@ -1136,7 +1161,15 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
                 if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosEliminar.IndicadorAjusteCampoSaldo))
                 {
-                    resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    if (!ajusteManual)
+                    {
+                        resultadoCalculo = listaDatos.AplicarCalculoDistribucion();
+                    }
+                    else
+                    {
+                        resultadoCalculo = true;
+                    }
+
 
                     foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in listaDatos)
                     {

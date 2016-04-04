@@ -957,7 +957,8 @@ namespace BCRGARANTIAS.Negocios
 
             string enlaceSeleccionado = string.Empty;
             string consultaGarantia = string.Empty;
-
+            bool ultimoRegistro = false;
+            int contadorRegistros = 0;
             int contadorColumnas = 0;
 
             HtmlTable tablaEnlaces = new HtmlTable();
@@ -978,6 +979,13 @@ namespace BCRGARANTIAS.Negocios
 
             foreach (LinkButton button in listadoEnlacesGarantias)
             {
+                contadorRegistros++;
+
+                if(contadorRegistros == listadoEnlacesGarantias.Count)
+                {
+                    ultimoRegistro = true;
+                }
+
                 if (contadorColumnas == 7)
                 {
                     nuevaFila = new HtmlTableRow();
@@ -1001,7 +1009,11 @@ namespace BCRGARANTIAS.Negocios
                         HtmlTableCell nuevaCelda = new HtmlTableCell();
                         HtmlTableCell celdaEspacio = new HtmlTableCell();
                         celdaEspacio.Width = "12px";
-                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        if (!ultimoRegistro)
+                        {
+                            celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+                        }
 
                         nuevaCelda.Controls.Add(button);
                         nuevaCelda.Attributes.Add("class", "celdaNormal");
@@ -1021,7 +1033,11 @@ namespace BCRGARANTIAS.Negocios
                         nuevaCelda = new HtmlTableCell();
                         celdaEspacio = new HtmlTableCell();
                         celdaEspacio.Width = "12px";
-                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        if (!ultimoRegistro)
+                        {
+                            celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+                        }
 
                         nuevaCelda.Controls.Add(button);
                         nuevaCelda.Attributes.Add("class", "celdaNormal");
@@ -1039,7 +1055,11 @@ namespace BCRGARANTIAS.Negocios
                         nuevaCelda = new HtmlTableCell();
                         celdaEspacio = new HtmlTableCell();
                         celdaEspacio.Width = "12px";
-                        celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+
+                        if (!ultimoRegistro)
+                        {
+                            celdaEspacio.InnerHtml = "&nbsp;&nbsp;/&nbsp;&nbsp;";
+                        }
 
                         nuevaCelda.Controls.Add(button);
                         nuevaCelda.Attributes.Add("class", "celdaNormal");

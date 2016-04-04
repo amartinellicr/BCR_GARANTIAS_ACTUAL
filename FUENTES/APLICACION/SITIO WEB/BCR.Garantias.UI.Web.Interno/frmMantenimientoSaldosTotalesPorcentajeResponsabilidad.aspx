@@ -199,7 +199,7 @@
                                         <ItemStyle BorderColor="Black" HorizontalAlign="Center" Width="100px" />
                                         <HeaderStyle BorderColor="Black" />
                                     </asp:ButtonField>
-                                    <asp:TemplateField HeaderText="Excluido">
+                                    <asp:TemplateField HeaderText="Excluida">
                                         <ItemStyle BorderColor="Black" HorizontalAlign="Center" Width="100px" />
                                         <HeaderStyle BorderColor="Black" />
                                         <ItemTemplate>

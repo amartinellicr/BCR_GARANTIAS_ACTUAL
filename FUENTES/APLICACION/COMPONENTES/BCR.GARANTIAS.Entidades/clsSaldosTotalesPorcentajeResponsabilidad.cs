@@ -236,7 +236,8 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje))
                         {
-                            registroActual.PorcentajeResponsabilidadCalculado = (((registroActual.SaldoActual / saldoParcial) * (porcentajePorDistribuir / 100)) * 100);
+                            registroActual.PorcentajeResponsabilidadCalculado = (((registroActual.SaldoActual / saldoParcial) * porcentajePorDistribuir)); // / 100);
+                            registroActual.PorcentajeResponsabilidadAjustado = registroActual.PorcentajeResponsabilidadCalculado;
                         }
                     }
                 }

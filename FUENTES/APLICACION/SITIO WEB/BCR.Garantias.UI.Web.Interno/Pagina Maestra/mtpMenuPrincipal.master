@@ -18,6 +18,8 @@
        
     <script language="javascript" type="text/javascript">
         //<![CDATA[
+
+        
         $(document).ready(function () {
 
             var $Alerta;
@@ -112,6 +114,8 @@
             var $datosConsulta;
             var $arregloOperaciones;
             var $queryString;
+            var $CambioManual;
+            var $SumatoriaValida;
 
             var $MensajePorcentajeMaximo;
 
@@ -143,6 +147,14 @@
                 return $(this).val(element).trigger('change');
             };
         }(jQuery));
+
+
+
+        $.ajaxSetup({
+            timeout: 20000
+        });
+
+       
 
         //]]>
     </script>
