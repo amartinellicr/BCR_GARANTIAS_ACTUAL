@@ -536,6 +536,11 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
             if ((ListaGarantia != null) && (ListaGarantia.Count > 0))
             {
+                if(ListaGarantia.AplicaCalcularRepresentacionPorcentualSaldos())
+                {
+                    ListaGarantia.AplicarCalculoRepresentacionPorcentualSaldos();
+                }
+
                 foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
                 {
                     garantia.CodigoError = 0;
@@ -616,7 +621,12 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
             clsSaldosTotalesPorcentajeResponsabilidad<clsSaldoTotalPorcentajeResponsabilidad> ListaGarantia = Gestor.ObtenerOperacionesPorGarantiaReal(garantiaRealConsultada, Global.UsuarioSistema);
 
             if ((ListaGarantia != null) && (ListaGarantia.Count > 0))
-            {                
+            {
+                if (ListaGarantia.AplicaCalcularRepresentacionPorcentualSaldos())
+                {
+                    ListaGarantia.AplicarCalculoRepresentacionPorcentualSaldos();
+                }
+                
                 foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
                 {
                     garantia.CodigoError = 0;
@@ -677,7 +687,12 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
 
             if ((ListaGarantia != null) && (ListaGarantia.Count > 0))
             {
-               foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
+                if (ListaGarantia.AplicaCalcularRepresentacionPorcentualSaldos())
+                {
+                    ListaGarantia.AplicarCalculoRepresentacionPorcentualSaldos();
+                }
+
+                foreach (clsSaldoTotalPorcentajeResponsabilidad garantia in ListaGarantia)
                 {
                     garantia.CodigoError = 0;
                     listaDatosRetornados.Add(garantia);

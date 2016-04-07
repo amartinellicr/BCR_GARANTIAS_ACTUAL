@@ -45,6 +45,8 @@ namespace BCR.GARANTIAS.Entidades
                         InnerList.Add(registroCargar);
                     }
                 }
+
+
             }
         }
 
@@ -268,7 +270,7 @@ namespace BCR.GARANTIAS.Entidades
         /// Aplica el cálculo de la representación porcentual del saldo de cada operación participante.
         /// </summary>
         /// <returns></returns>
-        public bool AplicarCalculorRepresentacionPorcentualSaldos()
+        public bool AplicarCalculoRepresentacionPorcentualSaldos()
         {
             bool calculoExitoso = true;
             decimal saldoTotal = 0;
@@ -305,6 +307,47 @@ namespace BCR.GARANTIAS.Entidades
                 calculoExitoso = false;
 
                 string detalleTecnico = string.Format("Método: AplicarCalculorRepresentacionPorcentualSaldos. Error: {0}, Descripción: {1}", ex.Message, ex.StackTrace);
+
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPrDetalle, detalleTecnico, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+            }
+
+            return calculoExitoso;
+        }
+
+        public bool AplicaCalcularRepresentacionPorcentualSaldos()
+        {
+            bool calculoExitoso = true;
+            
+            try
+            {
+                if ((InnerList != null) && (InnerList.Count > 0))
+                {
+                    //Se determina si todos los porcentajes de responsabilidad calculados son cero
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
+                    {
+                        if(registroActual.PorcentajeResponsabilidadCalculado > 0)
+                        {
+                            calculoExitoso = false;
+                            break;
+                        }
+                    }                   
+                }
+            }
+            catch (ArithmeticException ex)
+            {
+                calculoExitoso = false;
+
+                string detalleTecnico = string.Format("Método: AplicaCalcularRepresentacionPorcentualSaldos. Error: {0}, Descripción: {1}", ex.Message, ex.StackTrace);
+
+                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPrDetalle, detalleTecnico, Mensajes.ASSEMBLY), EventLogEntryType.Error);
+
+            }
+            catch (Exception ex)
+            {
+                calculoExitoso = false;
+
+                string detalleTecnico = string.Format("Método: AplicaCalcularRepresentacionPorcentualSaldos. Error: {0}, Descripción: {1}", ex.Message, ex.StackTrace);
 
                 UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes._errorAplicandoCalculoDistribucionPrDetalle, detalleTecnico, Mensajes.ASSEMBLY), EventLogEntryType.Error);
 

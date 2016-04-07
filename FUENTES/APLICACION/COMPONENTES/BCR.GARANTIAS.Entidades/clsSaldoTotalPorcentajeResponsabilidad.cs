@@ -149,8 +149,8 @@ namespace BCR.GARANTIAS.Entidades
                 short cuentaContable;
                 short codigoTipoGarantia;
                 int codigoTipoOperacion;
-                
-                
+                string indicadorFalso = "0,false,False";
+
                 ConsecutivoOperacion = ((!datosCargar.Tables[0].Rows[0].IsNull(_consecutivoOperacion) && (long.TryParse(datosCargar.Tables[0].Rows[0][_consecutivoOperacion].ToString(), out consecutivoOperacion))) ? consecutivoOperacion : ((long) -1));
                 ConsecutivoGarantia = ((!datosCargar.Tables[0].Rows[0].IsNull(_consecutivoGarantia) && (long.TryParse(datosCargar.Tables[0].Rows[0][_consecutivoGarantia].ToString(), out consecutivoGarantia))) ? consecutivoGarantia : ((long)-1));
                 NumeroRegistro = ((!datosCargar.Tables[0].Rows[0].IsNull(_numeroRegistro) && (long.TryParse(datosCargar.Tables[0].Rows[0][_numeroRegistro].ToString(), out numReg))) ? numReg : ((long)-1));
@@ -167,7 +167,8 @@ namespace BCR.GARANTIAS.Entidades
                 
                 IndicadorAjusteSaldoActual = ((!datosCargar.Tables[0].Rows[0].IsNull(_indicadorAjusteSaldoActual) && (datosCargar.Tables[0].Rows[0][_indicadorAjusteSaldoActual].ToString().CompareTo("0") == 0)) ? false : true);
                 IndicadorAjustePorcentaje = ((!datosCargar.Tables[0].Rows[0].IsNull(_indicadorAjustePorcentaje) && (datosCargar.Tables[0].Rows[0][_indicadorAjustePorcentaje].ToString().CompareTo("0") == 0)) ? false : true);
-                IndicadorExcluido = ((!datosCargar.Tables[0].Rows[0].IsNull(_indicadorExcluido) && (datosCargar.Tables[0].Rows[0][_operacionLarga].ToString().CompareTo("0") == 0)) ? false : true);
+                IndicadorExcluido = ((!datosCargar.Tables[0].Rows[0].IsNull(_indicadorExcluido) && (datosCargar.Tables[0].Rows[0][_indicadorExcluido].ToString().CompareTo("0") == 0)) ? false : true);
+                IndicadorExcluido = ((!datosCargar.Tables[0].Rows[0].IsNull(_indicadorExcluido) && (datosCargar.Tables[0].Rows[0][_indicadorExcluido].ToString().Length > 0) && (!indicadorFalso.Contains(datosCargar.Tables[0].Rows[0][_indicadorExcluido].ToString()))) ? true : false);
 
 
                 TipoOperacion = ((!datosCargar.Tables[0].Rows[0].IsNull(_tipoOperacion)) ? datosCargar.Tables[0].Rows[0][_tipoOperacion].ToString() : string.Empty);
@@ -244,7 +245,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 IndicadorAjusteSaldoActual = ((!datosCargar.IsNull(_indicadorAjusteSaldoActual) && (indicadorFalso.Contains(datosCargar[_indicadorAjusteSaldoActual].ToString()))) ? false : true);
                 IndicadorAjustePorcentaje = ((!datosCargar.IsNull(_indicadorAjustePorcentaje) && (indicadorFalso.Contains(datosCargar[_indicadorAjustePorcentaje].ToString()))) ? false : true);
-                IndicadorExcluido = ((!datosCargar.IsNull(_indicadorExcluido) && (indicadorFalso.Contains(datosCargar[_indicadorExcluido].ToString()))) ? false : true);
+                IndicadorExcluido = ((!datosCargar.IsNull(_indicadorExcluido) && (datosCargar[_indicadorExcluido].ToString().Length > 0) && (!indicadorFalso.Contains(datosCargar[_indicadorExcluido].ToString()))) ? true : false);
 
 
                 TipoOperacion = ((!datosCargar.IsNull(_tipoOperacion)) ? datosCargar[_tipoOperacion].ToString() : string.Empty);

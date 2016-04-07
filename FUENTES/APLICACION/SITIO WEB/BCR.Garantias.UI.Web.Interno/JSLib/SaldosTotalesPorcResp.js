@@ -4,6 +4,9 @@
 
 function SaldosTotalesPorcResp_PageInit() {
 
+    document.body.style.cursor = 'default';
+    document.documentElement.style.cursor = 'default';
+
     MostrarGarantiasFiduciariasRelacionadas(true);
     MostrarGarantiasRealesRelacionadas(true);
     MostrarGarantiasValoresRelacionadas(true);
@@ -17,8 +20,8 @@ function SaldosTotalesPorcResp_PageInit() {
     $queryString = new Array();
     $cuentaMensajes = 0;
     $porcentajeCien = false;
-    $CambioManual = false;
-    $SumatoriaValida = true;
+    AsignarCambioManual(false);
+    AsignarSumatoriaValida(true);
 
     HabilitarRegionBusqueda(-1);
 
@@ -36,10 +39,14 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
@@ -55,10 +62,14 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
@@ -74,10 +85,14 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
@@ -93,10 +108,14 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
@@ -112,10 +131,14 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
@@ -132,21 +155,46 @@ function SaldosTotalesPorcResp_PageInit() {
                 }
             }
         }
-        else if (!$.isNumeric(String.fromCharCode(event.which))) {
-            if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                event.preventDefault();
-            }
+        else if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
     });
 
     $$('txtPartido').on("keydown", function (event) {
         var codigoTipoGarantiaReal = parseInt($$('cbTipoGarantiaReal').val());
         if (codigoTipoGarantiaReal != 3) {
-            if ((!$.isNumeric(String.fromCharCode(event.which))) || (event.which == 48) || (event.which == 56) || (event.which == 57) || (($(this).val().length) >= 1)) {
-                if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                    event.preventDefault();
+            if (($(this).val().length + 1) <= 1) {
+                if (!(event.keyCode == 8                                // backspace
+                || event.keyCode == 9
+                || event.keyCode == 46                              // delete
+                || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+                || (event.keyCode >= 49 && event.keyCode <= 55)     // numbers on keyboard
+                || (event.keyCode >= 97 && event.keyCode <= 103))   // number on keypad
+                ) {
+                    event.preventDefault();     // Prevent character input
+                  }
                 }
-            }
+                else {
+                    if (!(event.keyCode == 8                                // backspace
+                    || event.keyCode == 9
+                    || event.keyCode == 46                              // delete
+                    || (event.keyCode >= 35 && event.keyCode <= 40))     // arrow keys/home/end
+                    ) {
+                        event.preventDefault();     // Prevent character input
+                      }
+                }
+            //if ((!$.isNumeric(String.fromCharCode(event.which))) || (event.keyCode == 48) || (event.keyCode == 56) || (event.keyCode == 57) ||
+            //    (event.keyCode == 96) || (event.keyCode == 104) || (event.keyCode == 105) || (($(this).val().length) >= 1)) {
+            //    if ((event.keyCode != 8) && (event.keyCode != 9) && (event.keyCode != 46) && (!(event.keyCode >= 35 && event.keyCode <= 40))) {
+            //        event.preventDefault();
+            //    }
+            //}
         }
     });
 
@@ -166,10 +214,14 @@ function SaldosTotalesPorcResp_PageInit() {
                         }
                     }
                 }
-                else if (!$.isNumeric(String.fromCharCode(event.which))) {
-                    if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                        event.preventDefault();
-                    }
+                else if (!(event.keyCode == 8                                // backspace
+                    || event.keyCode == 9
+                    || event.keyCode == 46                              // delete
+                    || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+                    || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+                    || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+                    ) {
+                    event.preventDefault();     // Prevent character input
                 }
             }
             else {
@@ -183,10 +235,12 @@ function SaldosTotalesPorcResp_PageInit() {
                         }
                     }
                 }
-                else if (!$.isNumeric(String.fromCharCode(event.which))) {
-                    if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                        event.preventDefault();
-                    }
+                else if (!(event.keyCode == 8                                // backspace
+                    || event.keyCode == 9
+                    || event.keyCode == 46                              // delete
+                    || (event.keyCode >= 35 && event.keyCode <= 40))     // arrow keys/home/end
+                    ) {
+                    event.preventDefault();     // Prevent character input
                 }
             }
         }
@@ -198,93 +252,29 @@ function SaldosTotalesPorcResp_PageInit() {
                     }
                 }
             }
-            else if (!$.isNumeric(String.fromCharCode(event.which))) {
-                if ((event.which != 8) && (event.which != 9) && (event.which != 46)) {
-                    event.preventDefault();
-                }
+            else if (!(event.keyCode == 8                                // backspace
+                || event.keyCode == 9
+                || event.keyCode == 46                              // delete
+                || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+                || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+                || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+                ) {
+                        event.preventDefault();     // Prevent character input
             }
         }
     });
 
     $$('txtGrado').on("keydown", function (event) {
-        if ((!$.isNumeric(String.fromCharCode(event.which))) && (event.which != 8) && (event.which != 9) && (event.which != 46)) {
-            event.preventDefault();
+        if (!(event.keyCode == 8                                // backspace
+        || event.keyCode == 9
+        || event.keyCode == 46                              // delete
+        || (event.keyCode >= 35 && event.keyCode <= 40)     // arrow keys/home/end
+        || (event.keyCode >= 48 && event.keyCode <= 57)     // numbers on keyboard
+        || (event.keyCode >= 96 && event.keyCode <= 105))   // number on keypad
+        ) {
+            event.preventDefault();     // Prevent character input
         }
-    });
-
-    //$$('imgCalculadoraGF').click(function () {
-
-    //    var tipoPersona = $$('cbTipoFiador').val();
-    //    var cedulaFiador = $$('txtCedulaFiador').val();
-
-    //    if ((tipoPersona.length > 0) && (tipoPersona != '-1') && (cedulaFiador.length > 0)) {
-    //        var url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=1&tipofiador=" + encodeURIComponent(tipoPersona) + "&idfiador=" + encodeURIComponent(cedulaFiador);
-    //        window.location.href = url;
-    //    }
-    //    else {
-    //        if ((tipoPersona.length > 0) && (tipoPersona != '-1')) {
-    //            alert("El tipo de persona es requerido");
-    //        }
-    //        else if (cedulaFiador.length > 0) {
-    //            alert("La cédula del fiador es requerido");
-    //        }
-    //    }
-    //});
-
-    //$$('imgCalculadoraGR').click(function () {
-
-    //var claseGarantia = $$('cbClase').val();
-    //var tipoGarantiaReal = $$('cbTipoGarantiaReal').val();
-    //var partido = $$('txtPartido').val();
-    //var numeroFinca = $$('txtNumFinca').val();
-    //var grado = ((tipoGarantiaReal == 2) ? $$('txtGrado').val() : '-1');
-
-    //if ((claseGarantia.length > 0) && (claseGarantia != '-1')
-    //    && (tipoGarantiaReal.length > 0) && (tipoGarantiaReal != '-1')
-    //    && (partido.length > 0) && (numeroFinca.length > 0) && (grado.length > 0)) {
-    //    var url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=2&tipogarantiareal=" + encodeURIComponent(tipoGarantiaReal) + "&clase=" + encodeURIComponent(claseGarantia) + "&partido=" + encodeURIComponent(partido) + "&idgarantia=" + encodeURIComponent(numeroFinca) + "&grado=" + encodeURIComponent(grado);
-    //    window.location.href = url;
-    //}
-    //else {
-    //    if ((tipoGarantiaReal.length > 0) && (tipoGarantiaReal != '-1')) {
-    //        alert("El tipo de garantía real es requerido");
-    //    }
-    //    else if ((claseGarantia.length > 0) && (claseGarantia != '-1')) {
-    //        alert("La clase de garantía es requerida");
-    //    }
-    //    else if ((tipoGarantiaReal != 3) && (partido.length > 0)) {
-    //        alert("El código del partido es requerido");
-    //    }
-    //    else if ((tipoGarantiaReal != 3) && (numeroFinca.length > 0)) {
-    //        alert("El número de finca es requerido");
-    //    }
-    //    else if ((tipoGarantiaReal == 3) && (numeroFinca.length > 0)) {
-    //        alert("La identificación del bien es requerida");
-    //    }
-    //    else if ((tipoGarantiaReal == 2) && (grado.length > 0)) {
-    //        alert("El c{odigo de grado es requerido");
-    //    }
-    //}
-    //});
-
-    //$$('imgCalculadoraGV').click(function () {
-
-    //    var claseGarantia = $$('cbClaseGarantia').val();
-    //    var numeroSeguridad = $$('txtSeguridad').val();
-
-    //    if ((claseGarantia.length > 0) && (claseGarantia != '-1') && (numeroSeguridad.length > 0)) {
-    //        var url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=3&claser=" + encodeURIComponent(claseGarantia) + "&numseguridad=" + encodeURIComponent(numeroSeguridad);
-    //        window.location.href = url;
-    //    }
-    //    else {
-    //        if ((claseGarantia.length > 0) && (claseGarantia != '-1')) {
-    //            alert("La clase de garantía es requerida");
-    //        }
-    //        else if (numeroSeguridad.length > 0) {
-    //            alert("El número de seguridad es requerido");
-    //        }
-    //    }
-    //});
+    });    
 
     /********************************************************************************************************************************************************************************************************************
    
@@ -319,6 +309,8 @@ function SaldosTotalesPorcResp_PageInit() {
 
 
 }
+
+
 
 
 /********************************************************************************************************************************************************************************************************************
@@ -949,21 +941,24 @@ METODOS UTILITARIOS
 //Muestra el mensaje informativo del paso que se esté ejecutando con AJAX
 function MostrarProgreso(mensaje) {
 
-    var textoEtiqueta = $$('textoCarga');
+    $.blockUI({ message: null });
+    //document.body.style.cursor = 'wait';
+    //document.documentElement.style.cursor = 'wait';
+    //var textoEtiqueta = $$('textoCarga');
 
-    textoEtiqueta.text(((mensaje.length > 0) ? mensaje : 'Procesando...'));
+    //textoEtiqueta.text(((mensaje.length > 0) ? mensaje : 'Procesando...'));
 
-    //setTimeout(function () {
-    $(".modal").remove();
-    var modal = $('<div />');
-    modal.addClass("modal");
-    $('body').append(modal);
-    var loading = $(".loading");
-    loading.show();
-    var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
-    var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
-    loading.css({ top: top, left: left });
-    //}, 200);
+    ////setTimeout(function () {
+    //$(".modal").remove();
+    //var modal = $('<div />');
+    //modal.addClass("modal");
+    //$('body').append(modal);
+    //var loading = $(".loading");
+    //loading.show();
+    //var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
+    //var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
+    //loading.css({ top: top, left: left });
+    ////}, 200);
 
     return true;
 }
@@ -971,16 +966,19 @@ function MostrarProgreso(mensaje) {
 //Oculta el mensaje informativo del paso que se esté ejecutando con AJAX
 function OcultarProgreso(tiempoEspera) {
 
-    var textoEtiqueta = $$('textoCarga');
+    setTimeout($.unblockUI, 100);
+    //document.body.style.cursor = 'default';
+    //document.documentElement.style.cursor = 'default';
+    //var textoEtiqueta = $$('textoCarga');
 
-    textoEtiqueta.text('Procesando...');
+    //textoEtiqueta.text('Procesando...');
 
-    //setTimeout(function () {
-    var loading = $(".loading");
-    var modal = $(".modal");
-    loading.hide();
-    modal.hide();
-    // }, tiempoEspera);
+    ////setTimeout(function () {
+    //var loading = $(".loading");
+    //var modal = $(".modal");
+    //loading.hide();
+    //modal.hide();
+    //// }, tiempoEspera);
 }
 
 //Cambia el texto de la etiqueta y muestra el mensaje informativo del paso que se esté ejecutando con AJAX
@@ -1284,7 +1282,7 @@ function ConfirmarEliminar() {
     var acepta = confirm('Está seguro que desea eliminar el registro seleccionado?');
     if (acepta == true) {
         $cuentaMensajes = 1;
-        $CambioManual = false; 
+        AsignarCambioManual(false);
         ManipularRegistro(3);
         return true;
     }
@@ -1301,7 +1299,7 @@ function ManipularRegistro(accionRealizar) {
     var mensajeExitoso = '';
     --$cuentaMensajes;
         
-    $SumatoriaValida = (($CambioManual) ? $SumatoriaValida : true);
+    AsignarSumatoriaValida((($CambioManual) ? $SumatoriaValida : true));
 
     if (!$SumatoriaValida) {
         var $MensajeSumatoriaPorcentajeInvalida = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>La sumatoria de los porcentajes de responsabilidad de todos los registros enlistados supera el 100%. Favor verificar.</p></div></div>')
@@ -1374,7 +1372,7 @@ function ManipularRegistro(accionRealizar) {
 
             $.ajax({
                 type: "POST",
-                async: true,
+                async: false,
                 url: metodoEjecutar,
                 data: "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}",
                 contentType: "application/json; charset=utf-8",
@@ -1439,8 +1437,8 @@ function ValidarPorcentajeResponsabilidad() {
 
 function ValidarDatosAjustados(accion) {
 
-    $CambioManual = false;
-    $SumatoriaValida = true;
+    AsignarCambioManual(false);
+    AsignarSumatoriaValida(true);
     
     if ($registroSeleccionado != null) {
 
@@ -1474,7 +1472,7 @@ function ValidarDatosAjustados(accion) {
             }
 
             if (sumatoriaPorcentaje > 100) {
-                $SumatoriaValida = false;
+                AsignarSumatoriaValida(false);
 
                 //var $MensajeSumatoriaPorcentajeInvalida = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>La sumatoria de los porcentajes de responsabilidad de todos los registros enlistados supera el 100%. Favor verificar.</p></div></div>')
                 //.dialog({
@@ -1575,7 +1573,7 @@ function ValidarDatosAjustados(accion) {
                             },
                             "Cambio Manual": function () {
                                 $(this).dialog("close");
-                                $CambioManual = true;
+                                AsignarCambioManual(true);
                                 ManipularRegistro(accion);
                             }
                         }/*,
@@ -1590,6 +1588,15 @@ function ValidarDatosAjustados(accion) {
         }
     }
 }
+
+function AsignarCambioManual(valor) {
+    $CambioManual = valor;
+}
+
+function AsignarSumatoriaValida(valor) {
+    $SumatoriaValida = valor;
+}
+
 
 /********************************************************************************************************************************************************************************************************************
 
@@ -1741,10 +1748,15 @@ function ValidarOperacion() {
 
         CambiarEtiquetaProgreso('Validando...');
 
+        $$('accordionGF').hide();
+        $$('accordionGR').hide();
+        $$('accordionGV').hide();
+        $$('filaDetalleAjuste').hide();
+        $$('gdvOperaciones').hide();
 
         $.ajax({
             type: "POST",
-            async: true,
+            async: false,
             url: pageUrl + "/ValidarOperacion",
             data: "{'codigoContabilidad':'" + codigoContabilidad + "', 'codigoOficina':'" + codigoOficina + "', 'codigoMoneda':'" + codigoMoneda + "', 'codigoProducto':'" + codigoProducto + "', 'numeroOperacion':'" + codigoOperacion + "'}",
             contentType: "application/json; charset=utf-8",
@@ -1893,9 +1905,15 @@ function ConsultarGarantiaFiduciaria(tipoPersonaFiador, cedulaFiador) {
 
         CambiarEtiquetaProgreso('Obteniendo Operaciones...');
 
+        $$('accordionGF').hide();
+        $$('accordionGR').hide();
+        $$('accordionGV').hide();
+        $$('filaDetalleAjuste').hide();
+        $$('gdvOperaciones').hide();
+
         $.ajax({
             type: "POST",
-            async: true,
+            async: false,
             url: pageUrl + "/ObtenerOperacionesGarantiaFiduciaria",
             data: "{'tipoPersona':'" + tipoPersonaFiador + "', 'identificacionFiador':'" + cedulaFiador + "'}",
             contentType: "application/json; charset=utf-8",
@@ -1967,7 +1985,7 @@ function ConsultarGarantiaReal(identificacionBien, claseGarantia, partido, grado
 
         $.ajax({
             type: "POST",
-            async: true,
+            async: false,
             url: pageUrl + "/ObtenerOperacionesGarantiaReal",
             data: "{'identificacionBien':'" + identificacionBien + "', 'claseGarantia':'" + claseGarantia + "', 'codigoPartido':'" + partido + "', 'codigoGrado':'" + grado + "'}",
             contentType: "application/json; charset=utf-8",
@@ -2039,7 +2057,7 @@ function ConsultarGarantiaValor(numeroSeguridad, claseGarantia) {
 
         $.ajax({
             type: "POST",
-            async: true,
+            async: false,
             url: pageUrl + "/ObtenerOperacionesGarantiaValor",
             data: "{'numeroSeguridad':'" + numeroSeguridad + "', 'claseGarantia':'" + claseGarantia + "'}",
             contentType: "application/json; charset=utf-8",
@@ -2116,6 +2134,8 @@ function RegistroSeleccionado(consecutivoOperacion, consecutivoGarantia, tipoGar
     this.PorcentajeResponsabilidaAjustado = porcentajeAjustado;
     this.IndiceRegistro = indiceRegistro;
 }
+
+
 
 
 
