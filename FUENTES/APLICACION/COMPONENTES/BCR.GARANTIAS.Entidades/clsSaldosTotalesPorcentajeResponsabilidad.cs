@@ -227,7 +227,7 @@ namespace BCR.GARANTIAS.Entidades
                     //Se obteiene el saldo parcial
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
                     {
-                        if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje))
+                        if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje) && (registroActual.NumeroRegistro == 1))
                         {
                             saldoParcial += ((registroActual.SaldoActualAjustado <= 0) ? registroActual.SaldoActual : registroActual.SaldoActualAjustado);
                         }
@@ -236,10 +236,33 @@ namespace BCR.GARANTIAS.Entidades
                     //Se recalculan los porcentajes de responsabilidad
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
                     {
-                        if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje))
+                        if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje) && (registroActual.NumeroRegistro == 1))
                         {
                             registroActual.PorcentajeResponsabilidadCalculado = (((registroActual.SaldoActual / saldoParcial) * porcentajePorDistribuir)); // / 100);
                             registroActual.PorcentajeResponsabilidadAjustado = registroActual.PorcentajeResponsabilidadCalculado;
+                        }
+                    }
+
+                    //Se asigna el mismo porcentajes de responsabilidad a los registros idénticos
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
+                    {
+                        if (registroActual.NumeroRegistro == 1)
+                        {
+                            foreach (clsSaldoTotalPorcentajeResponsabilidad registroHijo in InnerList)
+                            {
+                                if((registroHijo.CodigoTipoGarantia == registroActual.CodigoTipoGarantia) && (registroHijo.ConsecutivoOperacion == registroActual.ConsecutivoOperacion)
+                                    && (registroHijo.IdentificacionGarantia == registroActual.IdentificacionGarantia) && (registroHijo.NumeroRegistro > 1))
+                                {
+                                    registroHijo.IndicadorAjusteCampoPorcentaje = registroActual.IndicadorAjusteCampoPorcentaje;
+                                    registroHijo.IndicadorAjusteCampoSaldo = registroActual.IndicadorAjusteCampoSaldo;
+                                    registroHijo.IndicadorAjustePorcentaje = registroActual.IndicadorAjustePorcentaje;
+                                    registroHijo.IndicadorAjusteSaldoActual = registroActual.IndicadorAjusteSaldoActual;
+                                    registroHijo.IndicadorExcluido = registroActual.IndicadorExcluido;
+                                    registroHijo.PorcentajeResponsabilidadAjustado = registroActual.PorcentajeResponsabilidadAjustado;
+                                    registroHijo.PorcentajeResponsabilidadCalculado = registroActual.PorcentajeResponsabilidadCalculado;
+                                    registroHijo.SaldoActualAjustado = registroActual.SaldoActualAjustado;
+                                }
+                            }
                         }
                     }
                 }
@@ -282,14 +305,36 @@ namespace BCR.GARANTIAS.Entidades
                 {                    
                     //Se obteiene el saldo total
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
-                    {                        
-                            saldoTotal += registroActual.SaldoActual; 
+                    {
+                        if (registroActual.NumeroRegistro == 1)
+                        {
+                            saldoTotal += registroActual.SaldoActual;
+                        }
                     }
 
                     //Se recalculan los porcentajes de responsabilidad
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
                     {
-                        registroActual.PorcentajeResponsabilidadCalculado = ((registroActual.SaldoActual / saldoTotal) * 100);
+                        if (registroActual.NumeroRegistro == 1)
+                        {
+                            registroActual.PorcentajeResponsabilidadCalculado = ((registroActual.SaldoActual / saldoTotal) * 100);
+                        }
+                    }
+
+                    //Se asigna el mismo porcentajes de responsabilidad a los registros idénticos
+                    foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
+                    {
+                        if (registroActual.NumeroRegistro == 1)
+                        {
+                            foreach (clsSaldoTotalPorcentajeResponsabilidad registroHijo in InnerList)
+                            {
+                                if ((registroHijo.CodigoTipoGarantia == registroActual.CodigoTipoGarantia) && (registroHijo.ConsecutivoOperacion == registroActual.ConsecutivoOperacion)
+                                    && (registroHijo.IdentificacionGarantia == registroActual.IdentificacionGarantia) && (registroHijo.NumeroRegistro > 1))
+                                {
+                                    registroHijo.PorcentajeResponsabilidadCalculado = registroActual.PorcentajeResponsabilidadCalculado;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -326,7 +371,7 @@ namespace BCR.GARANTIAS.Entidades
                     //Se determina si todos los porcentajes de responsabilidad calculados son cero
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
                     {
-                        if(registroActual.PorcentajeResponsabilidadCalculado > 0)
+                        if((registroActual.NumeroRegistro == 1) && (registroActual.PorcentajeResponsabilidadCalculado > 0))
                         {
                             calculoExitoso = false;
                             break;
@@ -355,6 +400,7 @@ namespace BCR.GARANTIAS.Entidades
 
             return calculoExitoso;
         }
+
 
         #endregion Métodos
     }

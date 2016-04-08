@@ -15,10 +15,12 @@
     <script src="<%#ResolveUrl("~/JSLib/moment.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/blockUI.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/Utiles.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/SaldosTotalesPorcResp.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/SaldosTotalesPorcResp.min.js")%>" type="text/javascript"></script>
        
     <script language="javascript" type="text/javascript">
         //<![CDATA[
+
+        $(document).ajaxStop($.unblockUI);
 
  /********************************************************************************************************************************************************************************************************************
 
@@ -27,6 +29,14 @@ VARIABLES
 ********************************************************************************************************************************************************************************************************************/
         window.$CambioManual;
         window.$SumatoriaValida;
+        window.$RegistroExcluido;
+        window.$PermisoEdicion;
+        window.$registroSeleccionado;
+        window.$cuentaMensajes;
+        window.$porcentajeCien;
+        window.$datosConsulta;
+        window.$arregloOperaciones;
+        window.$queryString;
  
 /********************************************************************************************************************************************************************************************************************
 
@@ -120,14 +130,14 @@ FUNCION PRINCIPAL
 
             var $MostrarMensajesPorAceptAvaluo;
 
-            var $RegistroExcluido;
-            var $PermisoEdicion;
-            var $registroSeleccionado;
-            var $cuentaMensajes;
-            var $porcentajeCien;
-            var $datosConsulta;
-            var $arregloOperaciones;
-            var $queryString;
+            //var $RegistroExcluido;
+            //var $PermisoEdicion;
+            //var $registroSeleccionado;
+            //var $cuentaMensajes;
+            //var $porcentajeCien;
+            //var $datosConsulta;
+            //var $arregloOperaciones;
+            //var $queryString;
             //var $CambioManual;
             //var $SumatoriaValida;
 

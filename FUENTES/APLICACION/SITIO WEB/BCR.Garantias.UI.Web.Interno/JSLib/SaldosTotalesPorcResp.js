@@ -312,7 +312,6 @@ function SaldosTotalesPorcResp_PageInit() {
 
 
 
-
 /********************************************************************************************************************************************************************************************************************
 
 INICIALIZACION DE COMPONENTES, VALIDACIONES Y COMPORTAMIENTOS
@@ -536,8 +535,7 @@ function HabilitarRegionBusqueda(codigoRegion) {
     $$('filaDetalleAjuste').hide();
     $$('gdvOperaciones').hide();
 
-    OcultarProgreso(0);
-
+    
     switch (codigoRegion) {
         case 1: //Región de búsqueda por operación crediticia
             $$('filaBusquedaOperacion').show();
@@ -595,9 +593,7 @@ function HabilitarCamposBusqueda() {
     $$('tablaGarantiasFiduciarias').empty();
     $$('tablaGarantiasReales').empty();
     $$('tablaGarantiasValor').empty();
-
-    OcultarProgreso(0);
-
+  
     if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
         LimpiarCamposBusqueda();
         $$('filaRetorno').hide();
@@ -619,8 +615,6 @@ function HabilitarCamposBusqueda() {
 
             CargarListaCatalogo(codigoCatalogo, $$('cbTipoGarantia'), '-1', '-1');
 
-            OcultarProgreso(0);
-
             break;
         default:
             HabilitarRegionBusqueda(1);
@@ -634,8 +628,7 @@ function HabilitarCamposBusquedaGarantia() {
     var tipoBusqueda = parseInt(((($$('cbTipoGarantia').val() != null) ? $$('cbTipoGarantia').val() : "-1")));
 
     var codigoCatalogo = "-1";
-    OcultarProgreso(0);
-
+ 
     if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
         LimpiarCamposBusqueda();
         $$('filaRetorno').hide();
@@ -653,9 +646,7 @@ function HabilitarCamposBusquedaGarantia() {
             codigoCatalogo = parseInt((($$('hdnCatalogoTiposPersona').val() != null) ? $$('hdnCatalogoTiposPersona').val() : "-1"));
 
             CargarListaCatalogo(codigoCatalogo, $$('cbTipoPersona'), '-1', '-1');
-
-            OcultarProgreso(0);
-
+ 
             break;
         case 2:
             $$('filaTipoGarantiaReal').show();
@@ -669,8 +660,6 @@ function HabilitarCamposBusquedaGarantia() {
 
             CargarListaCatalogo(codigoCatalogo, $$('cbTipoGarantiaReal'), '-1', '-1');
 
-            OcultarProgreso(0);
-
             break;
         case 3:
             $$('filaBusquedaGarantiaValor').show();
@@ -683,8 +672,6 @@ function HabilitarCamposBusquedaGarantia() {
             codigoCatalogo = parseInt((($$('hdnCatalogoClasesGarantia').val() != null) ? $$('hdnCatalogoClasesGarantia').val() : "-1"));
 
             CargarListaCatalogo(codigoCatalogo, $$('cbClaseGarantiaValor'), '3', '-1');
-
-            OcultarProgreso(0);
 
             break;
         default:
@@ -702,8 +689,7 @@ function HabilitarCamposBusquedaGarantia() {
 function HabilitarCamposBusquedaGarantiaReal() {
     var tipoBusqueda = parseInt((($$('cbTipoGarantiaReal').val() != null) ? $$('cbTipoGarantiaReal').val() : "1"));
     var codigoCatalogo = "-1";
-    OcultarProgreso(0);
-
+ 
     if ((typeof ($queryString) === 'undefined') || ((typeof ($queryString) !== 'undefined') && ($queryString.length == 0))) {
         LimpiarCamposBusqueda();
         $$('filaRetorno').hide();
@@ -713,8 +699,7 @@ function HabilitarCamposBusquedaGarantiaReal() {
 
     CargarListaCatalogo(codigoCatalogo, $$('cbClaseGarantiaReal'), '2', tipoBusqueda);
 
-    OcultarProgreso(0);
-
+ 
     $$('filaTipoGarantiaReal').show();
     $$('filaBusquedaGarantiaReal').show();
     $$('filaClaseGarantiaReal').show();
@@ -726,28 +711,24 @@ function HabilitarCamposBusquedaGarantiaReal() {
             $$('filaGradoCedula').hide();
 
             $$('lblPartido').text('Partido:');
-            //$$('lblFinca').text('Número Finca:');
-
+ 
             break;
         case 2:
             $$('filaGradoCedula').show();
             $$('filaGradoCedula').css("display", "inline");
 
             $$('lblPartido').text('Partido:');
-            //$$('lblFinca').text('Número Finca:');
-
+ 
             break;
         case 3:
             $$('filaGradoCedula').hide();
 
             $$('lblPartido').text('Clase Bien:');
-            //$$('lblFinca').text('Id Bien:');
-
+ 
             break;
         default:
             $$('lblPartido').text('Partido:');
-            $$('lblFinca').text('Número Finca:');
-
+ 
             $$('filaGradoCedula').hide();
 
             break;
@@ -937,63 +918,39 @@ METODOS UTILITARIOS
 
 ********************************************************************************************************************************************************************************************************************/
 
-
-//Muestra el mensaje informativo del paso que se esté ejecutando con AJAX
-function MostrarProgreso(mensaje) {
-
-    $.blockUI({ message: null });
-    //document.body.style.cursor = 'wait';
-    //document.documentElement.style.cursor = 'wait';
-    //var textoEtiqueta = $$('textoCarga');
-
-    //textoEtiqueta.text(((mensaje.length > 0) ? mensaje : 'Procesando...'));
-
-    ////setTimeout(function () {
-    //$(".modal").remove();
-    //var modal = $('<div />');
-    //modal.addClass("modal");
-    //$('body').append(modal);
-    //var loading = $(".loading");
-    //loading.show();
-    //var top = Math.max($(window).height() / 2 - loading[0].offsetHeight / 2, 0);
-    //var left = Math.max($(window).width() / 2 - loading[0].offsetWidth / 2, 0);
-    //loading.css({ top: top, left: left });
-    ////}, 200);
-
-    return true;
-}
-
-//Oculta el mensaje informativo del paso que se esté ejecutando con AJAX
-function OcultarProgreso(tiempoEspera) {
-
-    setTimeout($.unblockUI, 100);
-    //document.body.style.cursor = 'default';
-    //document.documentElement.style.cursor = 'default';
-    //var textoEtiqueta = $$('textoCarga');
-
-    //textoEtiqueta.text('Procesando...');
-
-    ////setTimeout(function () {
-    //var loading = $(".loading");
-    //var modal = $(".modal");
-    //loading.hide();
-    //modal.hide();
-    //// }, tiempoEspera);
-}
-
-//Cambia el texto de la etiqueta y muestra el mensaje informativo del paso que se esté ejecutando con AJAX
-function CambiarEtiquetaProgreso(mensaje) {
-    OcultarProgreso(200);
-    MostrarProgreso(mensaje);
-
-
-    $(document).bind("ajaxStart", function () {
-        MostrarProgreso(mensaje);
-    }).bind("ajaxStop", function () {
-        OcultarProgreso(500);
-    });
-
-    return true;
+function formatFloat(num, casasDec, sepDecimal, sepMilhar) {
+    if (num < 0) {
+        num = -num;
+        sinal = -1;
+    } else
+        sinal = 1;
+    var resposta = "";
+    var part = "";
+    if (num != Math.floor(num)) // decimal values present
+    {
+        part = Math.round((num - Math.floor(num)) * Math.pow(10, casasDec)).toString(); // transforms decimal part into integer (rounded)
+        while (part.length < casasDec)
+            part = '0' + part;
+        if (casasDec > 0) {
+            resposta = sepDecimal + part;
+            num = Math.floor(num);
+        } else
+            num = Math.round(num);
+    } // end of decimal part
+    while (num > 0) // integer part
+    {
+        part = (num - Math.floor(num / 1000) * 1000).toString(); // part = three less significant digits
+        num = Math.floor(num / 1000);
+        if (num > 0)
+            while (part.length < 3) // 123.023.123  if sepMilhar = '.'
+                part = '0' + part; // 023
+        resposta = part + resposta;
+        if (num > 0)
+            resposta = sepMilhar + resposta;
+    }
+    if (sinal < 0)
+        resposta = '-' + resposta;
+    return resposta;
 }
 
 function htmlDecode(value) {
@@ -1120,20 +1077,57 @@ function LimpiarCampos() {
     }
 }
 
+function ObtenerRegistroValido(indiceInicial, esSiguiente) {
+
+    var indiceRetorno = -1;
+
+    if (($arregloOperaciones != null) && ($arregloOperaciones.length > 0)) {
+
+        if(esSiguiente) {
+            for (var i = (indiceInicial + 1); i < $arregloOperaciones.length; i++) {
+                if ($arregloOperaciones[i].NumeroRegistro === 1) {
+                    indiceRetorno = i;
+                    break;
+                }
+            }
+        }
+        else {
+            for (var i = (indiceInicial - 1) ; i >= 0; i--) {
+                if ($arregloOperaciones[i].NumeroRegistro === 1) {
+                    indiceRetorno = i;
+                    break;
+                }
+            }
+        }
+        
+    }
+
+    return indiceRetorno;
+}
+
+
 function RegistroSiguiente() {
 
     $$('lblMensaje').text('');
 
     if (($arregloOperaciones.length > 0) && ($registroSeleccionado != null)) {
 
-        var indiceSiguiente = $registroSeleccionado.IndiceRegistro + 1;
+        var indiceSiguiente = ObtenerRegistroValido($registroSeleccionado.IndiceRegistro, true);
+        var tamanoArreglo = $arregloOperaciones.length - 1;
+        
+        if (indiceSiguiente >= 0) {
 
-        if ((indiceSiguiente < $arregloOperaciones.length) && ($arregloOperaciones[indiceSiguiente].NumeroRegistro === 1)) {
-            DesplegarAjustes($arregloOperaciones[indiceSiguiente].ConsecutivoOperacion, $arregloOperaciones[indiceSiguiente].ConsecutivoGarantia);
-            $$('Siguiente').removeAttr('disabled');
-        }
-        else if (indiceSiguiente >= $arregloOperaciones.length) {
-            $$('Siguiente').attr('disabled', 'disabled');
+            if ((indiceSiguiente == tamanoArreglo) && ($arregloOperaciones[indiceSiguiente].NumeroRegistro === 1)) {
+                DesplegarAjustes($arregloOperaciones[indiceSiguiente].ConsecutivoOperacion, $arregloOperaciones[indiceSiguiente].ConsecutivoGarantia);
+                $$('Siguiente').attr('disabled', 'disabled');
+            }
+            else if ((indiceSiguiente < tamanoArreglo) && ($arregloOperaciones[indiceSiguiente].NumeroRegistro === 1)) {
+                DesplegarAjustes($arregloOperaciones[indiceSiguiente].ConsecutivoOperacion, $arregloOperaciones[indiceSiguiente].ConsecutivoGarantia);
+                $$('Siguiente').removeAttr('disabled');
+            }
+            else if (indiceSiguiente > tamanoArreglo) {
+                $$('Siguiente').attr('disabled', 'disabled');
+            }
         }
         else {
             $$('Siguiente').attr('disabled', 'disabled');
@@ -1147,17 +1141,24 @@ function RegistroAnterior() {
 
     if (($arregloOperaciones.length > 0) && ($registroSeleccionado != null)) {
 
-        var indiceAnterior = $registroSeleccionado.IndiceRegistro - 1;
+        var indiceAnterior = ObtenerRegistroValido($registroSeleccionado.IndiceRegistro, false);
 
-        if ((indiceAnterior >= 0) && ($arregloOperaciones[indiceAnterior].NumeroRegistro === 1)) {
-            DesplegarAjustes($arregloOperaciones[indiceAnterior].ConsecutivoOperacion, $arregloOperaciones[indiceAnterior].ConsecutivoGarantia);
-            $$('Anterior').removeAttr('disabled');
+        if (indiceAnterior >= 0) {
 
-            if (indiceAnterior === 0) {
+            if ((indiceAnterior >= 0) && ($arregloOperaciones[indiceAnterior].NumeroRegistro === 1)) {
+                DesplegarAjustes($arregloOperaciones[indiceAnterior].ConsecutivoOperacion, $arregloOperaciones[indiceAnterior].ConsecutivoGarantia);
+                $$('Anterior').removeAttr('disabled');
+
+                if (indiceAnterior === 0) {
+                    DesplegarAjustes($arregloOperaciones[indiceAnterior].ConsecutivoOperacion, $arregloOperaciones[indiceAnterior].ConsecutivoGarantia);
+                    $$('Anterior').attr('disabled', 'disabled');
+                }
+            }
+            else if (indiceAnterior < 0) {
                 $$('Anterior').attr('disabled', 'disabled');
             }
         }
-        else if (indiceAnterior < 0) {
+        else {
             $$('Anterior').attr('disabled', 'disabled');
         }
     }
@@ -1165,7 +1166,6 @@ function RegistroAnterior() {
         $$('Anterior').attr('disabled', 'disabled');
     }
 }
-
 
 function ConvertirArregloOperacionesJson() {
 
@@ -1291,8 +1291,6 @@ function ConfirmarEliminar() {
     }
 }
 
-
-
 function ManipularRegistro(accionRealizar) {
 
     $$('lblMensaje').text('');
@@ -1352,73 +1350,62 @@ function ManipularRegistro(accionRealizar) {
                 default:
                     break;
             }
+            
 
-            switch ($registroSeleccionado.CodigoTipoGarantia) {
-                case 1:
-                    descripcionAccion = descripcionAccion + ' Garantía Fiduciaria...';
-                    CambiarEtiquetaProgreso(descripcionAccion);
-                    break;
-                case 2:
-                    descripcionAccion = descripcionAccion + ' Garantía Real...';
-                    CambiarEtiquetaProgreso(descripcionAccion);
-                    break;
-                case 3:
-                    descripcionAccion = descripcionAccion + ' Garantía Valor...';
-                    CambiarEtiquetaProgreso(descripcionAccion);
-                    break;
-                default:
-                    break;
-            }
+            $.blockUI({
+                message: null,
+                onBlock: function () {
+                    $.ajax({
+                        type: "POST",
+                        async: false,
+                        url: metodoEjecutar,
+                        data: "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
 
-            $.ajax({
-                type: "POST",
-                async: false,
-                url: metodoEjecutar,
-                data: "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
+                            if (response.length > 0) {
 
-                    if (response.length > 0) {
+                                if (response[0].CodigoError === 0) {
 
-                        if (response[0].CodigoError === 0) {
+                                    $arregloOperaciones = response;
+                                    var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
+                                    var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
 
-                            $arregloOperaciones = response;
-                            var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
-                            var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
+                                    var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                    $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
 
-                            var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
-                            $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
+                                    for (var i = 0; i < response.length; i++) {
 
-                            for (var i = 0; i < response.length; i++) {
+                                        if (response[i].NumeroRegistro === 1) {
 
-                                if (response[i].NumeroRegistro === 1) {
+                                            $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
+                                            $("td", row).eq(1).html(response[i].SaldoActualTexto);
+                                            $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
+                                            $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
+                                            $("td", row).eq(4).html(response[i].TipoOperacion);
+                                            $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
+                                            $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
+                                            $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
+                                            $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
+                                            $("td", row).eq(9).html(response[i].IndicadorExcluido);
+                                            $("[id*=gdvOperaciones]").append(row);
 
-                                    $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
-                                    $("td", row).eq(1).html(response[i].SaldoActualTexto);
-                                    $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
-                                    $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
-                                    $("td", row).eq(4).html(response[i].TipoOperacion);
-                                    $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
-                                    $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
-                                    $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
-                                    $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
-                                    $("td", row).eq(9).html(response[i].IndicadorExcluido);
-                                    $("[id*=gdvOperaciones]").append(row);
-
-                                    row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                            row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                        }
+                                    };
+                                    DesplegarAjustes($registroSeleccionado.ConsecutivoOperacion, $registroSeleccionado.ConsecutivoGarantia);
+                                    $$('lblMensaje').text(mensajeExitoso);
                                 }
-                            };
-                            DesplegarAjustes($registroSeleccionado.ConsecutivoOperacion, $registroSeleccionado.ConsecutivoGarantia);
-                            $$('lblMensaje').text(mensajeExitoso);
+                                else {
+                                    $$('lblMensaje').text(response[0].DescripcionError);
+                                }
+                            }
+                        },
+                        failure: function (response) {
+                            $$('lblMensaje').text(response);
                         }
-                        else {
-                            $$('lblMensaje').text(response[0].DescripcionError);
-                        }
-                    }
-                },
-                failure: function (response) {
-                    $$('lblMensaje').text(response);
+                    });
                 }
             });
         }
@@ -1499,7 +1486,7 @@ function ValidarDatosAjustados(accion) {
 
         if (saldoAjustado > $registroSeleccionado.SaldoActual) {
 
-            var $MensajeSaldoMayor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El valor ajustado a aumentado en ' + diferenciaSaldo + ', está seguro que desea modificar el valor, esto afectará la distribución de mitigadores.</p></div></div>')
+            var $MensajeSaldoMayor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El valor ajustado a aumentado en ' + formatFloat(diferenciaSaldo, 2, '.', ',') + ', está seguro que desea modificar el valor, esto afectará la distribución de mitigadores.</p></div></div>')
                     .dialog({
                         autoOpen: false,
                         title: 'Saldo Ajustado Mayor',
@@ -1521,7 +1508,7 @@ function ValidarDatosAjustados(accion) {
             $MensajeSaldoMayor.dialog("open");
         }
         else if (saldoAjustado < $registroSeleccionado.SaldoActual) {
-            var $MensajeSaldoMenor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El valor ajustado disminuyó en ' + diferenciaSaldo + ', está seguro que desea modificar el valor, esto afectará la distribución de mitigadores.</p></div></div>')
+            var $MensajeSaldoMenor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>El valor ajustado disminuyó en ' + formatFloat(diferenciaSaldo, 2, '.', ',') + ', está seguro que desea modificar el valor, esto afectará la distribución de mitigadores.</p></div></div>')
                    .dialog({
                        autoOpen: false,
                        title: 'Saldo Ajustado Menor',
@@ -1555,7 +1542,7 @@ function ValidarDatosAjustados(accion) {
         }
         else if (porcentajeResponsabilidad > porcentajeOriginal) {
 
-            var $MensajeSaldoMayor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>Usted ha modificado el % de responsabilidad de una operación, si desea que el sistema respete este porcentaje y haga una nueva distribución con el porcentaje faltante de  ' + diferenciaPorcentaje + ' presione “Aceptar”, si no presione “Cambio Manual” para realizarlo usted.</p></div></div>')
+            var $MensajeSaldoMayor = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>Usted ha modificado el % de responsabilidad de una operación, si desea que el sistema respete este porcentaje y haga una nueva distribución con el porcentaje faltante de  ' + formatFloat(diferenciaPorcentaje, 2, '.', ',') + ' presione “Aceptar”, si no presione “Cambio Manual” para realizarlo usted.</p></div></div>')
                     .dialog({
                         autoOpen: false,
                         title: 'Porcentaje Responsabilidad Ajustado Mayor',
@@ -1612,9 +1599,7 @@ function ValidarPermisoEdicion() {
     var listaPermisos = (($$('hdnPerfilesPermitidos').val() != null) ? $$('hdnPerfilesPermitidos').val() : "");
 
     $$('lblMensaje').text('');
-
-    OcultarProgreso(0);
-
+ 
     $.ajax({
         type: "POST",
         async: false,
@@ -1648,9 +1633,7 @@ function CargarListaCatalogo(codigoCatalogo, objetoCargar, tipoGarantia, tipoGar
 
     $$('lblMensaje').text('');
 
-    OcultarProgreso(0);
-
-    $.ajax({
+     $.ajax({
         type: "POST",
         async: false,
         url: pageUrl + "/ExtraerCatalogo",
@@ -1744,113 +1727,98 @@ function ValidarOperacion() {
         var consecutivoOperacion = '';
         var operacionValida = false;
 
-        OcultarProgreso(0);
-
-        CambiarEtiquetaProgreso('Validando...');
-
         $$('accordionGF').hide();
         $$('accordionGR').hide();
         $$('accordionGV').hide();
         $$('filaDetalleAjuste').hide();
         $$('gdvOperaciones').hide();
 
-        $.ajax({
-            type: "POST",
-            async: false,
-            url: pageUrl + "/ValidarOperacion",
-            data: "{'codigoContabilidad':'" + codigoContabilidad + "', 'codigoOficina':'" + codigoOficina + "', 'codigoMoneda':'" + codigoMoneda + "', 'codigoProducto':'" + codigoProducto + "', 'numeroOperacion':'" + codigoOperacion + "'}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
-                if (response.length > 1) {
+        $.blockUI({
+            message: null,
+            onBlock: function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: pageUrl + "/ValidarOperacion",
+                    data: "{'codigoContabilidad':'" + codigoContabilidad + "', 'codigoOficina':'" + codigoOficina + "', 'codigoMoneda':'" + codigoMoneda + "', 'codigoProducto':'" + codigoProducto + "', 'numeroOperacion':'" + codigoOperacion + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.length > 1) {
 
-                    $$('gdvOperaciones').hide();
+                            $$('gdvOperaciones').hide();
 
-                    var datosRetornados = response.split("|");
+                            var datosRetornados = response.split("|");
 
-                    if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] != '0') && (datosRetornados[1].length > 0)) {
-                        $$('lblMensaje').text(datosRetornados[1]);
-                        $$('accordionGF').hide();
-                        $$('accordionGR').hide();
-                        $$('accordionGV').hide();
-                        $$('filaDetalleAjuste').hide();
-                        $$('gdvOperaciones').hide();
-                        return false;
-                    }
-                    else if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] == '0')) {
-                        $$('accordionGF').show();
-                        $$('accordionGR').show();
-                        $$('accordionGV').show();
-
-                        consecutivoOperacion = ((datosRetornados[1].length > 0) ? datosRetornados[1] : '');
-
-                        operacionValida = true;
-
-                        /*******/
-                        //Extraer la lista de las garantías
-                        /*******/
-
-                        for (var tipoGarantia = 1; tipoGarantia <= 3; tipoGarantia++) {
-
-                            switch (tipoGarantia) {
-                                case 1:
-                                    CambiarEtiquetaProgreso('Obteniendo Garantías Fiduciarias...');
-                                    break;
-                                case 2:
-                                    CambiarEtiquetaProgreso('Obteniendo Garantías Reales...');
-                                    break;
-                                case 3:
-                                    CambiarEtiquetaProgreso('Obteniendo Garantías Valor...');
-                                    break;
-                                default:
-                                    break;
+                            if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] != '0') && (datosRetornados[1].length > 0)) {
+                                $$('lblMensaje').text(datosRetornados[1]);
+                                $$('accordionGF').hide();
+                                $$('accordionGR').hide();
+                                $$('accordionGV').hide();
+                                $$('filaDetalleAjuste').hide();
+                                $$('gdvOperaciones').hide();
+                                return false;
                             }
+                            else if ((datosRetornados != null) && (datosRetornados[0] != null) && (datosRetornados[0].length > 0) && (datosRetornados[0] == '0')) {
+                                $$('accordionGF').show();
+                                $$('accordionGR').show();
+                                $$('accordionGV').show();
 
-                            $.ajax({
-                                type: "POST",
-                                async: false,
-                                url: pageUrl + "/ObtenerGarantias",
-                                data: "{'tipoOperacion':'" + tipoOperacion.toString() + "', 'consecutivoOperacion':'" + consecutivoOperacion + "', 'codigoContabilidad':'" + codigoContabilidad + "', 'codigoOficina':'" + codigoOficina + "', 'codigoMoneda':'" + codigoMoneda + "', 'codigoProducto':'" + codigoProducto + "', 'numeroOperacion':'" + codigoOperacion + "', 'tipoGarantia':'" + tipoGarantia.toString() + "'}",
-                                contentType: "application/json; charset=utf-8",
-                                dataType: "text html",
-                                success: function (response) {
+                                consecutivoOperacion = ((datosRetornados[1].length > 0) ? datosRetornados[1] : '');
 
-                                    if (response.length > 0) {
+                                operacionValida = true;
 
-                                        switch (tipoGarantia) {
-                                            case 1:
-                                                $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
-                                                $$('tablaGarantiasFiduciarias').empty().append($datosConsulta);
-                                                $$('accordionGF').accordion("refresh");
-                                                break;
-                                            case 2:
-                                                $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
-                                                $$('tablaGarantiasReales').empty().append($datosConsulta);
-                                                $$('accordionGR').accordion("refresh");
-                                                break;
-                                            case 3:
-                                                $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
-                                                $$('tablaGarantiasValor').empty().append($datosConsulta);
-                                                $$('accordionGV').accordion("refresh");
-                                                break;
-                                            default:
-                                                break;
+                                /*******/
+                                //Extraer la lista de las garantías
+                                /*******/
+
+                                for (var tipoGarantia = 1; tipoGarantia <= 3; tipoGarantia++) {
+
+                                     $.ajax({
+                                        type: "POST",
+                                        async: false,
+                                        url: pageUrl + "/ObtenerGarantias",
+                                        data: "{'tipoOperacion':'" + tipoOperacion.toString() + "', 'consecutivoOperacion':'" + consecutivoOperacion + "', 'codigoContabilidad':'" + codigoContabilidad + "', 'codigoOficina':'" + codigoOficina + "', 'codigoMoneda':'" + codigoMoneda + "', 'codigoProducto':'" + codigoProducto + "', 'numeroOperacion':'" + codigoOperacion + "', 'tipoGarantia':'" + tipoGarantia.toString() + "'}",
+                                        contentType: "application/json; charset=utf-8",
+                                        dataType: "text html",
+                                        success: function (response) {
+
+                                            if (response.length > 0) {
+
+                                                switch (tipoGarantia) {
+                                                    case 1:
+                                                        $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
+                                                        $$('tablaGarantiasFiduciarias').empty().append($datosConsulta);
+                                                        $$('accordionGF').accordion("refresh");
+                                                        break;
+                                                    case 2:
+                                                        $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
+                                                        $$('tablaGarantiasReales').empty().append($datosConsulta);
+                                                        $$('accordionGR').accordion("refresh");
+                                                        break;
+                                                    case 3:
+                                                        $datosConsulta = htmlDecode(response).replace('"<table>', '<table>').replace('</table>"', '</table>');
+                                                        $$('tablaGarantiasValor').empty().append($datosConsulta);
+                                                        $$('accordionGV').accordion("refresh");
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                            }
+                                        },
+                                        failure: function (response) {
+                                            $$('lblMensaje').text(response);
                                         }
-                                    }
-                                },
-                                failure: function (response) {
-                                    $$('lblMensaje').text(response);
+                                    });
                                 }
-                            });
+                            }
                         }
+                    },
+                    failure: function (response) {
+                        $$('lblMensaje').text(response);
                     }
-                }
-                //else {
+                });
 
-                //}            
-            },
-            failure: function (response) {
-                $$('lblMensaje').text(response);
             }
         });
     }
@@ -1861,19 +1829,23 @@ function ValidarGarantia() {
 
     $$('lblMensaje').text('');
 
+    $$('accordionGF').hide();
+    $$('accordionGR').hide();
+    $$('accordionGV').hide();
+    $$('filaDetalleAjuste').hide();
+    $$('gdvOperaciones').hide();
+
     var tipoGarantia = parseInt((($$('cbTipoGarantia').val() != null) ? $$('cbTipoGarantia').val() : "-1"));
 
     if (ValidarCamposGarantia()) {
 
         switch (tipoGarantia) {
             case 1:
-                CambiarEtiquetaProgreso('Obteniendo Garantías Fiduciarias...');
                 var tipoPersona = $$('cbTipoPersona').val();
                 var idFiador = $$('txtCedulaFiador').val();
                 ConsultarGarantiaFiduciaria(tipoPersona, idFiador);
                 break;
             case 2:
-                CambiarEtiquetaProgreso('Obteniendo Garantías Reales...');
                 var identificacionBien = $$('txtNumFinca').val();
                 var claseGarantia = $$('cbClaseGarantiaReal').val();
                 var partido = (($$('txtPartido').val().length > 0) ? $$('txtPartido').val() : '-1');
@@ -1881,7 +1853,6 @@ function ValidarGarantia() {
                 ConsultarGarantiaReal(identificacionBien, claseGarantia, partido, grado);
                 break;
             case 3:
-                CambiarEtiquetaProgreso('Obteniendo Garantías Valor...');
                 var numeroSeguridad = $$('txtNumeroSeguridad').val();
                 var claseGarantia = $$('cbClaseGarantiaValor').val();
                 ConsultarGarantiaValor(numeroSeguridad, claseGarantia);
@@ -1899,72 +1870,71 @@ function ConsultarGarantiaFiduciaria(tipoPersonaFiador, cedulaFiador) {
 
     var pageUrl = 'frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx';
 
+    $$('filaDetalleAjuste').hide();
+    $$('gdvOperaciones').hide();
+
+
     if (cedulaFiador != null) {
+ 
+        $.blockUI({
+            message: null,
+            onBlock: function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: pageUrl + "/ObtenerOperacionesGarantiaFiduciaria",
+                    data: "{'tipoPersona':'" + tipoPersonaFiador + "', 'identificacionFiador':'" + cedulaFiador + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
 
-        OcultarProgreso(0);
+                        if (response.length > 0) {
 
-        CambiarEtiquetaProgreso('Obteniendo Operaciones...');
+                            if (response[0].CodigoError === 0) {
 
-        $$('accordionGF').hide();
-        $$('accordionGR').hide();
-        $$('accordionGV').hide();
-        $$('filaDetalleAjuste').hide();
-        $$('gdvOperaciones').hide();
+                                $arregloOperaciones = response;
+                                var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
+                                var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
 
-        $.ajax({
-            type: "POST",
-            async: false,
-            url: pageUrl + "/ObtenerOperacionesGarantiaFiduciaria",
-            data: "{'tipoPersona':'" + tipoPersonaFiador + "', 'identificacionFiador':'" + cedulaFiador + "'}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
+                                var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
 
-                if (response.length > 0) {
+                                for (var i = 0; i < response.length; i++) {
 
-                    if (response[0].CodigoError === 0) {
+                                    if (response[i].NumeroRegistro === 1) {
 
-                        $arregloOperaciones = response;
-                        var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
-                        var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
+                                        $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
+                                        $("td", row).eq(1).html(response[i].SaldoActualTexto);
+                                        $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
+                                        $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
+                                        $("td", row).eq(4).html(response[i].TipoOperacion);
+                                        $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
+                                        $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
+                                        $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
+                                        $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
+                                        $("td", row).eq(9).html(response[i].IndicadorExcluido);
+                                        $("[id*=gdvOperaciones]").append(row);
 
-                        var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
-                        $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
+                                        row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                    }
+                                };
 
-                        for (var i = 0; i < response.length; i++) {
-
-                            if (response[i].NumeroRegistro === 1) {
-
-                                $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
-                                $("td", row).eq(1).html(response[i].SaldoActualTexto);
-                                $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
-                                $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
-                                $("td", row).eq(4).html(response[i].TipoOperacion);
-                                $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
-                                $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
-                                $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
-                                $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
-                                $("td", row).eq(9).html(response[i].IndicadorExcluido);
-                                $("[id*=gdvOperaciones]").append(row);
-
-                                row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $$('gdvOperaciones').show();
                             }
-                        };
+                            else {
+                                $$('lblMensaje').text(response[0].DescripcionError);
+                                $$('filaDetalleAjuste').hide();
+                                $$('gdvOperaciones').hide();
+                            }
+                        }
 
-                        $$('gdvOperaciones').show();
-                    }
-                    else {
-                        $$('lblMensaje').text(response[0].DescripcionError);
+                    },
+                    failure: function (response) {
+                        $$('lblMensaje').text(response);
                         $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
-                }
-
-            },
-            failure: function (response) {
-                $$('lblMensaje').text(response);
-                $$('filaDetalleAjuste').hide();
-                $$('gdvOperaciones').hide();
+                });
             }
         });
     }
@@ -1977,66 +1947,70 @@ function ConsultarGarantiaReal(identificacionBien, claseGarantia, partido, grado
 
     var pageUrl = 'frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx';
 
+    $$('filaDetalleAjuste').hide();
+    $$('gdvOperaciones').hide();
+
     if ((identificacionBien != null) && (claseGarantia != null)) {
+         
+        $.blockUI({
+            message: null,
+            onBlock: function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: pageUrl + "/ObtenerOperacionesGarantiaReal",
+                    data: "{'identificacionBien':'" + identificacionBien + "', 'claseGarantia':'" + claseGarantia + "', 'codigoPartido':'" + partido + "', 'codigoGrado':'" + grado + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
 
-        OcultarProgreso(0);
+                        if (response.length > 0) {
 
-        CambiarEtiquetaProgreso('Obteniendo Operaciones...');
+                            if (response[0].CodigoError === 0) {
 
-        $.ajax({
-            type: "POST",
-            async: false,
-            url: pageUrl + "/ObtenerOperacionesGarantiaReal",
-            data: "{'identificacionBien':'" + identificacionBien + "', 'claseGarantia':'" + claseGarantia + "', 'codigoPartido':'" + partido + "', 'codigoGrado':'" + grado + "'}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
+                                $arregloOperaciones = response;
+                                var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
+                                var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
 
-                if (response.length > 0) {
+                                var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
 
-                    if (response[0].CodigoError === 0) {
+                                for (var i = 0; i < response.length; i++) {
 
-                        $arregloOperaciones = response;
-                        var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
-                        var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
+                                    if (response[i].NumeroRegistro === 1) {
 
-                        var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
-                        $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
+                                        $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
+                                        $("td", row).eq(1).html(response[i].SaldoActualTexto);
+                                        $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
+                                        $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
+                                        $("td", row).eq(4).html(response[i].TipoOperacion);
+                                        $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
+                                        $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
+                                        $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
+                                        $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
+                                        $("td", row).eq(9).html(response[i].IndicadorExcluido);
+                                        $("[id*=gdvOperaciones]").append(row);
 
-                        for (var i = 0; i < response.length; i++) {
+                                        row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                    }
+                                };
 
-                            if (response[i].NumeroRegistro === 1) {
-
-                                $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
-                                $("td", row).eq(1).html(response[i].SaldoActualTexto);
-                                $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
-                                $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
-                                $("td", row).eq(4).html(response[i].TipoOperacion);
-                                $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
-                                $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
-                                $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
-                                $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
-                                $("td", row).eq(9).html(response[i].IndicadorExcluido);
-                                $("[id*=gdvOperaciones]").append(row);
-
-                                row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $$('gdvOperaciones').show();
                             }
-                        };
+                            else {
+                                $$('lblMensaje').text(response[0].DescripcionError);
+                                $$('filaDetalleAjuste').hide();
+                                $$('gdvOperaciones').hide();
+                            }
+                        }
 
-                        $$('gdvOperaciones').show();
-                    }
-                    else {
-                        $$('lblMensaje').text(response[0].DescripcionError);
+                    },
+                    failure: function (response) {
+                        $$('lblMensaje').text(response);
                         $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
-                }
-
-            },
-            failure: function (response) {
-                $$('lblMensaje').text(response);
-                $$('filaDetalleAjuste').hide();
-                $$('gdvOperaciones').hide();
+                });
             }
         });
     }
@@ -2049,72 +2023,74 @@ function ConsultarGarantiaValor(numeroSeguridad, claseGarantia) {
 
     var pageUrl = 'frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx';
 
+    $$('filaDetalleAjuste').hide();
+    $$('gdvOperaciones').hide();
+
     if ((numeroSeguridad != null) && (claseGarantia != null)) {
+         
+        $.blockUI({
+            message: null,
+            onBlock: function () {
+                $.ajax({
+                    type: "POST",
+                    async: false,
+                    url: pageUrl + "/ObtenerOperacionesGarantiaValor",
+                    data: "{'numeroSeguridad':'" + numeroSeguridad + "', 'claseGarantia':'" + claseGarantia + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
 
-        OcultarProgreso(0);
+                        if (response.length > 0) {
 
-        CambiarEtiquetaProgreso('Obteniendo Operaciones...');
+                            if (response[0].CodigoError === 0) {
 
-        $.ajax({
-            type: "POST",
-            async: false,
-            url: pageUrl + "/ObtenerOperacionesGarantiaValor",
-            data: "{'numeroSeguridad':'" + numeroSeguridad + "', 'claseGarantia':'" + claseGarantia + "'}",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (response) {
+                                $arregloOperaciones = response;
+                                var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
+                                var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
 
-                if (response.length > 0) {
+                                var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
 
-                    if (response[0].CodigoError === 0) {
+                                for (var i = 0; i < response.length; i++) {
 
-                        $arregloOperaciones = response;
-                        var checkBoxSeleccionado = "<input type=\"checkbox\" checked=\"checked\" disabled=\"disabled\"/>";
-                        var checkBoxNoSeleccionado = "<input type=\"checkbox\"disabled=\"disabled\"/>";
+                                    if (response[i].NumeroRegistro === 1) {
 
-                        var row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
-                        $("[id*=gdvOperaciones] tr").not($("[id*=gdvOperaciones] tr:first-child")).remove();
+                                        $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
+                                        $("td", row).eq(1).html(response[i].SaldoActualTexto);
+                                        $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
+                                        $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
+                                        $("td", row).eq(4).html(response[i].TipoOperacion);
+                                        $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
+                                        $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
+                                        $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
+                                        $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
+                                        $("td", row).eq(9).html(response[i].IndicadorExcluido);
+                                        $("[id*=gdvOperaciones]").append(row);
 
-                        for (var i = 0; i < response.length; i++) {
+                                        row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                    }
+                                };
 
-                            if (response[i].NumeroRegistro === 1) {
-
-                                $("td", row).eq(0).html("<a style=\"color: #333333\" href=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\" onclick=\"javascript:DesplegarAjustes('" + response[i].ConsecutivoOperacion + "', '" + response[i].ConsecutivoGarantia + "');\">" + response[i].OperacionLarga + "</a>");
-                                $("td", row).eq(1).html(response[i].SaldoActualTexto);
-                                $("td", row).eq(2).html(response[i].PorcentajeResponsabilidadTexto);
-                                $("td", row).eq(3).html(((response[i].CodigoTipoOperacion !== 2) ? response[i].CuentaContable : "-"));
-                                $("td", row).eq(4).html(response[i].TipoOperacion);
-                                $("td", row).eq(5).html(((response[i].IndicadorExcluido) ? checkBoxSeleccionado : checkBoxNoSeleccionado));
-                                $("td", row).eq(6).html(response[i].ConsecutivoOperacion);
-                                $("td", row).eq(7).html(response[i].ConsecutivoGarantia);
-                                $("td", row).eq(8).html(response[i].CodigoTipoGarantia);
-                                $("td", row).eq(9).html(response[i].IndicadorExcluido);
-                                $("[id*=gdvOperaciones]").append(row);
-
-                                row = $("[id*=gdvOperaciones] tr:last-child").clone(true);
+                                $$('gdvOperaciones').show();
                             }
-                        };
+                            else {
+                                $$('lblMensaje').text(response[0].DescripcionError);
+                                $$('filaDetalleAjuste').hide();
+                                $$('gdvOperaciones').hide();
+                            }
+                        }
 
-                        $$('gdvOperaciones').show();
-                    }
-                    else {
-                        $$('lblMensaje').text(response[0].DescripcionError);
+                    },
+                    failure: function (response) {
+                        $$('lblMensaje').text(response);
                         $$('filaDetalleAjuste').hide();
                         $$('gdvOperaciones').hide();
                     }
-                }
-
-            },
-            failure: function (response) {
-                $$('lblMensaje').text(response);
-                $$('filaDetalleAjuste').hide();
-                $$('gdvOperaciones').hide();
+                });
             }
         });
     }
 }
-
-
 
 
 
