@@ -3994,3 +3994,1265 @@ EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Código de la asegu
 GO
 
 
+CREATE TABLE dbo.SICAD_CARTAS_CREDITO
+( 
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	FECHA_CONSTITUCION   date  NOT NULL ,
+	FECHA_VENCIMIENTO    date  NULL ,
+	TIPO_PERSONA         int  NOT NULL ,
+	IDENTIDAD_CREDITO_SINDICADO varchar(30)  NOT NULL ,
+	VALOR_NOMINAL_GARANTIA decimal(20)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL int  NOT NULL ,
+	TIPO_ASIGNACION_CALIFICACION int  NOT NULL ,
+	CATEGORIA_CALIFICACION int  NOT NULL ,
+	CALIFICACION_RIESGO  varchar(30)  NOT NULL ,
+	CODIGO_EMPRESA_CALIFICADORA int  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías de cartas de crédito que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el número de la Carta de Crédito.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución de la garantía.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'FECHA_CONSTITUCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento de la garantía.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'FECHA_VENCIMIENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de persona de la identificación de la carta de crédito.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'TIPO_PERSONA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la entidad financiera que emite la carta de crédito Stand By o la carta de crédito de exportación.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'IDENTIDAD_CREDITO_SINDICADO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la garantía consignado en el documento legal mediante el cual se formalizó la operación de crédito.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'TIPO_MONEDA_VALOR_NOMINAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de a quien se asigna la calificación.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'TIPO_ASIGNACION_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la categoría de la calificación.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'CATEGORIA_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la calificación vigente del emisor del instrumento(s) financiero(s) que está(n) en garantía.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'CALIFICACION_RIESGO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la empresa que emite la calificación de riesgo del emisor.', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'CODIGO_EMPRESA_CALIFICADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_CARTAS_CREDITO', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_CC_IMPORTACION
+( 
+	ID_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION varchar(25)  NOT NULL ,
+	TIPO_BIEN_DOCUMENTO_CARTA_CREDITO_IMPORTACION int  NOT NULL ,
+	FECHA_CONSTITUCION   date  NOT NULL ,
+	FECHA_VENCIMIENTO    date  NULL ,
+	VALOR_NOMINAL_GARANTIA decimal(22,2)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL int  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías de cartas de crédito de importación que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el número de la Carta de Crédito de Importación.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'ID_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de bien consignado en el documento que ampara las cartas de importación.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'TIPO_BIEN_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución del documento que responde como garantía.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'FECHA_CONSTITUCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento del documento que responde como  garantía.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'FECHA_VENCIMIENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la garantía consignado en el documento legal mediante el cual se formalizó la operación de crédito.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'TIPO_MONEDA_VALOR_NOMINAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_CC_IMPORTACION_POLIZAS
+( 
+	ID_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION varchar(25)  NOT NULL ,
+	TIPO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION int  NOT NULL ,
+	MONTO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION decimal(22,2)  NOT NULL ,
+	FECHA_VENCIMIENTO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION date  NOT NULL ,
+	IND_COBERTURAS_POLIZA varchar(1)  NOT NULL ,
+	TIPO_PERSONA_BENEFICIARIO int  NOT NULL ,
+	ID_BENEFICIARIO      varchar(30)  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las pólizas de las garantías de carta de crédito de importación que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el número de la Carta de Crédito de Importación.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'ID_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de póliza utilizado para garantizar la cobertura del bien.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'TIPO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto asegurado del bien a favor de la Entidad.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'MONTO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento (incluye su periodo de gracia) de la póliza de seguro.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'FECHA_VENCIMIENTO_POLIZA_GARANTIA_DOCUMENTO_CARTA_CREDITO_IMPORTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el indicador de si la póliza del bien dado en garantía incluye todas las coberturas según la naturaleza para asegurar su recuperación en caso de siniestro.
+Los valores son: 
+"S": sí tiene todas las coberturas.
+"N": no tiene todas las coberturas.', 
+'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'IND_COBERTURAS_POLIZA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona referido al beneficiario de la póliza.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'TIPO_PERSONA_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la persona beneficiaria de la póliza.', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'ID_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_CC_IMPORTACION_POLIZAS', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_FACTURAS_CEDIDAS
+( 
+	ID_GARANTIA_FACTURA_CEDIDA varchar(25)  NOT NULL ,
+	FECHA_CONSTITUCION   date  NOT NULL ,
+	FECHA_VENCIMIENTO    date  NULL ,
+	TIPO_PERSONA         int  NOT NULL ,
+	ID_OBLIGADO          varchar(30)  NOT NULL ,
+	VALOR_NOMINAL_GARANTIA decimal(20)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL int  NOT NULL ,
+	TIPO_ASIGNACION_CALIFICACION int  NOT NULL ,
+	CATEGORIA_CALIFICACION int  NULL ,
+	CALIFICACION_RIESGO  varchar(30)  NULL ,
+	CODIGO_EMPRESA_CALIFICADORA int  NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías de facturas cedidas que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el número de la factura.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'ID_GARANTIA_FACTURA_CEDIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución de la factura cedida que responde como garantía.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'FECHA_CONSTITUCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento de la factura cedida que responde como garantía.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'FECHA_VENCIMIENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona del obligado.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'TIPO_PERSONA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la persona obligada a pagar el documento cedido en una cesión con recurso.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'ID_OBLIGADO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la garantía consignado en el documento legal mediante el cual se formalizó la operación de crédito.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'TIPO_MONEDA_VALOR_NOMINAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de a quien se asigna la calificación.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'TIPO_ASIGNACION_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la categoría de Calificación según la tabla de equivalencias para calificaciones de agencias calificadoras que incluyan únicamente la calificación del riesgo de crédito.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'CATEGORIA_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la calificación vigente del emisor del instrumento(s) financiero(s) que está(n) en garantía. Se deben usar los códigos según los utilizados por la Agencia Calificadora.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'CALIFICACION_RIESGO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la empresa que emite la calificación de riesgo del emisor.', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'CODIGO_EMPRESA_CALIFICADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_FACTURAS_CEDIDAS', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_FIDEICOMISO
+( 
+	ID_FIDEICOMISO_GARANTIA varchar(15)  NOT NULL ,
+	TIPO_LIMITACION_FIDEICOMISO int  NOT NULL ,
+	FECHA_CONSTITUCION   date  NOT NULL ,
+	FECHA_VENCIMIENTO    date  NOT NULL ,
+	VALOR_NOMINAL_FIDEICOMISO decimal(20)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL_FIDEICOMISO int  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre los fideicomisos que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del Fideicomiso utilizado por la Entidad.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'ID_FIDEICOMISO_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código que indica si el Fideicomiso tiene alguna limitación en monto para responder ante terceros.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'TIPO_LIMITACION_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución del fideicomiso que responde como garantía.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'FECHA_CONSTITUCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento del fideicomiso que responde como garantía.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'FECHA_VENCIMIENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto del valor Nominal de Fideicomiso consignado en el documento legal mediante el cual se formalizó el mismo.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'VALOR_NOMINAL_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la constitución del Fideicomiso.', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'TIPO_MONEDA_VALOR_NOMINAL_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_FIDEICOMISO', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_FIDUCIARIAS
+( 
+	ID_GARANTIA_FIDUCIARIA varchar(25)  NOT NULL ,
+	TIPO_PERSONA         int  NOT NULL ,
+	ID_FIADOR            varchar(30)  NOT NULL ,
+	TIPO_ASIGNACION_CALIFICACION int  NOT NULL 
+	CONSTRAINT DF_SICAD_FIDUCIARIAS_TIPO_ASIGNACION_CALIFICACION
+		 DEFAULT  0,
+	CATEGORIA_CALIFICACION int  NULL ,
+	CALIFICACION_RIESGO  varchar(30)  NULL ,
+	CODIGO_EMPRESA_CALIFICADORA int  NULL ,
+	SALARIO_NETO_FIADOR  decimal(22,2)  NULL ,
+	FECHA_VERIFICACION_ASALARIADO date  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías fiduciarias que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del fiador.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'ID_GARANTIA_FIDUCIARIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de persona del fiador.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'TIPO_PERSONA'
+GO
+
+EXEC sp_addextendedproperty 
+'MS_Description', 'Almacenará la identificación del fiador.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'ID_FIADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de asignación de la calificación. Por defecto el valor es 0 (cero), pues este dato no se maneja en el sistema.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'TIPO_ASIGNACION_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la categoría de la calificación. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'CATEGORIA_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la calificación de riesgo. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'CALIFICACION_RIESGO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la empresa calificadora. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'CODIGO_EMPRESA_CALIFICADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el salrio neto registrado para el fiador, esto para la fecha más reciente.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'SALARIO_NETO_FIADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha más reciente en que se realizó la verificación del salrio neto del fiador.', 'user', 'dbo', 'table', 'SICAD_FIDUCIARIAS', 'column', 'FECHA_VERIFICACION_ASALARIADO'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_FISO_FIDEICOMETIDO
+( 
+	ID_GARANTIA_FIDEICOMISO varchar(15)  NOT NULL ,
+	TIPO_GARANTIA_FIDEICOMETIDA int  NOT NULL ,
+	ID_GARANTIA_FIDEICOMETIDA varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR_FIDEICOMETIDO int  NOT NULL ,
+	INDICADOR_INSCRIPCION_A_FAVOR_FIDUCIARIO int  NOT NULL ,
+	FECHA_PRESENTACION_REGISTRO_GARANTIA_FIDEICOMETIDA date  NULL ,
+	PORCENTAJE_ACEPTACION decimal(5,2)  NOT NULL ,
+	VALOR_NOMINAL_GARANTIA decimal(20)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL_GARANTIA int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL_GARANTIA_FIDEICOMETIDA int  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías fideicometidas que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del Fideicomiso utilizado por la Entidad.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'ID_GARANTIA_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de garantía que garantiza la operación.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'TIPO_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código que asigna la entidad financiera a cada  Garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'ID_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'TIPO_MITIGADOR_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código que indica si existe inscripción o anotación del bien fideicometido está a favor del fiduciario en el Registro Público.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'INDICADOR_INSCRIPCION_A_FAVOR_FIDUCIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de presentación de los documentos de los bienes fideicometidos ante el Registro Público', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'FECHA_PRESENTACION_REGISTRO_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el porcentaje de aceptación asignado a la garantía por la entidad.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'PORCENTAJE_ACEPTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la garantía consignado en el documento legal mediante el cual se formalizó la operación de crédito.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'TIPO_MONEDA_VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'TIPO_DOCUMENTO_LEGAL_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_FISO_FIDEICOMETIDO', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_FISO_FIDO_GRAVAMEN
+( 
+	ID_GARANTIA_FIDEICOMISO varchar(15)  NOT NULL ,
+	ID_GARANTIA_FIDEICOMETIDA varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR_FIDEICOMETIDO int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL_GARANTIA_FIDEICOMETIDA int  NOT NULL ,
+	GRADO_GRAVAMENES_FIDEICOMETIDA int  NOT NULL ,
+	TIPO_PERSONA_ACREEDOR_FIDEICOMETIDA int  NOT NULL ,
+	ID_ACREEDOR_FIDEICOMETIDA varchar(30)  NOT NULL ,
+	MONTO_GRADO_GRAVAMENES_FIDEICOMETIDA decimal(22,2)  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre los gravamenes de las garantías fideicometidas que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del Fideicomiso utilizado por la Entidad.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'ID_GARANTIA_FIDEICOMISO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código que asigna la entidad financiera a cada  Garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'ID_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'TIPO_MITIGADOR_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'TIPO_DOCUMENTO_LEGAL_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el detalle de los gravámenes anteriores que tiene el bien que respalda la operación de crédito otorgada por la entidad financiera.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'GRADO_GRAVAMENES_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona del acreedor fideicometido.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'TIPO_PERSONA_ACREEDOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de los acreedores que ostenten grados de mayor prelación del bien dado en garantía.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'ID_ACREEDOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por la cual está respondiendo el grado de mayor prelación.', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'MONTO_GRADO_GRAVAMENES_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_FISO_FIDO_GRAVAMEN', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	GARANTIA_ANTERIOR_NO_APLICA int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GARANTIA_ANTERIOR_NO_APLICA
+		 DEFAULT  1,
+	CODIGO_EMPRESA       int  NULL 
+	CONSTRAINT DF_SICAD_GAROPER_CODIGO_EMPRESA
+		 DEFAULT  1,
+	FECHA_PROCESO        date  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_FECHA_PROCESO
+		 DEFAULT  GETDATE()
+)
+ON "PRIMARY"
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las operaciones que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la operación crediticia o de la línea de crédito.
+Se aplicará el siguiente formato:
+
+Para operaciones: cod_oficina +
+cod_moneda +
+cod_producto +
+operación
+
+Para contratos: cod_oficina +
+cod_moneda +
+operación', 
+'user', 'dbo', 'table', 'SICAD_GAROPER', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código para identificar si la operación crediticia dejó de tener garantía y que en periodos anteriores sí la tenía.
+0= La garantía reportada en periodos anteriores ya no es mitigadora o no existe y el crédito dejó de tener garantía.
+1= El crédito si tiene garantía, independientemente de si esa garantía fue reportada en algún periodo anterior o la garantía es nueva.
+
+Por defecto se asiganrá el código 1.',
+'user', 'dbo', 'table', 'SICAD_GAROPER', 'column', 'GARANTIA_ANTERIOR_NO_APLICA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_GAROPER', 'column', 'CODIGO_EMPRESA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha en que se llenó con registros la tabla. Este dato es primordial para determinar si se deben limpiar las diferentes tablas que son cargadas por el proceso de generación de archivos.
+
+Por defecto se asignará la fecha actual.', 
+'user', 'dbo', 'table', 'SICAD_GAROPER', 'column', 'FECHA_PROCESO'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER_FIDEICOMETIDO
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR       int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL int  NOT NULL ,
+	ID_GARANTIA_FIDEICOMETIDA varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR_FIDEICOMETIDA int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL_FIDEICOMETIDA int  NOT NULL ,
+	MONTO_MITIGADOR_FIDEICOMETIDO decimal(22,2)  NOT NULL ,
+	VALOR_NOMINAL_FIDEICOMETIDA decimal(20)  NOT NULL ,
+	TIPO_MONEDA_VALOR_NOMINAL_FIDEICOMETIDA int  NULL ,
+	FECHA_CONSTITUCION_GARANTIA_FIDEICOMETIDA date  NOT NULL ,
+	FECHA_VENCIMIENTO_GARANTIA_FIDEICOMETIDA date  NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las operaciones que poseen fideicomisos que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el identificador de la operación crediticia o de la línea de crédito.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la garantía que se asignó a la garantía según su tipo.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'TIPO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'TIPO_DOCUMENTO_LEGAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de las garantías que están contenidas en un fideicomiso y que cubren la operación.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'ID_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'TIPO_MITIGADOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'TIPO_DOCUMENTO_LEGAL_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por el cual se ha aceptado la garantía como mitigador de riesgo.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'MONTO_MITIGADOR_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto del valor nominal por la cual se acepta la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'VALOR_NOMINAL_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'TIPO_MONEDA_VALOR_NOMINAL_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución establecida en el documento legal del bien fideicometido como garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'FECHA_CONSTITUCION_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento establecida en el documento legal del bien fideicometido como garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'FECHA_VENCIMIENTO_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDEICOMETIDO', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER_FIDO_GRAVAMEN
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR       int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL int  NOT NULL ,
+	ID_GARANTIA_FIDEICOMETIDA varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR_FIDEICOMETIDA int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL_FIDEICOMETIDA int  NOT NULL ,
+	GRADO_GRAVAMEN_FIDEICOMETIDA int  NOT NULL ,
+	TIPO_PERSONA_ACREEDOR_FIDEICOMETIDA int  NOT NULL ,
+	ID_ACREEDOR_FIDEICOMETIDA varchar(30)  NOT NULL ,
+	MONTO_GRADO_GRAVAMEN_FIDEICOMETIDA decimal(22,2)  NOT NULL ,
+	TIPO_MONEDA_MONTO_GRADO_GRAVAMEN_FIDEICOMETIDO int  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre los gravamenes de las operaciones fideicometidas que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el identificador de la operación crediticia o de la línea de crédito.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la garantía que se asignó a la garantía según su tipo.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_DOCUMENTO_LEGAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de las garantías que están contenidas en un fideicomiso y que cubren la operación.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'ID_GARANTIA_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_MITIGADOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_DOCUMENTO_LEGAL_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el detalle de los gravámenes anteriores que tiene el bien fideicometido que respalda la operación de crédito otorgada por la entidad financiera.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'GRADO_GRAVAMEN_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona de la identificación del acreedor.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_PERSONA_ACREEDOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de los acreedores que obstenten grados de mayor prelación del bien fideicometido que es garantía de la operación crediticia.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'ID_ACREEDOR_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por la cual está respondiendo el grado de mayor prelación.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'MONTO_GRADO_GRAVAMEN_FIDEICOMETIDA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de moneda en la cual se constituyó la moneda original del gravamen fideicometido.', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'TIPO_MONEDA_MONTO_GRADO_GRAVAMEN_FIDEICOMETIDO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_GAROPER_FIDO_GRAVAMEN', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER_GRAVAMEN
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR       int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_TIPO_MITIGADOR
+		 DEFAULT  -1,
+	TIPO_DOCUMENTO_LEGAL int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_TIPO_DOCUMENTO_LEGAL
+		 DEFAULT  -1,
+	GRADO_GRAVAMENES     int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_GRADO_GRAVAMENES
+		 DEFAULT  -1,
+	TIPO_PERSONA_ACREEDOR int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_TIPO_PERSONA_ACREEDOR
+		 DEFAULT  2,
+	ID_ACREEDOR          varchar(30)  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_ID_ACREEDOR
+		 DEFAULT  '4000000019',
+	MONTO_GRADO_GRAVAMEN decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_MONTO_GRADO_GRAVAMEN
+		 DEFAULT  0,
+	TIPO_MONEDA_MONTO_GRADO_GRAVAMEN int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_TIPO_MONEDA_GRADO_GRAVAMEN
+		 DEFAULT  1,
+	CODIGO_EMPRESA       int  NULL 
+	CONSTRAINT DF_SICAD_GAROPER_GRAVAMEN_CODIGO_EMPRESA
+		 DEFAULT  1
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre los gravamenes de las operaciones que poseen relacionadas garantías reales y que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la operación crediticia o de la línea de crédito.
+Se aplicará el siguiente formato:
+
+Para operaciones: cod_oficina +
+cod_moneda +
+cod_producto +
+operación
+
+Para contratos: cod_oficina +
+cod_moneda +
+operación',
+'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la garantía, a saber: La identificación del bien.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'TIPO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'TIPO_DOCUMENTO_LEGAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del gravamen de cada garantía real.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'GRADO_GRAVAMENES'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona del Acreedor. Por defecto este valor será 2.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'TIPO_PERSONA_ACREEDOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del Acreedor. Por defecto este valor será 40000000019.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'ID_ACREEDOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por la cual está respondiendo el grado de mayor prelación. El valor será el correspondiente al monto total del avalúo.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'MONTO_GRADO_GRAVAMEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de moneda en la cual se constituyó la moneda original del gravamen. Por defecto el valor será 1.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'TIPO_MONEDA_MONTO_GRADO_GRAVAMEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar). Se asigna el valor 1 por defecto.', 'user', 'dbo', 'table', 'SICAD_GAROPER_GRAVAMEN', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER_LISTA
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	TIPO_GARANTIA        int  NOT NULL ,
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR       int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_TIPO_MITIGADOR
+		 DEFAULT  -1,
+	TIPO_DOCUMENTO_LEGAL int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_TIPO_DOCUMENTO_LEGAL
+		 DEFAULT  -1,
+	MONTO_MITIGADOR      decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_MONTO_MITIGADOR
+		 DEFAULT  0,
+	INDICADOR_INSCRIPCION_GARANTIA int  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_INDICADOR_INSCRIPCION_GARANTIA
+		 DEFAULT  -1,
+	FECHA_PRESENTACION_REGISTRO_GARANTIA date  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_FECHA_PRESENTACION_REGISTRO_GARANTIA
+		 DEFAULT  '19000101',
+	PORCENTAJE_RESPONSABILIDAD_GARANTIA decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_PORCENTAJE_RESPONSABILIDAD_GARANTIA
+		 DEFAULT  0,
+	VALOR_NOMINAL_GARANTIA decimal(20)  NOT NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_VALOR_NOMINAL_GARANTIA
+		 DEFAULT  0,
+	TIPO_MONEDA_VALOR_NOMINAL_GARANTIA int  NULL ,
+	PORCENTAJE_ACEPTACION decimal(5,2)  NOT NULL ,
+	FECHA_CONSTITUCION_GARANTIA date  NULL ,
+	FECHA_VENCIMIENTO_GARANTIA date  NULL ,
+	CODIGO_EMPRESA       int  NULL 
+	CONSTRAINT DF_SICAD_GAROPER_LISTA_CODIGO_EMPRESA
+		 DEFAULT  1
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la operación crediticia o de la línea de crédito.
+Se aplicará el siguiente formato:
+
+Para operaciones: cod_oficina +
+cod_moneda +
+cod_producto +
+operación
+
+Para contratos: cod_oficina +
+cod_moneda +
+operación',
+'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de garantía que garantiza la operación.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'TIPO_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la garantía, según su tipo:
+
+Tipo Fiduciaria: Será la identificación del fiador.
+
+Tipo Real: Será la identificación del bien.
+
+Tipo Valor: Será el código ISIN asignado al instrumento.',
+'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'TIPO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'TIPO_DOCUMENTO_LEGAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por el cual se ha aceptado la garantía como mitigador de riesgo', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'MONTO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del indicador de inscripción o anotación del bien a favor de la entidad financiera en el Registro Público.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'INDICADOR_INSCRIPCION_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de presentación de los documentos de la garantía ante el Registro Público para que se proceda a su inscripción, o bien, corresponde a la fecha en que se inscribió el bien.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'FECHA_PRESENTACION_REGISTRO_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el porcentaje de responsabilidad asignado por la entidad a la garantía para efectos de mitigador de riesgo (garantías que respaldan más de una operación, créditos sindicados).', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'PORCENTAJE_RESPONSABILIDAD_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto del valor nominal por la cual se acepta la garantía.
+
+Así, según el tipo de garantía:
+
+Fiduciarias: Corresponde al salario neto del fiador.
+
+Reales: Corresponde al monto del avalúo total del bien.
+
+Valor: Corresponde al monto del valor nominal del instrumento.', 
+'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de moneda del valor nominal indicado en el documento legal de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'TIPO_MONEDA_VALOR_NOMINAL_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el porcentaje de aceptación registrado para la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'PORCENTAJE_ACEPTACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'FECHA_CONSTITUCION_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'FECHA_VENCIMIENTO_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_GAROPER_PRIORIDAD
+( 
+	ID_OPERACION         varchar(25)  NOT NULL ,
+	ID_GARANTIA          varchar(25)  NOT NULL ,
+	TIPO_MITIGADOR       int  NOT NULL ,
+	TIPO_DOCUMENTO_LEGAL int  NOT NULL ,
+	GRADO_PRIORIDADES    int  NOT NULL ,
+	TIPO_PERSONA_BENEFICIARIO int  NOT NULL ,
+	ID_BENEFICIARIO      varchar(30)  NOT NULL ,
+	MONTO_PRIORIDADES    decimal(22,2)  NOT NULL ,
+	CODIGO_EMPRESA       int  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías relacionadas a operaciones que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER_LISTA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las prioridades de las operaciones que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el identificador de la operación crediticia o de la línea de crédito.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'ID_OPERACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la garantía que se asignó a la garantía según su tipo.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'ID_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo del mitigador del riesgo de la garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'TIPO_MITIGADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de documento legal.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'TIPO_DOCUMENTO_LEGAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el detalle de las prioridades de mayor prelación que tiene el fideicomiso que respalda la operación de crédito otorgada por la entidad financiera.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'GRADO_PRIORIDADES'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de tipo de persona de la identificación dle beneficiario.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'TIPO_PERSONA_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificaicón del beneficiario que obstente un grado de mayor prelación del fideicomiso de garantía.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'ID_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto por la cual está respondiendo las prioridades anteriores.', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'MONTO_PRIORIDADES'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar).', 'user', 'dbo', 'table', 'SICAD_GAROPER_PRIORIDAD', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_REALES
+( 
+	ID_GARANTIA_REAL     varchar(25)  NOT NULL,	
+	TIPO_BIEN_GARANTIA_REAL int  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_TIPO_BIEN_GARANTIA_REAL
+		 DEFAULT  1,
+	ID_BIEN              varchar(25)  NOT NULL ,
+	MONTO_ULTIMA_TASACION_TERRENO decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_MUTT
+		 DEFAULT  0,
+	MONTO_ULTIMA_TASACION_NO_TERRENO decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_MUTNT
+		 DEFAULT  0,
+	FECHA_ULTIMA_TASACION_GARANTIA date  NOT NULL ,
+	MONTO_TASACION_ACTUALIZADA_TERRENO decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_MTAT
+		 DEFAULT  0,
+	MONTO_TASACION_ACTUALIZADA_NO_TERRENO decimal(22,2)  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_MTANT
+		 DEFAULT  0,
+	FECHA_ULTIMO_SEGUIMIENTO_GARANTIA date  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_FECHA_ULTIMO_SEGUIMIENTO
+		 DEFAULT  '19000101',
+	FECHA_CONSTRUCCION   date  NULL ,
+	TIPO_PERSONA_TASADOR int  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_TIPO_PERSONA_TASADOR
+		 DEFAULT  -1,
+	ID_TASADOR           varchar(30)  NOT NULL 
+	CONSTRAINT DF_SICAD_REALES_ID_TASADOR
+		 DEFAULT  '-1',
+	TIPO_PERSONA_EMPRESA_TASADORA int  NULL ,
+	ID_EMPRESA_TASADORA  varchar(30)  NULL ,
+	CODIGO_EMPRESA       int  NULL 
+	CONSTRAINT DF_SICAD_REALES_CODIGO_EMPRESA
+		 DEFAULT  1
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías reales que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_REALES'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del bien.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'ID_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de bien. En caso de que no exista se asignará el código 1.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'TIPO_BIEN_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del bien.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'ID_BIEN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la última tasación del terreno. En caso de no existir se asignará el valor 0 (cero).', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'MONTO_ULTIMA_TASACION_TERRENO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la última tasación del no terreno. En caso de no existir se asignará el valor 0 (cero).', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'MONTO_ULTIMA_TASACION_NO_TERRENO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de valuación. En caso de no existir se asignará el valor 01/01/1900.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'FECHA_ULTIMA_TASACION_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la tasación actualizada del terreno. En caso de no existir se asignará el valor 0 (cero).', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'MONTO_TASACION_ACTUALIZADA_TERRENO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la tasación actualizada del no terreno. En caso de no existir se asignará el valor 0 (cero).', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'MONTO_TASACION_ACTUALIZADA_NO_TERRENO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de úlitmo seguimiento. En caso de no existir se asignará el valor 01/01/1900.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'FECHA_ULTIMO_SEGUIMIENTO_GARANTIA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de construcción.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'FECHA_CONSTRUCCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de persona del tasador. En caso de no existir se asignará el código -1.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'TIPO_PERSONA_TASADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del tasador. En caso de no existir se asignará el valor ''-1''.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'ID_TASADOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de persona de la empresa tasadora.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'TIPO_PERSONA_EMPRESA_TASADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la empresa tasadora.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'ID_EMPRESA_TASADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar). Se asigna el valor 1 por defecto.', 'user', 'dbo', 'table', 'SICAD_REALES', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+
+CREATE TABLE dbo.SICAD_REALES_POLIZA
+( 
+	ID_GARANTIA_REAL     varchar(25)  NOT NULL ,
+	TIPO_POLIZA_GARANTIA_REAL int  NOT NULL ,
+	MONTO_POLIZA_GARANTIA_REAL decimal(22,2)  NULL ,
+	FECHA_VENCIMIENTO_POLIZA_GARANTIA_REAL date  NULL ,
+	IND_COBERTURA_POLIZA varchar(1)  NULL 
+	CONSTRAINT DF_SICAD_REALES_POLIZAS_IND_COBERTURA_POLIZA
+		 DEFAULT  'N',
+	TIPO_PERSONA_BENEFICIARIO int  NULL 
+	CONSTRAINT DF_SICAD_REALES_POLIZA_TIPO_PERSONA_BENEFICIARIO
+		 DEFAULT  2,
+	ID_BENEFICIARIO      varchar(30)  NULL 
+	CONSTRAINT DF_SICAD_REALES_POLIZA_ID_BENEFICIARIO
+		 DEFAULT  '4000000019',
+	CODIGO_EMPRESA       int  NULL 
+	CONSTRAINT DF_SICAD_REALES_POLIZA_CODIGO_EMPRESA
+		 DEFAULT  1
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las pólizas de las garantías reales que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA' 
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del bien.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'ID_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de póliza SUGEF.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'TIPO_POLIZA_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto de la póliza.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'MONTO_POLIZA_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento de la póliza.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'FECHA_VENCIMIENTO_POLIZA_GARANTIA_REAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el indicador sobre si la póliza posee asignadas todas las coberturas obligatorias. En caso de que no posea coberturas obligatorias se asignará el valor ''N''. Los valores son:
+
+''S'' = Posee todas las coberturas obligatorias asignadas.
+
+''N'' = No posee todas las coberturas obligatorias asignadas.',
+'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'IND_COBERTURA_POLIZA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de persona beneficiaria de la póliza. El valor por defecto será 2, esto porque esta información no existe dentro del sistema.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'TIPO_PERSONA_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación de la persona beneficiaria de la póliza. El valor por defecto será ''4000000019'', esto porque esta información no existe dentro del sistema.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'ID_BENEFICIARIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código numérico con el que se identifica la empresa, o bien, el tipo de corte al que corresponde el registro (llámese mensual, preliminar). Se asigna el valor 1 por defecto.', 'user', 'dbo', 'table', 'SICAD_REALES_POLIZA', 'column', 'CODIGO_EMPRESA'
+GO
+
+
+
+CREATE TABLE dbo.SICAD_VALORES
+( 
+	ID_GARANTIA_VALOR    varchar(25)  NOT NULL ,
+	CLASIFICACION_INSTRUMENTO int  NOT NULL ,
+	TIPO_PERSONA         int  NULL ,
+	ID_EMISOR            varchar(30)  NULL ,
+	ID_INSTRUMENTO       varchar(25)  NOT NULL ,
+	SERIE_INSTRUMENTO    varchar(20)  NULL ,
+	PREMIO               decimal(5,2)  NULL ,
+	COD_ISIN             varchar(25)  NOT NULL ,
+	TIPO_ASIGNACION_CALIFICACION int  NOT NULL 
+	CONSTRAINT DF_SACAD_VALORES_TIPO_ASIGNACION_CALIFICACION
+		 DEFAULT  0,
+	CATEGORIA_CALIFICACION int  NULL ,
+	CALIFICACION_RIESGO  varchar(30)  NULL ,
+	CODIGO_EMPRESA_CALIFICADORA int  NULL ,
+	VALOR_FACIAL         decimal(22,2)  NULL ,
+	TIPO_MONEDA_VALOR_FACIAL int  NULL ,
+	VALOR_MERCADO        decimal(22,2)  NOT NULL ,
+	TIPO_MONEDA_VALOR_MERCADO int  NULL ,
+	FECHA_CONSTITUCION   date  NOT NULL ,
+	FECHA_VENCIMIENTO    date  NULL 
+)
+ON "PRIMARY"
+GO
+
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Esta tabla almacena la información sobre las garantías de valor que requiere SICAD.', 'user', 'dbo', 'table', 'SICAD_VALORES'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código ISIN asignado al instrumento.
+
+Este valor no podrá ser igual a "NO".', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'ID_GARANTIA_VALOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la clasificación del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'CLASIFICACION_INSTRUMENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código del tipo de persona del emisor del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'TIPO_PERSONA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la identificación del emisor del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'ID_EMISOR'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la descripción del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'ID_INSTRUMENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la serie del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'SERIE_INSTRUMENTO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará porcentaje del premio asignado al  instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'PREMIO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará código ISIN del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'COD_ISIN'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de asignación de la calificación. Por defecto el valor es 0 (cero), pues este dato no se maneja en el sistema.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'TIPO_ASIGNACION_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la categoría de la calificación. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'CATEGORIA_CALIFICACION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la calificación de riesgo. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'CALIFICACION_RIESGO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de la empresa calificadora. Este dato no existe en el sistema.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'CODIGO_EMPRESA_CALIFICADORA'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto del valor facial del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'VALOR_FACIAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de moneda del valor facial del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'TIPO_MONEDA_VALOR_FACIAL'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el monto del valor mercado del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'VALOR_MERCADO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el tipo de moneda del valor facial del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'TIPO_MONEDA_VALOR_MERCADO'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de constitución del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'FECHA_CONSTITUCION'
+GO
+
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará la fecha de vencimiento del instrumento.', 'user', 'dbo', 'table', 'SICAD_VALORES', 'column', 'FECHA_VENCIMIENTO'
+GO
+
+
