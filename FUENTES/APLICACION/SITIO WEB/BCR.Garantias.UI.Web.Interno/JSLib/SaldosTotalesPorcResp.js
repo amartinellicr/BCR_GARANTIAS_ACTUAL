@@ -995,15 +995,16 @@ function DesplegarAjustes(consecutivoOperacion, consecutivoGarantia) {
 
         for (var i = 0; i < $arregloOperaciones.length; i++) {
 
-            var saldoActualMostrar = (($arregloOperaciones[i].SaldoActualAjustado > 0) ? $arregloOperaciones[i].SaldoActualAjustado : (($arregloOperaciones[i].SaldoActual > 0) ? $arregloOperaciones[i].SaldoActual : '0.00'));
-            var porcentajeMostrar = (($arregloOperaciones[i].PorcentajeResponsabilidadAjustado >= 0) ? $arregloOperaciones[i].PorcentajeResponsabilidadAjustado : '0.00');
-            indiceSeleciconado = i;
+             indiceSeleciconado = i;
 
             if (($arregloOperaciones[i].NumeroRegistro === 1) && ($arregloOperaciones[i].ConsecutivoOperacion == consecutivoOperacion) && ($arregloOperaciones[i].ConsecutivoGarantia == consecutivoGarantia)) {
 
+                var saldoActualMostrar = (($arregloOperaciones[i].SaldoActualAjustado > 0) ? $arregloOperaciones[i].SaldoActualAjustado : (($arregloOperaciones[i].SaldoActual > 0) ? $arregloOperaciones[i].SaldoActual : '0.00'));
+                var porcentajeMostrar = (($arregloOperaciones[i].PorcentajeResponsabilidadAjustado >= 0) ? $arregloOperaciones[i].PorcentajeResponsabilidadAjustado : '0.00');
+
                 $RegistroExcluido = $arregloOperaciones[i].IndicadorExcluido;
 
-                $registroSeleccionado = new RegistroSeleccionado(consecutivoOperacion, consecutivoGarantia, $arregloOperaciones[i].CodigoTipoGarantia, saldoActualMostrar, $arregloOperaciones[i].SaldoActual, porcentajeMostrar, indiceSeleciconado);
+                $registroSeleccionado = new RegistroSeleccionado(consecutivoOperacion, consecutivoGarantia, $arregloOperaciones[i].CodigoTipoGarantia, saldoActualMostrar, $arregloOperaciones[i].SaldoActual, porcentajeMostrar, indiceSeleciconado, saldoActualMostrar);
 
                 $$('lblNumeroOperacion').text($arregloOperaciones[i].OperacionLarga);
                 $$('txtSaldoAjustado').val(saldoActualMostrar);
@@ -1105,7 +1106,6 @@ function ObtenerRegistroValido(indiceInicial, esSiguiente) {
     return indiceRetorno;
 }
 
-
 function RegistroSiguiente() {
 
     $$('lblMensaje').text('');
@@ -1116,6 +1116,11 @@ function RegistroSiguiente() {
         var tamanoArreglo = $arregloOperaciones.length - 1;
         
         if (indiceSiguiente >= 0) {
+
+            if ($CambioManual) {
+                ActualizaValoresAjustados();
+                ActualizarGrid();
+            }
 
             if ((indiceSiguiente == tamanoArreglo) && ($arregloOperaciones[indiceSiguiente].NumeroRegistro === 1)) {
                 DesplegarAjustes($arregloOperaciones[indiceSiguiente].ConsecutivoOperacion, $arregloOperaciones[indiceSiguiente].ConsecutivoGarantia);
@@ -1144,6 +1149,11 @@ function RegistroAnterior() {
         var indiceAnterior = ObtenerRegistroValido($registroSeleccionado.IndiceRegistro, false);
 
         if (indiceAnterior >= 0) {
+            
+            if ($CambioManual) {
+                ActualizaValoresAjustados();
+                ActualizarGrid();
+            }
 
             if ((indiceAnterior >= 0) && ($arregloOperaciones[indiceAnterior].NumeroRegistro === 1)) {
                 DesplegarAjustes($arregloOperaciones[indiceAnterior].ConsecutivoOperacion, $arregloOperaciones[indiceAnterior].ConsecutivoGarantia);
@@ -1295,8 +1305,16 @@ function ManipularRegistro(accionRealizar) {
 
     $$('lblMensaje').text('');
     var mensajeExitoso = '';
+
     --$cuentaMensajes;
-        
+
+    if ((accionRealizar != 3) && ($CambioManual)) {
+        ValidarSumatoriPorcentajes();
+    }
+    else {
+        $SumatoriaValida = true;
+    }
+
     AsignarSumatoriaValida((($CambioManual) ? $SumatoriaValida : true));
 
     if (!$SumatoriaValida) {
@@ -1320,14 +1338,15 @@ function ManipularRegistro(accionRealizar) {
 
         $MensajeSumatoriaPorcentajeInvalida.dialog("open");
     }
-    else  if (($SumatoriaValida) && ($cuentaMensajes === 0)) {
+    else if (($SumatoriaValida) && ($cuentaMensajes === 0)) {
         var pageUrl = 'frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx';
         var metodoEjecutar = '';
         var saldoActualRegistrado = $$('txtSaldoAjustado').val();
         var porcentajeRespRegistrado = $$('txtPorcentajeResponsabilidad').val();
         var descripcionAccion = '';
         var datoListaOperaciones = (($arregloOperaciones.length > 0) ? ConvertirArregloOperacionesJson() : '');
-        var ajusteManual = (((typeof ($CambioManual) !== 'undefined') && ($CambioManual)) ? '1' : '0')
+        var ajusteManual = (((typeof ($CambioManual) !== 'undefined') && ($CambioManual)) ? '1' : '0');
+        var datosEnviar = '';
 
         if ($registroSeleccionado != null) {
 
@@ -1336,21 +1355,37 @@ function ManipularRegistro(accionRealizar) {
                     descripcionAccion = 'Insertando';
                     metodoEjecutar = pageUrl + "/InsertarRegistro";
                     mensajeExitoso = 'La información se incluyó satisfactoriamente.';
+                    datosEnviar = "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}";
                     break;
                 case 2:
                     descripcionAccion = 'Modificando';
                     metodoEjecutar = pageUrl + "/ModificarRegistro";
                     mensajeExitoso = 'La información se modificó satisfactoriamente.';
+
+                    if ($CambioManual) {
+                        metodoEjecutar = pageUrl + "/ModificarRegistroManual";
+
+                        datosEnviar = "{'arregloElementos':'" + datoListaOperaciones + "'}";
+                    }
+                    else {
+                        ajusteManual = '0';
+                        datosEnviar = "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}";
+                    }
+
                     break;
                 case 3:
                     descripcionAccion = 'Eliminando';
                     metodoEjecutar = pageUrl + "/EliminarRegistro";
                     mensajeExitoso = 'La información se eliminó satisfactoriamente.';
+                    datosEnviar = "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}";
                     break;
                 default:
                     break;
             }
+
             
+
+
 
             $.blockUI({
                 message: null,
@@ -1359,10 +1394,12 @@ function ManipularRegistro(accionRealizar) {
                         type: "POST",
                         async: false,
                         url: metodoEjecutar,
-                        data: "{'consecutivoOperacion':'" + $registroSeleccionado.ConsecutivoOperacion + "', 'consecutivoGarantia':'" + $registroSeleccionado.ConsecutivoGarantia + "', 'tipoGarantia':'" + $registroSeleccionado.CodigoTipoGarantia + "', 'saldoActualAjustado':'" + saldoActualRegistrado + "', 'porcentajeRespAjustado':'" + porcentajeRespRegistrado + "', 'arregloElementos':'" + datoListaOperaciones + "', 'cambioManual':'" + ajusteManual + "'}",
+                        data: datosEnviar,
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
+
+                            $CambioManual = false;
 
                             if (response.length > 0) {
 
@@ -1422,6 +1459,65 @@ function ValidarPorcentajeResponsabilidad() {
     }
 }
 
+function ActualizaValoresAjustados()
+{
+    if ($registroSeleccionado != null) {
+
+        var datoSaldoIngresado = (($$('txtSaldoAjustado').val().length > 0) ? $$('txtSaldoAjustado').val() : '0').replace(/[^0-9-.]/g, '');
+        var saldoAjustado = parseFloat(datoSaldoIngresado);
+               
+        var datoPorcentajeResp = (($$('txtPorcentajeResponsabilidad').val().length > 0) ? $$('txtPorcentajeResponsabilidad').val() : '0');
+        var porcentajeResponsabilidad = parseFloat(datoPorcentajeResp);
+
+        $registroSeleccionado.SaldoActualAjustado = saldoAjustado;
+        $registroSeleccionado.PorcentajeResponsabilidadAjustado = datoPorcentajeResp;
+
+        if ($arregloOperaciones.length > 0) {
+
+            for (var i = 0; i < $arregloOperaciones.length; i++) {
+
+                if (($registroSeleccionado.ConsecutivoOperacion == $arregloOperaciones[i].ConsecutivoOperacion) &&
+                    ($registroSeleccionado.ConsecutivoGarantia == $arregloOperaciones[i].ConsecutivoGarantia) &&
+                    ($registroSeleccionado.CodigoTipoGarantia == $arregloOperaciones[i].CodigoTipoGarantia)) {
+
+                    $arregloOperaciones[i].IndicadorAjusteCampoSaldo = (($arregloOperaciones[i].SaldoActualAjustado != $registroSeleccionado.SaldoActualAjustado) ? true : false);
+                    $arregloOperaciones[i].IndicadorAjusteCampoPorcentaje = (($arregloOperaciones[i].PorcentajeResponsabilidadAjustado != $registroSeleccionado.PorcentajeResponsabilidadAjustado) ? true : false);
+
+                    $arregloOperaciones[i].SaldoActualAjustado = $registroSeleccionado.SaldoActualAjustado;
+                    $arregloOperaciones[i].PorcentajeResponsabilidadAjustado = $registroSeleccionado.PorcentajeResponsabilidadAjustado;
+                    //$arregloOperaciones[i].PorcentajeResponsabilidadCalculado = $registroSeleccionado.PorcentajeResponsabilidadAjustado;
+                    $arregloOperaciones[i].SaldoActualTexto = accounting.formatMoney($registroSeleccionado.SaldoActualAjustado, { symbol: "", thousand: ",", decimal: "." });
+                    $arregloOperaciones[i].PorcentajeResponsabilidadTexto = accounting.formatMoney($registroSeleccionado.PorcentajeResponsabilidadAjustado, { symbol: "", thousand: ",", decimal: "." });;
+                }
+            }
+        }
+    }
+}
+
+function ValidarSumatoriPorcentajes() {
+    if ($arregloOperaciones.length > 0) {
+
+        var sumatoriaPorcentaje = 0;
+
+        for (var i = 0; i < $arregloOperaciones.length; i++) {
+
+            if ($arregloOperaciones[i].NumeroRegistro === 1) {
+
+                sumatoriaPorcentaje += parseFloat((($arregloOperaciones[i].PorcentajeResponsabilidadAjustado > 0) ? $arregloOperaciones[i].PorcentajeResponsabilidadAjustado : $arregloOperaciones[i].PorcentajeResponsabilidadCalculado));
+            }
+        }
+
+        sumatoriaPorcentaje = accounting.toFixed(sumatoriaPorcentaje, 2);
+        
+        if (sumatoriaPorcentaje > 100) {
+            AsignarSumatoriaValida(false);
+        }
+        else {
+            AsignarSumatoriaValida(true);
+        }
+    }
+}
+
 function ValidarDatosAjustados(accion) {
 
     AsignarCambioManual(false);
@@ -1429,18 +1525,26 @@ function ValidarDatosAjustados(accion) {
     
     if ($registroSeleccionado != null) {
 
+        this.SaldoActualAjustado = saldoAjustado;
+        this.SaldoActual
+
         var datoSaldoIngresado = (($$('txtSaldoAjustado').val().length > 0) ? $$('txtSaldoAjustado').val() : '0').replace(/[^0-9-.]/g, '');
         var saldoAjustado = parseFloat(datoSaldoIngresado);
-        var diferenciaSaldo = (parseFloat(((saldoAjustado > $registroSeleccionado.SaldoActual) ? (saldoAjustado - $registroSeleccionado.SaldoActual) : ($registroSeleccionado.SaldoActual - saldoAjustado))).toFixed(2)).toString('N2');
+
+        var saldoMostrado = parseFloat($registroSeleccionado.SaldoMostrado);
+        var diferenciaSaldo = (parseFloat(((saldoAjustado > saldoMostrado) ? (saldoAjustado - saldoMostrado) : (saldoMostrado - saldoAjustado))).toFixed(2)).toString('N2');
 
         var datoPorcentajeResp = (($$('txtPorcentajeResponsabilidad').val().length > 0) ? $$('txtPorcentajeResponsabilidad').val() : '0');
         var porcentajeResponsabilidad = parseFloat(datoPorcentajeResp);
 
-        var porcentajeOriginal = parseFloat($registroSeleccionado.PorcentajeResponsabilidaAjustado);
+        var porcentajeOriginal = parseFloat($registroSeleccionado.PorcentajeResponsabilidadAjustado);
         var diferenciaPorcentaje = parseFloat(100 - porcentajeResponsabilidad);
         $cuentaMensajes = 0;
         $porcentajeCien = false;
         
+        if ($CambioManual) {
+            ActualizaValoresAjustados();
+        }
 
         if ($arregloOperaciones.length > 0) {
 
@@ -1448,13 +1552,16 @@ function ValidarDatosAjustados(accion) {
 
             for (var i = 0; i < $arregloOperaciones.length; i++) {
 
-                if (($registroSeleccionado.ConsecutivoOperacion == $arregloOperaciones[i].ConsecutivoOperacion) &&
-                    ($registroSeleccionado.ConsecutivoGarantia == $arregloOperaciones[i].ConsecutivoGarantia) &&
-                    ($registroSeleccionado.CodigoTipoGarantia == $arregloOperaciones[i].CodigoTipoGarantia)) {
-                    sumatoriaPorcentaje += porcentajeResponsabilidad;
-                }
-                else {
-                    sumatoriaPorcentaje += parseFloat((($arregloOperaciones[i].PorcentajeResponsabilidadAjustado > 0) ? $arregloOperaciones[i].PorcentajeResponsabilidadAjustado : $arregloOperaciones[i].PorcentajeResponsabilidadCalculado));
+                if ($arregloOperaciones[i].NumeroRegistro === 1) {
+
+                    if (($registroSeleccionado.ConsecutivoOperacion == $arregloOperaciones[i].ConsecutivoOperacion) &&
+                        ($registroSeleccionado.ConsecutivoGarantia == $arregloOperaciones[i].ConsecutivoGarantia) &&
+                        ($registroSeleccionado.CodigoTipoGarantia == $arregloOperaciones[i].CodigoTipoGarantia)) {
+                        sumatoriaPorcentaje += porcentajeResponsabilidad;
+                    }
+                    else {
+                        sumatoriaPorcentaje += parseFloat((($arregloOperaciones[i].PorcentajeResponsabilidadAjustado > 0) ? $arregloOperaciones[i].PorcentajeResponsabilidadAjustado : $arregloOperaciones[i].PorcentajeResponsabilidadCalculado));
+                    }
                 }
             }
 
@@ -1556,12 +1663,13 @@ function ValidarDatosAjustados(accion) {
                         buttons: {
                             "Aceptar": function () {
                                 $(this).dialog("close");
+                                AsignarCambioManual(false);
                                 ManipularRegistro(accion);
                             },
                             "Cambio Manual": function () {
                                 $(this).dialog("close");
                                 AsignarCambioManual(true);
-                                ManipularRegistro(accion);
+                                //ManipularRegistro(accion);
                             }
                         }/*,
                         close: function () { ManipularRegistro(accion); }*/
@@ -1577,7 +1685,7 @@ function ValidarDatosAjustados(accion) {
 }
 
 function AsignarCambioManual(valor) {
-    $CambioManual = valor;
+    $CambioManual = (((typeof ($CambioManual) !== 'undefined') && ($CambioManual)) ? $CambioManual : valor);
 }
 
 function AsignarSumatoriaValida(valor) {
@@ -2093,22 +2201,21 @@ function ConsultarGarantiaValor(numeroSeguridad, claseGarantia) {
 }
 
 
-
-
 /********************************************************************************************************************************************************************************************************************
 
 CLASES
 
 ********************************************************************************************************************************************************************************************************************/
 
-function RegistroSeleccionado(consecutivoOperacion, consecutivoGarantia, tipoGarantia, saldoAjustado, saldoActual, porcentajeAjustado, indiceRegistro) {
+function RegistroSeleccionado(consecutivoOperacion, consecutivoGarantia, tipoGarantia, saldoAjustado, saldoActual, porcentajeAjustado, indiceRegistro, saldoMostrado) {
     this.ConsecutivoOperacion = consecutivoOperacion;
     this.ConsecutivoGarantia = consecutivoGarantia;
     this.CodigoTipoGarantia = tipoGarantia;
     this.SaldoActualAjustado = saldoAjustado;
     this.SaldoActual = saldoActual;
-    this.PorcentajeResponsabilidaAjustado = porcentajeAjustado;
+    this.PorcentajeResponsabilidadAjustado = porcentajeAjustado;
     this.IndiceRegistro = indiceRegistro;
+    this.SaldoMostrado = saldoMostrado;
 }
 
 

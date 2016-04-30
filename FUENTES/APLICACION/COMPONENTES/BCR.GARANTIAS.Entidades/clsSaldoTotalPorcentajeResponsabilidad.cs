@@ -65,10 +65,16 @@ namespace BCR.GARANTIAS.Entidades
         public int CodigoError { get; set; }
         public string DescripcionError { get; set; }
 
-        public string SaldoActualTexto { get { return SaldoActual.ToString("N2"); } }
+        public string SaldoActualTexto
+        {
+            get
+            {
+                return ((IndicadorExcluido) ? ((SaldoActual >= 0) ? SaldoActual.ToString("N2") : "0.00") : ((SaldoActualAjustado >= 0) ? SaldoActualAjustado.ToString("N2") : ((SaldoActual >= 0) ? SaldoActual.ToString("N2") : "0.00")));
+            }
+        }
         public string PorcentajeResponsabilidadTexto {
             get {
-                return ((PorcentajeResponsabilidadAjustado >= 0) ? PorcentajeResponsabilidadAjustado.ToString("N2") : ((PorcentajeResponsabilidadCalculado >= 0) ? PorcentajeResponsabilidadCalculado.ToString("N2") : "0.00"));
+                return ((IndicadorExcluido) ? "0.00" : ((PorcentajeResponsabilidadAjustado >= 0) ? PorcentajeResponsabilidadAjustado.ToString("N2") : ((PorcentajeResponsabilidadCalculado >= 0) ? PorcentajeResponsabilidadCalculado.ToString("N2") : "0.00")));
             } 
         }
 

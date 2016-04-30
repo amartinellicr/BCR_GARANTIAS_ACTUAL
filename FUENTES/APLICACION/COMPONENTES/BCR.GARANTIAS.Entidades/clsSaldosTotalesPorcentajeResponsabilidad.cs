@@ -205,6 +205,9 @@ namespace BCR.GARANTIAS.Entidades
             decimal SaldoRegistroAjustado = 0;
             decimal porcentajeRegistroAjustado = 0;
             decimal porcentajePorDistribuir = 0;
+            decimal porcentajeAcumulado = 0;
+            int cantidadRegistrosCalculo = 0;
+            int contadorRegistro = 0;
 
             try
             {
@@ -217,12 +220,13 @@ namespace BCR.GARANTIAS.Entidades
                         {
                             SaldoRegistroAjustado += registroAjustado.SaldoActualAjustado;
                             porcentajeRegistroAjustado += registroAjustado.PorcentajeResponsabilidadAjustado;
+                           // porcentajeAcumulado = porcentajeRegistroAjustado;
                         }
                     }
 
                     //Se calcula el porcentaje que resta por distribuir
                     porcentajePorDistribuir = 100 - porcentajeRegistroAjustado;
-
+                    porcentajeAcumulado = porcentajePorDistribuir;
 
                     //Se obteiene el saldo parcial
                     foreach (clsSaldoTotalPorcentajeResponsabilidad registroActual in InnerList)
@@ -230,6 +234,7 @@ namespace BCR.GARANTIAS.Entidades
                         if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje) && (registroActual.NumeroRegistro == 1))
                         {
                             saldoParcial += ((registroActual.SaldoActualAjustado <= 0) ? registroActual.SaldoActual : registroActual.SaldoActualAjustado);
+                            cantidadRegistrosCalculo++;
                         }
                     }
 
@@ -238,8 +243,19 @@ namespace BCR.GARANTIAS.Entidades
                     {
                         if ((!registroActual.IndicadorExcluido) && (!registroActual.IndicadorAjusteCampoSaldo) && (!registroActual.IndicadorAjusteCampoPorcentaje) && (registroActual.NumeroRegistro == 1))
                         {
-                            registroActual.PorcentajeResponsabilidadCalculado = (((registroActual.SaldoActual / saldoParcial) * porcentajePorDistribuir)); // / 100);
-                            registroActual.PorcentajeResponsabilidadAjustado = registroActual.PorcentajeResponsabilidadCalculado;
+                            contadorRegistro += 1;
+
+                            if (contadorRegistro == cantidadRegistrosCalculo)
+                            {
+                                registroActual.PorcentajeResponsabilidadCalculado = porcentajeAcumulado;//Convert.ToDecimal((100 - porcentajeAcumulado)); //UtilitariosComun.Round((Convert.ToDecimal((100 - porcentajeAcumulado))), 2); 
+                                registroActual.PorcentajeResponsabilidadAjustado = porcentajeAcumulado; //registroActual.PorcentajeResponsabilidadCalculado;
+                            }
+                            else {
+                                decimal porCalc = Convert.ToDecimal(((registroActual.SaldoActual / saldoParcial) * porcentajePorDistribuir));
+                                registroActual.PorcentajeResponsabilidadCalculado = Decimal.Round(porCalc, 2, MidpointRounding.ToEven);//Convert.ToDecimal(((registroActual.SaldoActual / saldoParcial) * porcentajePorDistribuir));
+                                registroActual.PorcentajeResponsabilidadAjustado = registroActual.PorcentajeResponsabilidadCalculado;
+                                porcentajeAcumulado -= registroActual.PorcentajeResponsabilidadCalculado;
+                            }
                         }
                     }
 

@@ -272,6 +272,16 @@ namespace BCR.GARANTIAS.Comun
             else
                 return string.Empty;
         }
-	}
+
+        public static decimal Round(decimal num, int decimales)
+
+        {
+
+            decimal multi = (decimal) Math.Pow(10, decimales);
+
+            return ((long)((num * multi) + 0.5m)) / multi;
+
+        }
+    }
 }
 
