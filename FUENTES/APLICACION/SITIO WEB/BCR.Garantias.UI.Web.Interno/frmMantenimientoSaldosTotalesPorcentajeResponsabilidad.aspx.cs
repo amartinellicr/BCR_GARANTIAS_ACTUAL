@@ -791,7 +791,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                     }
                 }
 
-                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosInsertar.IndicadorAjusteCampoSaldo))
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosInsertar.IndicadorAjusteCampoSaldo) || (porcentajeIngresado == 100))
                 {
                     if (!ajusteManual)
                     {
@@ -1098,7 +1098,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                     }
                 }
 
-                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosModificar.IndicadorAjusteCampoSaldo))
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosModificar.IndicadorAjusteCampoSaldo) || (porcentajeIngresado == 100))
                 {
                     if (!ajusteManual)
                     {
@@ -1283,8 +1283,8 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                         garantia.IndicadorAjusteCampoSaldo = (((saldoIngresado >= 0) && (saldoIngresado != garantia.SaldoActual)) ? true : false);
                         garantia.IndicadorAjusteCampoPorcentaje = (((porcentajeIngresado >= 0) && (porcentajeIngresado != garantia.PorcentajeResponsabilidadAjustado)) ? true : false);
                         garantia.SaldoActualAjustado = ((saldoIngresado >= 0) ? saldoIngresado : garantia.SaldoActual);
-                        garantia.PorcentajeResponsabilidadAjustado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
-                        garantia.PorcentajeResponsabilidadCalculado = ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
+                        garantia.PorcentajeResponsabilidadAjustado = 0; // ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadAjustado);
+                        garantia.PorcentajeResponsabilidadCalculado = 0; // ((porcentajeIngresado >= 0) ? porcentajeIngresado : garantia.PorcentajeResponsabilidadCalculado);
                         garantia.IndicadorExcluido = true;
 
                         datosEliminar = garantia;
@@ -1299,7 +1299,7 @@ public partial class frmMantenimientoSaldosTotalesPorcentajeResponsabilidad : BC
                     Gestor.EliminarSaldoTotalPr(datosEliminar, Global.UsuarioSistema, HttpContext.Current.Request.UserHostAddress);
                 }
 
-                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosEliminar.IndicadorAjusteCampoSaldo))
+                if (((porcentajePorDistribuir > limiteInferior) && (porcentajePorDistribuir < limiteSuperior)) || (datosEliminar.IndicadorAjusteCampoSaldo) || (porcentajeIngresado == 100))
                 {
                     if (!ajusteManual)
                     {
