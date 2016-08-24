@@ -6663,10 +6663,10 @@ namespace BCR.GARANTIAS.Entidades
                         existePolizaEliminada = true;
                     }
 
-
-                    if (((polizaSeleccionadaInicial == null) && (polizaSapAsociada != null)) ||
-                        ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
-                        && ((polizaSeleccionadaInicial.CodigoPolizaSap != polizaSapAsociada.CodigoPolizaSap))))
+                    if(polizaSapAsociada != null)
+                    //if (((polizaSeleccionadaInicial == null) && (polizaSapAsociada != null)) ||
+                    //    ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
+                    //    && ((polizaSeleccionadaInicial.CodigoPolizaSap != polizaSapAsociada.CodigoPolizaSap))))
                     {
                         existenCamposModificados = true;
                         polizaInsertada = true;
@@ -6725,12 +6725,12 @@ namespace BCR.GARANTIAS.Entidades
                         listaDatosInsertadosGarPoliza.Add(_fechaInserto, (string.Format("-|{0}", fechaInsercion.ToString("yyyyMMdd HH:mm:ss"))));
                         listaDatosInsertadosGarPoliza.Add(_usuarioInserto, (string.Format("-|{0}", idUsuario)));
                     }
-                    else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
-                            && ((polizaSeleccionadaInicial.CodigoPolizaSap == polizaSapAsociada.CodigoPolizaSap))
-                            && (polizaSeleccionadaInicial.MontoAcreenciaPolizaSap != polizaSapAsociada.MontoAcreenciaPolizaSap))
-                    {
-                        existenCamposModificados = true;
-                    }
+                    //else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
+                    //        && ((polizaSeleccionadaInicial.CodigoPolizaSap == polizaSapAsociada.CodigoPolizaSap))
+                    //        && (polizaSeleccionadaInicial.MontoAcreenciaPolizaSap != polizaSapAsociada.MontoAcreenciaPolizaSap))
+                    //{
+                    //    existenCamposModificados = true;
+                    //}
 
                     #endregion Datos Insertados
 
