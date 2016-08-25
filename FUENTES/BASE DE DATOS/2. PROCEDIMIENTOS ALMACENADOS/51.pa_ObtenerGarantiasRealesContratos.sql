@@ -365,7 +365,7 @@ BEGIN
 					WHEN GRC.cod_clase_garantia = 11 THEN GRC.Idendificacion_Alfanumerica_Bien
 					WHEN GRC.cod_clase_garantia = 38 THEN GRC.Idendificacion_Alfanumerica_Bien
 					WHEN GRC.cod_clase_garantia = 43 THEN GRC.Idendificacion_Alfanumerica_Bien
-					ELSE GRC.Identificacion_Bien
+					ELSE CONVERT(VARCHAR, GRC.Identificacion_Bien)
 				END	AS Identificacion_Bien,
 				GRC.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 				GRC.Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.

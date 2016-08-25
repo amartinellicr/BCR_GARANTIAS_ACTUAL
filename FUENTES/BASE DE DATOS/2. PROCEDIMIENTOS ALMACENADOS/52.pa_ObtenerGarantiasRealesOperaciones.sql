@@ -369,7 +369,7 @@ BEGIN
 					WHEN GRO.cod_clase_garantia = 11 THEN GRO.Idendificacion_Alfanumerica_Bien
 					WHEN GRO.cod_clase_garantia = 38 THEN GRO.Idendificacion_Alfanumerica_Bien
 					WHEN GRO.cod_clase_garantia = 43 THEN GRO.Idendificacion_Alfanumerica_Bien
-					ELSE GRO.Identificacion_Bien
+					ELSE CONVERT(VARCHAR, GRO.Identificacion_Bien)
 				END	AS Identificacion_Bien,
 				GRO.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 				GRO.Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.
