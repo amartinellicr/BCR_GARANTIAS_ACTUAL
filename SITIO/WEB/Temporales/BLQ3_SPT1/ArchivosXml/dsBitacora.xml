@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <Datos>
+    <cod_usuario>401640970</cod_usuario>
+    <cod_ip>127.0.0.1</cod_ip>
+    <cod_operacion>2</cod_operacion>
+    <des_tabla>GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION</des_tabla>
+    <des_campo_afectado>cod_generador_divisas</des_campo_afectado>
+    <est_anterior_campo_afectado>2</est_anterior_campo_afectado>
+    <est_actual_campo_afectado>1</est_actual_campo_afectado>
+    <cod_tipo_garantia>1</cod_tipo_garantia>
+    <cod_garantia>AA18378</cod_garantia>
+    <cod_operacion_crediticia>AA35297</cod_operacion_crediticia>
+    <fecha_corte>25/02/2008</fecha_corte>
+    <fecha_hora>2008-02-04T13:03:56-06:00</fecha_hora>
+    <des_operacion>MOD</des_operacion>
+  </Datos>
+  <Datos>
+    <cod_usuario>401640970</cod_usuario>
+    <cod_ip>127.0.0.1</cod_ip>
+    <cod_operacion>2</cod_operacion>
+    <des_tabla>GAR_PERITO</des_tabla>
+    <des_campo_afectado>cod_tipo_persona</des_campo_afectado>
+    <est_anterior_campo_afectado>2</est_anterior_campo_afectado>
+    <est_actual_campo_afectado>1</est_actual_campo_afectado>
+    <cod_tipo_garantia>1</cod_tipo_garantia>
+    <cod_garantia>VV18378</cod_garantia>
+    <cod_operacion_crediticia>VV35297</cod_operacion_crediticia>
+    <fecha_corte>25/02/2008</fecha_corte>
+    <fecha_hora>2008-02-05T13:03:56-06:00</fecha_hora>
+    <des_operacion>MOD</des_operacion>
+  </Datos>
+</NewDataSet>

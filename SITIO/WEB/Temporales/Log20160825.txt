@@ -1,0 +1,44 @@
+Archivo creado 25/08/2016 08:12:43 AM
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 08:12:43 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario tiene problemas al autenticar contra el AD.
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 09:03:59 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 11:00:05 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 11:00:09 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 11:00:11 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:25/08/2016 12:31:18 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar las garantías de la operación  '1-808-1-2-5954799'. Detalle: El procedimiento o la función 'pa_ObtenerGarantiasRealesOperaciones' esperaba el parámetro '@nContabilidad', que no se ha especificado.
+

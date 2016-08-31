@@ -340,7 +340,13 @@ CREATE TABLE dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
-	Fecha_Replica DATETIME NULL	  
+	Fecha_Replica DATETIME NULL,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION_PorcentajeAceptacion
+		 DEFAULT  -1,
+	Indicador_Porcentaje_Responsabilidad_Maximo bit  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION_Indicador_Porcentaje_Responsabilidad_Maximo
+		 DEFAULT  0	  
 )
  ON "PRIMARY"
 GO
@@ -356,6 +362,24 @@ GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION', 'column' , 'Fecha_Replica'
 GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador referente a si la garantía posee asignado el 100% del porcentaje de responsabilidad. Donde:
+
+0: El porcentaje de responsabilidad no es el           100%.
+1: El porcentaje de responsabilidad es el               100%.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Indicador_Porcentaje_Responsabilidad_Maximo'
+GO
+
 
 
 CREATE TABLE dbo.GAR_GARANTIAS_REALES_X_OPERACION
@@ -385,7 +409,13 @@ CREATE TABLE dbo.GAR_GARANTIAS_REALES_X_OPERACION
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
-	Fecha_Replica DATETIME NULL	  
+	Fecha_Replica DATETIME NULL,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_REALES_X_OPERACION_PorcentajeAceptacion
+		 DEFAULT  -1,
+	Indicador_Porcentaje_Responsabilidad_Maximo bit  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_REALES_X_OPERACION_Indicador_Porcentaje_Responsabilidad_Maximo
+		 DEFAULT  0	  
 )
  ON "PRIMARY"
 GO
@@ -403,6 +433,24 @@ EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que se insertó el regis
 GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_REALES_X_OPERACION', 'column' , 'Fecha_Replica'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_REALES_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador referente a si la garantía posee asignado el 100% del porcentaje de responsabilidad. Donde:
+
+0: El porcentaje de responsabilidad no es el           100%.
+
+1: El porcentaje de responsabilidad es el               100%.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_REALES_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Indicador_Porcentaje_Responsabilidad_Maximo'
 GO
 
 
@@ -428,7 +476,13 @@ CREATE TABLE dbo.GAR_GARANTIAS_VALOR_X_OPERACION
 	Usuario_Modifico VARCHAR(30) NULL,
 	Fecha_Modifico DATETIME NULL,
 	Fecha_Inserto DATETIME NULL,
-	Fecha_Replica DATETIME NULL	  
+	Fecha_Replica DATETIME NULL,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_VALOR_X_OPERACION_PorcentajeAceptacion
+		 DEFAULT  -1,
+	Indicador_Porcentaje_Responsabilidad_Maximo bit  NOT NULL 
+	CONSTRAINT DF_GAR_GARANTIAS_VALOR_X_OPERACION_Indicador_Porcentaje_Responsabilidad_Maximo
+		 DEFAULT  0	  
 )
  ON "PRIMARY"
 GO
@@ -444,6 +498,25 @@ GO
 
 EXEC sp_addextendedproperty 'MS_Description' , 'Fecha en que el registro fue ajustado por algún proceso de réplica.' , 'user' , 'dbo' , 'table' , 'GAR_GARANTIAS_VALOR_X_OPERACION', 'column' , 'Fecha_Replica'
 GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_VALOR_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador referente a si la garantía posee asignado el 100% del porcentaje de responsabilidad. Donde:
+
+0: El porcentaje de responsabilidad no es el           100%.
+
+1: El porcentaje de responsabilidad es el               100%.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GARANTIAS_VALOR_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Indicador_Porcentaje_Responsabilidad_Maximo'
+GO
+
 
 CREATE TABLE dbo.GAR_GARANTIAS_X_GIRO
 (
@@ -489,11 +562,20 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_FIDUCIARIAS
 	cedula_deudor         varchar(30)  NULL ,
 	nombre_deudor         varchar(50)  NULL ,
 	oficina_deudor        smallint  NULL ,
-	cod_estado_tarjeta    varchar(1)  NULL 
+	cod_estado_tarjeta    varchar(1)  NULL  ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GIROS_GARANTIAS_FIDUCIARIAS_PorcentajeAceptacion
+		 DEFAULT  -1
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GIROS_GARANTIAS_FIDUCIARIAS',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.GAR_GIROS_GARANTIAS_REALES
@@ -546,7 +628,10 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_REALES
 	Porcentaje_Aceptacion_Terreno  decimal(5,2) NULL,
 	Porcentaje_Aceptacion_No_Terreno  decimal(5,2) NULL,
 	Porcentaje_Aceptacion_Terreno_Calculado  decimal(5,2) NULL,
-	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2) NULL 
+	Porcentaje_Aceptacion_No_Terreno_Calculado  decimal(5,2) NULL  ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GIROS_GARANTIAS_REALES_PorcentajeAceptacion
+		 DEFAULT  -1
 )
  ON "PRIMARY"
 GO
@@ -578,6 +663,14 @@ EXEC sp_addextendedproperty
 'table', 'GAR_GIROS_GARANTIAS_REALES',
 'column', 'Porcentaje_Aceptacion_No_Terreno_Calculado'
 GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GIROS_GARANTIAS_REALES',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
+
 
 CREATE TABLE dbo.GAR_GIROS_GARANTIAS_VALOR
 (
@@ -616,11 +709,20 @@ CREATE TABLE dbo.GAR_GIROS_GARANTIAS_VALOR
 	cod_moneda_garantia   smallint  NULL ,
 	cedula_deudor         varchar(30)  NULL ,
 	nombre_deudor         varchar(50)  NULL ,
-	oficina_deudor        smallint  NULL 
+	oficina_deudor        smallint  NULL ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_GIROS_GARANTIAS_VALOR_PorcentajeAceptacion
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_GIROS_GARANTIAS_VALOR',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.GAR_MIG_DEUDORES
@@ -650,11 +752,20 @@ CREATE TABLE dbo.GAR_OPERACION
 	cod_estado            smallint  NOT NULL 
 	CONSTRAINT DF_GAR_OPERACION_cod_estado
 		 DEFAULT  1 ,
-	cod_oficon            smallint  NULL 
+	cod_oficon            smallint  NULL,
+	Cuenta_Contable		  smallint  NOT NULL 
+	CONSTRAINT  DF_GAR_OPERACION_Cuenta_Contable 
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+'MS_Description', 'Almacenará el código de cuenta mayor registrado en el SICC. En el caso de los contratos se asignará el valor -1 por defecto.',
+'user', 'dbo',
+'table', 'GAR_OPERACION',
+'column', 'Cuenta_Contable'
+GO
 
 
 CREATE TABLE dbo.GAR_PERITO
@@ -1368,11 +1479,20 @@ CREATE TABLE dbo.TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA
 	cedula_acreedor       varchar(30)  NULL ,
 	fecha_expiracion      datetime  NULL ,
 	monto_cobertura       money  NULL ,
-	des_observacion       varchar(150)  NULL 
+	des_observacion       varchar(150)  NULL ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA_PorcentajeAceptacion
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.TAR_GARANTIAS_X_PERFIL_X_TARJETA
@@ -1701,9 +1821,19 @@ CREATE TABLE dbo.TMP_GARANTIAS_FIDUCIARIAS
 	CONSTRAINT DF_GAR_GIROS_GARANTIAS_FIDUCIARIAS_ind_duplicidad
 		 DEFAULT  1 ,
 	cod_usuario           varchar(30)  NOT NULL ,
-	cod_llave             bigint  IDENTITY (1,1) 
+	cod_llave             bigint  IDENTITY (1,1) ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TMP_GARANTIAS_FIDUCIARIAS_PorcentajeAceptacion
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TMP_GARANTIAS_FIDUCIARIAS',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
 GO
 
 
@@ -1775,7 +1905,10 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES
 	Fecha_Vencimiento_Poliza datetime NULL,
 	Codigo_Tipo_Poliza_Sugef  int NULL,
 	Indicador_Poliza char(1) NULL,
-	Indicador_Coberturas_Obligatorias  char(2) NULL
+	Indicador_Coberturas_Obligatorias  char(2) NULL ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TMP_GARANTIAS_REALES_PorcentajeAceptacion
+		 DEFAULT  -1
 )
  ON "PRIMARY"
 GO
@@ -1848,6 +1981,13 @@ EXEC sp_addextendedproperty
 'user', 'dbo',
 'table', 'TMP_GARANTIAS_REALES',
 'column', 'Indicador_Coberturas_Obligatorias'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TMP_GARANTIAS_REALES',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
 GO
 
 
@@ -1932,7 +2072,10 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES_OPERACIONES
 		 DEFAULT  0,
 	Indicador_Calcular_PANTC  bit  NOT NULL 
 	CONSTRAINT  DF_TMP_GARANTIAS_REALES_OPERACIONES_IndicadorCalcularPANTC
-		 DEFAULT  0
+		 DEFAULT  0,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TMP_GARANTIAS_REALES_OPERACIONES_PorcentajeAceptacion
+		 DEFAULT  -1
 )
  ON "PRIMARY"
 GO
@@ -2096,6 +2239,12 @@ EXEC sp_addextendedproperty
 'column', 'Indicador_Calcular_PANTC'
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TMP_GARANTIAS_REALES_OPERACIONES',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.TMP_GARANTIAS_REALES_X_OPERACION
@@ -2163,7 +2312,10 @@ CREATE TABLE dbo.TMP_GARANTIAS_REALES_X_OPERACION
 	Numero_Placa_Bien     varchar(25)  NOT NULL 
 	CONSTRAINT DF_TMP_GARANTIAS_REALES_X_OPERACION_Numero_Placa_Bien
 		 DEFAULT  '' ,
-	Codigo_Usuario        varchar(30)  NOT NULL 
+	Codigo_Usuario        varchar(30)  NOT NULL ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TMP_GARANTIAS_REALES_X_OPERACION_PorcentajeAceptacion
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
 GO
@@ -2294,6 +2446,12 @@ GO
 EXEC sp_addextendedproperty 'MS_Description' , 'Identificación del usuario que ejecuta el proceso.' , 'user' , 'dbo' , 'table' , 'TMP_GARANTIAS_REALES_X_OPERACION', 'column' , 'Codigo_Usuario'
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TMP_GARANTIAS_REALES_X_OPERACION',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.TMP_GARANTIAS_VALOR
@@ -2347,11 +2505,20 @@ CREATE TABLE dbo.TMP_GARANTIAS_VALOR
 	CONSTRAINT DF_GAR_GIROS_GARANTIAS_VALOR_ind_duplicidad
 		 DEFAULT  1 ,
 	cod_usuario           varchar(30)  NOT NULL ,
-	cod_llave             bigint  IDENTITY (1,1) 
+	cod_llave             bigint  IDENTITY (1,1) ,
+	Porcentaje_Aceptacion decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_TMP_GARANTIAS_VALOR_PorcentajeAceptacion
+		 DEFAULT  -1 
 )
  ON "PRIMARY"
 GO
 
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Porcentaje de aceptación de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'TMP_GARANTIAS_VALOR',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Aceptacion'
+GO
 
 
 CREATE TABLE dbo.TMP_OPERACIONES
@@ -3993,4 +4160,168 @@ GO
 EXEC sp_addextendedproperty @name=N'MS_Description', @value=N'Código de la aseguradora.' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'POLIZAS_HST', @level2type=N'COLUMN',@level2name=N'Codigo_Aseguradora'
 GO
 
+
+CREATE TABLE dbo.GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD
+( 
+	Consecutivo_Operacion bigint  NOT NULL ,
+	Consecutivo_Garantia bigint  NOT NULL ,
+	Codigo_Tipo_Garantia smallint  NOT NULL ,
+	Saldo_Actual_Ajustado decimal(18,2)  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Saldo_Actual_Ajustado
+		 DEFAULT  -1,
+	Porcentaje_Responsabilidad_Ajustado decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Porcentaje_Responsabilidad_Ajustado
+		 DEFAULT  -1,
+	Porcentaje_Responsabilidad_Calculado decimal(5,2)  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Porcentaje_Responsabilidad_Calculado
+		 DEFAULT  -1,
+	Indicador_Excluido   bit  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Indicador_Exlcuido
+		 DEFAULT  0,
+	Indicador_Ajuste_Saldo_Actual bit  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Indicador_Ajuste_Saldo_Actual
+		 DEFAULT  0,
+	Indicador_Ajuste_Porcentaje bit  NOT NULL 
+	CONSTRAINT DF_GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD_Indicador_Ajuste_Porcentaje
+		 DEFAULT  0,
+	Usuario_Inserto      varchar(30) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL ,
+	Usuario_Modifico     varchar(30) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL ,
+	Usuario_Elimino      varchar(30) COLLATE SQL_Latin1_General_CP1_CI_AS  NULL ,
+	Fecha_Inserto        datetime  NULL ,
+	Fecha_Modifico       datetime  NULL ,
+	Fecha_Elimino        datetime  NULL ,
+	Fecha_Replica        datetime  NULL 
+)
+GO
+
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Esta tabla almacenará los registros de aquellas operaciones y garantías que participan en la distribución del porcentaje de responsabilidad.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el consecutivo de la operación, contrato o giro de contrato.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Consecutivo_Operacion'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el consecutivo de la garantía.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Consecutivo_Garantia'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el código del tipo de garantía, donde:
+  1: Garantía Fiduciaria.
+  2: Garantía Real.
+  3: Garantía Valor.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Codigo_Tipo_Garantia'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el saldo actual ingresado por el usuario.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Saldo_Actual_Ajustado'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el porcentaje de responsabilidad definido por el usuario.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Responsabilidad_Ajustado'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el porcentaje de responsabilidad calculado por el sistema.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Porcentaje_Responsabilidad_Calculado'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador de si el registro fue eliminado por el usuario, donde:
+
+0: El registro no ha sido excluido.
+1: El registro fue excluido.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Indicador_Excluido'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador de si el saldo actual fue ingresado por el usuario, donde:
+
+0: El saldo no ha sido ajustado.
+1: El saldo fue ajustado.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Indicador_Ajuste_Saldo_Actual'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Almacenará el indicador de si el porcentaje de responsabilidad fue ingresado por el usuario, donde:
+
+0: El porcentaje no ha sido ajustado.
+1: El porcentaje fue ajustado.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Indicador_Ajuste_Porcentaje'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Identificación del usuario que realizó la inclusión de un registro excluido.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Usuario_Inserto'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Identificación del usuario que realizó la última modificación.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Usuario_Modifico'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Identificación del usuario que eliminó el registro.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Usuario_Elimino'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Fecha en que se insertó el registro.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Fecha_Inserto'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Fecha en que se realizó la última modificación.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Fecha_Modifico'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Fecha en que se eliminó el registro.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Fecha_Elimino'
+GO
+
+EXEC sp_addextendedproperty
+@name = N'MS_Description', @value = N'Fecha en que el registro fue ajustado por algún proceso de réplica.',
+@level0type = N'SCHEMA', @level0name = N'dbo',
+@level1type = N'TABLE', @level1name = N'GAR_SALDOS_TOTALES_PORCENTAJES_RESPONSABILIDAD',
+@level2type = N'COLUMN', @level2name = N'Fecha_Replica'
+GO
 

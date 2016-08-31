@@ -1,0 +1,79 @@
+Archivo creado 29/04/2016 11:00:10 AM
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 11:00:10 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 12:07:35 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 12:33:11 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía , Tipo Garantia: 2, relacionada a la operación 267-1-2-5917938. Detalle Técnico: Error: Se produjo un error al modificar los datos del saldo total y porcentaje de responsabilidad. El registro no existe., Descripción:    at BCRGARANTIAS.Negocios.SaldosTotalesPorcentajesResponsabilidad.Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, String usuario, String ip)
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 12:33:41 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía , Tipo Garantia: 2, relacionada a la operación 267-1-2-5917938. Detalle Técnico: Error: Se produjo un error al modificar los datos del saldo total y porcentaje de responsabilidad. El registro no existe., Descripción:    at BCRGARANTIAS.Negocios.SaldosTotalesPorcentajesResponsabilidad.Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, String usuario, String ip)
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 03:13:12 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 03:13:30 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario tiene problemas al autenticar contra el AD.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 03:13:35 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario tiene problemas al autenticar contra el AD.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 07:23:49 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 08:11:10 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 09:10:46 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía , Tipo Garantia: 2, relacionada a la operación 259-2-2-5938066. Detalle Técnico: Error: Se produjo un error al modificar los datos del saldo total y porcentaje de responsabilidad. El registro no existe., Descripción:    at BCRGARANTIAS.Negocios.SaldosTotalesPorcentajesResponsabilidad.Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, String usuario, String ip)
+
+
+NUEVO EVENTO______Fecha y Hora:29/04/2016 09:29:31 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+No se pudo eliminar la información del saldo total y porcentaje de responsabilidad de la garantía , Tipo Garantia: 2, relacionada a la operación 259-2-2-5938066. Detalle Técnico: Error: Se produjo un error al modificar los datos del saldo total y porcentaje de responsabilidad. El registro no existe., Descripción:    at BCRGARANTIAS.Negocios.SaldosTotalesPorcentajesResponsabilidad.Eliminar(clsSaldoTotalPorcentajeResponsabilidad entidadSaldoTotalPorcentajeResponsabilidad, String usuario, String ip)
+

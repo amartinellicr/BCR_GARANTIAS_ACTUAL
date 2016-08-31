@@ -341,7 +341,7 @@ BEGIN
 						 END AS garantia
 					
 		FROM	@TMP_GARANTIAS_REALES_CONTRATOS GRC
-			INNER JOIN CAT_ELEMENTO CE1
+			INNER JOIN dbo.CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRC.cod_tipo_garantia_real
 		
 		WHERE	GRC.cod_usuario = @psCedula_Usuario 
@@ -370,7 +370,7 @@ BEGIN
 				GRC.Indicador_Porcentaje_Responsabilidad_Maximo, --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 				GRC.Indicador_Cuenta_Contable_Especial --RQ_MANT_2015111010495738_00615: Se agrega este campo.
 		FROM	@TMP_GARANTIAS_REALES_CONTRATOS GRC
-			INNER JOIN CAT_ELEMENTO CE1
+			INNER JOIN dbo.CAT_ELEMENTO CE1
 			ON CE1.cat_campo = GRC.cod_tipo_garantia_real
 		WHERE	GRC.cod_tipo_operacion = 2 
 			AND GRC.cod_usuario = @psCedula_Usuario 
@@ -379,6 +379,9 @@ BEGIN
 			GRC.cod_tipo_garantia_real,
 			GRC.cod_bien
 	END
+
+	--SE ELIMINAN LAS TABLAS TEMPORALES CREADAS
+	DROP TABLE #TEMP_PRMGT
 END
 
 GO

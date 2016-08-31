@@ -1,0 +1,9 @@
+Archivo creado 10/05/2016 11:01:45 AM
+
+
+NUEVO EVENTO______Fecha y Hora:10/05/2016 11:01:45 AM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario tiene problemas al autenticar contra el AD.
+
