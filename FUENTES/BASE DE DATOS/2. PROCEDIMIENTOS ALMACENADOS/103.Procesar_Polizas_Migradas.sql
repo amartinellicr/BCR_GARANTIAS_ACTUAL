@@ -79,6 +79,15 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2016090110632770</Requerimiento>
+			<Fecha>02/02/2016</Fecha>
+			<Descripción>
+				Se realiza un ajuste al relacionar las coberturas a las pólizas, para que sólo se relacionen las coberturas que son válidas para el sistema. 
+			</Descripción>
+		</Cambio>
+		
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -1134,6 +1143,12 @@ BEGIN
 					INNER JOIN dbo.GAR_POLIZAS GP1
 					ON GP1.Codigo_SAP = TSC.Codigo_SAP
 					AND GP1.Codigo_Tipo_Cobertura = TSC.Codigo_Tipo_Cobertura
+					--INICIO INCIDENTE: 2016090110632770
+					INNER JOIN dbo.GAR_COBERTURAS GCO 
+					ON GCO.Codigo_Cobertura = TSC.Codigo_Cobertura
+					AND GCO.Codigo_Tipo_Cobertura = TSC.Codigo_Tipo_Cobertura
+					AND GCO.Codigo_Tipo_Poliza = GP1.Tipo_Poliza
+					--FIN INCIDENTE: 2016090110632770
 				WHERE	TSC.Registro_Activo = 1
 		
 			END TRY
