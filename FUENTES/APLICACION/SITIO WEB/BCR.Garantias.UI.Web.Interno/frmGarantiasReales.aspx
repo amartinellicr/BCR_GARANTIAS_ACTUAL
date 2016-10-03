@@ -52,7 +52,8 @@
 												        Width="194px">
 												        <asp:ListItem Value="1">Operación Crediticia</asp:ListItem>
 												        <asp:ListItem Value="2">Contrato</asp:ListItem>
-											        </asp:dropdownlist><asp:button id="Button2" runat="server" BackColor="White" BorderColor="White" BorderStyle="None"></asp:button></td>
+											        </asp:dropdownlist>
+										        </td>
 									        </tr>
 									        <tr>
 										        <td class="td_Texto" width="24%">Contabilidad:</td>
@@ -222,13 +223,24 @@
 											    </td>
 									        </tr>
 									        <tr>
+                                                <td class="td_Texto">% Responsabilidad:</td>
+                                                <td>
+										            <asp:TextBox ID="txtPorcentajeResponsabilidad"  runat="server" CssClass="id-tabla-texto" MaxLength="6" ValidationGroup="MKE" 
+										                         ToolTip="Porcentaje de Responsabilidad" Enabled="False" tabIndex="20"/>
+                                                    <div style="cursor:pointer; display:inline;">
+                                                        <asp:ImageButton ID="imgCalculadoraGR" runat="server" ImageUrl="~/Images/Calculadora.png" />
+                                                    </div>
+										        </td>
+                                                <td></td>
+									        </tr>
+									        <tr>
 										        <td class="td_Texto" colspan="4"><br>
 										        </td>
 									        </tr>
 									        <tr>
 										        <td colspan="4" style="clear:both;" valign="top" >
 										            <div id="accordion" style="width:100%;">
-                                                        <h3>Detalle del Avalúo</h3>
+                                                        <h3 style="margin-bottom:0px;">Detalle del Avalúo</h3>
                                                         <div style="text-align:left;">
                                                             <table width="95%" style="text-align:left; height:300px;">
 													            <tr>
@@ -396,7 +408,7 @@
 									        <tr>
 										        <td colspan="4" style="clear:both; width:100%; height:100%;" valign="top" >
 										            <div id="accPoliza" style="width:100%; height:100%;">
-                                                        <h3>Póliza de la Garantía</h3>
+                                                        <h3 style="margin-bottom:0px;">Póliza de la Garantía</h3>
                                                         <div style="text-align:left;">
                                                             <table width="95%" style="text-align:left; height:500px;">
 													            <tr>
@@ -585,6 +597,7 @@
     <asp:HiddenField ID="hdnListaSemestresCalculados" runat="server"></asp:HiddenField>
     <asp:HiddenField ID="hdnIndiceAccordionPolizaActivo" runat="server" Value="-1"></asp:HiddenField>
     <asp:HiddenField ID="hdnHabilitarPoliza" runat="server" Value="0"></asp:HiddenField>
+    <asp:HiddenField ID="hdnAplicaCalculoPA" runat="server" Value="1"></asp:HiddenField>
    
 </asp:Content>
 

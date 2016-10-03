@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Collections.Specialized;
 
 namespace BCR.GARANTIAS.Comun
@@ -231,6 +230,35 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorPorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo  = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_ULTIMO_SEGUIMIENTO_MAQUINARIA_EQUIPO";
         public const string _errorPorcAceptNoTerrenoCalcFechaValuacion                          = "ERROR_PORC_ACEPT_NO_TERRENO_CALC_FECHA_VALUACION";
 
+        public const string _errorInsertandoGarantia                                            = "ERROR_INSERTANDO_GARANTIA";
+        public const string _errorInsertandoGarantiaDetalle                                     = "ERROR_INSERTANDO_GARANTIA_DETALLE";
+
+        public const string _errorValidandoTarjeta                                              = "ERROR_VALIDANDO_TARJETA";
+        public const string _errorValidandoTarjetaDetalle                                       = "ERROR_VALIDANDO_TARJETA_DETALLE";
+        public const string _errorConexionWebServices                                           = "ERROR_CONEXION_WEB_SERVICES";
+        public const string _errorConexionWebServicesDetalle                                    = "ERROR_CONEXION_WEB_SERVICE_DETALLE";
+        public const string _errorInterfaceSistar                                               = "ERROR_INTERFAZ_SISTAR";
+        public const string _errorInterfaceSistarDetalle                                        = "ERROR_INTERFAZ_SISTAR_DETALLE";
+        public const string _errorTramaSistar                                                   = "ERROR_TRAMA_SISTAR";
+        public const string _errorObteniendoTipoCambioBCCR                                      = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR";
+        public const string _errorObteniendoTipoCambioBCCRFechas                                = "ERROR_OBTENIENDO_TIPO_CAMBIO_BCCR_FECHAS";
+
+        public const string _errorInsertandoSaldoTotalPr                                        = "ERROR_INSERTANDO_SALDO_TOTAL_PR";
+        public const string _errorInsertandoSaldoTotalPrDetalle                                 = "ERROR_INSERTANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorModificandoSaldoTotalPr                                       = "ERROR_MODIFICANDO_SALDO_TOTAL_PR";
+        public const string _errorModificandoSaldoTotalPrDetalle                                = "ERROR_MODIFICANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorEliminandoSaldoTotalPr                                        = "ERROR_ELIMINANDO_SALDO_TOTAL_PR";
+        public const string _errorEliminandoSaldoTotalPrDetalle                                 = "ERROR_ELIMINANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorConsultandoSaldoTotalPrDetalle                                = "ERROR_CONSULTANDO_SALDO_TOTAL_PR_DETALLE";
+        public const string _errorConsultandoOperacionesRelacionadasGarantiaDetalle             = "ERROR_CONSULTANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE";
+        public const string _errorNormalizandoOperacionesRelacionadasAGarantia                  = "ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA";
+        public const string _errorNormalizandoOperacionesRelacionadasAGarantiaDetalle           = "ERROR_NORMALIZANDO_OPERACIONES_RELACIONADAS_A_GARANTIA_DETALLE";
+
+        public const string _errorAplicandoCalculoDistribucionPrDetalle                         = "ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR_DETALLE";
+        public const string _errorAplicandoCalculoDistribucionPr                                = "ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR";
+        public const string _errorObteniendoOperacionesGarantias                                = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS";
+        public const string _errorObteniendoOperacionesGarantiasDetalle                         = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS_DETALLE";
+
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>
@@ -266,7 +294,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (Exception e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
 			}
 		}
@@ -281,7 +309,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}
@@ -297,7 +325,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}
@@ -318,7 +346,7 @@ namespace BCR.GARANTIAS.Comun
 			}
 			catch (ExcepcionBase e)
 			{
-                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + ")";
+                string errorEsuscitado = ERROR_OBTENIENDO_MENSAJE + " (Llave no encontrada: " + llave + "). Detalle Técnico: " + e.Message;
                 throw new ExcepcionBase(errorEsuscitado, e);
             }
 		}

@@ -1,20 +1,14 @@
-using System.Web;
 using System.IO;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Configuration;
-using System.Security.AccessControl;
 using System.Security.Permissions;
-using System.Security.Principal;
 using System.Xml;
 using System.Text;
+using System;
 
-
-using BCRGarantias.Contenedores;
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
-using System;
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -26,9 +20,7 @@ namespace BCRGARANTIAS.Negocios
         #region Variables Globales
 
         DataSet dsDatos = new DataSet();
-
-        private const int tiempo_Espera_Ejecucion = 300;
-
+               
         #endregion
 
         #region Deudores
@@ -42,7 +34,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoDeudores", null, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoDeudores", null, AccesoBD.TiempoEsperaEjecucion);
 
             }
             catch (SqlException sqlEx)
@@ -141,7 +133,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.Text, strConsulta, null, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.Text, strConsulta, null, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -256,7 +248,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciarias", null, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciarias", null, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -302,7 +294,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = File.CreateText(fileName))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_RESPONSABILIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -317,7 +309,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_MITIGADOR_RIESGO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_DOCUMENTO_LEGAL"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_PERSONA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OPERACION_ESPECIAL"].ToString() + "\t" +
@@ -326,7 +318,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["NOMBRE_DEUDOR"].ToString().Replace("\r\n", " ") + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
                                              string.Empty + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["CODIGO_INTERNO_SISTAR"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["CODIGO_INTERNO_SISTAR"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -359,11 +352,11 @@ namespace BCRGARANTIAS.Negocios
             try
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
-                new SqlParameter("IDUsuario", SqlDbType.VarChar, 20)};
+                new SqlParameter("@psCedula_Usuario", SqlDbType.VarChar, 20)};
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasFiduciariasInfoCompleta", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasFiduciariasInfoCompleta", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -409,7 +402,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = File.CreateText(fileName))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_RESPONSABILIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -424,7 +417,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_MITIGADOR_RIESGO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_DOCUMENTO_LEGAL"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_PERSONA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OPERACION_ESPECIAL"].ToString() + "\t" +
@@ -433,8 +426,9 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["NOMBRE_DEUDOR"].ToString().Replace("\r\n", " ") + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["BIN"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["CODIGO_INTERNO_SISTAR"].ToString() + "\t"
-                                            );
+                                             dsDatos.Tables["Datos"].Rows[i]["CODIGO_INTERNO_SISTAR"].ToString() + "\t" +
+                                              dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" 
+                                           );
                         }
                     }
                 }
@@ -466,11 +460,11 @@ namespace BCRGARANTIAS.Negocios
             try
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
-                new SqlParameter("IDUsuario", SqlDbType.VarChar, 20)};
+                new SqlParameter("@psCedula_Usuario", SqlDbType.VarChar, 20)};
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciariasContratos", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasFiduciariasContratos", parameters, AccesoBD.TiempoEsperaEjecucion);
 
             }
             catch (SqlException sqlEx)
@@ -517,7 +511,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = File.CreateText(fileName))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_RESPONSABILIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tES_CONTRATO_VENCIDO");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tES_CONTRATO_VENCIDO\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -532,7 +526,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_MITIGADOR_RIESGO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_DOCUMENTO_LEGAL"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_PERSONA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_ACREEDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OPERACION_ESPECIAL"].ToString() + "\t" +
@@ -542,7 +536,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["BIN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CODIGO_INTERNO_SISTAR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["ES_CONTRATO_VENCIDO"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["ES_CONTRATO_VENCIDO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
 
                         }
@@ -577,7 +572,7 @@ namespace BCRGARANTIAS.Negocios
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
                 new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 20), 
-                new SqlParameter("piEjecutarParte", SqlDbType.TinyInt)
+                new SqlParameter("piEjecutar_Parte", SqlDbType.TinyInt)
                 };
 
                 parameters[0].Value = strIDUsuario;
@@ -603,7 +598,7 @@ namespace BCRGARANTIAS.Negocios
                 parameters[0].Value = strIDUsuario;
                 parameters[1].Value = 4;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasReales", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasReales", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -655,7 +650,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_DE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -704,7 +699,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_TERRENO_CALCULADO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO_CALCULADO"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -735,8 +731,8 @@ namespace BCRGARANTIAS.Negocios
             try
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
-                new SqlParameter("IDUsuario", SqlDbType.VarChar, 20), 
-                new SqlParameter("piEjecutarParte", SqlDbType.Bit)
+                new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 20), 
+                new SqlParameter("@pbEjecutar_Parte", SqlDbType.Bit)
                 };
 
                 parameters[0].Value = strIDUsuario;
@@ -746,7 +742,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[1].Value = true;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasRealesInfoCompleta", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasRealesInfoCompleta", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -798,7 +794,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_DE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -842,7 +838,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_POLIZA"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_VENCIMIENTO_POLIZA"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_POLIZA_SUGEF"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["INDICADOR_POLIZA"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["INDICADOR_POLIZA"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -874,7 +871,7 @@ namespace BCRGARANTIAS.Negocios
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
                 new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 20), 
-                new SqlParameter("piEjecutarParte", SqlDbType.TinyInt)
+                new SqlParameter("piEjecutar_Parte", SqlDbType.TinyInt)
                 };
 
                 parameters[0].Value = strIDUsuario;
@@ -895,7 +892,7 @@ namespace BCRGARANTIAS.Negocios
                 parameters[0].Value = strIDUsuario;
                 parameters[1].Value = 3;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasRealesContratos", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasRealesContratos", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -947,7 +944,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_DE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tESTA_VENCIDO\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_VALUACION\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tESTA_VENCIDO\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -997,7 +994,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_TERRENO_CALCULADO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO_CALCULADO"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             ); 
                                             
                         }
@@ -1040,7 +1038,7 @@ namespace BCRGARANTIAS.Negocios
             {
                 SqlParameter[] parameters = new SqlParameter[] { };
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Registros_Calculo_MTAT_MTANT", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Registros_Calculo_MTAT_MTANT", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1150,7 +1148,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValor", null, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValor", null, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1202,7 +1200,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_RESPONSABILIDAD\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -1216,7 +1214,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_PRESENTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["INDICADOR_INSCRIPCION"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_CONSTITUCION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_GRAVAMEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_PRIORIDAD"].ToString() + "\t" +
@@ -1240,7 +1238,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONEDA_GARANTIA"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["NOMBRE_DEUDOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -1271,12 +1270,12 @@ namespace BCRGARANTIAS.Negocios
             try
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
-                new SqlParameter("IDUsuario", SqlDbType.VarChar, 20)
+                new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 20)
                 };
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasValorInfoCompleta", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarGarantiasValorInfoCompleta", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1328,7 +1327,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_RESPONSABILIDAD\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -1342,7 +1341,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_PRESENTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["INDICADOR_INSCRIPCION"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_CONSTITUCION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_GRAVAMEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_PRIORIDAD"].ToString() + "\t" +
@@ -1366,7 +1365,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONEDA_GARANTIA"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["NOMBRE_DEUDOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -1397,12 +1397,12 @@ namespace BCRGARANTIAS.Negocios
             try
             {
                 SqlParameter[] parameters = new SqlParameter[] { 
-                new SqlParameter("@IDUsuario", SqlDbType.VarChar, 20)              
+                new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 20)              
                 };
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValorContratos", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGarantiasValorContratos", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1454,7 +1454,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_RESPONSABILIDAD\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tES_CONTRATO_VENCIDO");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tNUMERO_SEGURIDAD\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tGRADO_PRIORIDAD\tMONTO_PRIORIDAD\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tCLASIFICACION_INSTRUMENTO\tINSTRUMENTO\tSERIE_INSTRUMENTO\tTIPO_PERSONA_EMISOR\tCEDULA_EMISOR\tPREMIO\tISIN\tVALOR_FACIAL\tMONEDA_VALOR_FACIAL\tVALOR_MERCADO\tMONEDA_VALOR_MERCADO\tMONTO_RESPONSABILIDAD\tMONEDA_GARANTIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tES_CONTRATO_VENCIDO\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -1468,7 +1468,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_PRESENTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["INDICADOR_INSCRIPCION"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_ACEPTACION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_CONSTITUCION"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_GRAVAMEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["GRADO_PRIORIDAD"].ToString() + "\t" +
@@ -1493,7 +1493,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["NOMBRE_DEUDOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["OFICINA_DEUDOR"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["ES_CONTRATO_VENCIDO"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["ES_CONTRATO_VENCIDO"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t"
                                             );
                         }
                     }
@@ -1532,7 +1533,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoContratos", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoContratos", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1637,7 +1638,7 @@ namespace BCRGARANTIAS.Negocios
 
                 parameters[0].Value = strIDUsuario;
 
-                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGiros", parameters, tiempo_Espera_Ejecucion);
+                dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_GenerarInfoGiros", parameters, AccesoBD.TiempoEsperaEjecucion);
             }
             catch (SqlException sqlEx)
             {
@@ -1787,15 +1788,19 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al indicador de inscripción", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al indicador de inscripción", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", "No se obtuvieron datos referentes a las garantías reales.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
@@ -1821,71 +1826,81 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al indicador de inscripción", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al indicador de inscripción", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", "No se obtuvieron datos referentes a las garantías de valor.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     //Escribe el encabezado del archivo
                     writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tTIPO_INCONSISTENCIA\tTIPO_GARANTIA\tDESCRIPCION_TIPO_GARANTIA\tNUMERO_SEGURIDAD\tTIPO_INSTRUMENTO");
 
-                    xmlTrama.LoadXml(vsObtenerGR);
-
-                    if (xmlTrama != null)
+                    if ((vsObtenerGR != null) && (vsObtenerGR.Length > 0))
                     {
-                        xmlInconsistencias = xmlTrama.SelectSingleNode("//DETALLE").ChildNodes;
+                        xmlTrama.LoadXml(vsObtenerGR);
 
-                        if (xmlInconsistencias != null)
+                        if (xmlTrama != null)
                         {
-                            foreach (XmlNode Inconsistencia in xmlInconsistencias)
+                            xmlInconsistencias = xmlTrama.SelectSingleNode("//DETALLE").ChildNodes;
+
+                            if (xmlInconsistencias != null)
                             {
-                                if (Inconsistencia.HasChildNodes)
+                                foreach (XmlNode Inconsistencia in xmlInconsistencias)
                                 {
-                                    writer.WriteLine(Inconsistencia.InnerText);
+                                    if (Inconsistencia.HasChildNodes)
+                                    {
+                                        writer.WriteLine(Inconsistencia.InnerText);
+                                    }
+
+                                    #region Obsoleto
+                                    //writer.WriteLine(
+                                    //    ((xmlTrama.SelectSingleNode("//CONTABILIDAD") != null) ? xmlTrama.SelectSingleNode("//CONTABILIDAD").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//OFICINA") != null) ? xmlTrama.SelectSingleNode("//OFICINA").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//MONEDA") != null) ? xmlTrama.SelectSingleNode("//MONEDA").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//PRODUCTO") != null) ? xmlTrama.SelectSingleNode("//PRODUCTO").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//OPERACION") != null) ? xmlTrama.SelectSingleNode("//OPERACION").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_BIEN") != null) ? xmlTrama.SelectSingleNode("//TIPO_BIEN").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//CODIGO_BIEN") != null) ? xmlTrama.SelectSingleNode("//CODIGO_BIEN").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_MITIGADOR") != null) ? xmlTrama.SelectSingleNode("//TIPO_MITIGADOR").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_DOCUMENTO_LEGAL") != null) ? xmlTrama.SelectSingleNode("//TIPO_DOCUMENTO_LEGAL").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_INCONSISTENCIA") != null) ? xmlTrama.SelectSingleNode("//TIPO_INCONSISTENCIA").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_GARANTIA") != null) ? xmlTrama.SelectSingleNode("//TIPO_GARANTIA").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//DESCRIPCION_TIPO_GARANTIA") != null) ? xmlTrama.SelectSingleNode("//DESCRIPCION_TIPO_GARANTIA").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//NUMERO_SEGURIDAD") != null) ? xmlTrama.SelectSingleNode("//NUMERO_SEGURIDAD").InnerText : string.Empty) + "\t" +
+                                    //    ((xmlTrama.SelectSingleNode("//TIPO_INSTRUMENTO") != null) ? xmlTrama.SelectSingleNode("//TIPO_INSTRUMENTO").InnerText : string.Empty) + "\t"
+                                    //);
+
+                                    #endregion Obsoleto
                                 }
-
-                                #region Obsoleto
-                                //writer.WriteLine(
-                                //    ((xmlTrama.SelectSingleNode("//CONTABILIDAD") != null) ? xmlTrama.SelectSingleNode("//CONTABILIDAD").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//OFICINA") != null) ? xmlTrama.SelectSingleNode("//OFICINA").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//MONEDA") != null) ? xmlTrama.SelectSingleNode("//MONEDA").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//PRODUCTO") != null) ? xmlTrama.SelectSingleNode("//PRODUCTO").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//OPERACION") != null) ? xmlTrama.SelectSingleNode("//OPERACION").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_BIEN") != null) ? xmlTrama.SelectSingleNode("//TIPO_BIEN").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//CODIGO_BIEN") != null) ? xmlTrama.SelectSingleNode("//CODIGO_BIEN").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_MITIGADOR") != null) ? xmlTrama.SelectSingleNode("//TIPO_MITIGADOR").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_DOCUMENTO_LEGAL") != null) ? xmlTrama.SelectSingleNode("//TIPO_DOCUMENTO_LEGAL").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_INCONSISTENCIA") != null) ? xmlTrama.SelectSingleNode("//TIPO_INCONSISTENCIA").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_GARANTIA") != null) ? xmlTrama.SelectSingleNode("//TIPO_GARANTIA").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//DESCRIPCION_TIPO_GARANTIA") != null) ? xmlTrama.SelectSingleNode("//DESCRIPCION_TIPO_GARANTIA").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//NUMERO_SEGURIDAD") != null) ? xmlTrama.SelectSingleNode("//NUMERO_SEGURIDAD").InnerText : string.Empty) + "\t" +
-                                //    ((xmlTrama.SelectSingleNode("//TIPO_INSTRUMENTO") != null) ? xmlTrama.SelectSingleNode("//TIPO_INSTRUMENTO").InnerText : string.Empty) + "\t"
-                                //);
-
-                                #endregion Obsoleto
                             }
                         }
                     }
 
-                    xmlTrama.LoadXml(vsObtenerGV);
-
-                    if (xmlTrama != null)
+                    if ((vsObtenerGV != null) && (vsObtenerGV.Length > 0))
                     {
-                        xmlInconsistencias = xmlTrama.SelectSingleNode("//DETALLE").ChildNodes;
+                        xmlTrama.LoadXml(vsObtenerGV);
 
-                        if (xmlInconsistencias != null)
+                        if (xmlTrama != null)
                         {
-                            foreach (XmlNode Inconsistencia in xmlInconsistencias)
+                            xmlInconsistencias = xmlTrama.SelectSingleNode("//DETALLE").ChildNodes;
+
+                            if (xmlInconsistencias != null)
                             {
-                                if (Inconsistencia.HasChildNodes)
+                                foreach (XmlNode Inconsistencia in xmlInconsistencias)
                                 {
-                                    writer.WriteLine(Inconsistencia.InnerText);
+                                    if (Inconsistencia.HasChildNodes)
+                                    {
+                                        writer.WriteLine(Inconsistencia.InnerText);
+                                    }
                                 }
                             }
                         }
@@ -1960,13 +1975,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al partido y finca", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al partido y finca", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al partido y finca", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al partido y finca", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2063,13 +2079,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al tipo de garantía real", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al tipo de garantía real", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al tipo de garantía real", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al tipo de garantía real", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2166,13 +2183,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "de los avalúos", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "de los avalúos", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "de los avalúos", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "de los avalúos", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2269,13 +2287,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "a la clases de garantía", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "a la clases de garantía", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "a la clases de garantía", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "a la clases de garantía", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2371,13 +2390,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "a la póliza de garantía", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "a la póliza de garantía", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "a la póliza de garantía", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "a la póliza de garantía", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2472,13 +2492,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al porcentaje de aceptación", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al porcentaje de aceptación", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS, "al porcentaje de aceptación", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al porcentaje de aceptación", "No se obtuvieron datos referentes a la inconsistencia.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2579,13 +2600,14 @@ namespace BCRGARANTIAS.Negocios
                                 {
                                     if (strMensajeObtenido[0].CompareTo("0") != 0)
                                     {
+                                        UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", strMensajeObtenido[1], Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
                                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoAlertas, "al indicador de inscripción", Mensajes.ASSEMBLY));
                                     }
                                 }
                             }
                             else
                             {
-                                throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoAlertas, "al indicador de inscripción", Mensajes.ASSEMBLY));
+                                UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_INCONSISTENCIAS_DETALLE, "al indicador de inscripción", "No se obtuvieron datos referentes a la alerta.", Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Information);
                             }
                         }
                     }
@@ -2652,7 +2674,7 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         //Ejecuta el comando
-                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Generar_Informacion_Cambios_Garantias", parameters, tiempo_Espera_Ejecucion);
+                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Generar_Informacion_Cambios_Garantias", parameters, AccesoBD.TiempoEsperaEjecucion);
 
                         if ((dsDatos != null) || ((dsDatos != null) && (dsDatos.Tables["Datos"].Rows.Count - 1 ) >= 0))
                         {
@@ -2718,7 +2740,7 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         //Ejecuta el comando
-                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Cambios_Garantias", parameters, tiempo_Espera_Ejecucion);
+                        dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Cambios_Garantias", parameters, AccesoBD.TiempoEsperaEjecucion);
 
                         if ((dsDatos != null) || ((dsDatos != null) && (dsDatos.Tables["Datos"].Rows.Count - 1) >= 0))
                         {

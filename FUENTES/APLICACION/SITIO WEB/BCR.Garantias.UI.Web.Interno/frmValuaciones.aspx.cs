@@ -1,17 +1,7 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Diagnostics;
-using System.Text;
-using System.Threading;
-using System.Data.OleDb;
+using System.Data;
+
 using BCRGARANTIAS.Negocios;
 
 namespace BCRGARANTIAS.Forms
@@ -20,10 +10,13 @@ namespace BCRGARANTIAS.Forms
     {
         #region Variables Globales
 
-        protected System.Web.UI.WebControls.Image Image2;
-        protected System.Data.OleDb.OleDbConnection oleDbConnection1;
-        protected System.Web.UI.WebControls.Label lblUsrConectado;
-        protected System.Web.UI.WebControls.Label lblFecha;
+        protected Image Image2;
+        protected Label lblUsrConectado;
+        protected Label lblFecha;
+
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
 
         #endregion
 
@@ -36,16 +29,13 @@ namespace BCRGARANTIAS.Forms
             btnEliminar.Click +=new EventHandler(btnEliminar_Click);
             btnInsertar.Click +=new EventHandler(btnInsertar_Click);
             btnLimpiar.Click +=new EventHandler(btnLimpiar_Click);
-            btnModificar.Click +=new EventHandler(btnModificar_Click);
-            btnRegresar.Click +=new EventHandler(btnRegresar_Click);
-            Button2.Click +=new EventHandler(Button2_Click);
+            btnRegresar.Click +=new EventHandler(btnRegresar_Click);           
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             btnEliminar.Attributes["onclick"] = "javascript:return confirm('¿Está seguro que desea eliminar la valuación del fiador seleccionado?')";
-            btnModificar.Attributes["onclick"] = "javascript:return confirm('¿Está seguro que desea modificar la valuación del fiador seleccionado?')";
-
+            
             txtSalario.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtSalario.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
 
@@ -61,14 +51,13 @@ namespace BCRGARANTIAS.Forms
 
                         txtCedula.Text = Request.QueryString["strCedula"].ToString();
                         txtNombre.Text = Request.QueryString["strNombre"].ToString();
-                        //CargarTieneCapacidad();
+ 
                         if ((txtCedula.Text != string.Empty) && (txtNombre.Text != string.Empty))
                         {
                             CargarGrid();
                         }
 
-                        btnModificar.Enabled = false;
-                        btnEliminar.Enabled = false;
+                       btnEliminar.Enabled = false;
                     }
                     else
                     {
@@ -78,18 +67,29 @@ namespace BCRGARANTIAS.Forms
                 }
                 catch (Exception ex)
                 {
+                    seRedirecciona = true;
+
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Acceso Denegado" +
-                            "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
-                            "&bBotonVisible=0");
+                    {
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Acceso Denegado" +
+                                            "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
+                                            "&bBotonVisible=0");
+                    }
                     else
-                        Response.Redirect("frmMensaje.aspx?" +
-                            "bError=1" +
-                            "&strTitulo=" + "Problemas Cargando Página" +
-                            "&strMensaje=" + ex.Message +
-                            "&bBotonVisible=0");
+                    {
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Cargando Página" +
+                                            "&strMensaje=" + ex.Message +
+                                            "&bBotonVisible=0");
+                    }
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
         }
@@ -107,24 +107,22 @@ namespace BCRGARANTIAS.Forms
                 {
                     if (ValidarFecha())
                     {
-                        //DateTime dFecha = DateTime.Parse(txtFechaActualizacion.Text.ToString());
                         Gestor.CrearValuacionFiador(int.Parse(Session["GarantiaFiduciaria"].ToString()),
                                                     txtFechaActualizacion.Text.ToString(),
-                            //Convert.ToDecimal(txtSalario.Text.Replace(".","")),
-                                                    Convert.ToDecimal(txtSalario.Text),
+                                                     Convert.ToDecimal(txtSalario.Text),
                                                     -1,
-                                                    //int.Parse(cbCapacidad.SelectedValue.ToString()), 
                                                     Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
 
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=0" +
-                                        "&strTitulo=" + "Inserción Exitosa" +
-                                        "&strMensaje=" + "La valuación del fiador se insertó satisfactoriamente." +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
-                                                                    "|strNombre=" + Request.QueryString["strNombre"].ToString() +
-                                                                    "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=0" +
+                                            "&strTitulo=" + "Inserción Exitosa" +
+                                            "&strMensaje=" + "La valuación del fiador se insertó satisfactoriamente." +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
+                                                                        "|strNombre=" + Request.QueryString["strNombre"].ToString() +
+                                                                        "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
                     }
                     else
                     {
@@ -134,25 +132,25 @@ namespace BCRGARANTIAS.Forms
             }
             catch (Exception ex)
             {
-                //				lblMensaje.Text = ex.Message;
-                if (ex.Message.StartsWith("The statement has been terminated."))
+               if (ex.Message.StartsWith("The statement has been terminated."))
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Insertando Registro" +
-                                    "&strMensaje=" + "No se pudo insertar la valuación del fiador. Error:" + ex.Message +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
-                                                                    "|strNombre=" + Request.QueryString["strNombre"].ToString() +
-                                                                    "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Insertando Registro" +
+                                        "&strMensaje=" + "No se pudo insertar la valuación del fiador. Error:" + ex.Message +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
+                                                                        "|strNombre=" + Request.QueryString["strNombre"].ToString() +
+                                                                        "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
                 }
             }
-        }
 
-        private void Button2_Click(object sender, System.EventArgs e)
-        {
-            FormatearCamposNumericos();
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
+            }
         }
 
         private void btnRegresar_Click(object sender, System.EventArgs e)
@@ -173,7 +171,6 @@ namespace BCRGARANTIAS.Forms
                 txtFechaActualizacion.Text = "";
                 txtSalario.Text = "";
                 btnInsertar.Enabled = true;
-                btnModificar.Enabled = false;
                 btnEliminar.Enabled = false;
                 txtFechaActualizacion.Enabled = true;
             }
@@ -182,52 +179,7 @@ namespace BCRGARANTIAS.Forms
                 lblMensaje.Text = ex.Message;
             }
         }
-
-        /// <summary>
-        /// Este evento permite modificar la información de la calificación
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnModificar_Click(object sender, System.EventArgs e)
-        {
-            try
-            {
-                if (ValidarDatos())
-                {
-                    Gestor.ModificarValuacionFiador(int.Parse(Session["GarantiaFiduciaria"].ToString()),
-                                                    DateTime.Parse(txtFechaActualizacion.Text.ToString()),
-                                                    Convert.ToDecimal(txtSalario.Text),
-                                                    int.Parse(cbCapacidad.SelectedValue.ToString()),
-                                                    Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
-
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=0" +
-                                    "&strTitulo=" + "Modificación Exitosa" +
-                                    "&strMensaje=" + "La valuación del fiador se modificó satisfactoriamente." +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
-                                                                "|strNombre=" + Request.QueryString["strNombre"].ToString() +
-                                                                "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
-                {
-                    Response.Redirect("frmMensaje.aspx?" +
-                        "bError=1" +
-                        "&strTitulo=" + "Problemas Modificando Registro" +
-                        "&strMensaje=" + "No se pudo modificar la información de la valuación del fiador." + "\r" +
-                        "&bBotonVisible=1" +
-                        "&strTextoBoton=Regresar" +
-                        "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
-                                                    "|strNombre=" + Request.QueryString["strNombre"].ToString() +
-                                                    "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
-                }
-            }
-        }
-
+ 
         private void btnEliminar_Click(object sender, System.EventArgs e)
         {
             try
@@ -236,33 +188,38 @@ namespace BCRGARANTIAS.Forms
                                                 txtFechaActualizacion.Text.ToString(),
                                                 Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
 
-                //				Gestor.EliminarValuacionFiador(int.Parse(Request.QueryString["nGarantiaFiduciaria"].ToString()),
-                //												DateTime.Parse(txtFechaActualizacion.Text.ToString()));
+                seRedirecciona = true;
 
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=0" +
-                                "&strTitulo=" + "Eliminación Exitosa" +
-                                "&strMensaje=" + "La valuación del fiador se eliminó satisfactoriamente." +
-                                "&bBotonVisible=1" +
-                                "&strTextoBoton=Regresar" +
-                                "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
-                                                            "|strNombre=" + Request.QueryString["strNombre"].ToString() +
-                                                            "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
-            }
-            catch (Exception ex)
-            {
-                if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
-                {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Eliminando Registro" +
-                                    "&strMensaje=" + "No se pudo eliminar la valuación del fiador." + "\r" +
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=0" +
+                                    "&strTitulo=" + "Eliminación Exitosa" +
+                                    "&strMensaje=" + "La valuación del fiador se eliminó satisfactoriamente." +
                                     "&bBotonVisible=1" +
                                     "&strTextoBoton=Regresar" +
                                     "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
                                                                 "|strNombre=" + Request.QueryString["strNombre"].ToString() +
                                                                 "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
+            }
+            catch (Exception ex)
+            {
+                if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
+                {
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Eliminando Registro" +
+                                        "&strMensaje=" + "No se pudo eliminar la valuación del fiador." + "\r" +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmValuaciones.aspx?strCedula=" + Request.QueryString["strCedula"].ToString() +
+                                                                    "|strNombre=" + Request.QueryString["strNombre"].ToString() +
+                                                                    "|nGarantiaFiduciaria=" + Request.QueryString["nGarantiaFiduciaria"].ToString());
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -294,29 +251,17 @@ namespace BCRGARANTIAS.Forms
 
                             if (gdvValuacionesFiador.SelectedDataKey[1].ToString() != null)
                             {
-                                //if (!gdvValuacionesFiador.SelectedDataKey[2].ToString().Contains("."))
-                                //{
-                                    decimal nSalario = Convert.ToDecimal(gdvValuacionesFiador.SelectedDataKey[1].ToString());
+                                decimal nSalario = Convert.ToDecimal(gdvValuacionesFiador.SelectedDataKey[1].ToString());
 
-                                    txtSalario.Text = nSalario.ToString("N");
-                                //}
-                                //else
-                                //{
-                                //    txtSalario.Text = gdvValuacionesFiador.SelectedDataKey[2].ToString();
-                                //}
+                                txtSalario.Text = nSalario.ToString("N");
                             }
                             else
                             {
-                                txtSalario.Text = "0.00"; //gdvValuacionesFiador.SelectedDataKey[1].ToString();
+                                txtSalario.Text = "0.00";
                             }
-
-                            //CargarTieneCapacidad();
-                            //if (gdvValuacionesFiador.SelectedDataKey[0].ToString() != null)
-                            //    cbCapacidad.Items.FindByValue(gdvValuacionesFiador.SelectedDataKey[0].ToString()).Selected = true;
 
                             txtFechaActualizacion.Enabled = false;
                             btnInsertar.Enabled = false;
-                            btnModificar.Enabled = true;
                             btnEliminar.Enabled = true;
 
                         }
@@ -361,40 +306,22 @@ namespace BCRGARANTIAS.Forms
         {
             try
             {
-                string strSQL = "SELECT " +
-                                    "convert(varchar(10),a.fecha_valuacion,103) as fecha_valuacion, " +
-                                    "a.ingreso_neto " +
-                                    //"isnull(a.cod_tiene_capacidad_pago,-1) as cod_tiene_capacidad_pago, " +
-                                    //"b.cat_descripcion as tiene_capacidad_pago " +
-                                "FROM " +
-                                    "GAR_VALUACIONES_FIADOR a " +
-                                    //, " +
-                                    //"CAT_ELEMENTO b " +
-                                "WHERE " +
-                                    "a.cod_garantia_fiduciaria = " + Request.QueryString["nGarantiaFiduciaria"].ToString() +
-                                    //" and a.cod_tiene_capacidad_pago = b.cat_campo " +
-                                    //" and b.cat_catalogo = " + Application["CAT_TIENE_CAPACIDAD"].ToString() +
-                                " ORDER BY " +
-                                    "convert(datetime,a.fecha_valuacion) DESC";
+                int consecutivoGarantia = ((int.TryParse(Request.QueryString["nGarantiaFiduciaria"].ToString(), out consecutivoGarantia)) ? consecutivoGarantia : -1);
 
-                System.Data.DataSet dsDatos = new System.Data.DataSet();
-                oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(strSQL, oleDbConnection1);
-                cmdConsulta.Fill(dsDatos, "Datos");
+                DataSet dsDatos = Gestor.ObtenerValuacionesFiador(consecutivoGarantia);
 
-                if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Datos"].Rows.Count > 0))
+                if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables[0].Rows.Count > 0))
                 {
 
-                    if ((!dsDatos.Tables["Datos"].Rows[0].IsNull("fecha_valuacion")) &&
-                        (!dsDatos.Tables["Datos"].Rows[0].IsNull("ingreso_neto"))) //&&
-                        //(!dsDatos.Tables["Datos"].Rows[0].IsNull("tiene_capacidad_pago")))
+                    if ((!dsDatos.Tables[0].Rows[0].IsNull("fecha_valuacion")) &&
+                        (!dsDatos.Tables[0].Rows[0].IsNull("ingreso_neto"))) 
                     {
-                        this.gdvValuacionesFiador.DataSource = dsDatos.Tables["Datos"].DefaultView;
+                        this.gdvValuacionesFiador.DataSource = dsDatos.Tables[0].DefaultView;
                         this.gdvValuacionesFiador.DataBind();
                     }
                     else
                     {
-                        dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
+                        dsDatos.Tables[0].Rows.Add(dsDatos.Tables[0].NewRow());
                         this.gdvValuacionesFiador.DataSource = dsDatos;
                         this.gdvValuacionesFiador.DataBind();
 
@@ -407,7 +334,7 @@ namespace BCRGARANTIAS.Forms
                 }
                 else
                 {
-                    dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
+                    dsDatos.Tables[0].Rows.Add(dsDatos.Tables[0].NewRow());
                     this.gdvValuacionesFiador.DataSource = dsDatos;
                     this.gdvValuacionesFiador.DataBind();
 
@@ -422,21 +349,6 @@ namespace BCRGARANTIAS.Forms
             {
                 lblMensaje.Text = ex.Message;
             }
-        }
-
-        private void CargarTieneCapacidad()
-        {
-            System.Data.DataSet dsDatos = new System.Data.DataSet();
-            oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-            OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cat_campo, cat_descripcion FROM cat_elemento WHERE cat_catalogo = " + int.Parse(Application["CAT_TIENE_CAPACIDAD"].ToString()) + " UNION ALL SELECT -1, '' ORDER BY cat_campo", oleDbConnection1);
-            cmdConsulta.Fill(dsDatos, "Tipos");
-            cbCapacidad.DataSource = null;
-            cbCapacidad.DataSource = dsDatos.Tables["Tipos"].DefaultView;
-            cbCapacidad.DataValueField = "CAT_CAMPO";
-            cbCapacidad.DataTextField = "CAT_DESCRIPCION";
-            cbCapacidad.DataBind();
-            cbCapacidad.ClearSelection();
-
         }
 
         /// <summary>
@@ -489,36 +401,14 @@ namespace BCRGARANTIAS.Forms
             bool bRespuesta = true;
             try
             {
-                //DateTime dFecha = DateTime.Parse(txtFechaActualizacion.Text.ToString());
-                string strSQL = "SELECT " +
-                                    "fecha_valuacion " +
-                                "FROM " +
-                                    "GAR_VALUACIONES_FIADOR " +
-                                "WHERE " +
-                                    "cod_garantia_fiduciaria = " + Request.QueryString["nGarantiaFiduciaria"].ToString() +
-                                    " AND fecha_valuacion = '" + txtFechaActualizacion.Text.ToString().Substring(6, 4).ToString() + "/" +
-                                                                txtFechaActualizacion.Text.ToString().Substring(0, 2).ToString() + "/" +
-                                                                txtFechaActualizacion.Text.ToString().Substring(3, 2).ToString() + "'";
+                int consecutivoGarantia = ((int.TryParse(Request.QueryString["nGarantiaFiduciaria"].ToString(), out consecutivoGarantia)) ? consecutivoGarantia : -1);
+                DateTime fechaValuacion = ((DateTime.TryParse(txtFechaActualizacion.Text, out fechaValuacion)) ? fechaValuacion : DateTime.MinValue);
 
-                //			string strSQL = "SELECT " +
-                //								"fecha_valuacion " +
-                //							"FROM " +
-                //								"GAR_VALUACIONES_FIADOR " +
-                //							"WHERE " +
-                //								"cod_garantia_fiduciaria = " + Request.QueryString["nGarantiaFiduciaria"].ToString() +
-                //								" AND fecha_valuacion = convert(varchar(10),'" + dFecha.Year.ToString() + "-" 
-                //													  						   + dFecha.Month.ToString() + "-"  
-                //																			   + dFecha.Day.ToString() + "',111)";
-
-                System.Data.DataSet dsDatos = new System.Data.DataSet();
-                oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(strSQL, oleDbConnection1);
-                cmdConsulta.Fill(dsDatos, "Datos");
-
-                if (dsDatos.Tables["Datos"] != null)
-                    if (dsDatos.Tables["Datos"].Rows.Count > 0)
-                        bRespuesta = false;
-
+                if((consecutivoGarantia != -1) && (fechaValuacion != DateTime.MinValue))
+                {
+                    bRespuesta = !Gestor.ExisteFecha(consecutivoGarantia, fechaValuacion.ToString("yyyyMMdd"));
+                }
+                
                 if (!bRespuesta)
                     FormatearCamposNumericos();
             }

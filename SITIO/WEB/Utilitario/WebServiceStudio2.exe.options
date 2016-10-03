@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <DataEditors />
+  <InvokeSettings>
+    <RecentlyUsedUris>
+      <Uri>http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx</Uri>
+      <Uri>http://usmq-app:16000/WSMQ/</Uri>
+      <Uri>http://usmqws/WSMQ/WSMQ.asmx</Uri>
+      <Uri>http://192.168.162.15/WSMQ/WSMQ.asmx</Uri>
+    </RecentlyUsedUris>
+  </InvokeSettings>
+  <TypeConverters />
+  <UiSettings>
+    <MessageFont>Lucida Sans Unicode, 9,25pt</MessageFont>
+    <ReqRespFont>Lucida Sans Unicode, 9,25pt</ReqRespFont>
+    <WsdlFont>Lucida Sans Unicode, 8,25pt</WsdlFont>
+  </UiSettings>
+  <WsdlSettings UseClientCert="false" BypassCertificateValidation="false" CustomCodeDomProvider="" Language="CS" Protocol="SOAP" />
+</Configuration>

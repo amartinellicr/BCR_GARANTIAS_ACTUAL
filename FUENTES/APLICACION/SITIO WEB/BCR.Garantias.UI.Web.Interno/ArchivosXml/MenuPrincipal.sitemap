@@ -7,7 +7,6 @@
 			<siteMapNode url="frmGarantiasFiduciaria.aspx" title="Garantías Fiduciarias"  description="" roles="" />
 			<siteMapNode url="frmGarantiasporPerfil.aspx" title="Garantías por Perfil"  description="" roles="" />
 			<siteMapNode url="frmGarantiasReales.aspx" title="Garantías Reales"  description="" roles="" />
-			<!--siteMapNode url="frmGarantiasRealesCopia.aspx" title="Garantías Reales Copia"  description="" roles="" /-->
 			<siteMapNode url="frmGarantiasValor.aspx" title="Garantías de Valor"  description="" roles="" />
 			<siteMapNode url="frmGarantiasGiros.aspx" title="Relacionar Giros"  description="" roles="" />
 			<siteMapNode url="" title="-----------------------------------"  description="" roles="" />
@@ -18,6 +17,7 @@
 			<siteMapNode url="frmCatalogos.aspx" title="Catálogos"  description="" roles=""/>
 			<siteMapNode url="frmMantenimientoBin.aspx" title="Bin"  description="" roles=""/>
 			<siteMapNode url="frmIndicesActualizacionAvaluos.aspx" title="Indices de Actualización de Avalúos"  description="" roles=""/>
+			<siteMapNode url="frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx" title="Saldos Totales y Porcentaje de Responsabilidad"  description="" roles=""/>
 		</siteMapNode>
 		<siteMapNode url="" title="Reportes"  description="" roles="">
 			<siteMapNode url="frmConsultaAvanceXGarantia.aspx" title="Avance por Oficina"  description="" roles="" />

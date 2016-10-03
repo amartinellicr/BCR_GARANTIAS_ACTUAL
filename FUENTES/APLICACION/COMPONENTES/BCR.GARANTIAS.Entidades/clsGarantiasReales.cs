@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -179,7 +176,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsGarantiasReales()
         {
-            this.tramaGarantias = string.Empty;
+            tramaGarantias = string.Empty;
         }
 
         /// <summary>
@@ -188,7 +185,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaGarantias">Trama que posee los datos de las garantías obtenidas de la Base de Datos</param>
         public clsGarantiasReales(string tramaListaGarantias, bool esServicioWindows)
         {
-            this.tramaGarantias = string.Empty;
+            tramaGarantias = string.Empty;
 
             if (tramaListaGarantias.Length > 0)
             {
@@ -220,7 +217,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlGarantias != null)
                 {
-                    this.tramaGarantias = tramaListaGarantias;
+                    tramaGarantias = tramaListaGarantias;
 
                     if (xmlGarantias.HasChildNodes)
                     {
@@ -238,13 +235,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadGarantiaReal.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadGarantiaReal.ErrorDatos;
-                                    this.descripcionError = entidadGarantiaReal.DescripcionError;
+                                    errorDatos = entidadGarantiaReal.ErrorDatos;
+                                    descripcionError = entidadGarantiaReal.DescripcionError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadGarantiaReal);
+                                    Agregar(entidadGarantiaReal);
                                 }
                             }
                         }
@@ -294,9 +291,9 @@ namespace BCR.GARANTIAS.Entidades
             XmlDocument xmlTramaAvaluos = null;
             XmlDocument docAvaluo = null;
 
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
-                foreach (clsGarantiaReal avaluoGarantiaReal in this.InnerList)
+                foreach (clsGarantiaReal avaluoGarantiaReal in InnerList)
                 {
                     if (xmlTramaAvaluos == null)
                     {

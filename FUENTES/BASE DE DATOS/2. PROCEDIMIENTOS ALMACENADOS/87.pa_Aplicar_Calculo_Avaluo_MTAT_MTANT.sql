@@ -10,9 +10,9 @@ IF OBJECT_ID ('Aplicar_Calculo_Avaluo_MTAT_MTANT', 'P') IS NOT NULL
 GO
 
 CREATE PROCEDURE [dbo].[Aplicar_Calculo_Avaluo_MTAT_MTANT]
-	@psCedula_Usuario	VARCHAR(30),
-	@piIndicadorProceso	TINYINT,
-	@psRespuesta		VARCHAR(1000) OUTPUT
+	@psCedula_Usuario VARCHAR(30),
+	@piIndicador_Proceso TINYINT,
+	@psRespuesta VARCHAR(1000) OUTPUT
 	
 AS
 /*****************************************************************************************************************************************************
@@ -24,7 +24,7 @@ AS
 			@psCedula_Usuario		= Identificación del usuario que realiza la consulta. 
 									  Este es dato llave usado para la búsqueda de los registros que deben 
                                       ser eliminados de la tabla temporal.
-			@piIndicadorProceso		= Indica la parte del proceso que será ejecutada.
+			@piIndicador_Proceso	= Indica la parte del proceso que será ejecutada.
 
 	</Entradas>
 	<Salidas>
@@ -62,7 +62,7 @@ AS
 			<Fecha>21/09/2015</Fecha>
 			<Descripción>
 				Se incorpora el cálculo de los porcentajes de aceptación de terreno y no terreno calculado.
-				Adicionalmente se agrega el parámetro de entrada "@piIndicadorProceso", se segmenta la ejecución del procedimiento almacenado
+				Adicionalmente se agrega el parámetro de entrada "@piIndicador_Proceso", se segmenta la ejecución del procedimiento almacenado
 				y se elimina la parte referente a la actualización de datos del avalúo, así como la referente a la eliminación de duplicados, 
 				esto porque el proceso de "CargarContratosVencidos" ejecuta dicha parte, por lo que los datos al momento de ejecutarse este proceso 
 				ya se encuentran actualizados.
@@ -85,6 +85,16 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
+			<Fecha>04/12/2015</Fecha>
+			<Descripción>
+				El cambio es referente a la implementación del campo porcentaje de responsabilidad, mismo que ya existe, por lo que se debe
+				crear el campo referente al porcentaje de aceptación, este campo reemplazará al camp oporcentaje de responsabilidad dentro de 
+				cualquier lógica existente. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -100,28 +110,28 @@ BEGIN
 
 	/*Se declaran las variables y se setean*/
 	DECLARE	
-			@viCatParametrosCalculo		SMALLINT, -- Catálogo de los parámetros usados para le cálculo del monto de la tasación actualizada del no terreno = 28.
-			@vdPorcentajeInferior		DECIMAL(5,2), -- Porcentaje correpondiente al límite inferior.
-			@vdPorcentajeIntermedio		DECIMAL(5,2), -- Porcentaje correpondiente al límite intermedio.
-			@vdPorcentajeSuperior		DECIMAL(5,2), -- Porcentaje correpondiente al límite superior.
-			@viAnnoInferior				SMALLINT, -- Año correpondiente al límite inferior.
-			@viAnnoIntermedio			SMALLINT, -- Año correpondiente al límite intermedio.
-			@vdtFechaActual				DATETIME, -- Corresponde a la fecha actual del sistema.
-			@viCantidadRegistros		BIGINT,   -- Cantidad de registros que posee la estructura a la cual se recorrera.
+			@viCat_Parametros_Calculo	SMALLINT, -- Catálogo de los parámetros usados para le cálculo del monto de la tasación actualizada del no terreno = 28.
+			@vdPorcentaje_Inferior		DECIMAL(5,2), -- Porcentaje correpondiente al límite inferior.
+			@vdPorcentaje_Intermedio	DECIMAL(5,2), -- Porcentaje correpondiente al límite intermedio.
+			@vdPorcentaje_Superior		DECIMAL(5,2), -- Porcentaje correpondiente al límite superior.
+			@viAnno_Inferior			SMALLINT, -- Año correpondiente al límite inferior.
+			@viAnno_Intermedio			SMALLINT, -- Año correpondiente al límite intermedio.
+			@vdtFecha_Actual			DATETIME, -- Corresponde a la fecha actual del sistema.
+			@viCantidad_Registros		BIGINT,   -- Cantidad de registros que posee la estructura a la cual se recorrera.
 			@viContador					BIGINT,   -- Contador utilizado dentro del ciclo que permite recorrer la estructura que posee los registros del cálculo de montos.
-			@vdtFechaAvaluo				DATETIME, -- Fecha inicial de la función que obtene la lista de fechas de los semestres a evaluar.
-			@vdtFechaFinal				DATETIME, -- Fecha final de la función que obtene la lista de fechas de los semestres a evaluar.
-			@viGarantiaReal				BIGINT,	  -- Consecutivo de la garantía a la que se le obtendrá la lista de semestres a evaluar.
-			@viEjecucionProceso			INT,		-- Consecutivo asignado al proceso ejecutado.
-			@viEjecucionProcesoDetalle	SMALLINT,	-- Consecutivo asignado al detalle del proceso ejecutado.
+			@vdtFecha_Avaluo			DATETIME, -- Fecha inicial de la función que obtene la lista de fechas de los semestres a evaluar.
+			@vdtFecha_Final				DATETIME, -- Fecha final de la función que obtene la lista de fechas de los semestres a evaluar.
+			@viGarantia_Real			BIGINT,	  -- Consecutivo de la garantía a la que se le obtendrá la lista de semestres a evaluar.
+			@viEjecucion_Proceso		INT,		-- Consecutivo asignado al proceso ejecutado.
+			@viEjecucion_Proceso_Detalle SMALLINT,	-- Consecutivo asignado al detalle del proceso ejecutado.
 			@vsCodigo_Proceso			VARCHAR(20), -- Código del proceso.
-			@vbRegistroActivo			BIT, --Determina si el registro a evaluar se encuentra activo o no.
+			@vbRegistro_Activo			BIT, --Determina si el registro a evaluar se encuentra activo o no.
 			@viConsecutivo				BIGINT, --Se usa para generar los códigos de la tabla temporal de números.
-			@dtFechaMinimaAvaluo		DATETIME, --Fecha del avalúo más viejo.
-			@dtFechaMaximaAvaluo		DATETIME, --FEcha del avalúo más reciente.
-			@viMesesAgregar				INT, --Cantidad máxima de meses que serán agregados con el fin de obtener la lista de semestres involucrados en el cálculo.
-			@viFechaActualEntera		INT, --Corresponde al a fecha actual en formato numérico.
-			@vdtFechaActualHora			DATETIME --Corresponde a la fecha actual con hora.
+			@dtFecha_Minima_Avaluo		DATETIME, --Fecha del avalúo más viejo.
+			@dtFecha_Maxima_Avaluo		DATETIME, --FEcha del avalúo más reciente.
+			@viMeses_Agregar			INT, --Cantidad máxima de meses que serán agregados con el fin de obtener la lista de semestres involucrados en el cálculo.
+			@viFecha_Actual_Entera		INT, --Corresponde al a fecha actual en formato numérico.
+			@vdtFecha_Actual_Hora		DATETIME --Corresponde a la fecha actual con hora.
 			
 	CREATE TABLE #TMP_GARANTIAS_REALES_X_OPERACION (	Cod_Llave								BIGINT		IDENTITY(1,1),
 														Cod_Contabilidad						TINYINT,
@@ -133,10 +143,10 @@ BEGIN
 														Cod_Garantia_Real						BIGINT,
 														Cod_Tipo_Garantia_real					TINYINT,
 														Cod_Tipo_Operacion						TINYINT,
-														Cod_Bien								VARCHAR(25)	COLLATE database_default,
+														Cod_Bien								VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Codigo_Partido							SMALLINT,
-														Numero_Finca							VARCHAR(25)	COLLATE database_default,
-														Num_Placa_Bien							VARCHAR(25)	COLLATE database_default,
+														Numero_Finca							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
+														Num_Placa_Bien							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Clase_Garantia							SMALLINT,
 														Fecha_Valuacion							DATETIME,
 														Monto_Ultima_Tasacion_Terreno			MONEY	,
@@ -150,7 +160,7 @@ BEGIN
 														Monto_Avaluo_SICC						DECIMAL(14,2),
 														Fecha_Proximo_Calculo					DATETIME,
 														Tipo_Bien								SMALLINT,
-														Cod_Usuario								VARCHAR (30)	COLLATE database_default
+														Cod_Usuario								VARCHAR (30)	COLLATE DATABASE_DEFAULT
 														PRIMARY KEY (Cod_Llave)
 												)
 
@@ -167,10 +177,10 @@ BEGIN
 														Cod_Garantia_Real						BIGINT,
 														Cod_Tipo_Garantia_real					TINYINT,
 														Cod_Tipo_Operacion						TINYINT,
-														Cod_Bien								VARCHAR(25)	COLLATE database_default,
+														Cod_Bien								VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Codigo_Partido							SMALLINT,
-														Numero_Finca							VARCHAR(25)	COLLATE database_default,
-														Num_Placa_Bien							VARCHAR(25)	COLLATE database_default,
+														Numero_Finca							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
+														Num_Placa_Bien							VARCHAR(25)	COLLATE DATABASE_DEFAULT,
 														Clase_Garantia							SMALLINT,
 														Tipo_Mitigador_Riesgo					SMALLINT,
 														Fecha_Valuacion							DATETIME,
@@ -195,9 +205,10 @@ BEGIN
 														Indicador_Calculo						BIT,
 														Fecha_Ultimo_Seguimiento				DATETIME,
 														Cantidad_Coberturas_Obligatorias		INT,
-														Cantidad_Coberturas_Obligatorias_Asignadas		INT,
+														Cantidad_Coberturas_Obligatorias_Asignadas	INT,
 														Indicador_Deudor_Habita_Vivienda		BIT,
-														Cod_Usuario								VARCHAR (30)	COLLATE database_default
+														Porcentaje_Aceptacion					DECIMAL(5,2),
+														Cod_Usuario								VARCHAR (30)	COLLATE DATABASE_DEFAULT
 														PRIMARY KEY (Cod_Llave)
 													)
 
@@ -207,7 +218,7 @@ BEGIN
 
 	DECLARE @ERRORES_TRANSACCIONALES TABLE	(
 												Codigo_Error		TINYINT,
-												Descripcion_Error	VARCHAR(4000) COLLATE database_default
+												Descripcion_Error	VARCHAR(4000) COLLATE DATABASE_DEFAULT
 											)
 
 	DECLARE @NUMEROS TABLE (Consecutivo BIGINT IDENTITY(1,1),
@@ -218,46 +229,46 @@ BEGIN
 	--Inicialización de variables
 	SET	@viConsecutivo = 1
 	
-	SET @viCatParametrosCalculo		= 28
+	SET @viCat_Parametros_Calculo = 28
 
-	SET @vdPorcentajeInferior = (SELECT		MIN(CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P','')))) 
-								 FROM		dbo.CAT_ELEMENTO 
-								 WHERE		cat_catalogo = @viCatParametrosCalculo
-									AND cat_campo LIKE '%P')
+	SET @vdPorcentaje_Inferior = (	SELECT	MIN(CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P','')))) 
+									FROM	dbo.CAT_ELEMENTO 
+									WHERE	cat_catalogo = @viCat_Parametros_Calculo
+										AND cat_campo LIKE '%P')
 
-	SET @vdPorcentajeSuperior = (SELECT		MAX(CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))))  
-								 FROM		dbo.CAT_ELEMENTO 
-								 WHERE		cat_catalogo = @viCatParametrosCalculo
-									AND cat_campo LIKE '%P')
+	SET @vdPorcentaje_Superior = (	SELECT	MAX(CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))))  
+									FROM	dbo.CAT_ELEMENTO 
+									WHERE	cat_catalogo = @viCat_Parametros_Calculo
+										AND cat_campo LIKE '%P')
 
-	SET @vdPorcentajeIntermedio = (SELECT	CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) 
-								   FROM		dbo.CAT_ELEMENTO 
-								   WHERE	cat_catalogo = @viCatParametrosCalculo
-									AND CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) > @vdPorcentajeInferior
-									AND CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) < @vdPorcentajeSuperior
-									AND cat_campo LIKE '%P')
+	SET @vdPorcentaje_Intermedio = (SELECT	CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) 
+									FROM	dbo.CAT_ELEMENTO 
+									WHERE	cat_catalogo = @viCat_Parametros_Calculo
+										AND CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) > @vdPorcentaje_Inferior
+										AND CONVERT(DECIMAL(5,2), (REPLACE(RTRIM(LTRIM(cat_campo)),'P',''))) < @vdPorcentaje_Superior
+										AND cat_campo LIKE '%P')
 
 
-	SET @viAnnoInferior = (SELECT	MIN(CONVERT(SMALLINT, (REPLACE(RTRIM(LTRIM(cat_campo)),'A','')))) 
-						   FROM		dbo.CAT_ELEMENTO 
-						   WHERE	cat_catalogo = @viCatParametrosCalculo
-									AND cat_campo LIKE '%A')
+	SET @viAnno_Inferior = (SELECT	MIN(CONVERT(SMALLINT, (REPLACE(RTRIM(LTRIM(cat_campo)),'A','')))) 
+							FROM	dbo.CAT_ELEMENTO 
+							WHERE	cat_catalogo = @viCat_Parametros_Calculo
+								AND cat_campo LIKE '%A')
 
-	SET @viAnnoIntermedio = (SELECT	MAX(CONVERT(SMALLINT, (REPLACE(RTRIM(LTRIM(cat_campo)),'A','')))) 
-						   FROM		dbo.CAT_ELEMENTO 
-						   WHERE	cat_catalogo = @viCatParametrosCalculo
+	SET @viAnno_Intermedio = (	SELECT	MAX(CONVERT(SMALLINT, (REPLACE(RTRIM(LTRIM(cat_campo)),'A','')))) 
+								FROM	dbo.CAT_ELEMENTO 
+								WHERE	cat_catalogo = @viCat_Parametros_Calculo
 									AND cat_campo LIKE '%A')
 
 	SET @vsCodigo_Proceso = 'CALCULAR_MTAT_MTANT'
 	
-	SET @vdtFechaActual = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+	SET @vdtFecha_Actual = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 
-	SET @viFechaActualEntera = CONVERT(INT, CONVERT(VARCHAR(8), (CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)), 112))
+	SET @viFecha_Actual_Entera = CONVERT(INT, CONVERT(VARCHAR(8), (CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)), 112))
 	
-	SET @vdtFechaActualHora = GETDATE()
+	SET @vdtFecha_Actual_Hora = GETDATE()
 	
 	--Se carga la tabla temporal de consecutivos
-	WHILE	@viConsecutivo <=20000
+	WHILE	@viConsecutivo <= 20000
 	BEGIN
 		INSERT INTO @NUMEROS (Campo_vacio) VALUES(@viConsecutivo)
 		SET @viConsecutivo = @viConsecutivo + 1
@@ -266,18 +277,15 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------
 	---- SE INICIALIZAN LAS ESTRUCTURAS FISICAS UTILIZADAS
 	---------------------------------------------------------------------------------------------------------------------------
-	IF(@piIndicadorProceso = 1)
+	IF(@piIndicador_Proceso = 1)
 	BEGIN
 
 		/*Se elimina la información de las tablas temporales que hubiera generado el usuario previamente*/
-		DELETE	FROM dbo.TMP_OPERACIONES_DUPLICADAS 
-		WHERE	cod_usuario		= @psCedula_Usuario
-
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES_OPERACIONES 
-		WHERE	Codigo_Usuario	= @psCedula_Usuario
+		WHERE	Codigo_Usuario = @psCedula_Usuario
 
 		DELETE	FROM dbo.TMP_GARANTIAS_REALES_X_OPERACION 
-		WHERE	Codigo_Usuario	= @psCedula_Usuario
+		WHERE	Codigo_Usuario = @psCedula_Usuario
 		
 		SET @psRespuesta = N'<RESPUESTA>' +
 						'<CODIGO>0</CODIGO>' +
@@ -296,7 +304,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------
 	---- SE OBTIENEN LOS REGISTROS QUE SERÁN CANDIDATOS AL CALCULO
 	---------------------------------------------------------------------------------------------------------------------------
-	IF(@piIndicadorProceso = 2)
+	IF(@piIndicador_Proceso = 2)
 	BEGIN	
 
 		/*Se crean las tablas temporales locales*/
@@ -382,7 +390,7 @@ BEGIN
 		SELECT	prmca_pco_ofici, prmca_pco_moned, prmca_pco_produc, prmca_pnu_contr, 10 AS producto_prmgt
 		FROM	dbo.GAR_SICC_PRMCA 
 		WHERE	prmca_estado = 'A'
-			AND prmca_pfe_defin >= @viFechaActualEntera
+			AND prmca_pfe_defin >= @viFecha_Actual_Entera
 	
 		/*Se obtienen todos los contratos vencidos con giros activos*/
 		
@@ -394,7 +402,7 @@ BEGIN
 			AND MOC.prmoc_pcomonint = MCA.prmca_pco_moned
 			AND MOC.prmoc_pnu_contr = MCA.prmca_pnu_contr
 		WHERE	MCA.prmca_estado = 'A'
-			AND MCA.prmca_pfe_defin < @viFechaActualEntera
+			AND MCA.prmca_pfe_defin < @viFecha_Actual_Entera
 			AND MOC.prmoc_pse_proces = 1
 			AND MOC.prmoc_estado = 'A'
 			AND MOC.prmoc_pnu_contr > 0
@@ -506,7 +514,7 @@ BEGIN
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.cod_partido = TMP.prmgt_pnu_part 
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE DATABASE_DEFAULT
 		WHERE	GGR.cod_clase_garantia = 11
 		
 		
@@ -716,7 +724,7 @@ BEGIN
 			INNER JOIN 	#TEMP_GAR_PRENDAS_ALF TMP
 			ON GGR.cod_clase_garantia = TMP.prmgt_pcoclagar
 			AND GGR.Identificacion_Sicc = TMP.prmgt_pnuidegar
-			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE database_default
+			AND GGR.Identificacion_Alfanumerica_Sicc = TMP.prmgt_pnuide_alf COLLATE DATABASE_DEFAULT
 		WHERE	GGR.cod_clase_garantia = 38
 			OR GGR.cod_clase_garantia = 43
 		
@@ -735,7 +743,7 @@ BEGIN
 			Codigo_Grado_Gravamen, Codigo_Clase_Garantia, Codigo_Partido, Codigo_Tipo_Garantia, Codigo_Tipo_Operacion, 
 			Indicador_Duplicidad, Porcentaje_Responsabilidad, Monto_Mitigador, Codigo_Grado, Codigo_Clase_Bien, 
 			Cedula_Hipotecaria, Codigo_Bien, Fecha_Presentacion, Fecha_Constitucion, Numero_Finca, 
-			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC)
+			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC, Porcentaje_Aceptacion)
 		SELECT	DISTINCT 
 			GO1.cod_operacion,
 			GGR.cod_garantia_real,
@@ -756,7 +764,7 @@ BEGIN
 			GGR.cod_tipo_garantia,
 			1 AS Codigo_Tipo_Operacion,
 			1 AS Indicador_Duplicidad,
-			COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+			COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 			COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -780,7 +788,8 @@ BEGIN
 				ELSE 0
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
-			0 AS Indicador_Calcular_PANTC
+			0 AS Indicador_Calcular_PANTC,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real
@@ -810,7 +819,7 @@ BEGIN
 			Codigo_Grado_Gravamen, Codigo_Clase_Garantia, Codigo_Partido, Codigo_Tipo_Garantia, Codigo_Tipo_Operacion, 
 			Indicador_Duplicidad, Porcentaje_Responsabilidad, Monto_Mitigador, Codigo_Grado, Codigo_Clase_Bien, 
 			Cedula_Hipotecaria, Codigo_Bien, Fecha_Presentacion, Fecha_Constitucion, Numero_Finca, 
-			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC)
+			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC, Porcentaje_Aceptacion)
 		SELECT	DISTINCT 
 			GO1.cod_operacion,
 			GGR.cod_garantia_real,
@@ -831,7 +840,7 @@ BEGIN
 			GGR.cod_tipo_garantia,
 			2 AS Codigo_Tipo_Operacion,
 			1 AS Indicador_Duplicidad,
-			COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+			COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 			COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -855,7 +864,8 @@ BEGIN
 				ELSE 0
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
-			0 AS Indicador_Calcular_PANTC
+			0 AS Indicador_Calcular_PANTC,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real
@@ -885,7 +895,7 @@ BEGIN
 			Codigo_Grado_Gravamen, Codigo_Clase_Garantia, Codigo_Partido, Codigo_Tipo_Garantia, Codigo_Tipo_Operacion, 
 			Indicador_Duplicidad, Porcentaje_Responsabilidad, Monto_Mitigador, Codigo_Grado, Codigo_Clase_Bien, 
 			Cedula_Hipotecaria, Codigo_Bien, Fecha_Presentacion, Fecha_Constitucion, Numero_Finca, 
-			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC)
+			Numero_Placa_Bien, Codigo_Usuario, Indicador_Calcular_MTAT_MTANT, Indicador_Calcular_PATC, Indicador_Calcular_PANTC, Porcentaje_Aceptacion)
 		SELECT	DISTINCT 
 			GO1.cod_operacion,
 			GGR.cod_garantia_real,
@@ -906,7 +916,7 @@ BEGIN
 			GGR.cod_tipo_garantia,
 			2 AS Codigo_Tipo_Operacion,
 			1 AS Indicador_Duplicidad,
-			COALESCE(GRO.porcentaje_responsabilidad, 0) AS Porcentaje_Responsabilidad,
+			COALESCE(GRO.porcentaje_responsabilidad, -1) AS Porcentaje_Responsabilidad,
 			COALESCE(GRO.monto_mitigador, 0) AS Monto_Mitigador,
 			COALESCE(GGR.cod_grado,'') AS Codigo_Grado,
 			COALESCE(GGR.cod_clase_bien,'') AS Codigo_Clase_Bien,
@@ -930,7 +940,8 @@ BEGIN
 				ELSE 0
 			END AS Indicador_Calcular_MTAT_MTANT, 
 			0 AS Indicador_Calcular_PATC, 
-			0 AS Indicador_Calcular_PANTC
+			0 AS Indicador_Calcular_PANTC,
+			COALESCE(GRO.Porcentaje_Aceptacion, 0) AS Porcentaje_Aceptacion --RQ_MANT_2015111010495738_00610: Se agrega este campo.
 		FROM	#TEMP_GARANTIA_REAL TGR
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
 			ON GRO.cod_garantia_real = TGR.cod_garantia_real
@@ -1109,7 +1120,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------
 	---- SE APLICA EL CALCULO DE LAS TASACIONES ACTUALIZADAS DEL TERRENO Y NO TERRENO
 	---------------------------------------------------------------------------------------------------------------------------
-	IF(@piIndicadorProceso = 3)
+	IF(@piIndicador_Proceso = 3)
 	BEGIN
 
 		/************************************************************************************************
@@ -1236,7 +1247,7 @@ BEGIN
 			AND TGR.Codigo_Tipo_Garantia_Real BETWEEN 1 AND 3
 			AND TGR.Indicador_Calcular_MTAT_MTANT = 1
 			AND GRV.Fecha_Semestre_Calculado IS NOT NULL
-			AND 6 <= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFechaActual)
+			AND 6 <= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFecha_Actual)
 
 		
 		INSERT INTO #TMP_GARANTIAS_REALES_X_OPERACION 
@@ -1297,7 +1308,7 @@ BEGIN
 			AND TGR.Codigo_Tipo_Garantia_Real BETWEEN 1 AND 3
 			AND TGR.Indicador_Calcular_MTAT_MTANT = 1
 			AND GRV.Fecha_Semestre_Calculado IS NOT NULL
-			AND 6 >= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFechaActual)
+			AND 6 >= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFecha_Actual)
 			AND COALESCE(GRV.monto_tasacion_actualizada_terreno, 0) = 0
 			
 		
@@ -1359,7 +1370,7 @@ BEGIN
 			AND TGR.Codigo_Tipo_Garantia_Real BETWEEN 1 AND 3
 			AND TGR.Indicador_Calcular_MTAT_MTANT = 1
 			AND GRV.Fecha_Semestre_Calculado IS NOT NULL
-			AND 6 >= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFechaActual)
+			AND 6 >= dbo.ObtenerDiferenciaMeses(GRV.Fecha_Semestre_Calculado, @vdtFecha_Actual)
 			AND ((COALESCE(GRV.monto_tasacion_actualizada_terreno, 0) = 0)
 				OR (COALESCE(GRV.monto_tasacion_actualizada_no_terreno, 0) = 0)) 
 
@@ -1375,8 +1386,8 @@ BEGIN
 	
 		
 		--Se verifica que los parámetros escenciales se hayan podido obtener, caso contrario el proceso no es ejecutado
-		IF((@vdPorcentajeInferior IS NULL) OR (@vdPorcentajeSuperior IS NULL) OR (@vdPorcentajeIntermedio IS NULL)
-		   OR (@viAnnoInferior IS NULL) OR (@viAnnoIntermedio IS NULL))
+		IF((@vdPorcentaje_Inferior IS NULL) OR (@vdPorcentaje_Superior IS NULL) OR (@vdPorcentaje_Intermedio IS NULL)
+		   OR (@viAnno_Inferior IS NULL) OR (@viAnno_Intermedio IS NULL))
 		BEGIN
 			INSERT INTO @ERRORES_TRANSACCIONALES ( Codigo_Error, Descripcion_Error)
 			SELECT 2, 'Alguno de los parámetros usados por el cálculo del monto de la tasación actualizada del terreno y no terreno calculado no fue obtenido o está mal parametrizado.'
@@ -1529,15 +1540,15 @@ BEGIN
 			 *                                                                                              *
 			 ************************************************************************************************/		
 			--Se obtiene la fecha final en la que se debe generar lal ista de semestres, corresponde a la fecha en que se relaiza el cálculo
-			SET @vdtFechaFinal = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
+			SET @vdtFecha_Final = CONVERT(DATETIME,CAST(GETDATE() AS VARCHAR(11)),101)
 			
 			--Se obtiene la fecha de valuación más antigua y más reciente
-			SELECT	@dtFechaMinimaAvaluo = MIN(Fecha_Valuacion),
-					@dtFechaMaximaAvaluo = MAX(Fecha_Valuacion)
+			SELECT	@dtFecha_Minima_Avaluo = MIN(Fecha_Valuacion),
+					@dtFecha_Maxima_Avaluo = MAX(Fecha_Valuacion)
 			FROM	#TMP_GARANTIAS_REALES_X_OPERACION
 			
 			--Se obtiene la cantidad de meses máximos a agregar
-			SET @viMesesAgregar = ((DATEDIFF(YEAR, @dtFechaMinimaAvaluo, @dtFechaMaximaAvaluo) * 2) + 10)
+			SET @viMeses_Agregar = ((DATEDIFF(YEAR, @dtFecha_Minima_Avaluo, @dtFecha_Maxima_Avaluo) * 2) + 10)
 
 			--Se ingresan dentro de la tabla temporal, usada por el cálculo, los semestres obtenidos y otra información relevante
 			INSERT INTO dbo.TMP_CALCULO_MTAT_MTANT(
@@ -1613,18 +1624,18 @@ BEGIN
 									FROM		@NUMEROS TMP,
 										dbo.GAR_VALUACIONES_REALES GR1 
 										INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-										ON GRO.cod_garantia_real		= GR1.cod_garantia_real
-										AND GRO.Fecha_Valuacion_SICC	= GR1.fecha_valuacion
+										ON GRO.cod_garantia_real = GR1.cod_garantia_real
+										AND GRO.Fecha_Valuacion_SICC = GR1.fecha_valuacion
 									WHERE	GR1.Indicador_Tipo_Registro = 1
-										AND TMP.Consecutivo <= @viMesesAgregar
+										AND TMP.Consecutivo <= @viMeses_Agregar
 										AND DATEADD(MONTH,6*(TMP.Consecutivo-1), GR1.fecha_valuacion) >= GR1.fecha_valuacion
-										AND DATEADD(MONTH,6*(TMP.Consecutivo-1), GR1.fecha_valuacion) <= @vdtFechaFinal) AS TF1
+										AND DATEADD(MONTH,6*(TMP.Consecutivo-1), GR1.fecha_valuacion) <= @vdtFecha_Final) AS TF1
 								ON TF1.cod_garantia_real = GRV.cod_garantia_real
 								WHERE	GRV.Indicador_Tipo_Registro = 1
 								) TFS
-					ON TFS.cod_operacion		= TGR.Cod_Operacion
-					AND TFS.cod_garantia_real	= TGR.Cod_Garantia_Real
-					AND TFS.fecha_valuacion		= TGR.Fecha_Avaluo_SICC
+					ON TFS.cod_operacion = TGR.Cod_Operacion
+					AND TFS.cod_garantia_real = TGR.Cod_Garantia_Real
+					AND TFS.fecha_valuacion = TGR.Fecha_Avaluo_SICC
 				
 				--Se obtiene el tipo de cambio y el IPC para cada semestre
 				UPDATE	TCM
@@ -1634,39 +1645,39 @@ BEGIN
 					INNER JOIN dbo.CAT_INDICES_ACTUALIZACION_AVALUO CIA 
 					ON CONVERT(DATETIME,CAST(CIA.Fecha_Hora AS VARCHAR(11)),101) = TCM.Semestre_Calculado
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
-					AND CIA.Fecha_Hora = (SELECT	MAX(CI1.Fecha_Hora) 
-										FROM	dbo.CAT_INDICES_ACTUALIZACION_AVALUO CI1  
-										WHERE	CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101) = TCM.Semestre_Calculado
-										GROUP BY CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101))
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
+					AND CIA.Fecha_Hora = (	SELECT	MAX(CI1.Fecha_Hora) 
+											FROM	dbo.CAT_INDICES_ACTUALIZACION_AVALUO CI1  
+											WHERE	CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101) = TCM.Semestre_Calculado
+											GROUP BY CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101))
 				
 				--Se obtienen los datos del semestre anterior
 				UPDATE	TCM
-				SET		TCM.Tipo_Cambio_Anterior				= CIA.Tipo_Cambio,
-						TCM.Indice_Precios_Consumidor_Anterior	= CIA.Indice_Precios_Consumidor
+				SET		TCM.Tipo_Cambio_Anterior = CIA.Tipo_Cambio,
+						TCM.Indice_Precios_Consumidor_Anterior = CIA.Indice_Precios_Consumidor
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 					INNER JOIN dbo.CAT_INDICES_ACTUALIZACION_AVALUO CIA 
 					ON CONVERT(DATETIME,CAST(CIA.Fecha_Hora AS VARCHAR(11)),101) = DATEADD(MONTH, -6, TCM.Semestre_Calculado)
 					INNER JOIN (SELECT	MAX(CI1.Fecha_Hora) AS Fecha_Hora
-										FROM	dbo.CAT_INDICES_ACTUALIZACION_AVALUO CI1  
-										GROUP BY CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101)) CI2
+								FROM	dbo.CAT_INDICES_ACTUALIZACION_AVALUO CI1  
+								GROUP BY CONVERT(DATETIME,CAST(CI1.Fecha_Hora AS VARCHAR(11)),101)) CI2
 					ON CI2.Fecha_Hora = CIA.Fecha_Hora
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se actualiza el dato del total de número de semestres
 				UPDATE	TCM
-				SET		TCM.Total_Semestres_Calcular	= TC1.Numero_Registro
+				SET		TCM.Total_Semestres_Calcular = TC1.Numero_Registro
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 					INNER JOIN (SELECT	MAX(Numero_Registro) AS Numero_Registro, Codigo_Operacion, Codigo_Garantia
 								FROM	dbo.TMP_CALCULO_MTAT_MTANT  
 								WHERE	Usuario = @psCedula_Usuario
-									AND Fecha_Hora >= @vdtFechaActualHora
+									AND Fecha_Hora >= @vdtFecha_Actual_Hora
 								GROUP BY Codigo_Operacion, Codigo_Garantia) TC1
 					ON TC1.Codigo_Operacion = TCM.Codigo_Operacion
 					AND TC1.Codigo_Garantia = TCM.Codigo_Garantia
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se establece el valor del factor del tipo de cambio
 				UPDATE	TCM
@@ -1677,7 +1688,7 @@ BEGIN
 												 END
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se establece el valor del factor del IPC
 				UPDATE	TCM
@@ -1688,56 +1699,56 @@ BEGIN
 										 END
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se establece el porcentaje de depreciación semestral aplicable a cada registro
 				UPDATE	TCM
 				SET		TCM.Porcentaje_Depreciacion_Semestral = CASE
-																	WHEN (TCM.Semestre_Calculado <= (DATEADD(YEAR, @viAnnoInferior, TCM.Fecha_Valuacion))) THEN CONVERT(FLOAT, (@vdPorcentajeInferior/100))
-																	WHEN ((TCM.Semestre_Calculado > (DATEADD(YEAR, @viAnnoInferior, TCM.Fecha_Valuacion))) 
-																		AND (TCM.Semestre_Calculado <= (DATEADD(YEAR, @viAnnoIntermedio, TCM.Fecha_Valuacion)))) THEN CONVERT(FLOAT, (@vdPorcentajeIntermedio/100))
-																	ELSE CONVERT(FLOAT, (@vdPorcentajeSuperior/100))
+																	WHEN (TCM.Semestre_Calculado <= (DATEADD(YEAR, @viAnno_Inferior, TCM.Fecha_Valuacion))) THEN CONVERT(FLOAT, (@vdPorcentaje_Inferior/100))
+																	WHEN ((TCM.Semestre_Calculado > (DATEADD(YEAR, @viAnno_Inferior, TCM.Fecha_Valuacion))) 
+																		AND (TCM.Semestre_Calculado <= (DATEADD(YEAR, @viAnno_Intermedio, TCM.Fecha_Valuacion)))) THEN CONVERT(FLOAT, (@vdPorcentaje_Intermedio/100))
+																	ELSE CONVERT(FLOAT, (@vdPorcentaje_Superior/100))
 																END
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE	TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se igualan los montos a los correspondientes de la última tasación, esto sólo para el primer semestre 
 				UPDATE	TCM
-				SET		TCM.Monto_Tasacion_Actualizada_Terreno		= TCM.Monto_Ultima_Tasacion_Terreno,
-						TCM.Monto_Tasacion_Actualizada_No_Terreno	= TCM.Monto_Ultima_Tasacion_No_Terreno
+				SET		TCM.Monto_Tasacion_Actualizada_Terreno = TCM.Monto_Ultima_Tasacion_Terreno,
+						TCM.Monto_Tasacion_Actualizada_No_Terreno = TCM.Monto_Ultima_Tasacion_No_Terreno
 				FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE	TCM.Numero_Registro = 1
 					AND TCM.Usuario = @psCedula_Usuario
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 
 				--Se asigna el valor NULL a los montos calculados en caso de que alguno de los factores sea igual a NULL.
 				UPDATE TCM
-				SET TCM.Monto_Tasacion_Actualizada_Terreno		= NULL,
-					TCM.Monto_Tasacion_Actualizada_No_Terreno	= NULL
+				SET TCM.Monto_Tasacion_Actualizada_Terreno = NULL,
+					TCM.Monto_Tasacion_Actualizada_No_Terreno = NULL
 				FROM dbo.TMP_CALCULO_MTAT_MTANT TCM
 				WHERE TCM.Numero_Registro > 1
 					AND TCM.Usuario = @psCedula_Usuario
 					AND ((TCM.Factor_Tipo_Cambio IS NULL) OR (TCM.Factor_IPC IS NULL))	
-					AND TCM.Fecha_Hora >= @vdtFechaActualHora
+					AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 				--Se vuelven a obtener la cantidad de registros a los que se les debe aplicar el cálculo de los montos
-				SET @viCantidadRegistros = (SELECT	MAX(Numero_Registro)
+				SET @viCantidad_Registros = (SELECT	MAX(Numero_Registro)
 											FROM	dbo.TMP_CALCULO_MTAT_MTANT 
 											WHERE	Usuario = @psCedula_Usuario
-												AND Fecha_Hora >= @vdtFechaActualHora)
+												AND Fecha_Hora >= @vdtFecha_Actual_Hora)
 			
 				--Se inicializa el contador del ciclo en 2, esto porque se debe obtener el semestre anterior 
 				SET @viContador = 2	
 				
 				--Se inicia el ciclo que permitirá calcular los montos actualizados para cada registro evaluado
-				WHILE @viContador <= @viCantidadRegistros
+				WHILE @viContador <= @viCantidad_Registros
 				BEGIN
 					--Se calculan los montos usando como menor factor el tipo de cambio, para los registros que tengan más de un semestre por calcular
 					UPDATE	TCM
-					SET		TCM.Monto_Tasacion_Actualizada_Terreno		= dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior * (1 + TCM.Factor_Tipo_Cambio))),
-							TCM.Monto_Tasacion_Actualizada_No_Terreno	= dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_Tipo_Cambio)))
+					SET		TCM.Monto_Tasacion_Actualizada_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior * (1 + TCM.Factor_Tipo_Cambio))),
+							TCM.Monto_Tasacion_Actualizada_No_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_Tipo_Cambio)))
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 						INNER JOIN (SELECT	TC1.Codigo_Operacion, TC1.Codigo_Garantia, TC1.Numero_Registro,
 										TC1.Monto_Tasacion_Actualizada_Terreno AS MTAT_Anterior,
@@ -1745,21 +1756,21 @@ BEGIN
 									FROM	dbo.TMP_CALCULO_MTAT_MTANT TC1 
 									WHERE	TC1.Numero_Registro = (@viContador - 1)
 										AND TC1.Usuario = @psCedula_Usuario
-										AND TC1.Fecha_Hora >= @vdtFechaActualHora) CMM
+										AND TC1.Fecha_Hora >= @vdtFecha_Actual_Hora) CMM
 						ON	CMM.Codigo_Operacion = TCM.Codigo_Operacion
 						AND CMM.Codigo_Garantia = TCM.Codigo_Garantia
-					WHERE	TCM.Factor_Tipo_Cambio	IS NOT NULL
-						AND TCM.Factor_IPC			IS NOT NULL
-						AND TCM.Factor_Tipo_Cambio	<= TCM.Factor_IPC
-						AND TCM.Numero_Registro		= @viContador
+					WHERE	TCM.Factor_Tipo_Cambio IS NOT NULL
+						AND TCM.Factor_IPC IS NOT NULL
+						AND TCM.Factor_Tipo_Cambio <= TCM.Factor_IPC
+						AND TCM.Numero_Registro = @viContador
 						AND TCM.Total_Semestres_Calcular > 1
 						AND TCM.Usuario = @psCedula_Usuario
-						AND TCM.Fecha_Hora >= @vdtFechaActualHora
+						AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 					--Se calculan los montos usando como menor factor el IPC, para los registros que tengan más de un semestre por calcular
 					UPDATE	TCM
-					SET		TCM.Monto_Tasacion_Actualizada_Terreno		= dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior *  (1 + TCM.Factor_IPC))),
-							TCM.Monto_Tasacion_Actualizada_No_Terreno	= dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_IPC)))
+					SET		TCM.Monto_Tasacion_Actualizada_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTAT_Anterior *  (1 + TCM.Factor_IPC))),
+							TCM.Monto_Tasacion_Actualizada_No_Terreno = dbo.ufn_RedondearValor_FV((CMM.MTANT_Anterior * (1-TCM.Porcentaje_Depreciacion_Semestral) * (1 + TCM.Factor_IPC)))
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM
 						INNER JOIN (SELECT	TC1.Codigo_Operacion, TC1.Codigo_Garantia, TC1.Numero_Registro,
 										TC1.Monto_Tasacion_Actualizada_Terreno AS MTAT_Anterior,
@@ -1767,16 +1778,16 @@ BEGIN
 									FROM	dbo.TMP_CALCULO_MTAT_MTANT TC1 
 									WHERE	TC1.Numero_Registro = (@viContador - 1)
 										AND TC1.Usuario = @psCedula_Usuario
-										AND TC1.Fecha_Hora >= @vdtFechaActualHora) CMM
+										AND TC1.Fecha_Hora >= @vdtFecha_Actual_Hora) CMM
 						ON	CMM.Codigo_Operacion = TCM.Codigo_Operacion
 						AND CMM.Codigo_Garantia = TCM.Codigo_Garantia
-					WHERE	TCM.Factor_Tipo_Cambio	IS NOT NULL
-						AND TCM.Factor_IPC			IS NOT NULL
-						AND TCM.Factor_Tipo_Cambio	> TCM.Factor_IPC
-						AND TCM.Numero_Registro		= @viContador
+					WHERE	TCM.Factor_Tipo_Cambio IS NOT NULL
+						AND TCM.Factor_IPC IS NOT NULL
+						AND TCM.Factor_Tipo_Cambio > TCM.Factor_IPC
+						AND TCM.Numero_Registro = @viContador
 						AND TCM.Total_Semestres_Calcular > 1
 						AND TCM.Usuario = @psCedula_Usuario
-						AND TCM.Fecha_Hora >= @vdtFechaActualHora
+						AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora
 					
 					--Se aumenta el contador del cico
 					SET @viContador = @viContador + 1
@@ -1806,18 +1817,18 @@ BEGIN
 					FROM	dbo.TMP_CALCULO_MTAT_MTANT TCM 
 					WHERE	TCM.Semestre_Calculado = (	SELECT	MAX(CM1.Semestre_Calculado)
 														FROM	dbo.TMP_CALCULO_MTAT_MTANT CM1 
-														WHERE	CM1.Codigo_Operacion	= TCM.Codigo_Operacion
-															AND CM1.Codigo_Garantia		= TCM.Codigo_Garantia
+														WHERE	CM1.Codigo_Operacion = TCM.Codigo_Operacion
+															AND CM1.Codigo_Garantia	= TCM.Codigo_Garantia
 															AND CM1.Usuario = @psCedula_Usuario
-															AND CM1.Fecha_Hora >= @vdtFechaActualHora)
+															AND CM1.Fecha_Hora >= @vdtFecha_Actual_Hora)
 						AND TCM.Numero_Registro = (	SELECT	MAX(CM2.Numero_Registro)
 													FROM	dbo.TMP_CALCULO_MTAT_MTANT CM2 
-													WHERE	CM2.Codigo_Operacion	= TCM.Codigo_Operacion
-														AND CM2.Codigo_Garantia		= TCM.Codigo_Garantia
+													WHERE	CM2.Codigo_Operacion = TCM.Codigo_Operacion
+														AND CM2.Codigo_Garantia = TCM.Codigo_Garantia
 														AND CM2.Usuario = @psCedula_Usuario
-														AND CM2.Fecha_Hora >= @vdtFechaActualHora)
+														AND CM2.Fecha_Hora >= @vdtFecha_Actual_Hora)
 						AND TCM.Usuario = @psCedula_Usuario
-						AND TCM.Fecha_Hora >= @vdtFechaActualHora) TMP
+						AND TCM.Fecha_Hora >= @vdtFecha_Actual_Hora) TMP
 					ON TMP.Codigo_Garantia = GVR.cod_garantia_real
 					AND TMP.Fecha_Valuacion = GVR.fecha_valuacion
 				
@@ -1847,21 +1858,21 @@ BEGIN
 			IF((SELECT	COUNT(*) FROM @ERRORES_TRANSACCIONALES) > 0)
 			BEGIN
 				--Se obtiene el código de ejecución del proceso del día actual
-				SELECT	@viEjecucionProceso = MAX(conEjecucionProceso)
+				SELECT	@viEjecucion_Proceso = MAX(conEjecucionProceso)
 				FROM	dbo.GAR_EJECUCION_PROCESO 
 				WHERE	cocProceso = @vsCodigo_Proceso
-					AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFechaActual
+					AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFecha_Actual
 
-				SELECT	@viEjecucionProcesoDetalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
+				SELECT	@viEjecucion_Proceso_Detalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
 				FROM	dbo.GAR_EJECUCION_PROCESO_DETALLE 
-				WHERE	conEjecucionProceso = @viEjecucionProceso
+				WHERE	conEjecucionProceso = @viEjecucion_Proceso
 
-				IF (@viEjecucionProceso IS NULL)
+				IF (@viEjecucion_Proceso IS NULL)
 				BEGIN
 					INSERT	INTO GAR_EJECUCION_PROCESO(cocProceso, fecEjecucion)
 					VALUES	(@vsCodigo_Proceso, GETDATE())
 
-					SET		@viEjecucionProceso = @@IDENTITY
+					SET		@viEjecucion_Proceso = @@IDENTITY
 				END
 
 				--Se inserta una descripción global de error, que encierra el detalle
@@ -1870,8 +1881,8 @@ BEGIN
 					conEjecucionProcesoDetalle,
 					desObservacion,
 					indError)
-				SELECT	@viEjecucionProceso, 
-						@viEjecucionProcesoDetalle,
+				SELECT	@viEjecucion_Proceso, 
+						@viEjecucion_Proceso_Detalle,
 						'Se presentaron los siguientes problemas al ejecutar el proceso automático del cálculo del monto de la tasación actualizada del terreno y no terreno',
 						1
 
@@ -1881,8 +1892,8 @@ BEGIN
 					conEjecucionProcesoDetalle,
 					desObservacion,
 					indError)
-				SELECT	@viEjecucionProceso, 
-						(@viEjecucionProcesoDetalle + 1),
+				SELECT	@viEjecucion_Proceso, 
+						(@viEjecucion_Proceso_Detalle + 1),
 						Descripcion_Error,
 						1
 				FROM	@ERRORES_TRANSACCIONALES
@@ -1921,7 +1932,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------
 	---- SE APLICA EL CALCULO DEL PORCENTAJE DE ACEPTACION DEL TERRENO CALCULADO
 	---------------------------------------------------------------------------------------------------------------------------
-	IF(@piIndicadorProceso = 4)
+	IF(@piIndicador_Proceso = 4)
 	BEGIN
 	
 		/************************************************************************************************
@@ -1939,7 +1950,7 @@ BEGIN
 		 Fecha_Proximo_Calculo, Tipo_Bien, Indicador_Inscripcion, Fecha_Constitucion, Porcentaje_Aceptacion_Parametrizado, Porcentaje_Aceptacion_Terreno, 
 		 Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, Porcentaje_Aceptacion_No_Terreno_Calculado, 
 		 Indicador_Calculo, Fecha_Ultimo_Seguimiento, Cantidad_Coberturas_Obligatorias, Cantidad_Coberturas_Obligatorias_Asignadas, 
-		 Indicador_Deudor_Habita_Vivienda, Cod_Usuario)
+		 Indicador_Deudor_Habita_Vivienda, Porcentaje_Aceptacion, Cod_Usuario)
 		SELECT	DISTINCT 
 				TGR.Codigo_Contabilidad, 			
 				TGR.Codigo_Oficina, 		
@@ -1986,13 +1997,14 @@ BEGIN
 				0 AS Cantidad_Coberturas_Obligatorias, 
 				0 AS Cantidad_Coberturas_Obligatorias_Asignadas,
 				GGR.Indicador_Vivienda_Habitada_Deudor AS Indicador_Deudor_Habita_Vivienda,
+				0 AS Porcentaje_Aceptacion,
 				TGR.Codigo_Usuario
 		FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-			ON GRO.cod_operacion		= TGR.Codigo_Operacion
-			AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GRO.cod_operacion = TGR.Codigo_Operacion
+			AND GRO.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
-			ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GGR.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GRV 
 			ON GRV.cod_garantia_real = GRO.cod_garantia_real
 		WHERE	TGR.Codigo_Usuario = @psCedula_Usuario
@@ -2035,7 +2047,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 1
-			AND @vdtFechaActual	>= DATEADD(DAY, 30, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 30, Fecha_Constitucion)
 
 
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2043,7 +2055,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 2
-			AND @vdtFechaActual	>= DATEADD(DAY, 60, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 60, Fecha_Constitucion)
 		
 		
 		
@@ -2057,7 +2069,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
-			AND @vdtFechaActual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
 		SET	    Porcentaje_Aceptacion_Terreno_Calculado = CONVERT(FLOAT,(Porcentaje_Aceptacion_Parametrizado / 2))
@@ -2066,7 +2078,7 @@ BEGIN
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien = 2
 			AND Indicador_Deudor_Habita_Vivienda = 0 
-			AND @vdtFechaActual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		--FIN RQ_MANT_2015112410502005: Se ajusta la validación.
 
 		--Castigo por inconsistencia en la fecha de valuación, se excluyen las prendas
@@ -2076,7 +2088,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
-			AND @vdtFechaActual	> DATEADD(YEAR, 5, Fecha_Valuacion)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 5, Fecha_Valuacion)
 		
 		
 		--Se asigna el porcentaje parametrizado al campo, esto para todos aquellos registros que no entraron dentro del cálculo
@@ -2222,21 +2234,21 @@ BEGIN
 		IF((SELECT	COUNT(*) FROM @ERRORES_TRANSACCIONALES) > 0)
 		BEGIN
 			--Se obtiene el código de ejecución del proceso del día actual
-			SELECT	@viEjecucionProceso = MAX(conEjecucionProceso)
+			SELECT	@viEjecucion_Proceso = MAX(conEjecucionProceso)
 			FROM	dbo.GAR_EJECUCION_PROCESO 
 			WHERE	cocProceso = @vsCodigo_Proceso
-				AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFechaActual
+				AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFecha_Actual
 
-			SELECT	@viEjecucionProcesoDetalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
+			SELECT	@viEjecucion_Proceso_Detalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
 			FROM	dbo.GAR_EJECUCION_PROCESO_DETALLE 
-			WHERE	conEjecucionProceso = @viEjecucionProceso
+			WHERE	conEjecucionProceso = @viEjecucion_Proceso
 
-			IF (@viEjecucionProceso IS NULL)
+			IF (@viEjecucion_Proceso IS NULL)
 			BEGIN
 				INSERT	INTO GAR_EJECUCION_PROCESO(cocProceso, fecEjecucion)
 				VALUES	(@vsCodigo_Proceso, GETDATE())
 
-				SET		@viEjecucionProceso = @@IDENTITY
+				SET		@viEjecucion_Proceso = @@IDENTITY
 			END
 
 			--Se inserta una descripción global de error, que encierra el detalle
@@ -2245,8 +2257,8 @@ BEGIN
 				conEjecucionProcesoDetalle,
 				desObservacion,
 				indError)
-			SELECT	@viEjecucionProceso, 
-					@viEjecucionProcesoDetalle,
+			SELECT	@viEjecucion_Proceso, 
+					@viEjecucion_Proceso_Detalle,
 					'Se presentaron los siguientes problemas al ejecutar el proceso automático del cálculo del monto de la tasación actualizada del terreno y no terreno',
 					1
 
@@ -2256,8 +2268,8 @@ BEGIN
 				conEjecucionProcesoDetalle,
 				desObservacion,
 				indError)
-			SELECT	@viEjecucionProceso, 
-					(@viEjecucionProcesoDetalle + 1),
+			SELECT	@viEjecucion_Proceso, 
+					(@viEjecucion_Proceso_Detalle + 1),
 					Descripcion_Error,
 					1
 			FROM	@ERRORES_TRANSACCIONALES
@@ -2295,7 +2307,7 @@ BEGIN
 	---------------------------------------------------------------------------------------------------------------------------
 	---- SE APLICA EL CALCULO DEL PORCENTAJE DE ACEPTACION DEL NO TERRENO CALCULADO
 	---------------------------------------------------------------------------------------------------------------------------
-	IF(@piIndicadorProceso = 5)
+	IF(@piIndicador_Proceso = 5)
 	BEGIN
 	
 		/************************************************************************************************
@@ -2313,7 +2325,7 @@ BEGIN
 		 Fecha_Proximo_Calculo, Tipo_Bien, Indicador_Inscripcion, Fecha_Constitucion, Porcentaje_Aceptacion_Parametrizado, Porcentaje_Aceptacion_Terreno, 
 		 Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, Porcentaje_Aceptacion_No_Terreno_Calculado, 
 		 Indicador_Calculo, Fecha_Ultimo_Seguimiento, Cantidad_Coberturas_Obligatorias, Cantidad_Coberturas_Obligatorias_Asignadas, 
-		 Indicador_Deudor_Habita_Vivienda, Cod_Usuario)
+		 Indicador_Deudor_Habita_Vivienda, Porcentaje_Aceptacion, Cod_Usuario)
 		SELECT	DISTINCT 
 				TGR.Codigo_Contabilidad, 			
 				TGR.Codigo_Oficina, 		
@@ -2360,13 +2372,14 @@ BEGIN
 				0 AS Cantidad_Coberturas_Obligatorias, 
 				0 AS Cantidad_Coberturas_Obligatorias_Asignadas,
 				GGR.Indicador_Vivienda_Habitada_Deudor AS Indicador_Deudor_Habita_Vivienda,
+				0 AS Porcentaje_Aceptacion,
 				TGR.Codigo_Usuario
 		FROM	dbo.TMP_GARANTIAS_REALES_OPERACIONES TGR 
 			INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
-			ON GRO.cod_operacion		= TGR.Codigo_Operacion
-			AND GRO.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GRO.cod_operacion = TGR.Codigo_Operacion
+			AND GRO.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_GARANTIA_REAL GGR 
-			ON GGR.cod_garantia_real	= TGR.Codigo_Garantia_Real
+			ON GGR.cod_garantia_real = TGR.Codigo_Garantia_Real
 			INNER JOIN dbo.GAR_VALUACIONES_REALES GRV 
 			ON GRV.cod_garantia_real = GRO.cod_garantia_real
 		WHERE	TGR.Codigo_Usuario = @psCedula_Usuario
@@ -2450,7 +2463,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 1
-			AND @vdtFechaActual	>= DATEADD(DAY, 30, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 30, Fecha_Constitucion)
 
 
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2458,7 +2471,7 @@ BEGIN
 		WHERE	Cod_Usuario = @psCedula_Usuario
 			AND Porcentaje_Aceptacion_Terreno_Calculado = -1
 			AND Indicador_Inscripcion = 2
-			AND @vdtFechaActual	>= DATEADD(DAY, 60, Fecha_Constitucion)
+			AND @vdtFecha_Actual >= DATEADD(DAY, 60, Fecha_Constitucion)
 													
 		
 		--Se aplican las validaciones que reducen a la mitad el porcentaje de aceptación parametrizado, al porcentaje de aceptación del terreno calculado
@@ -2470,7 +2483,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND ((Tipo_Bien = 1) OR (Tipo_Bien > 3))
-			AND @vdtFechaActual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 			
 		--Castigo por inconsistencia en la fecha de último seguimiento, para el tipo de bien 2, se excluyen las prendas
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2480,7 +2493,7 @@ BEGIN
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien = 2
 			AND Indicador_Deudor_Habita_Vivienda = 0
-			AND @vdtFechaActual	> DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 1, Fecha_Ultimo_Seguimiento)
 		
 		--Si el tipo de bien es igual a 4, esto para las prendas
 		UPDATE	#TMP_GARANTIAS_REALES_X_OPERACION_PAC 
@@ -2489,7 +2502,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND Cod_Tipo_Garantia_real = 3
 			AND Tipo_Bien = 4
-			AND @vdtFechaActual	> DATEADD(MONTH, 6, Fecha_Ultimo_Seguimiento)
+			AND @vdtFecha_Actual > DATEADD(MONTH, 6, Fecha_Ultimo_Seguimiento)
 		
 		
 		--Castigo por inconsistencia en la fecha de valuación, se excluyen las prendas
@@ -2499,7 +2512,7 @@ BEGIN
 			AND Porcentaje_Aceptacion_No_Terreno_Calculado = -1
 			AND ((Cod_Tipo_Garantia_real = 1) OR (Cod_Tipo_Garantia_real = 2))
 			AND Tipo_Bien <> 3
-			AND @vdtFechaActual	> DATEADD(YEAR, 5, Fecha_Valuacion)
+			AND @vdtFecha_Actual > DATEADD(YEAR, 5, Fecha_Valuacion)
 		
 		
 		--Si la garantía no tiene una póliza asignada
@@ -2712,21 +2725,21 @@ BEGIN
 		IF((SELECT	COUNT(*) FROM @ERRORES_TRANSACCIONALES) > 0)
 		BEGIN
 			--Se obtiene el código de ejecución del proceso del día actual
-			SELECT	@viEjecucionProceso = MAX(conEjecucionProceso)
+			SELECT	@viEjecucion_Proceso = MAX(conEjecucionProceso)
 			FROM	dbo.GAR_EJECUCION_PROCESO 
 			WHERE	cocProceso = @vsCodigo_Proceso
-				AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFechaActual
+				AND CONVERT(DATETIME,CAST(fecEjecucion AS VARCHAR(11)),101) = @vdtFecha_Actual
 
-			SELECT	@viEjecucionProcesoDetalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
+			SELECT	@viEjecucion_Proceso_Detalle = COALESCE(MAX(conEjecucionProcesoDetalle), 0) + 1
 			FROM	dbo.GAR_EJECUCION_PROCESO_DETALLE 
-			WHERE	conEjecucionProceso = @viEjecucionProceso
+			WHERE	conEjecucionProceso = @viEjecucion_Proceso
 
-			IF (@viEjecucionProceso IS NULL)
+			IF (@viEjecucion_Proceso IS NULL)
 			BEGIN
 				INSERT	INTO GAR_EJECUCION_PROCESO(cocProceso, fecEjecucion)
 				VALUES	(@vsCodigo_Proceso, GETDATE())
 
-				SET		@viEjecucionProceso = @@IDENTITY
+				SET		@viEjecucion_Proceso = @@IDENTITY
 			END
 
 			--Se inserta una descripción global de error, que encierra el detalle
@@ -2735,8 +2748,8 @@ BEGIN
 				conEjecucionProcesoDetalle,
 				desObservacion,
 				indError)
-			SELECT	@viEjecucionProceso, 
-					@viEjecucionProcesoDetalle,
+			SELECT	@viEjecucion_Proceso, 
+					@viEjecucion_Proceso_Detalle,
 					'Se presentaron los siguientes problemas al ejecutar el proceso automático del cálculo del monto de la tasación actualizada del terreno y no terreno',
 					1
 
@@ -2746,8 +2759,8 @@ BEGIN
 				conEjecucionProcesoDetalle,
 				desObservacion,
 				indError)
-			SELECT	@viEjecucionProceso, 
-					(@viEjecucionProcesoDetalle + 1),
+			SELECT	@viEjecucion_Proceso, 
+					(@viEjecucion_Proceso_Detalle + 1),
 					Descripcion_Error,
 					1
 			FROM	@ERRORES_TRANSACCIONALES
@@ -2781,4 +2794,5 @@ BEGIN
 		END
 
 	END	
+
 END

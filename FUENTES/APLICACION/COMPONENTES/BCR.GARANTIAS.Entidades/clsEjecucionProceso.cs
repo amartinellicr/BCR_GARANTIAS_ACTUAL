@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace BCR.GARANTIAS.Entidades
@@ -87,10 +85,10 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsEjecucionProceso()
         {
-            this.nombreProceso = string.Empty;
-            this.fechaEjecucion = DateTime.MinValue;
-            this.resultadoEjecucion = string.Empty;
-            this.detalleEjecucion = string.Empty;
+            nombreProceso = string.Empty;
+            fechaEjecucion = DateTime.MinValue;
+            resultadoEjecucion = string.Empty;
+            detalleEjecucion = string.Empty;
         }
 
         /// <summary>
@@ -115,10 +113,10 @@ namespace BCR.GARANTIAS.Entidades
             </RESPUESTA>
              */
 
-            this.nombreProceso      = string.Empty;
-            this.fechaEjecucion     = DateTime.MinValue;
-            this.resultadoEjecucion = string.Empty;
-            this.detalleEjecucion   = string.Empty;
+            nombreProceso = string.Empty;
+            fechaEjecucion = DateTime.MinValue;
+            resultadoEjecucion = string.Empty;
+            detalleEjecucion = string.Empty;
 
             if (tramaEjecucionProceso.Length > 0)
             {

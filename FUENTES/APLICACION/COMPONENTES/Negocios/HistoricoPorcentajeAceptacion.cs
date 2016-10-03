@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Collections.Specialized;
-using System.Xml;
 using System.Data.SqlClient;
 using System.Diagnostics;
 
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
 using BCR.GARANTIAS.Comun;
 using BCR.GARANTIAS.Entidades;
 
@@ -18,12 +13,10 @@ namespace BCRGARANTIAS.Negocios
 {
     public class HistoricoPorcentajeAceptacion
     {
-
         #region Variables Globales
         BitacoraBD moBitacoraBD = new BitacoraBD();
 
         #endregion
-
 
         #region Metodos Públicos
 
@@ -32,39 +25,32 @@ namespace BCRGARANTIAS.Negocios
         {
             try
             {
-                SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString());
-                SqlCommand oComando = null;
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand("Insertar_Historico_Porcentaje_Aceptacion", oConexion))
+                    {
+                        //declara las propiedades del comando
+                        oComando.CommandType = CommandType.StoredProcedure;
 
-                oComando = new SqlCommand("Insertar_Historico_Porcentaje_Aceptacion", oConexion);
+                        oComando.Parameters.AddWithValue("@psCodigo_Usuario", codigoUsuario);
+                        oComando.Parameters.AddWithValue("@piCodigo_Accion", codigoAcccion);
+                        oComando.Parameters.AddWithValue("@piCodigo_Consulta", codigoConsulta);
+                        oComando.Parameters.AddWithValue("@piCodigo_Tipo_Garantia", codigoTipoGarantia);
+                        oComando.Parameters.AddWithValue("@piCodigo_Tipo_Mitigador", codigoTipoMitigador);
+                        oComando.Parameters.AddWithValue("@psDescripcion_Campo_Afectado", (descripcionCampoAfectado.Length == 0) ? "-" : descripcionCampoAfectado);
+                        oComando.Parameters.AddWithValue("@psEstado_Anterior_Campo_Afectado", (estadoAnteriorCampoAfectado.Length == 0) ? "-" : estadoAnteriorCampoAfectado);
+                        oComando.Parameters.AddWithValue("@psEstado_Actual_Campo_Afectado", (estadoActualCampoAfectado.Length == 0) ? "-" : estadoActualCampoAfectado);
 
-                SqlDataAdapter oDataAdapter = new SqlDataAdapter();
+                        //Abre la conexion
+                        oComando.Connection.Open();
 
-                //declara las propiedades del comando
-                oComando.CommandType = CommandType.StoredProcedure;
-                //oComando.CommandTimeout = 120;
+                        //Ejecuta el comando
+                        oComando.ExecuteNonQuery();
 
-                //if (nOficina != null)
-                //{
-                //    nOficina = (int)nOficina;
-                //}
-
-                oComando.Parameters.AddWithValue("@psCodigo_Usuario",codigoUsuario);
-                oComando.Parameters.AddWithValue("@piCodigo_Accion",codigoAcccion);
-                oComando.Parameters.AddWithValue("@piCodigo_Consulta",codigoConsulta);
-                oComando.Parameters.AddWithValue("@piCodigo_Tipo_Garantia",codigoTipoGarantia);
-                oComando.Parameters.AddWithValue("@piCodigo_Tipo_Mitigador",codigoTipoMitigador);
-                oComando.Parameters.AddWithValue("@psDescripcion_Campo_Afectado", (descripcionCampoAfectado.Length == 0)? "-" :descripcionCampoAfectado);
-                oComando.Parameters.AddWithValue("@psEstado_Anterior_Campo_Afectado", (estadoAnteriorCampoAfectado.Length ==0) ? "-":estadoAnteriorCampoAfectado );
-                oComando.Parameters.AddWithValue("@psEstado_Actual_Campo_Afectado", (estadoActualCampoAfectado.Length == 0) ? "-" : estadoActualCampoAfectado);
-
-                //Abre la conexion
-                oConexion.Open();
-                oDataAdapter.InsertCommand = oComando;
-                oDataAdapter.InsertCommand.Connection = oConexion;
-
-                oComando.ExecuteNonQuery();
-
-                oConexion.Close();
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
             }
             catch
             {
@@ -118,14 +104,16 @@ namespace BCRGARANTIAS.Negocios
                 parameters[4].Value = (eHistorico.CodigoUsuario.Trim().Length == 0) ? null: eHistorico.CodigoUsuario;
                 parameters[5].Value = fechaInicio;
                 parameters[6].Value = fechaFinal;    
-
-
+                
                 SqlParameter[] parametrosSalida = new SqlParameter[] { };
 
                 using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
                 {
                     oConexion.Open();
                     dsDatosHistorico = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "Consultar_Historico_Porcentaje_Aceptacion", parameters, 0);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)
@@ -144,11 +132,8 @@ namespace BCRGARANTIAS.Negocios
             }
             return dsDatosHistorico;
         }
-
-
-
+        
         #endregion
-
 
     }//FIN
 }//FIN 

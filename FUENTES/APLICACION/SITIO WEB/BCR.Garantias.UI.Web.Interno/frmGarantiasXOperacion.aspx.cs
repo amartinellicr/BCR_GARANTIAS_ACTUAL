@@ -520,17 +520,17 @@ namespace BCRGARANTIAS.Presentacion
 				{
 					SqlParameter[] parameters = new SqlParameter[] 
 					{ 
-						new SqlParameter("nCodOperacion", SqlDbType.BigInt),
-						new SqlParameter("nContabilidad", SqlDbType.TinyInt),
-						new SqlParameter("nOficina", SqlDbType.SmallInt),
-						new SqlParameter("nMoneda", SqlDbType.TinyInt),
-						new SqlParameter("nProducto", SqlDbType.TinyInt),
-						new SqlParameter("nOperacion", SqlDbType.Decimal, 7),
-						new SqlParameter("nObtenerSoloCodigo", SqlDbType.Bit),
-						new SqlParameter("IDUsuario", SqlDbType.VarChar, 30),
+						new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),
+						new SqlParameter("piCodigo_Contabilidad", SqlDbType.TinyInt),
+						new SqlParameter("piCodigo_Oficina", SqlDbType.SmallInt),
+						new SqlParameter("piCodigo_Moneda", SqlDbType.TinyInt),
+						new SqlParameter("piCodigo_Producto", SqlDbType.TinyInt),
+						new SqlParameter("pdNumero_Operacion", SqlDbType.Decimal, 7),
+						new SqlParameter("pbObtener_Solo_Codigo", SqlDbType.Bit),
+						new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 30),
 					};
 
-					parameters[0].Value = DBNull.Value;
+                    parameters[0].Value = DBNull.Value;
 					parameters[1].Value = nContabilidad;
 					parameters[2].Value = nOficina;
 					parameters[3].Value = nMoneda;
@@ -548,16 +548,16 @@ namespace BCRGARANTIAS.Presentacion
 				{
 					SqlParameter[] parameters = new SqlParameter[] 
 					{ 
-						new SqlParameter("nCodOperacion", SqlDbType.BigInt),
-						new SqlParameter("nContabilidad", SqlDbType.TinyInt),
-						new SqlParameter("nOficina", SqlDbType.SmallInt),
-						new SqlParameter("nMoneda", SqlDbType.TinyInt),
-						new SqlParameter("nContrato", SqlDbType.Int),
-						new SqlParameter("nObtenerSoloCodigo", SqlDbType.Bit),
-						new SqlParameter("IDUsuario", SqlDbType.VarChar, 30),
+						new SqlParameter("piConsecutivo_Operacion", SqlDbType.BigInt),
+						new SqlParameter("piCodigo_Contabilidad", SqlDbType.TinyInt),
+						new SqlParameter("piCodigo_Oficina", SqlDbType.SmallInt),
+						new SqlParameter("piCodigo_Moneda", SqlDbType.TinyInt),
+						new SqlParameter("pdNumero_Contrato", SqlDbType.Int),
+						new SqlParameter("pbObtener_Solo_Codigo", SqlDbType.Bit),
+						new SqlParameter("psCedula_Usuario", SqlDbType.VarChar, 30),
 					};
 
-					parameters[0].Value = DBNull.Value;
+                    parameters[0].Value = DBNull.Value;
 					parameters[1].Value = nContabilidad;
 					parameters[2].Value = nOficina;
 					parameters[3].Value = nMoneda;

@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using System.Xml;
-using System.Web;
 using System.IO;
-using LiderSoft.FrameWork.Comun;
-using BCRGarantias.Contenedores;
-using System.Threading;
 
 namespace BCRGARANTIAS.Negocios
 {

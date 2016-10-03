@@ -91,9 +91,10 @@
 										    <td class="td_Texto" colSpan="2">
 										            <asp:button id="Button2" runat="server" BackColor="White" BorderColor="White" BorderStyle="None"></asp:button>
 										            <asp:button id="btnRegresar" tabIndex="6" runat="server" ToolTip="Regresa al formulario anterior" Text="Regresar"></asp:button>
-												    <asp:button id="btnLimpiar" tabIndex="7" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button><asp:button id="btnInsertar" tabIndex="8" runat="server" ToolTip="Insertar Valuación" Text="Insertar"></asp:button>
-												    <asp:button id="btnModificar" tabIndex="9" runat="server" ToolTip="Modificar Valuación" Text="Modificar" Visible="False"></asp:button>
-												    <asp:button id="btnEliminar" tabIndex="10" runat="server" ToolTip="Eliminar Valuación" Text="Eliminar"></asp:button></td>
+												    <asp:button id="btnLimpiar" tabIndex="7" runat="server" ToolTip="Limpiar" Text="Limpiar"></asp:button>
+                                                    <asp:button id="btnInsertar" tabIndex="8" runat="server" ToolTip="Insertar Valuación" Text="Insertar"></asp:button>
+												    <asp:button id="btnEliminar" tabIndex="9" runat="server" ToolTip="Eliminar Valuación" Text="Eliminar"></asp:button>
+										    </td>
 									    </tr>
 								    </table>
 							    </td>

@@ -2718,19 +2718,20 @@ function CalcularMontoMitigador() {
         });
     }
     else {
-        
-        $.ajax({
-            type: "POST",
-            url: pageUrl + "/CalcularMontoMitigadorPA",
-            data: '{"porcentajeAceptacionTerreno":"' + pcjAceptTerreno + '", "porcentajeAceptacionNoTerreno":"' + pcjAceptNoTerreno + '", "porcentajeAceptacionTerrenoCalc":"' + pcjAceptTerrenoCalculado + '", "porcentajeAceptacionNoTerrenoCalc":"' + pcjAceptNoTerrenoCalculado + '", "montoTasActTerreno":"' + montoTasActTerreno + '", "montoTasActNoTerreno":"' + montoTasActNoTerreno + '"}',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: OnSuccess,
-            failure: function (response) {
-                $$('lblMensaje').text(response);
-                alert(response);
-            }
-        });
+        if (($$('btnValidarOperacion').attr("CARGAINICIAL")) === '0') {
+            $.ajax({
+                type: "POST",
+                url: pageUrl + "/CalcularMontoMitigadorPA",
+                data: '{"porcentajeAceptacionTerreno":"' + pcjAceptTerreno + '", "porcentajeAceptacionNoTerreno":"' + pcjAceptNoTerreno + '", "porcentajeAceptacionTerrenoCalc":"' + pcjAceptTerrenoCalculado + '", "porcentajeAceptacionNoTerrenoCalc":"' + pcjAceptNoTerrenoCalculado + '", "montoTasActTerreno":"' + montoTasActTerreno + '", "montoTasActNoTerreno":"' + montoTasActNoTerreno + '"}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    $$('lblMensaje').text(response);
+                    alert(response);
+                }
+            });
+        }
     }
 }
 
@@ -3484,6 +3485,7 @@ function MostrarPoliza(habilitarControl) {
     }
 }
 
+
 //HABILITAR O DESHABILITAR EL CONTROL DEL DETALLE DEL AVALUO
 function HabilitarAvaluoReal(habiltarControl) {
     if (habiltarControl) {
@@ -3507,6 +3509,8 @@ function HabilitarPoliza(habiltarControl) {
         $("#accPoliza").accordion("option", "disabled", true);
     }
 }
+
+
 
 //DESHABILITA Y RETRAE EL CONTROL ACORDEON DEL AVALUO DE GARANTIAS REALES
 function ContraerAvaluo() {
@@ -4110,6 +4114,7 @@ function ValidarPorcentajeAceptacionCalculado() {
         if ((tipoBien > 4) || (porceAceptCalculadoOriginal === 0)) {
 
             $$('txtPorcentajeAceptacionCalculado').val(porcentajeAceptacion);
+            $calculoMontoMitigadorAplicado = false;
             return;
         }
 
@@ -4614,6 +4619,7 @@ function MostrarMensajesPorAceptAvaluo(mostrar) {
     $MostrarMensajesPorAceptAvaluo = mostrar;
     return true;
 }
+
 
  
 

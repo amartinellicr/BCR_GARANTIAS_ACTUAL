@@ -1,61 +1,139 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
+using BCR.GARANTIAS.Entidades;
+
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Operaciones.
-	/// </summary>
-	public class Operaciones
-	{
-		#region Metodos Publicos
-		public long ObtenerConsecutivoOperacion(int nContabilidad, int nOficina, int nMoneda, 
-												int nProducto, long nOperacion, string strDeudor)
+    /// <summary>
+    /// Summary description for Operaciones.
+    /// </summary>
+    public class Operaciones
+	{        
+        #region Métodos Públicos
+        public long ObtenerConsecutivoOperacion(int nContabilidad, int nOficina, int nMoneda, int nProducto, long nOperacion, string strDeudor)
 		{
-			try
-			{
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = new SqlCommand("pa_ObtenerConsecutivoOperacion", oConexion);
-					DataSet dsData = new DataSet();
-					SqlParameter oParam = new SqlParameter();
-					SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-					long nConsecutivo = 0;
+            DataSet dsData = new DataSet();
+            long nConsecutivo = 0;
 
-					//Declara las propiedades del comando
-					oComando.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("nContabilidad", SqlDbType.SmallInt),
+                        new SqlParameter("nOficina", SqlDbType.SmallInt),
+                        new SqlParameter("nMoneda", SqlDbType.SmallInt),
+                        new SqlParameter("nProducto", SqlDbType.SmallInt),
+                        new SqlParameter("nOperacion", SqlDbType.Decimal),
+                        new SqlParameter("strDeudor", SqlDbType.VarChar, 30)
+                    };
 
-					//Agrega los parametros
-					oComando.Parameters.AddWithValue("@nContabilidad", nContabilidad);
-					oComando.Parameters.AddWithValue("@nOficina", nOficina);
-					oComando.Parameters.AddWithValue("@nMoneda", nMoneda);
-					oComando.Parameters.AddWithValue("@nProducto", nProducto);
-					oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
-					oComando.Parameters.AddWithValue("@strDeudor", strDeudor);
+                parameters[0].Value = nContabilidad;
+                parameters[1].Value = nOficina;
+                parameters[2].Value = nMoneda;
+                parameters[3].Value = nProducto;
+                parameters[4].Value = nOperacion;
+                parameters[5].Value = strDeudor;
 
-					//Abre la conexion
-					oConexion.Open();
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    oConexion.Open();
 
-					//Ejecuta el comando
-					oDataAdapter.SelectCommand = oComando;
-					oDataAdapter.SelectCommand.Connection = oConexion;
-					oDataAdapter.Fill(dsData, "Datos");
-					if (dsData.Tables["Datos"].Rows.Count > 0)
-						nConsecutivo = long.Parse(dsData.Tables["Datos"].Rows[0][0].ToString());
+                    object datoRetornado = AccesoBD.ExecuteScalar(CommandType.StoredProcedure, "pa_ObtenerConsecutivoOperacion", parameters);
 
-					return nConsecutivo;
-				}
-			}
-			catch
-			{
-				throw;
-			}
+                    oConexion.Close();
+                    oConexion.Dispose();
+
+                    nConsecutivo = (long.TryParse(datoRetornado.ToString(), out nConsecutivo) ? nConsecutivo : 0);
+                }
+ 
+                return nConsecutivo;
+            }
+            catch
+            {
+                throw;
+            }
 		}
 
-		#endregion
-	}
+        public clsOperacionCrediticia ValidarOperacion(int nContabilidad, int nOficina, int nMoneda, int nProducto, long nOperacion)
+        {
+            DataSet dsDatos = new DataSet();
+            clsOperacionCrediticia datosOperacion = new clsOperacionCrediticia();
+
+            try
+            {
+                SqlParameter[] parameters = new SqlParameter[] {
+                        new SqlParameter("Contabilidad", SqlDbType.SmallInt),
+                        new SqlParameter("Oficina", SqlDbType.SmallInt),
+                        new SqlParameter("Moneda", SqlDbType.SmallInt),
+                        new SqlParameter("Producto", SqlDbType.SmallInt),
+                        new SqlParameter("Operacion", SqlDbType.Decimal)
+                    };
+
+                parameters[3].IsNullable = true;
+
+                parameters[0].Value = nContabilidad;
+                parameters[1].Value = nOficina;
+                parameters[2].Value = nMoneda;
+
+                if (nProducto != -1)
+                {
+                    parameters[3].Value = nProducto;
+                }
+                else
+                {
+                    parameters[3].Value = DBNull.Value;
+                }
+
+                parameters[4].Value = nOperacion;
+
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    oConexion.Open();
+
+                    dsDatos = AccesoBD.ExecuteDataSet(CommandType.StoredProcedure, "pa_ValidarOperaciones", parameters);
+
+                    oConexion.Close();
+                    oConexion.Dispose();
+                }
+
+                datosOperacion.Contabilidad = ((short) nContabilidad);
+                datosOperacion.Oficina = ((short) nOficina);
+                datosOperacion.Moneda = ((short) nMoneda);
+                datosOperacion.Producto = ((short) nProducto);
+                datosOperacion.Operacion = nOperacion;
+
+                if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables[0].Rows.Count > 0))
+                {
+                    datosOperacion.EsGiro = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._indicadorEsGiro)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._indicadorEsGiro)) && (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._indicadorEsGiro].ToString().CompareTo("1") == 0)) ? true : false);
+
+                    datosOperacion.ConsecutivoContrato = (((dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoContrato))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoContrato].ToString())) : -1);
+
+                    datosOperacion.FormatoLargoContrato = (((datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._formatoLargoContrato)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._formatoLargoContrato))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._formatoLargoContrato].ToString()) : string.Empty);
+
+                    datosOperacion.ConsecutivoOperacion = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._consecutivoOperacion)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._consecutivoOperacion))) ? (long.Parse(dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._consecutivoOperacion].ToString())) : -1);
+
+                    datosOperacion.CedulaDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._cedulaDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._cedulaDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._cedulaDeudor].ToString()) : string.Empty);
+
+                    datosOperacion.NombreDeudor = (((!datosOperacion.EsGiro) && (dsDatos.Tables[0].Columns.Contains(clsOperacionCrediticia._nombreDeudor)) && (!dsDatos.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._nombreDeudor))) ? (dsDatos.Tables[0].Rows[0][clsOperacionCrediticia._nombreDeudor].ToString()) : string.Empty);
+
+                    datosOperacion.EsValida = ((datosOperacion.EsGiro) ? false : true);
+                }
+                else
+                {
+                    datosOperacion.EsValida = false;
+                }
+            }
+            catch
+            {
+                throw;
+            }           
+
+            return datosOperacion;
+        }
+
+        #endregion
+    }
 }

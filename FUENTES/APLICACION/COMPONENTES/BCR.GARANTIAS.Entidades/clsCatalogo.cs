@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
+using System.Text;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
+
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -18,11 +12,12 @@ namespace BCR.GARANTIAS.Entidades
     {
         #region Constantes
 
+        public const string _entidadCatalogo   = "CAT_CATALOGO";
         private const string _tagCatalogo       = "CATALAGO";
 
-        private const string _catCatalogo       = "cat_catalogo";
-        private const string _catCampo          = "cat_campo";
-        private const string _catDescripcion    = "cat_descripcion";
+        public const string _catCatalogo       = "cat_catalogo";
+        public const string _catCampo          = "cat_campo";
+        public const string _catDescripcion    = "cat_descripcion";
 
         #endregion Constantes
 
@@ -239,6 +234,36 @@ namespace BCR.GARANTIAS.Entidades
         #endregion Constructores
 
         #region Métodos Públicos
+
+        /// <summary>
+        /// Método que permite generar el contenido de la clase en formato JSON
+        /// </summary>
+        /// <returns>Cadena de texto en formato JSON</returns>
+        public string ConvertirJSON()
+        {
+            StringBuilder formatoJSON = new StringBuilder("{");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(clsElemento._consecutivoElemento);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(codElemento.ToString());
+            formatoJSON.Append('"');
+            formatoJSON.Append(",");
+
+            formatoJSON.Append('"');
+            formatoJSON.Append(clsElemento._descripcionElemento);
+            formatoJSON.Append('"');
+            formatoJSON.Append(':');
+            formatoJSON.Append('"');
+            formatoJSON.Append(DescripcionCodigoElemento);
+            formatoJSON.Append('"');
+
+            formatoJSON.Append('}');
+
+            return formatoJSON.ToString();
+        }
 
         #endregion Métodos Públicos
 

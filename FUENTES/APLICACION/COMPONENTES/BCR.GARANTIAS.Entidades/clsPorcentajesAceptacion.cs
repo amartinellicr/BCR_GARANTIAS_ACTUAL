@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 
@@ -93,7 +92,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsPorcentajesAceptacion()
         {
-            this.tramaPorcentajesAceptacion = string.Empty;
+            tramaPorcentajesAceptacion = string.Empty;
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaPolizasBD">Trama que posee los datos de las pólizas obtenidas de la Base de Datos</param>
         public clsPorcentajesAceptacion(string tramaPorcentajesAceptacionBD)
         {
-            this.tramaPorcentajesAceptacion = string.Empty;
+            tramaPorcentajesAceptacion = string.Empty;
 
             if (tramaPorcentajesAceptacionBD.Length > 0)
             {
@@ -125,7 +124,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlPorcentajes != null)
                 {
-                    this.tramaPorcentajesAceptacion = tramaPorcentajesAceptacionBD;
+                    tramaPorcentajesAceptacion = tramaPorcentajesAceptacionBD;
 
                     if (xmlPorcentajes.HasChildNodes)
                     {
@@ -137,13 +136,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadPorcentajeAceptacion.ErrorDatos)
                             {
-                                this.errorDatos = entidadPorcentajeAceptacion.ErrorDatos;
-                                this.descripcionError = entidadPorcentajeAceptacion.DescripcionError;
+                                errorDatos = entidadPorcentajeAceptacion.ErrorDatos;
+                                descripcionError = entidadPorcentajeAceptacion.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadPorcentajeAceptacion);
+                                Agregar(entidadPorcentajeAceptacion);
                             }
                         }
                     }
@@ -276,7 +275,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsPorcentajeAceptacion porcentajeAceptacion in this.InnerList)
+                foreach (clsPorcentajeAceptacion porcentajeAceptacion in InnerList)
                 {
                     objEscritor.WriteStartElement(_tagPorcentaje);
 
@@ -384,13 +383,13 @@ namespace BCR.GARANTIAS.Entidades
             StringBuilder listaPorcentajesAceptacionJSON = new StringBuilder();
 
             //Se revisa que la lista posea semestres
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                 listaPorcentajesAceptacionJSON.Append("[");
 
                 //Se recorren los semestres y se genera la cedena JSON de cada uno
-                foreach (clsPorcentajeAceptacion convertirPorcentajeAceptacion in this.InnerList)
+                foreach (clsPorcentajeAceptacion convertirPorcentajeAceptacion in InnerList)
                 {
                     listaPorcentajesAceptacionJSON.Append(convertirPorcentajeAceptacion.ConvertirJSON());
                     listaPorcentajesAceptacionJSON.Append(",");

@@ -1,0 +1,16 @@
+Archivo creado 29/01/2016 01:29:46 PM
+
+
+NUEVO EVENTO______Fecha y Hora:29/01/2016 01:29:46 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se presentaron problemas técnicos al extraer los datos del archivo 'GarantiasValorInfoCompleta'. Detalle técnico: El procedimiento o la función 'pa_GenerarGarantiasValorInfoCompleta' esperaba el parámetro '@IDUsuario', que no se ha especificado.
+
+
+NUEVO EVENTO______Fecha y Hora:29/01/2016 01:35:36 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se presentaron problemas técnicos al extraer los datos del archivo 'Contratos'. Detalle técnico: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+

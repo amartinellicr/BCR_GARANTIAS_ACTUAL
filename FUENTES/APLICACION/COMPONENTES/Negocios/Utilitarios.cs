@@ -1,18 +1,15 @@
 using System;
-using System.Web;
-using System.Data;
 using System.Configuration;
 using System.Diagnostics;
-using System.Xml;
 using System.IO;
 using System.Reflection;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for Class1.
-	/// </summary>
-	public class Utilitarios
+    /// <summary>
+    /// Summary description for Class1.
+    /// </summary>
+    public class Utilitarios
 	{
         #region Constantes
             private const string BACKSLASH = "\\";

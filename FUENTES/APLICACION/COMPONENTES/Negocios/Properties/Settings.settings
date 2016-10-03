@@ -5,5 +5,11 @@
     <Setting Name="Negocios_ActDirectory_ActiveDirectory" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">http://bcr0106lab82/bcr.servicios.web/activedirectory.asmx</Value>
     </Setting>
+    <Setting Name="Negocios_BCR_MQ_Servicios_WSMQ" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://192.168.162.15/WSMQ/WSMQ.asmx</Value>
+    </Setting>
+    <Setting Name="Negocios_BCCR_IndicadoresEconomicos_wsIndicadoresEconomicos" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://indicadoreseconomicos.bccr.fi.cr/indicadoreseconomicos/WebServices/wsIndicadoresEconomicos.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

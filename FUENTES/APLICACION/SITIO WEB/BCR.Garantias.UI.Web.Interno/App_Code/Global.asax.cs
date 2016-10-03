@@ -95,6 +95,7 @@ public class Global : System.Web.HttpApplication
             Application["MNU_CONSULTA_CAMBIOS_GARANTIAS"] = ConfigurationManager.AppSettings.Get("MNU_CONSULTA_CAMBIOS_GARANTIAS");
             Application["MNU_REPORTE_EJECUCION_PROCESOS"] = ConfigurationManager.AppSettings.Get("MNU_REPORTE_EJECUCION_PROCESOS");
             Application["MNU_HISTORICO_PORCENTAJE_ACEPTACION"] = ConfigurationManager.AppSettings.Get("MNU_HISTORICO_PORCENTAJE_ACEPTACION");
+            Application["MNU_SALDOS_TOTALES_PORCENTAJE_RESPONSABILIDAD"] = ConfigurationManager.AppSettings.Get("MNU_SALDOS_TOTALES_PORCENTAJE_RESPONSABILIDAD");
 
             //Catálogos
             Application["CAT_TIPO_PERSONA"] = ConfigurationManager.AppSettings.Get("CAT_TIPO_PERSONA");
@@ -200,6 +201,15 @@ public class Global : System.Web.HttpApplication
             Application["ANNOS_FECHA_PRESCRIPCION_HIPOTECA"] = ConfigurationManager.AppSettings.Get("ANNOS_FECHA_PRESCRIPCION_HIPOTECA");
             Application["ANNOS_FECHA_PRESCRIPCION_CEDULA_HIPOTECARIA"] = ConfigurationManager.AppSettings.Get("ANNOS_FECHA_PRESCRIPCION_CEDULA_HIPOTECARIA");
             Application["ANNOS_FECHA_PRESCRIPCION_PRENDA"] = ConfigurationManager.AppSettings.Get("ANNOS_FECHA_PRESCRIPCION_PRENDA");
+
+            Application["PERFILES_PERMISO_EDICION_STPR"] = ConfigurationManager.AppSettings.Get("PERFILES_PERMISO_EDICION_STPR");
+            
+        }
+        catch (ConfigurationErrorsException ex)
+        {
+            UtilitariosComun.RegistraEventLog(Mensajes.Obtener(Mensajes.ERROR_OBTENIENDO_DATOS_ARCHIVO_CONFIGURACION_DETALLE, ex.Message, Mensajes.ASSEMBLY), System.Diagnostics.EventLogEntryType.Error);
+
+            throw ex;
         }
         catch (Exception ex)
         {

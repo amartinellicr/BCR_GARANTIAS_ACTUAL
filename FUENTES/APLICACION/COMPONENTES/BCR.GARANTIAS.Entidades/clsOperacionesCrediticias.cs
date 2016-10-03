@@ -129,7 +129,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtOperaciones.NewRow();
 
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     drFila[_contabilidad] = operacionCredi.Contabilidad;
                     drFila[_oficina] = operacionCredi.Oficina;
@@ -168,7 +168,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     cadenaRetornada.Append(operacionCredi.Contabilidad.ToString());
                     cadenaRetornada.Append(" - ");
@@ -205,7 +205,7 @@ namespace BCR.GARANTIAS.Entidades
                 /*Se eliminan las operaciones o contratos duplicados, esto para generar un sólo código*/
                 ArrayList operacionesValidas = new ArrayList();
 
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     foreach (clsOperacionCrediticia operacionCrediticia in operacionesValidas)
                     {
@@ -335,7 +335,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     objEscritor.WriteStartElement(_operacion);
 
@@ -416,7 +416,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     listaConsecutivosOperaciones += operacionCredi.CodigoOperacion.ToString() + "|";
                 }
@@ -435,7 +435,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsOperacionCrediticia operacionCredi in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCredi in InnerList)
                 {
                     if (!listaConsecutivosGarantias.Contains(operacionCredi.CodigoGarantia))
                     {
@@ -462,9 +462,9 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsOperacionCrediticia operacionCrediInicial in this.InnerList)
+                foreach (clsOperacionCrediticia operacionCrediInicial in InnerList)
                 {
-                    foreach (clsOperacionCrediticia operacionCrediActual in this.InnerList)
+                    foreach (clsOperacionCrediticia operacionCrediActual in InnerList)
                     {
                         if (operacionCrediInicial.MontoAcreenciaPoliza != operacionCrediActual.MontoAcreenciaPoliza)
                         {

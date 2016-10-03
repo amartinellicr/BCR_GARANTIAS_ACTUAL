@@ -31,8 +31,9 @@ namespace BCRGarantias.Contenedores
         public const string OFICINA_DEUDOR = "oficina_deudor";
         public const string COD_BIN = "cod_bin";
         public const string COD_INTERNO_SISTAR = "cod_interno_sistar";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        #endregion
 
         public ContenedorGiros_garantias_fiduciarias()
 		{

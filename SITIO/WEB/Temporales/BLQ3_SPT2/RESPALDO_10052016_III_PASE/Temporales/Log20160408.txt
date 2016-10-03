@@ -1,0 +1,9 @@
+Archivo creado 08/04/2016 03:00:58 PM
+
+
+NUEVO EVENTO______Fecha y Hora:08/04/2016 03:00:58 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar la página 'del mantenimiento de saldos totales y porcentaje de responsabilidad'. Detalle: Thread was being aborted.
+

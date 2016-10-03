@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 
@@ -90,7 +89,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsCoberturas()
         {
-            this.tramaCoberturas = string.Empty;
+            tramaCoberturas = string.Empty;
         }
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaCoberturasBD">Trama que posee los datos de las pólizas obtenidas de la Base de Datos</param>
         public clsCoberturas(string tramaCoberturasBD)
         {
-            this.tramaCoberturas = string.Empty;
+            tramaCoberturas = string.Empty;
 
             if (tramaCoberturasBD.Length > 0)
             {
@@ -163,7 +162,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlCoberturas != null)
                 {
-                    this.tramaCoberturas = tramaCoberturasBD;
+                    tramaCoberturas = tramaCoberturasBD;
 
                     if (xmlCoberturas.HasChildNodes)
                     {
@@ -177,13 +176,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadCobertura.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadCobertura.ErrorDatos;
-                                    this.descripcionError = entidadCobertura.DescripcionError;
+                                    errorDatos = entidadCobertura.ErrorDatos;
+                                    descripcionError = entidadCobertura.DescripcionError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadCobertura);
+                                    Agregar(entidadCobertura);
                                 }
                             }
                         }
@@ -196,13 +195,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadCobertura.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadCobertura.ErrorDatos;
-                                    this.descripcionError = entidadCobertura.DescripcionError;
+                                    errorDatos = entidadCobertura.ErrorDatos;
+                                    descripcionError = entidadCobertura.DescripcionError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadCobertura);
+                                    Agregar(entidadCobertura);
                                 }
                             }
                         }
@@ -299,8 +298,8 @@ namespace BCR.GARANTIAS.Entidades
             if (InnerList.Count > 0)
             {
 
-                List<clsCobertura> listaCoberturasPorAsignar = this.Items(Enumeradores.Tipos_Trama_Cobertura.PorAsignar);
-                List<clsCobertura> listaCoberturasAsignadas = this.Items(Enumeradores.Tipos_Trama_Cobertura.Asignada);
+                List<clsCobertura> listaCoberturasPorAsignar = Items(Enumeradores.Tipos_Trama_Cobertura.PorAsignar);
+                List<clsCobertura> listaCoberturasAsignadas = Items(Enumeradores.Tipos_Trama_Cobertura.Asignada);
 
                 //Se genera el nodo de las coberturas por asignar
                 if (listaCoberturasPorAsignar.Count > 0)
@@ -405,13 +404,13 @@ namespace BCR.GARANTIAS.Entidades
             StringBuilder  listaCoberturasJSON = new StringBuilder();
 
             //Se revisa que la lista posea coberturas
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                  listaCoberturasJSON.Append("[");
 
                 //Se recorren las coberturas y se genera la cedena JSON de cada uno
-                 foreach (clsCobertura convertirCobertura in this.InnerList)
+                 foreach (clsCobertura convertirCobertura in InnerList)
                  {
                      listaCoberturasJSON.Append(convertirCobertura.ConvertirJSON());
                      listaCoberturasJSON.Append(",");

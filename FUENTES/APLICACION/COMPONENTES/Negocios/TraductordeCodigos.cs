@@ -1,11 +1,10 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
-using System.Data.SqlClient;
 using System.Configuration;
+using System.Data.SqlClient;
+
 using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
-using System.Collections;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
@@ -13,11 +12,21 @@ namespace BCRGARANTIAS.Negocios
     {
         #region Variables Globales
 
-        //DataSet dsCatalogos = new DataSet();
         DataTable dtElementos = new DataTable();
-        //DataTable dtInstrumentos = new DataTable();
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
 
         #endregion
+
+        #region Constructor
+
+        public TraductordeCodigos()
+        {
+            CargarDatos();
+        }
+
+        #endregion Constructor
 
         #region Métodos Públicos Especiales
 
@@ -34,19 +43,31 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                if (strCodigoGarFidu != string.Empty)
+                if (strCodigoGarFidu.Length > 0)
                 {
-                    DataSet dsGarantFiduc = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_fiduciaria.CEDULA_FIADOR +
-                        " from GAR_GARANTIA_FIDUCIARIA" +
-                        " where " + ContenedorGarantia_fiduciaria.COD_GARANTIA_FIDUCIARIA + " = " + strCodigoGarFidu);
+                    listaCampos = new string[] { clsGarantiaFiduciaria._cedulaFiador,
+                                                 clsGarantiaFiduciaria._entidadGarantiaFiduciaria,
+                                                 clsGarantiaFiduciaria._consecutivoGarantiaFiduciaria, strCodigoGarFidu};
 
-                    if ((dsGarantFiduc != null) && (dsGarantFiduc.Tables.Count > 0) && (dsGarantFiduc.Tables[0].Rows.Count > 0))
-                    {
-                        if (!dsGarantFiduc.Tables[0].Rows[0].IsNull(ContenedorGarantia_fiduciaria.CEDULA_FIADOR))
-                        {
-                            strCedulaFiador = dsGarantFiduc.Tables[0].Rows[0][ContenedorGarantia_fiduciaria.CEDULA_FIADOR].ToString();
-                        }
-                    }
+                    sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3}", listaCampos);
+
+                    SqlParameter[] parameters = new SqlParameter[] { new SqlParameter("ReturnValue", SqlDbType.VarChar) };
+
+                    parameters[0].Direction = ParameterDirection.ReturnValue;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.Text, sentenciaSql, parameters);
+
+                    strCedulaFiador = ((string) parameters[0].Value);
+
+                    //DataSet dsGarantFiduc = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+                    //if ((dsGarantFiduc != null) && (dsGarantFiduc.Tables.Count > 0) && (dsGarantFiduc.Tables[0].Rows.Count > 0))
+                    //{
+                    //    if (!dsGarantFiduc.Tables[0].Rows[0].IsNull(clsGarantiaFiduciaria._cedulaFiador))
+                    //    {
+                    //        strCedulaFiador = dsGarantFiduc.Tables[0].Rows[0][clsGarantiaFiduciaria._cedulaFiador].ToString();
+                    //    }
+                    //}
                 }
             }
             catch
@@ -72,19 +93,31 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                if (strCodigoOperacionCrediticia != string.Empty)
+                if (strCodigoOperacionCrediticia.Length > 0)
                 {
-                    DataSet dsOperaciones = AccesoBD.ejecutarConsulta("select " + ContenedorOperacion.CEDULA_DEUDOR +
-                        " from " + ContenedorOperacion.NOMBRE_ENTIDAD +
-                        " where " + ContenedorOperacion.COD_OPERACION + " = " + strCodigoOperacionCrediticia);
+                    listaCampos = new string[] { clsOperacionCrediticia._cedulaDeudor,
+                                                 clsOperacionCrediticia._entidadOperacion,
+                                                 clsOperacionCrediticia._consecutivoOperacion, strCodigoOperacionCrediticia};
 
-                    if ((dsOperaciones != null) && (dsOperaciones.Tables.Count > 0) && (dsOperaciones.Tables[0].Rows.Count > 0))
-                    {
-                        if (!dsOperaciones.Tables[0].Rows[0].IsNull(ContenedorOperacion.CEDULA_DEUDOR))
-                        {
-                            strCedulaDeudor = dsOperaciones.Tables[0].Rows[0][ContenedorOperacion.CEDULA_DEUDOR].ToString();
-                        }
-                    }
+                    sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3}", listaCampos);
+
+                    SqlParameter[] parameters = new SqlParameter[] { new SqlParameter("ReturnValue", SqlDbType.VarChar) };
+
+                    parameters[0].Direction = ParameterDirection.ReturnValue;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.Text, sentenciaSql, parameters);
+
+                    strCedulaDeudor = ((string)parameters[0].Value);
+
+                    //DataSet dsOperaciones = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+                    //if ((dsOperaciones != null) && (dsOperaciones.Tables.Count > 0) && (dsOperaciones.Tables[0].Rows.Count > 0))
+                    //{
+                    //    if (!dsOperaciones.Tables[0].Rows[0].IsNull(clsOperacionCrediticia._cedulaDeudor))
+                    //    {
+                    //        strCedulaDeudor = dsOperaciones.Tables[0].Rows[0][clsOperacionCrediticia._cedulaDeudor].ToString();
+                    //    }
+                    //}
                 }
             }
             catch
@@ -111,17 +144,30 @@ namespace BCRGARANTIAS.Negocios
             {
                 if (strCodigoGarFiduTar != string.Empty)
                 {
-                    DataSet dsGarantFiduc = AccesoBD.ejecutarConsulta("select " + ContenedorGarantia_fiduciaria.CEDULA_FIADOR +
-                        " from TAR_GARANTIA_FIDUCIARIA" +
-                        " where " + ContenedorGarantia_fiduciaria.COD_GARANTIA_FIDUCIARIA + " = " + strCodigoGarFiduTar);
 
-                    if ((dsGarantFiduc != null) && (dsGarantFiduc.Tables.Count > 0) && (dsGarantFiduc.Tables[0].Rows.Count > 0))
-                    {
-                        if (!dsGarantFiduc.Tables[0].Rows[0].IsNull(ContenedorGarantia_fiduciaria.CEDULA_FIADOR))
-                        {
-                            strCedulaFiadorTar = dsGarantFiduc.Tables[0].Rows[0][ContenedorGarantia_fiduciaria.CEDULA_FIADOR].ToString();
-                        }
-                    }
+                    listaCampos = new string[] { clsGarantiaFiduciariaTarjeta._cedulaFiador,
+                                                 clsGarantiaFiduciariaTarjeta._entidadGarantiaFiduciariaTarjeta,
+                                                 clsGarantiaFiduciariaTarjeta._consecutivoGarantiaFiduciaria, strCodigoGarFiduTar};
+
+                    sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3}", listaCampos);
+
+                    SqlParameter[] parameters = new SqlParameter[] { new SqlParameter("ReturnValue", SqlDbType.VarChar) };
+
+                    parameters[0].Direction = ParameterDirection.ReturnValue;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.Text, sentenciaSql, parameters);
+
+                    strCedulaFiadorTar = ((string)parameters[0].Value);
+
+                    //DataSet dsGarantFiduc = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+                    //if ((dsGarantFiduc != null) && (dsGarantFiduc.Tables.Count > 0) && (dsGarantFiduc.Tables[0].Rows.Count > 0))
+                    //{
+                    //    if (!dsGarantFiduc.Tables[0].Rows[0].IsNull(clsGarantiaFiduciariaTarjeta._cedulaFiador))
+                    //    {
+                    //        strCedulaFiadorTar = dsGarantFiduc.Tables[0].Rows[0][clsGarantiaFiduciariaTarjeta._cedulaFiador].ToString();
+                    //    }
+                    //}
                 }
             }
             catch
@@ -145,17 +191,30 @@ namespace BCRGARANTIAS.Negocios
             {
                 if (strNumeroTarjeta != string.Empty)
                 {
-                    DataSet dsTarjeta = AccesoBD.ejecutarConsulta("select " + ContenedorTarjeta.CEDULA_DEUDOR +
-                        " from " + ContenedorTarjeta.NOMBRE_ENTIDAD +
-                        " where " + ContenedorTarjeta.COD_TARJETA + " = " + strNumeroTarjeta);
+                    listaCampos = new string[] { clsTarjeta._cedulaDeudor,
+                                                 clsTarjeta._entidadTarjeta,
+                                                 clsTarjeta._consecutivoTarjeta, strNumeroTarjeta};
 
-                    if ((dsTarjeta != null) && (dsTarjeta.Tables.Count > 0) && (dsTarjeta.Tables[0].Rows.Count > 0))
-                    {
-                        if (!dsTarjeta.Tables[0].Rows[0].IsNull(ContenedorTarjeta.CEDULA_DEUDOR))
-                        {
-                            strCedulaDeudorTar = dsTarjeta.Tables[0].Rows[0][ContenedorTarjeta.CEDULA_DEUDOR].ToString();
-                        }
-                    }
+                    sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = {3}", listaCampos);
+
+                    SqlParameter[] parameters = new SqlParameter[] { new SqlParameter("ReturnValue", SqlDbType.VarChar) };
+
+                    parameters[0].Direction = ParameterDirection.ReturnValue;
+
+                    AccesoBD.ExecuteNonQuery(CommandType.Text, sentenciaSql, parameters);
+
+                    strCedulaDeudorTar = ((string)parameters[0].Value);
+
+
+                    //DataSet dsTarjeta = AccesoBD.ejecutarConsulta(sentenciaSql);
+
+                    //if ((dsTarjeta != null) && (dsTarjeta.Tables.Count > 0) && (dsTarjeta.Tables[0].Rows.Count > 0))
+                    //{
+                    //    if (!dsTarjeta.Tables[0].Rows[0].IsNull(clsTarjeta._cedulaDeudor))
+                    //    {
+                    //        strCedulaDeudorTar = dsTarjeta.Tables[0].Rows[0][clsTarjeta._cedulaDeudor].ToString();
+                    //    }
+                    //}
                 }
             }
             catch
@@ -179,19 +238,14 @@ namespace BCRGARANTIAS.Negocios
         /// </summary>
         private void CargarDatos()
         {
-            //dsCatalogos = AccesoBD.ejecutarConsulta("select " + ContenedorCatalogo.CAT_CATALOGO + "," +
-            //    ContenedorCatalogo.CAT_DESCRIPCION +
-            //    " from " + ContenedorCatalogo.NOMBRE_ENTIDAD);
+            listaCampos = new string[] {clsElemento._codigoCampo, clsElemento._codigoCatalogo, clsElemento._descripcionElemento, clsElemento._consecutivoElemento,
+                                        clsElemento._entidadElemento};
 
-            dtElementos = AccesoBD.ejecutarConsulta("select " + ContenedorElemento.CAT_CAMPO + "," +
-                ContenedorElemento.CAT_CATALOGO + "," + ContenedorElemento.CAT_DESCRIPCION + "," +
-                ContenedorElemento.CAT_ELEMENTO +
-                " from " + ContenedorElemento.NOMBRE_ENTIDAD).Tables[0];
+            sentenciaSql = string.Format("SELECT {0}, {1}, {2}, {3} FROM dbo.{4}", listaCampos);
 
-            //dtInstrumentos = AccesoBD.ejecutarConsulta("select " + ContenedorInstrumentos.COD_INSTRUMENTO + "," +
-            //    ContenedorInstrumentos.DES_INSTRUMENTO +
-            //    " from " + ContenedorInstrumentos.NOMBRE_ENTIDAD).Tables[0];
-        }
+            dtElementos = AccesoBD.ejecutarConsulta(sentenciaSql).Tables[0];
+
+         }
 
         #endregion
 
@@ -208,18 +262,23 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoClaseGarantia != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_CLASE_GARANTIA"];
 
-                DataRow[] drClaseGarantia = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoClaseGarantia.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoClaseGarantia.ToString()};
 
-                if (drClaseGarantia.Length > 0)
-                {
-                    strDescripcion = drClaseGarantia[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drClaseGarantia = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drClaseGarantia.Length > 0) ? drClaseGarantia[0][clsElemento._descripcionElemento].ToString() : "-");
             }
+
             return strDescripcion;
         }
         #endregion
@@ -237,17 +296,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoGarantia != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA"];
 
-                DataRow[] drTipoGarantia = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoGarantia.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoGarantia.ToString()};
 
-                if (drTipoGarantia.Length > 0)
-                {
-                    strDescripcion = drTipoGarantia[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoGarantia = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoGarantia.Length > 0) ? drTipoGarantia[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -267,17 +330,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoPersona != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_PERSONA"];
 
-                DataRow[] drTipoPersona = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoPersona.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoPersona.ToString()};
 
-                if (drTipoPersona.Length > 0)
-                {
-                    strDescripcion = drTipoPersona[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoPersona = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoPersona.Length > 0) ? drTipoPersona[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -297,17 +364,20 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoMitigador != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_MITIGADOR"];
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoMitigador.ToString()};
 
-                DataRow[] drTipoMitigador = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoMitigador.ToString() + "'");
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
 
-                if (drTipoMitigador.Length > 0)
-                {
-                    strDescripcion = drTipoMitigador[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                DataRow[] drTipoMitigador = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoMitigador.Length > 0) ? drTipoMitigador[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -327,17 +397,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoDocumento != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPOS_DOCUMENTOS"];
 
-                DataRow[] drTipoDocumento = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoDocumento.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoDocumento.ToString()};
 
-                if (drTipoDocumento.Length > 0)
-                {
-                    strDescripcion = drTipoDocumento[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoDocumento = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoDocumento.Length > 0) ? drTipoDocumento[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -357,17 +431,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoOperacionEspecial != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_OPERACION_ESPECIAL"];
 
-                DataRow[] drTipoOperacionEspecial = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoOperacionEspecial.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoOperacionEspecial.ToString()};
 
-                if (drTipoOperacionEspecial.Length > 0)
-                {
-                    strDescripcion = drTipoOperacionEspecial[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoOperacionEspecial = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoOperacionEspecial.Length > 0) ? drTipoOperacionEspecial[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -387,17 +465,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoMoneda != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_MONEDA"];
 
-                DataRow[] drTipoMoneda = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoMoneda.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoMoneda.ToString()};
 
-                if (drTipoMoneda.Length > 0)
-                {
-                    strDescripcion = drTipoMoneda[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoMoneda = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoMoneda.Length > 0) ? drTipoMoneda[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -417,17 +499,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoCapacidadPago != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_CAPACIDAD_PAGO"];
 
-                DataRow[] drTipoCapacidadPago = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoCapacidadPago.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoCapacidadPago.ToString()};
 
-                if (drTipoCapacidadPago.Length > 0)
-                {
-                    strDescripcion = drTipoCapacidadPago[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoCapacidadPago = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoCapacidadPago.Length > 0) ? drTipoCapacidadPago[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -447,17 +533,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoCondicionEspecial != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_CONDICION_ESPECIAL"];
 
-                DataRow[] drTipoCondicionEspecial = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoCondicionEspecial.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoCondicionEspecial.ToString()};
 
-                if (drTipoCondicionEspecial.Length > 0)
-                {
-                    strDescripcion = drTipoCondicionEspecial[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoCondicionEspecial = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoCondicionEspecial.Length > 0) ? drTipoCondicionEspecial[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -477,17 +567,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoEmpresa != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_CODIGO_EMPRESA"];
 
-                DataRow[] drCodigoEmpresa = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoEmpresa.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoEmpresa.ToString()};
 
-                if (drCodigoEmpresa.Length > 0)
-                {
-                    strDescripcion = drCodigoEmpresa[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drCodigoEmpresa = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drCodigoEmpresa.Length > 0) ? drCodigoEmpresa[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -507,17 +601,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoEmpresa != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_EMPRESA"];
 
-                DataRow[] drTipoEmpresa = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoEmpresa.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoEmpresa.ToString()};
 
-                if (drTipoEmpresa.Length > 0)
-                {
-                    strDescripcion = drTipoEmpresa[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoEmpresa = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoEmpresa.Length > 0) ? drTipoEmpresa[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -537,17 +635,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoInscripcion != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_INSCRIPCION"];
 
-                DataRow[] drTipoInscripcion = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoInscripcion.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoInscripcion.ToString()};
 
-                if (drTipoInscripcion.Length > 0)
-                {
-                    strDescripcion = drTipoInscripcion[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoInscripcion = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoInscripcion.Length > 0) ? drTipoInscripcion[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -568,17 +670,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoGradoGravamen != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_GRADO_GRAVAMEN"];
 
-                DataRow[] drGradoGravamen = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoGradoGravamen.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoGradoGravamen.ToString()};
 
-                if (drGradoGravamen.Length > 0)
-                {
-                    strDescripcion = drGradoGravamen[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drGradoGravamen = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drGradoGravamen.Length > 0) ? drGradoGravamen[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -598,17 +704,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoBien != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_BIEN"];
 
-                DataRow[] drTipoBien = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoBien.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoBien.ToString()};
 
-                if (drTipoBien.Length > 0)
-                {
-                    strDescripcion = drTipoBien[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoBien = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoBien.Length > 0) ? drTipoBien[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -628,17 +738,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoLiquidez != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_LIQUIDEZ"];
 
-                DataRow[] drTipoLiquidez = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoLiquidez.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoLiquidez.ToString()};
 
-                if (drTipoLiquidez.Length > 0)
-                {
-                    strDescripcion = drTipoLiquidez[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoLiquidez = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoLiquidez.Length > 0) ? drTipoLiquidez[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -658,17 +772,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoTenencia != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TENENCIA"];
 
-                DataRow[] drTipoTenencia = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoTenencia.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoTenencia.ToString()};
 
-                if (drTipoTenencia.Length > 0)
-                {
-                    strDescripcion = drTipoTenencia[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoTenencia = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoTenencia.Length > 0) ? drTipoTenencia[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -688,17 +806,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoRecomendacionPerito != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_RECOMENDACION_PERITO"];
 
-                DataRow[] drTipoRecomendacionPerito = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoRecomendacionPerito.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoRecomendacionPerito.ToString()};
 
-                if (drTipoRecomendacionPerito.Length > 0)
-                {
-                    strDescripcion = drTipoRecomendacionPerito[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoRecomendacionPerito = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoRecomendacionPerito.Length > 0) ? drTipoRecomendacionPerito[0][clsElemento._descripcionElemento].ToString() : "-");
             }
             
             return strDescripcion;
@@ -719,17 +841,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoInspeccion3Meses != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_INSPECCION_3_MESES"];
 
-                DataRow[] drTipoInspeccion3Meses = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoInspeccion3Meses.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoInspeccion3Meses.ToString()};
 
-                if (drTipoInspeccion3Meses.Length > 0)
-                {
-                    strDescripcion = drTipoInspeccion3Meses[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoInspeccion3Meses = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoInspeccion3Meses.Length > 0) ? drTipoInspeccion3Meses[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -750,17 +876,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoClasificacionInstrumento != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_CLASIFICACION_INSTRUMENTO"];
 
-                DataRow[] drTipoClasificacionInstrumento = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoClasificacionInstrumento.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoClasificacionInstrumento.ToString()};
 
-                if (drTipoClasificacionInstrumento.Length > 0)
-                {
-                    strDescripcion = drTipoClasificacionInstrumento[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoClasificacionInstrumento = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoClasificacionInstrumento.Length > 0) ? drTipoClasificacionInstrumento[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -781,17 +911,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoAsignacion != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_ASIGNACION"];
 
-                DataRow[] drTipoAsignacion = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoAsignacion.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoAsignacion.ToString()};
 
-                if (drTipoAsignacion.Length > 0)
-                {
-                    strDescripcion = drTipoAsignacion[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoAsignacion = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoAsignacion.Length > 0) ? drTipoAsignacion[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -811,17 +945,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoGenerador != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_GENERADOR"];
 
-                DataRow[] drTipoGenerador = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoGenerador.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoGenerador.ToString()};
 
-                if (drTipoGenerador.Length > 0)
-                {
-                    strDescripcion = drTipoGenerador[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoGenerador = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoGenerador.Length > 0) ? drTipoGenerador[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -841,17 +979,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoVinculadoEntidad != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_VINCULADO_ENTIDAD"];
 
-                DataRow[] drTipoVinculadoEntidad = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoVinculadoEntidad.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoVinculadoEntidad.ToString()};
 
-                if (drTipoVinculadoEntidad.Length > 0)
-                {
-                    strDescripcion = drTipoVinculadoEntidad[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoVinculadoEntidad = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoVinculadoEntidad.Length > 0) ? drTipoVinculadoEntidad[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -871,17 +1013,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoGarantiaReal != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_REAL"];
 
-                DataRow[] drTipoGarantiaReal = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoGarantiaReal.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoGarantiaReal.ToString()};
 
-                if (drTipoGarantiaReal.Length > 0)
-                {
-                    strDescripcion = drTipoGarantiaReal[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoGarantiaReal = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoGarantiaReal.Length > 0) ? drTipoGarantiaReal[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -901,17 +1047,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoTieneCapacidad != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIENE_CAPACIDAD"];
 
-                DataRow[] drTipoTieneCapacidad = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoTieneCapacidad.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoTieneCapacidad.ToString()};
 
-                if (drTipoTieneCapacidad.Length > 0)
-                {
-                    strDescripcion = drTipoTieneCapacidad[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoTieneCapacidad = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoTieneCapacidad.Length > 0) ? drTipoTieneCapacidad[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -931,17 +1081,21 @@ namespace BCRGARANTIAS.Negocios
 
             if (nCodigoTipoEstado != -1)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPOS_ESTADO"];
 
-                DataRow[] drTipoEstado = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + nCodigoTipoEstado.ToString() + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, nCodigoTipoEstado.ToString()};
 
-                if (drTipoEstado.Length > 0)
-                {
-                    strDescripcion = drTipoEstado[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoEstado = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoEstado.Length > 0) ? drTipoEstado[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -963,16 +1117,20 @@ namespace BCRGARANTIAS.Negocios
             {
                 DataTable dtCatalogos = new DataTable();
 
-                dtCatalogos = AccesoBD.ejecutarConsulta("select " + ContenedorCatalogo.CAT_CATALOGO + "," +
-                    ContenedorCatalogo.CAT_DESCRIPCION +
-                    " from " + ContenedorCatalogo.NOMBRE_ENTIDAD).Tables[0];
+                listaCampos = new string[] {clsCatalogo._catCatalogo, clsCatalogo._catDescripcion,
+                                            clsCatalogo._entidadCatalogo};
 
-                DataRow[] drTipoCatalogo = dtCatalogos.Select(ContenedorCatalogo.CAT_CATALOGO + " = " + nCodigoTipoCatalogo.ToString());
+                sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2}", listaCampos);
 
-                if (drTipoCatalogo.Length > 0)
-                {
-                    strDescripcion = drTipoCatalogo[0][ContenedorCatalogo.CAT_DESCRIPCION].ToString();
-                }
+                dtCatalogos = AccesoBD.ejecutarConsulta(sentenciaSql).Tables[0];
+
+                listaCampos = new string[] {clsCatalogo._catCatalogo, nCodigoTipoCatalogo.ToString() };
+
+                sentenciaSql = string.Format("{0} = {1}", listaCampos);
+
+                DataRow[] drTipoCatalogo = dtCatalogos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoCatalogo.Length > 0) ? drTipoCatalogo[0][clsCatalogo._catDescripcion].ToString() : "-");
             }
 
             return strDescripcion;
@@ -990,22 +1148,19 @@ namespace BCRGARANTIAS.Negocios
         {
             string strCodigoInstrumentoObt = "-";
 
-            if (strCodigoInstrumento != string.Empty)
+            DataTable dtInstrumentos = new DataTable();
+
+            if (strCodigoInstrumento.Length > 0)
             {
-                DataTable dtInstrumentos = new DataTable();
+                listaCampos = new string[] {clsInstrumento._descripcionInstrumento,
+                                            clsInstrumento._entidadInstrumento,
+                                            clsInstrumento._codigoInstrumento, strCodigoInstrumento};
 
-                if (strCodigoInstrumento != string.Empty)
-                {
-                    dtInstrumentos = AccesoBD.ejecutarConsulta("select " + ContenedorInstrumentos.DES_INSTRUMENTO +
-                           " from " + ContenedorInstrumentos.NOMBRE_ENTIDAD +
-                           " where " + ContenedorInstrumentos.COD_INSTRUMENTO + " = '" + strCodigoInstrumento + "'").Tables[0];
+                sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = '{3}'", listaCampos);
 
-                    if ((dtInstrumentos != null) && (dtInstrumentos.Rows.Count > 0) 
-                       && (!dtInstrumentos.Rows[0].IsNull(ContenedorInstrumentos.DES_INSTRUMENTO)))
-                    {
-                        strCodigoInstrumentoObt = dtInstrumentos.Rows[0][ContenedorInstrumentos.DES_INSTRUMENTO].ToString();
-                    }
-                }
+                dtInstrumentos = AccesoBD.ejecutarConsulta(sentenciaSql).Tables[0];
+
+                strCodigoInstrumentoObt = (((dtInstrumentos != null) && (dtInstrumentos.Rows.Count > 0) && (!dtInstrumentos.Rows[0].IsNull(clsInstrumento._descripcionInstrumento))) ? dtInstrumentos.Rows[0][clsInstrumento._descripcionInstrumento].ToString() : "-");
             }
 
             return strCodigoInstrumentoObt;
@@ -1024,19 +1179,23 @@ namespace BCRGARANTIAS.Negocios
         {
             string strDescripcion = "-";
 
-            if (strCodigoTipoEstado != string.Empty)
+            if (strCodigoTipoEstado.Length > 0)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_ESTADO_TARJETA"];
 
-                DataRow[] drTipoEstado = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + strCodigoTipoEstado + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, strCodigoTipoEstado};
 
-                if (drTipoEstado.Length > 0)
-                {
-                    strDescripcion = drTipoEstado[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoEstado = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoEstado.Length > 0) ? drTipoEstado[0][clsElemento._descripcionElemento].ToString() : "-");
             }
 
             return strDescripcion;
@@ -1054,23 +1213,23 @@ namespace BCRGARANTIAS.Negocios
         {
             string strDescripcion = "-";
 
-            if (strCodigoTipoGarantia != string.Empty)
+            if (strCodigoTipoGarantia.Length > 0)
             {
-                CargarDatos();
+                if ((dtElementos == null) || ((dtElementos != null) && (dtElementos.Rows.Count == 0)))
+                {
+                    CargarDatos();
+                }
 
                 string strIndiceCatalogo = ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"];
 
-                DataRow[] drTipoEstado = dtElementos.Select(ContenedorElemento.CAT_CATALOGO + " = " + strIndiceCatalogo
-                    + " and " + ContenedorElemento.CAT_CAMPO + " = '" + (strCodigoTipoGarantia.PadLeft(2, '0')) + "'");
+                listaCampos = new string[] {clsElemento._codigoCatalogo, strIndiceCatalogo,
+                                            clsElemento._codigoCampo, (strCodigoTipoGarantia.PadLeft(2, '0'))};
 
-                if (drTipoEstado.Length > 0)
-                {
-                    strDescripcion = drTipoEstado[0][ContenedorElemento.CAT_DESCRIPCION].ToString();
-                }
-                else
-                {
-                    strDescripcion = TraducirTipoGarantia(Convert.ToInt32(strCodigoTipoGarantia));
-                }
+                sentenciaSql = string.Format("{0} = {1} AND {2} = '{3}'", listaCampos);
+
+                DataRow[] drTipoEstado = dtElementos.Select(sentenciaSql);
+
+                strDescripcion = ((drTipoEstado.Length > 0) ? drTipoEstado[0][clsElemento._descripcionElemento].ToString() : TraducirTipoGarantia(Convert.ToInt32(strCodigoTipoGarantia)));
             }
 
             return strDescripcion;

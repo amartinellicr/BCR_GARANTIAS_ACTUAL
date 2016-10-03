@@ -1,0 +1,58 @@
+Archivo creado 23/08/2016 12:27:46 PM
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:27:46 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:30:27 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:30:41 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:34:31 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:34:35 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:35:01 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no exsite en la BD.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:36:41 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar las garantías de la operación  '1-282-2-2-5904984'. Detalle: El procedimiento o la función 'pa_ObtenerGarantiasRealesOperaciones' esperaba el parámetro '@nContabilidad', que no se ha especificado.
+
+
+NUEVO EVENTO______Fecha y Hora:23/08/2016 12:40:20 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se ha presentado un problema al cargar las garantías de la operación  '1-282-2-2-5904984'. Detalle: El procedimiento o la función 'pa_ObtenerGarantiasRealesOperaciones' esperaba el parámetro '@nContabilidad', que no se ha especificado.
+

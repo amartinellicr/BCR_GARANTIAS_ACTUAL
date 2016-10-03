@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {

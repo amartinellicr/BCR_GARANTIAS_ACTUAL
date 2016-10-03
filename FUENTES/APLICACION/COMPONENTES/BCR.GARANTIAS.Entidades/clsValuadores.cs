@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -77,7 +75,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsValuadores()
         {
-            this.tramaValuador = string.Empty;
+            tramaValuador = string.Empty;
         }
 
         /// <summary>
@@ -87,7 +85,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="listaTipoValuador">Tipo de valuador sobre el que se desea extraer la información</param>
         public clsValuadores(string tramaValuadores, Enumeradores.TiposValuadores listaTipoValuador)
         {
-            this.tramaValuador = string.Empty;
+            tramaValuador = string.Empty;
 
             string tipoValuador = "los valuadores";
 
@@ -121,7 +119,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlValuadores != null)
                 {
-                    this.tramaValuador = tramaValuadores;
+                    tramaValuador = tramaValuadores;
 
                     if (xmlValuadores.HasChildNodes)
                     {
@@ -133,13 +131,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadValuador.ErrorDatos)
                             {
-                                this.errorDatos = entidadValuador.ErrorDatos;
-                                this.descripcionError = entidadValuador.DescripcionError;
+                                errorDatos = entidadValuador.ErrorDatos;
+                                descripcionError = entidadValuador.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadValuador);
+                                Agregar(entidadValuador);
                             }
                         }
                     }

@@ -152,7 +152,7 @@ namespace BCR.GARANTIAS.Entidades
         private DateTime fechaPresentacion;
 
         /// <summary>
-        /// Porcentaje de aceptación
+        /// Porcentaje de responsabilidad
         /// </summary>
         private decimal porcentajeResponsabilidad;
 
@@ -355,6 +355,11 @@ namespace BCR.GARANTIAS.Entidades
         /// Indicador de que el dudor habita la vivienda
         /// </summary>
         private bool indicadorViviendaHabitadaDeudor;
+
+        /// <summary>
+        /// Porcentaje de aceptación
+        /// </summary>
+        private decimal porcentajeAceptacion;
 
         #endregion Garantía
 
@@ -1051,8 +1056,6 @@ namespace BCR.GARANTIAS.Entidades
         public const string _codEstado = "cod_estado";
         public const string _porcentajeAceptacion = "Porcentaje_Aceptacion";
         public const string _cedulaAcreedor = "cedula_acreedor";
-        
-
         private const string _desTipoBien = "des_tipo_bien";
         private const string _desTipoMitigador = "des_tipo_mitigador";
         private const string _desTipoDocumento = "des_tipo_documento";
@@ -1073,6 +1076,8 @@ namespace BCR.GARANTIAS.Entidades
         private const string _desTipoLiquidezAnterior = "des_tipo_liquidez_anterior";
         private const string _desTipoTenenciaAnterior = "des_tipo_tenencia_anterior";
         private const string _desTipoMonedaAnterior = "des_tipo_moneda_anterior";
+        private const string _indicadorPorcentajeResponsabilidadMaximo = "Indicador_Porcentaje_Responsabilidad_Maximo";
+        private const string _indicadorCuentaContableEspecial = "Porcentaje_Aceptacion";
 
         public const string _usuarioInserto = "Usuario_Inserto";
         public const string _usuarioModifico = "Usuario_Modifico";
@@ -1317,7 +1322,7 @@ namespace BCR.GARANTIAS.Entidades
             montoMitigador = 0;
             codInscripcion = -1;
             fechaPresentacion = DateTime.MinValue;
-            porcentajeResponsabilidad = 0;
+            porcentajeResponsabilidad = -1;
             codGradoGravamen = -1;
             codOperacionEspecial = -1;
             fechaConstitucion = DateTime.MinValue;
@@ -1362,40 +1367,48 @@ namespace BCR.GARANTIAS.Entidades
             porcentajeAceptacionCalculadoOriginal = 0;
 
             indicadorViviendaHabitadaDeudor = false;
+
+            porcentajeAceptacion = 0;
+
+            IndicadorPorcentajeResponsabilidadMaximo = false;
+            IndicadorCuentaContableEspecial = false;
+            IdentificacionGarantia = -1;
+            IdentificacionAlfanumericaGarantia = string.Empty;
+
             #endregion Garantía
 
             #region Avalúos
 
             fechaValuacion = new DateTime(1900, 01, 01);
-            cedulaEmpresa = string.Empty;
-            cedulaPerito = string.Empty;
-            montoUltimaTasacionTerreno = 0;
-            montoUltimaTasacionNoTerreno = 0;
-            montoTasacionActualizadaTerreno = 0;
-            montoTasacionActualizadaNoTerreno = 0;
-            fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
-            montoTotalAvaluo = 0;
-            fechaConstruccion = new DateTime(1900, 01, 01);
-            fechaValuacionSICC = new DateTime(1900, 01, 01);
-            fechaAvaluoSICC = new DateTime(1900, 01, 01);
-            montoTotalAvaluoSICC = 0;
-            fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
-            fechaActualBD = new DateTime(1900, 01, 01);
-            avaluoActualizado = false;
-            fechaSemestreCalculado = new DateTime(1900, 01, 01);
-            montoTasacionActualizadaTerrenoCalculado = null;
-            montoTasacionActualizadaNoTerrenoCalculado = null;
+                cedulaEmpresa = string.Empty;
+                cedulaPerito = string.Empty;
+                montoUltimaTasacionTerreno = 0;
+                montoUltimaTasacionNoTerreno = 0;
+                montoTasacionActualizadaTerreno = 0;
+                montoTasacionActualizadaNoTerreno = 0;
+                fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
+                montoTotalAvaluo = 0;
+                fechaConstruccion = new DateTime(1900, 01, 01);
+                fechaValuacionSICC = new DateTime(1900, 01, 01);
+                fechaAvaluoSICC = new DateTime(1900, 01, 01);
+                montoTotalAvaluoSICC = 0;
+                fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
+                fechaActualBD = new DateTime(1900, 01, 01);
+                avaluoActualizado = false;
+                fechaSemestreCalculado = new DateTime(1900, 01, 01);
+                montoTasacionActualizadaTerrenoCalculado = null;
+                montoTasacionActualizadaNoTerrenoCalculado = null;
 
-            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+                #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
-            porcentajeAceptacionTerreno = 0;
-            porcentajeAceptacionNoTerreno = 0;
-            porcentajeAceptacionTerrenoCalculado = 0;
-            porcentajeAceptacionNoTerrenoCalculado = 0;
+                porcentajeAceptacionTerreno = 0;
+                porcentajeAceptacionNoTerreno = 0;
+                porcentajeAceptacionTerrenoCalculado = 0;
+                porcentajeAceptacionNoTerrenoCalculado = 0;
 
-            #endregion
+                #endregion
 
-            #endregion Avalúos
+                #endregion Avalúos
 
             #region Inconsistencias
 
@@ -1498,7 +1511,7 @@ namespace BCR.GARANTIAS.Entidades
                                                         _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen, 
                                                         _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor, 
                                                         _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion, 
-                                                        _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado};
+                                                        _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado, _porcentajeAceptacion};
             listaCamposGarantiaOperacion = new List<string>(listaCamposGarXOper);
 
             string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
@@ -1703,7 +1716,7 @@ namespace BCR.GARANTIAS.Entidades
             montoMitigador = 0;
             codInscripcion = -1;
             fechaPresentacion = DateTime.MinValue;
-            porcentajeResponsabilidad = 0;
+            porcentajeResponsabilidad = -1;
             codGradoGravamen = -1;
             codOperacionEspecial = -1;
             fechaConstitucion = DateTime.MinValue;
@@ -1748,6 +1761,13 @@ namespace BCR.GARANTIAS.Entidades
             porcentajeAceptacionCalculadoOriginal = 0;
 
             indicadorViviendaHabitadaDeudor = false;
+
+            porcentajeAceptacion = 0;
+
+            IndicadorPorcentajeResponsabilidadMaximo = false;
+            IndicadorCuentaContableEspecial = false;
+            IdentificacionGarantia = -1;
+            IdentificacionAlfanumericaGarantia = string.Empty;
 
             #endregion Garantía
 
@@ -1894,7 +1914,7 @@ namespace BCR.GARANTIAS.Entidades
             string[] listaCamposGarXOper = { _codOperacion, _codGarantiaReal, _codTipoMitigador, _codTipoDocumentoLegal,  _montoMitigador, 
                                                         _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen, 
                                                         _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor, 
-                                                        _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion, _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado };
+                                                        _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion, _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado, _porcentajeAceptacion };
             listaCamposGarantiaOperacion = new List<string>(listaCamposGarXOper);
 
             string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
@@ -2106,6 +2126,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         decimal porcAcepCalculado;
                         decimal porcAcepCalculadoOriginal;
+                        decimal porcAceptacion;
 
                         try
                         {
@@ -2129,7 +2150,7 @@ namespace BCR.GARANTIAS.Entidades
                             codEstado = ((xmlGarantia.SelectSingleNode("//" + _codEstado) != null) ? ((short.TryParse((xmlGarantia.SelectSingleNode("//" + _codEstado).InnerText), out estado)) ? estado : (short)-1) : (short)-1);
 
                             montoMitigador = ((xmlGarantia.SelectSingleNode("//" + _montoMitigador) != null) ? ((decimal.TryParse((xmlGarantia.SelectSingleNode("//" + _montoMitigador).InnerText), out monMitigador)) ? monMitigador : 0) : 0);
-                            porcentajeResponsabilidad = ((xmlGarantia.SelectSingleNode("//" + _porcentajeResponsabilidad) != null) ? ((decimal.TryParse((xmlGarantia.SelectSingleNode("//" + _porcentajeResponsabilidad).InnerText), out porResponsabilidad)) ? porResponsabilidad : 0) : 0);
+                            porcentajeResponsabilidad = ((xmlGarantia.SelectSingleNode("//" + _porcentajeResponsabilidad) != null) ? ((decimal.TryParse((xmlGarantia.SelectSingleNode("//" + _porcentajeResponsabilidad).InnerText), out porResponsabilidad)) ? porResponsabilidad : -1) : -1);
                             montoTotalAvaluo = ((xmlGarantia.SelectSingleNode("//" + _montoTotalAvaluo) != null) ? ((decimal.TryParse((xmlGarantia.SelectSingleNode("//" + _montoTotalAvaluo).InnerText), out monTotalAvaluo)) ? monTotalAvaluo : 0) : 0);
 
                             fechaPresentacion = ((xmlGarantia.SelectSingleNode("//" + _fechaPresentacion) != null) ? ((DateTime.TryParseExact((xmlGarantia.SelectSingleNode("//" + _fechaPresentacion).InnerText), formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPresentacion)) ? ((fecPresentacion != (new DateTime(1900, 01, 01))) ? fecPresentacion : DateTime.MinValue) : DateTime.MinValue) : DateTime.MinValue);
@@ -2186,7 +2207,16 @@ namespace BCR.GARANTIAS.Entidades
                             indicadorViviendaHabitadaDeudor = ((xmlTrama.SelectSingleNode("//" + _indicadorViviendaHabitadaDeudor) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorViviendaHabitadaDeudor).InnerText.CompareTo("0") == 0) ? false : true) : false);
                             ///////////////////
 
+                            porcentajeAceptacion = ((xmlGarantia.SelectSingleNode("//" + _porcentajeAceptacion) != null) ? ((decimal.TryParse((xmlGarantia.SelectSingleNode("//" + _porcentajeAceptacion).InnerText), out porcAceptacion)) ? porcAceptacion : 0) : 0);
 
+
+                            //////////////////
+
+                            IndicadorPorcentajeResponsabilidadMaximo = ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo).InnerText.CompareTo("0") == 0) ? false : true) : false);
+                            IndicadorCuentaContableEspecial =  ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial).InnerText.CompareTo("0") == 0) ? false : true) : false);
+
+
+                            /////////////////
 
                             listaDescripcionValoresAnterioresCombos.Add(_codTipoBien, ((desTipoBienAnterior.Length > 0) ? desTipoBienAnterior : desTipoBien));
                             listaDescripcionValoresAnterioresCombos.Add(_codTipoMitigador, ((desTipoMitigadorAnterior.Length > 0) ? desTipoMitigadorAnterior : desTipoMitigador));
@@ -2941,7 +2971,7 @@ namespace BCR.GARANTIAS.Entidades
         }
 
         /// <summary>
-        /// Propiedad que obtiene y establece el porcentaje de aceptación
+        /// Propiedad que obtiene y establece el porcentaje de responsabilidad
         /// </summary>
         public decimal PorcentajeResponsabilidad
         {
@@ -3326,6 +3356,20 @@ namespace BCR.GARANTIAS.Entidades
             get { return indicadorViviendaHabitadaDeudor; }
             set { indicadorViviendaHabitadaDeudor = value; }
         }
+
+        /// <summary>
+        /// Propiedad que obtiene y establece el porcentaje de aceptación
+        /// </summary>
+        public decimal PorcentajeAceptacion
+        {
+            get { return porcentajeAceptacion; }
+            set { porcentajeAceptacion = value; }
+        }
+
+        public bool IndicadorPorcentajeResponsabilidadMaximo { get; set; }
+        public bool IndicadorCuentaContableEspecial { get; set; }
+        public long IdentificacionGarantia { get; set; }
+        public string IdentificacionAlfanumericaGarantia { get; set; }
 
         #endregion Garantía
 
@@ -4742,10 +4786,10 @@ namespace BCR.GARANTIAS.Entidades
                     }
                 }
                 //Se verifica la validez del porcentaje de aceptación y del monto mitigador
-                else if ((!tieneErrorMontoMitigador) && (montoMitigador >= 0) && (porcentajeResponsabilidad >= 0) && (montoTotalAvaluo >= 0))
+                else if ((!tieneErrorMontoMitigador) && (montoMitigador >= 0) && (porcentajeAceptacion >= 0) && (montoTotalAvaluo >= 0))
                 {
                     tieneErrorMontoMitigador = true;
-                    //decimal porResp = (this.porcentajeResponsabilidad / 100);
+                    //decimal porResp = (this.porcentajeAceptacion / 100);
 
                     //decimal montoMitigadorCalculado = Math.Round(this.montoTotalAvaluo * (porResp), 2, MidpointRounding.ToEven);
                     decimal montoMitigadorCalculado = Math.Round(CalcularMontoMitigador(), 2, MidpointRounding.ToEven);
@@ -4788,7 +4832,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 30 días posteriores a la 
                         //fecha de constitución
-                        if ((DateTime.Today >= fechaLimite) && (porcentajeResponsabilidad != 0))
+                        if ((DateTime.Today >= fechaLimite) && (porcentajeAceptacion != 0))
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -4798,7 +4842,7 @@ namespace BCR.GARANTIAS.Entidades
                         }
                         //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 30 días 
                         //hábiles
-                        else if ((DateTime.Today < fechaLimite) && ((porcentajeResponsabilidad < 0) || (porcentajeResponsabilidad > 80)))
+                        else if ((DateTime.Today < fechaLimite) && ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)))
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -4814,7 +4858,7 @@ namespace BCR.GARANTIAS.Entidades
 
                         //Se verifica si el porcentaje de aceptación es diferente de 0 (cero) si la fecha actual supera los 60 días posteriores a la 
                         //fecha de constitución
-                        if ((DateTime.Today >= fechaLimite) && (porcentajeResponsabilidad != 0))
+                        if ((DateTime.Today >= fechaLimite) && (porcentajeAceptacion != 0))
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -4824,7 +4868,7 @@ namespace BCR.GARANTIAS.Entidades
                         }
                         //Se valida si el porcetaje de aceptación se encuentra enttre 0 y 80 cuando la fecha actual se encuentra entre los 60 días 
                         //hábiles
-                        else if ((DateTime.Today < fechaLimite) && ((porcentajeResponsabilidad < 0) || (porcentajeResponsabilidad > 80)))
+                        else if ((DateTime.Today < fechaLimite) && ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80)))
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -4839,7 +4883,7 @@ namespace BCR.GARANTIAS.Entidades
                         /*REQ: Siebel 1 - 23969281. Se elimina la validación en la que se evaluaba que para las garantías inscritas se cumpliera el plazo
                         normado por SUGEF.*/
 
-                        /*if (this.porcentajeResponsabilidad == 0)
+                        /*if (this.porcentajeAceptacion == 0)
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -4848,7 +4892,7 @@ namespace BCR.GARANTIAS.Entidades
                             listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcentajeAceptacion), _mensajePorcentajeAceptacionInvalidoIndIns);
                         }
                         else*/
-                        if ((porcentajeResponsabilidad < 0) || (porcentajeResponsabilidad > 80))
+                        if ((porcentajeAceptacion < 0) || (porcentajeAceptacion > 80))
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -5313,7 +5357,7 @@ namespace BCR.GARANTIAS.Entidades
                     double diferenciaAnnos = UtilitariosComun.DateDiff("Y", fechaValuacion, DateTime.Now);
 
                     //Se valida si el porcentaje de aceptación es correcto para la vigencia del avalúo
-                    if ((diferenciaAnnos >= 5) && (porcentajeResponsabilidad > 40))
+                    if ((diferenciaAnnos >= 5) && (porcentajeAceptacion > 40))
                     {
                         esValida = false;
                         errorValidaciones = true;
@@ -5321,7 +5365,7 @@ namespace BCR.GARANTIAS.Entidades
                         inconsistenciaValidezMontoAvaluoActualizadoTerreno = 1;
                         listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.ValidezMontoTasActTerreno), _mensajeValidezMtoAvalActTerrenoPorcMay);
                     }
-                    //else if ((diferenciaAnnos < 5) && (this.porcentajeResponsabilidad <= 40))
+                    //else if ((diferenciaAnnos < 5) && (this.porcentajeAceptacion <= 40))
                     //{
                     //    esValida = false;
                     //    errorValidaciones = true;
@@ -5601,7 +5645,7 @@ namespace BCR.GARANTIAS.Entidades
                 }
 
                 ////Se bloquean los controles cuando existe un problema con el porcentaje de aceptación
-                //if ((this.inconsistenciaPorcentajeAceptacion) || (this.porcentajeResponsabilidad == 0))
+                //if ((this.inconsistenciaPorcentajeAceptacion) || (this.porcentajeAceptacion == 0))
                 //{
                 //    listaControlesWeb[((int)Enumeradores.ControlesWebGarantiasReales.MontoMitigador)] = false;
                 //}
@@ -6010,7 +6054,7 @@ namespace BCR.GARANTIAS.Entidades
                     if ((codTipoBien >= 1) && (codTipoBien <= 4))
                     {
                         //si el PorcentajeAceptacionCalculado da 0 se debe corregir la inconsitencia antes de continuar 
-                        if (porcentajeResponsabilidad > PorcentajeAceptacionCalculado) //PorcentajeAceptacionCalculado se inicializa en 0, 
+                        if (porcentajeAceptacion > PorcentajeAceptacionCalculado) //PorcentajeAceptacionCalculado se inicializa en 0, 
                         {
                             esValida = false;
                             errorValidaciones = true;
@@ -6563,9 +6607,8 @@ namespace BCR.GARANTIAS.Entidades
             int tipoBienActual = -1;
 
             string porcentajeAceptCalculadoOriginal = string.Empty;
-           DateTime fechaBase = new DateTime(1900,01,01);
-
-            DateTime fecModifico;
+            DateTime fechaBase = new DateTime(1900,01,01);
+            DateTime fecModifico;            
 
             if ((tramaInicial.Length > 0) && (tramaDatosActuales.Length > 0))
             {
@@ -6620,10 +6663,10 @@ namespace BCR.GARANTIAS.Entidades
                         existePolizaEliminada = true;
                     }
 
-
-                    if (((polizaSeleccionadaInicial == null) && (polizaSapAsociada != null)) ||
-                        ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
-                        && ((polizaSeleccionadaInicial.CodigoPolizaSap != polizaSapAsociada.CodigoPolizaSap))))
+                    if(polizaSapAsociada != null)
+                    //if (((polizaSeleccionadaInicial == null) && (polizaSapAsociada != null)) ||
+                    //    ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
+                    //    && ((polizaSeleccionadaInicial.CodigoPolizaSap != polizaSapAsociada.CodigoPolizaSap))))
                     {
                         existenCamposModificados = true;
                         polizaInsertada = true;
@@ -6682,12 +6725,12 @@ namespace BCR.GARANTIAS.Entidades
                         listaDatosInsertadosGarPoliza.Add(_fechaInserto, (string.Format("-|{0}", fechaInsercion.ToString("yyyyMMdd HH:mm:ss"))));
                         listaDatosInsertadosGarPoliza.Add(_usuarioInserto, (string.Format("-|{0}", idUsuario)));
                     }
-                    else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
-                            && ((polizaSeleccionadaInicial.CodigoPolizaSap == polizaSapAsociada.CodigoPolizaSap))
-                            && (polizaSeleccionadaInicial.MontoAcreenciaPolizaSap != polizaSapAsociada.MontoAcreenciaPolizaSap))
-                    {
-                        existenCamposModificados = true;
-                    }
+                    //else if ((polizaSeleccionadaInicial != null) && (polizaSapAsociada != null)
+                    //        && ((polizaSeleccionadaInicial.CodigoPolizaSap == polizaSapAsociada.CodigoPolizaSap))
+                    //        && (polizaSeleccionadaInicial.MontoAcreenciaPolizaSap != polizaSapAsociada.MontoAcreenciaPolizaSap))
+                    //{
+                    //    existenCamposModificados = true;
+                    //}
 
                     #endregion Datos Insertados
 
@@ -7084,7 +7127,7 @@ namespace BCR.GARANTIAS.Entidades
 
                                         break;
                                     case _usuarioInserto:
-                                    // case _usuarioModifico:
+                                   // case _usuarioModifico:
                                     case _fechaInserto:
                                     //case _fechaModifico:
                                     //    sentenciaActualizacionAvaluos.Append((string.Format("{0} = {1},", nodoActual.Name, (((nodoActual.InnerText.Length > 0) ? ((nodoActual.InnerText.CompareTo("-1") != 0) ? nodoActual.InnerText : "NULL") : "NULL")))));
@@ -7107,6 +7150,7 @@ namespace BCR.GARANTIAS.Entidades
                             }
                         }
                     }
+                                        
 
 
                     if (existenCamposModificados)
@@ -7426,7 +7470,8 @@ namespace BCR.GARANTIAS.Entidades
 
                         polizaSap = ((polizaSap != null) ? polizaSap : polizaRelacionada);
                         polizaSeleccionadaInicial = ((polizaSeleccionadaInicial != null) ? polizaSeleccionadaInicial : polizaRelacionada);
-                        
+
+
                         if (polizaSap != null)
                         {
                             //Inicializa el nodo que poseer los datos de la garantía que serán insertados
@@ -7575,6 +7620,9 @@ namespace BCR.GARANTIAS.Entidades
                                                     break;
                                                 case _fechaPrescripcion: entidadBitacoraRelacion.ValorAnterior = DateTime.TryParseExact(datoInicialR, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPrescripcion) ? fecPrescripcion.ToString("dd/MM/yyyy") : datoInicialR;
                                                     break;
+                                                case _porcentajeAceptacion:
+                                                    entidadBitacoraRelacion.ValorAnterior = (Convert.ToDecimal(datoInicialR)).ToString("N2");
+                                                    break;
                                                 //case _fechaModifico: entidadBitacoraRelacion.ValorAnterior = DateTime.TryParse(datoInicialR, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoInicialR;
                                                 //    break;
                                                 default: entidadBitacoraRelacion.ValorAnterior = datoInicialR;
@@ -7608,6 +7656,9 @@ namespace BCR.GARANTIAS.Entidades
                                                 case _fechaVencimiento: entidadBitacoraRelacion.ValorActual = DateTime.TryParseExact(datoActualR, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecVencimientoAct) ? fecVencimientoAct.ToString("dd/MM/yyyy") : datoActualR;
                                                     break;
                                                 case _fechaPrescripcion: entidadBitacoraRelacion.ValorActual = DateTime.TryParseExact(datoActualR, formatosFecha, CultureInfo.InvariantCulture, DateTimeStyles.None, out fecPrescripcionAct) ? fecPrescripcionAct.ToString("dd/MM/yyyy") : datoActualR;
+                                                    break;
+                                                case _porcentajeAceptacion:
+                                                    entidadBitacoraRelacion.ValorActual = (Convert.ToDecimal(datoActualR)).ToString("N2");
                                                     break;
                                                 //case _fechaModifico: entidadBitacoraRelacion.ValorActual = DateTime.TryParse(datoActualR, out fecModifico) ? fecModifico.ToString("dd/MM/yyyy hh:mm:ss tt") : datoActualR;
                                                 //    break;
@@ -8523,7 +8574,7 @@ namespace BCR.GARANTIAS.Entidades
             }
             else
             {
-                decimal porcentajeAceptMenor = ((porcentajeResponsabilidad <= porcentajeAceptacionCalculado) ? porcentajeResponsabilidad : porcentajeAceptacionCalculado);
+                decimal porcentajeAceptMenor = ((porcentajeAceptacion <= porcentajeAceptacionCalculado) ? porcentajeAceptacion : porcentajeAceptacionCalculado);
 
                 decimal montoTotalAvaluo = montoTasacionActualizadaTerreno + montoTasacionActualizadaNoTerreno;
 
@@ -9002,6 +9053,10 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteString(((indicadorViviendaHabitadaDeudor) ? "1" : "0"));
                     objEscritor.WriteEndElement();
 
+                    //Crea el nodo del porcentaje de aceptación
+                    objEscritor.WriteStartElement(_porcentajeAceptacion);
+                    objEscritor.WriteString(porcentajeAceptacion.ToString("N2"));
+                    objEscritor.WriteEndElement();
 
                     #region Campos Bitacora
 
@@ -9694,7 +9749,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 SqlParameter[] parameters = new SqlParameter[] { };
 
-                DataSet datosPolizaRelacionada = AccesoBD.ExecuteDataSet(CommandType.Text, sentenciaSql, parameters);
+               DataSet datosPolizaRelacionada = AccesoBD.ExecuteDataSet(CommandType.Text, sentenciaSql, parameters);
 
                 if ((datosPolizaRelacionada != null) && (datosPolizaRelacionada.Tables.Count > 0) && (datosPolizaRelacionada.Tables[0].Rows.Count > 0))
                 {

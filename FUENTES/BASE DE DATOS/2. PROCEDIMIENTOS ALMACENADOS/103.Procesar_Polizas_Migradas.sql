@@ -62,6 +62,15 @@ AS
 		</Cambio>
 		<Cambio>
 			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías</Requerimiento>
+			<Fecha>07/12/2015</Fecha>
+			<Descripción>
+				Se realiza un ajuste al momento de actualizar el indicador de estado del registro de las pólizas relacionadas a garantías,
+				se busca activar todas las relaciones para luego desactivar aquellas cuya póliza ha sufrido un cambio de estado. 
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
 			<Requerimiento>RQ_2016012910535596 Cambio en Estado de Pólizas</Requerimiento>
 			<Fecha>02/02/2016</Fecha>
 			<Descripción>
@@ -69,6 +78,15 @@ AS
 				se busca activar todas las relaciones para luego desactivar aquellas cuya póliza ha sufrido un cambio de estado. 
 			</Descripción>
 		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>Incidente: 2016090110632770</Requerimiento>
+			<Fecha>02/02/2016</Fecha>
+			<Descripción>
+				Se realiza un ajuste al relacionar las coberturas a las pólizas, para que sólo se relacionen las coberturas que son válidas para el sistema. 
+			</Descripción>
+		</Cambio>
+		
 		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
@@ -1125,6 +1143,12 @@ BEGIN
 					INNER JOIN dbo.GAR_POLIZAS GP1
 					ON GP1.Codigo_SAP = TSC.Codigo_SAP
 					AND GP1.Codigo_Tipo_Cobertura = TSC.Codigo_Tipo_Cobertura
+					--INICIO INCIDENTE: 2016090110632770
+					INNER JOIN dbo.GAR_COBERTURAS GCO 
+					ON GCO.Codigo_Cobertura = TSC.Codigo_Cobertura
+					AND GCO.Codigo_Tipo_Cobertura = TSC.Codigo_Tipo_Cobertura
+					AND GCO.Codigo_Tipo_Poliza = GP1.Tipo_Poliza
+					--FIN INCIDENTE: 2016090110632770
 				WHERE	TSC.Registro_Activo = 1
 		
 			END TRY

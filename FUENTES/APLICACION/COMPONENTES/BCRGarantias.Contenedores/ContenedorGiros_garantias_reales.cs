@@ -43,8 +43,9 @@ namespace BCRGarantias.Contenedores
         public const string COD_TIPO_PERITO = "cod_tipo_perito";
         public const string MONTO_ULTIMA_TASACION_TERRENO = "monto_ultima_tasacion_terreno";
         public const string MONTO_ULTIMA_TASACION_NO_TERRENO = "monto_ultima_tasacion_no_terreno";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        #endregion
 
         public ContenedorGiros_garantias_reales()
 		{

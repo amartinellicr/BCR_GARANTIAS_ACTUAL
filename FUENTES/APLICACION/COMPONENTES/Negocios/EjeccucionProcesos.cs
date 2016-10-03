@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Xml;
@@ -47,7 +46,7 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-                SqlParameter[] parameters = new SqlParameter[] { 
+                SqlParameter[] parameters = new SqlParameter[] {
                         new SqlParameter("pdFechaInicial", SqlDbType.DateTime),
                         new SqlParameter("pdFechaFinal", SqlDbType.DateTime),
                         new SqlParameter("psCodigoProceso", SqlDbType.VarChar, 20),
@@ -86,6 +85,8 @@ namespace BCRGARANTIAS.Negocios
 
                     //Ejecuta el comando
                     oRetornoDEP = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Obtener_Resultado_Ejecucion_Procesos_Replica", parameters);
+
+
 
                     if (oRetornoDEP != null)
                     {
@@ -156,6 +157,9 @@ namespace BCRGARANTIAS.Negocios
                     {
                         throw new ExcepcionBase(Mensajes.Obtener(Mensajes._errorObteniendoResultadosEjecucion, Mensajes.ASSEMBLY));
                     }
+
+                    oConexion.Close();
+                    oConexion.Dispose();
                 }
             }
             catch (Exception ex)

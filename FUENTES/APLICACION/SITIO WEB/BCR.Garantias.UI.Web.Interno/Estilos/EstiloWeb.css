@@ -1,0 +1,463 @@
+﻿.Contenedor{
+    width:880px;
+    background-color:Window;
+    border:0px;
+    font-size:100%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+}
+
+.Contenedor_Inicializar {
+    clear:both;
+    height:0px;
+    width:0px;
+    display:none;
+    visibility:hidden;
+}
+
+.Campo_Normal {
+    width:35px;
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+}
+
+.Contenedor_Auditoria{
+    background-color:#e0e0df;
+}
+
+.Contenedor_Usuario_Modifico {
+    float:left;
+}
+
+.Contenedor_Fecha_Modifico {
+    float:right;
+}
+
+.Contenedor_Fecha_Replica {
+    display:inline-block; 
+    float:right;
+}
+
+.Titulo_Nivel_1 {
+    font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:medium;
+	font-weight:bold;
+	color:#005a9c;
+}
+
+.Titulo_Nivel_2 {
+    font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:smaller;
+	font-weight:bold;
+	color:#005a9c;
+}
+
+.Titulo_Nivel_3 {
+    font-style: normal;
+    font-family: Verdana, Tahoma, Arial;
+    font-size: 70%;
+    font-weight: bold;
+    color: #005a9c;
+}
+
+.Contenedor_Titulo{
+    height:43px;
+    text-align:center;
+    vertical-align:middle;
+    width:830px;
+}
+
+
+.Contenedor_Tabla {
+    display:table;
+    border:2px solid #005a9c;
+    width:830px;
+    background-color:white;
+    text-align:center;
+    vertical-align:middle;
+    padding-left: 1px;
+    padding-right: 3px;
+    padding-bottom: 3px;
+    padding-top: 0px;
+    margin:auto;
+}
+
+.Contenedor_Fila {
+    display:table-row;
+    width:826px;
+}
+
+.Contenedor_Columna {
+    display:table-cell;
+    border:1px solid #005a9c;
+    background-color:white;
+    vertical-align: middle;
+    text-align:left;
+    margin-top:auto;
+    margin-bottom:3px;
+    float:left;
+    width:826px;
+    padding-top:5px;
+}
+
+.Contenedor_Columna_Centrada {
+    display:table-cell;
+    border:1px solid #005a9c;
+    background-color:white;
+    vertical-align: middle;
+    text-align:center;
+    margin-top:auto;
+    margin-bottom:3px;
+    float:left;
+    width:826px;
+    padding-top:5px;
+}
+
+.Contenedor_Columna_Titulo {
+    display:table-cell;
+    border:1px solid #005a9c;
+    background-color:#dcdcdc;
+    text-align:left;
+    margin-top:3px;
+    margin-bottom:3px;
+    width:826px;
+}
+
+.Texto_Error
+{	
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:70%;
+	font-weight:bold;
+	color:Red;
+}
+
+.Etiqueta
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:11px;
+	text-align:right;
+    vertical-align: middle;	
+}
+
+.Etiqueta_Agrupada
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:11px;
+	text-align:right;
+    vertical-align: middle;	
+}
+
+.Etiqueta_Deudor
+{
+	font-family:Verdana, Tahoma, Arial;
+	font-size:11px;
+	text-align:right;
+    vertical-align: middle;	
+    font-style: italic;
+    font-weight:bold;
+    color:steelblue;
+    display:none;
+}
+
+.Etiqueta_ID_Garantia
+{
+	font-family:Verdana, Tahoma, Arial;
+	font-size:11px;
+	text-align:right;
+    vertical-align: middle;	
+    font-style: italic;
+}
+
+.Campo_Agrupado {
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+}
+
+.Campo_Agrupado_Llave {
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    background-color:antiquewhite;
+}
+
+.Campo_Agrupado_No_Llave {
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    background-color:aliceblue;
+}
+
+
+.Campo_Bloqueado {
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    background-color:#e8e8e8;
+}
+
+.Contenedor_Agrupado {
+    float:left;
+    padding-left:10px;
+    width:auto;
+}
+
+.Contenedor_Agrupado_Derecho {
+    float: right;
+    padding-left:30px;
+    text-align:left;
+    width:auto;
+}
+
+.Contenedor_Distribuido {
+    width:auto; 
+    overflow:hidden;
+    margin-left:30px;
+    margin-right:30px;
+}
+
+.Contenedor_Separador {
+    height:10px;
+    width:auto;
+}
+
+
+.Campo_Numerico
+{
+    font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    text-align:right;
+    background-color:white;
+}
+
+.Campo_Numerico_Bloqueado
+{
+    font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    background-color:#e8e8e8;
+	text-align:right;
+}
+
+.Campo_Radio_Boton {
+	font-size:70%;
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+    vertical-align:middle;
+    background-color:white;
+    text-align:right;
+    color:black;
+}
+
+.Etiqueta_Cobertura {
+    width:300px; 
+    min-width:200px; 
+    height: 25px; 
+    text-align:center; 
+    font-style:normal; 
+    font-family:Verdana, Tahoma, Arial; 
+    font-size:11px;
+    vertical-align: middle;	
+}
+
+.Contenedor_Pie_Pagina{
+    font-size:10px;
+    color:gray;
+    font-family:Arial, Verdana, Tahoma; 
+    text-align:center;
+}
+
+
+.modal
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: black;
+    z-index: 99;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+    -moz-opacity: 0.2;
+    min-height: 100%;
+    width: 100%;
+}
+.loading
+{
+    font-family: Arial;
+    font-size: 10pt;
+    border: 2px solid #005a9c;
+    width: 150px;
+    height: 100px;
+    display: none;
+    position: fixed;
+    background-color: white;
+    z-index: 999;
+}
+
+.Texto_Carga{
+    font-weight:bold;
+}
+
+.Texto
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:12px;
+    font-weight:bold;
+}
+
+.ComboTipoGarantiaLlave
+{
+	margin-left:7px;
+}
+
+.ComboTipoPersonaLlave
+{
+	margin-left:10px;
+}
+
+.ComboClaseGarantiaRealLlave
+{
+	margin-left:10px;
+}
+
+#accordionGF h3
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:12px;
+	font-weight:bold;
+}
+
+#accordionGR h3
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:12px;
+	font-weight:bold;
+}
+
+#accordionGV h3
+{
+	font-style:normal;
+	font-family:Verdana, Tahoma, Arial;
+	font-size:12px;
+	font-weight:bold;
+}
+
+.celdaNormal
+{
+	font-family: Arial, Sans-Serif;
+	font-size: 12px;
+}
+
+
+table tr td .celdaNormal a:link
+{
+	color:blue;
+    text-decoration:none;
+    cursor: pointer;
+}
+
+table tr td .celdaNormal a:visited
+{
+	color:red;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+table tr td .celdaNormal a:hover
+{
+	color:red;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+table tr td .celdaNormal a:focus
+{
+	color:red;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+
+table tr td .celdaNormal a:active
+{
+	color:red;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.celdaSeleccionada, 
+.celdaSeleccionada a {
+    font-family: Arial, Sans-Serif;
+	font-size: 12px;
+    color:red !important;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+
+.enlaceRetorno 
+{
+    clear:both;
+	font-family: Arial, Sans-Serif;
+	font-size: 12px;
+}
+
+
+.enlaceRetorno:link
+{
+	color:blue;
+    text-decoration:none;
+    cursor: pointer;
+}
+
+.enlaceRetorno:visited
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.enlaceRetorno:hover
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.enlaceRetorno:focus
+{
+	color:blue;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,14 +1,12 @@
 using System;
 using System.Web;
-using System.Collections;
-using System.Runtime.Serialization;
 
 namespace BCRGARANTIAS.Negocios
 {
-	/// <summary>
-	/// Summary description for CGarantiaValor.
-	/// </summary>
-	[Serializable]
+    /// <summary>
+    /// Summary description for CGarantiaValor.
+    /// </summary>
+    [Serializable]
 	public class CGarantiaValor
 	{
 		#region Variables
@@ -61,6 +59,8 @@ namespace BCRGARANTIAS.Negocios
         private DateTime _fechaModifico;
         private DateTime _fechaInserto;
         private DateTime _fechaReplica;
+
+        private decimal _porcentajeAceptacion;
 
 		#endregion
 
@@ -334,14 +334,20 @@ namespace BCRGARANTIAS.Negocios
             set { _fechaReplica = value; }
         }
 
+        public decimal PorcentajeAceptacion
+        {
+            get { return _porcentajeAceptacion; }
+            set { _porcentajeAceptacion = value; }
+        }
+
         #endregion
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Constructor de la clase
-		/// </summary>
-		public CGarantiaValor()
+        /// <summary>
+        /// Constructor de la clase
+        /// </summary>
+        public CGarantiaValor()
 		{
 			ClaseGarantia = -1;
 			TipoMitigador = -1;

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Data;
 
@@ -84,7 +82,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtProcesosEjecutados.NewRow();
 
-                foreach (clsEjecucionProceso procesoEjecutado in this.InnerList)
+                foreach (clsEjecucionProceso procesoEjecutado in InnerList)
                 {
                     drFila[_proceso] = procesoEjecutado.NombreProceso;
                     drFila[_fecha] = procesoEjecutado.FechaEjecucion;

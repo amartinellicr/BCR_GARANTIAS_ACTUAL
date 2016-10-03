@@ -1,28 +1,18 @@
 using System;
 using System.Xml;
-using System.IO;
-using System.Collections;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Configuration;
-using System.Data.OleDb;
+using System.Web.UI;
+using System.Collections.Generic;
+using System.Web;
 
 using BCRGARANTIAS.Datos;
 using BCRGARANTIAS.Negocios;
-using ProcesamientoMQ2003;
 using BCRGARANTIAS.Presentacion;
 using BCR.GARANTIAS.Comun;
+using BCR.GARANTIAS.Entidades;
 
 
 namespace BCRGARANTIAS.Forms
@@ -31,28 +21,33 @@ namespace BCRGARANTIAS.Forms
     {
         #region Constantes
 
-        private const string LLAVE_CONSECUTIVO_OPERACION        = "LLAVE_CONSECUTIVO_OPERACION";
-        private const string LLAVE_CONSECUTIVO_GARANTIA         = "LLAVE_CONSECUTIVO_GARANTIA";
-        private const string LLAVE_ES_GIRO                      = "LLAVE_ES_GIRO";
-        private const string LLAVE_CONSECUTIVO_CONTRATO         = "LLAVE_CONSECUTIVO_CONTRATO";
-        private const string _llaveContratoGiro                 = "_llaveContratoGiro";
-        private const string LLAVE_FECHA_REPLICA                = "LLAVE_FECHA_REPLICA";
-        private const string LLAVE_FECHA_MODIFICACION           = "LLAVE_FECHA_MODIFICACION";
+        private const string LLAVE_CONSECUTIVO_OPERACION = "LLAVE_CONSECUTIVO_OPERACION";
+        private const string LLAVE_CONSECUTIVO_GARANTIA = "LLAVE_CONSECUTIVO_GARANTIA";
+        private const string LLAVE_ES_GIRO = "LLAVE_ES_GIRO";
+        private const string LLAVE_CONSECUTIVO_CONTRATO = "LLAVE_CONSECUTIVO_CONTRATO";
+        private const string _llaveContratoGiro = "_llaveContratoGiro";
+        private const string LLAVE_FECHA_REPLICA = "LLAVE_FECHA_REPLICA";
+        private const string LLAVE_FECHA_MODIFICACION = "LLAVE_FECHA_MODIFICACION";
+        private const string LLAVE_FILA_SELECCIONADA = "LLAVE_FILA_SELECCIONADA";
+        private const string LLAVE_ENTIDAD_CATALOGOS = "LLAVE_ENTIDAD_CATALOGOS";
 
         #endregion Constantes
 
         #region Variables Globales
 
-        protected System.Data.OleDb.OleDbConnection oleDbConnection1;
-        protected System.Web.UI.WebControls.DropDownList cbTipoEmpresa;
-        protected System.Web.UI.WebControls.TextBox txtEmpresa;
-        protected System.Web.UI.WebControls.DropDownList cbMoneda;
-        protected System.Web.UI.WebControls.DropDownList cbLiquidez;
-        protected System.Web.UI.WebControls.DropDownList cbRecomendacion;
-        protected System.Web.UI.WebControls.DropDownList cbInspección;
+        protected DropDownList cbTipoEmpresa;
+        protected TextBox txtEmpresa;
+        protected DropDownList cbMoneda;
+        protected DropDownList cbLiquidez;
+        protected DropDownList cbRecomendacion;
+        protected DropDownList cbInspección;
         protected mtpMenuPrincipal oPagina = new mtpMenuPrincipal();
 
         private string _contratoDelGiro = string.Empty;
+
+        private bool seRedirecciona = false;
+
+        private string urlPaginaMensaje = string.Empty;
 
         #endregion
 
@@ -137,6 +132,59 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se guarda en sesión el índice de la fila seleccionada del grid
+        /// </summary>
+        public int FilaSeleccionada
+        {
+            get
+            {
+                return ((Session[LLAVE_FILA_SELECCIONADA] != null) ? int.Parse(Session[LLAVE_FILA_SELECCIONADA].ToString()) : -1);
+            }
+
+            set
+            {
+                Session[LLAVE_FILA_SELECCIONADA] = value.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Permite obetener la lista de los códigos de los catálogos usados en este mantenimiento
+        /// </summary>
+        public string ListaCodigosCatalogos
+        {
+            get
+            {
+                return "|" + ((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_OPERACION_ESPECIAL).ToString() +
+                        "|" + ((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPO_MITIGADOR).ToString() +
+                        "|" + ((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPO_PERSONA).ToString() +
+                        "|" + ((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPOS_DOCUMENTOS).ToString() + "|";
+            }
+        }
+
+        /// <summary>
+        /// Se almacena y se obtiene la entidad del tipo Catálogos
+        /// </summary>
+        public clsCatalogos<clsCatalogo> ListaCatalogosGF
+        {
+            get
+            {
+                if (ViewState[LLAVE_ENTIDAD_CATALOGOS] != null)
+                {
+                    return new clsCatalogos<clsCatalogo>(((string)ViewState[LLAVE_ENTIDAD_CATALOGOS]));
+                }
+                else
+                {
+                    return Gestor.ObtenerCatalogos(ListaCodigosCatalogos);
+                }
+            }
+
+            set
+            {
+                ViewState.Add(LLAVE_ENTIDAD_CATALOGOS, value.TramaCatalogo);
+            }
+        }
+
         #endregion Propiedades
 
         #region Eventos
@@ -144,7 +192,6 @@ namespace BCRGARANTIAS.Forms
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            btnBuscarFiador.Click += new ImageClickEventHandler(btnBuscarFiador_Click);
             btnIngresos.Click += new EventHandler(btnIngresos_Click);
             btnInsertar.Click += new EventHandler(btnInsertar_Click);
             btnModificar.Click += new EventHandler(btnModificar_Click);
@@ -153,6 +200,7 @@ namespace BCRGARANTIAS.Forms
             btnValidarOperacion.Click += new EventHandler(btnValidarOperacion_Click);
             btnValidarTarjeta.Click += new EventHandler(btnValidarTarjeta_Click);
             cbTipoCaptacion.SelectedIndexChanged += new EventHandler(cbTipoCaptacion_SelectedIndexChanged);
+            imgCalculadoraGF.Click += new ImageClickEventHandler(ImageButton_Click); 
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -169,7 +217,7 @@ namespace BCRGARANTIAS.Forms
             btnInsertar.Attributes["onclick"] = "javascript:return confirm('¿Está seguro que desea insertar esta garantía?')";
             btnEliminar.Attributes["onclick"] = "javascript:return confirm('¿Está seguro que desea eliminar la garantía seleccionada?')";
             btnModificar.Attributes["onclick"] = "javascript:return confirm('¿Está seguro que desea modificar la garantía seleccionada?')";
-            
+
             btnIngresos.Enabled = true;
 
 
@@ -179,6 +227,9 @@ namespace BCRGARANTIAS.Forms
             txtPorcentajeResponsabilidad.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtPorcentajeResponsabilidad.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true)");
 
+            txtPorcentajeAceptacion.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
+            txtPorcentajeAceptacion.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,true)");
+
             txtMontoCobertura.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtMontoCobertura.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
 
@@ -186,13 +237,15 @@ namespace BCRGARANTIAS.Forms
             lblObservacion.Visible = false;
 
             contenedorDatosModificacion.Visible = false;
-          
+
 
             if (!IsPostBack)
             {
                 try
                 {
                     int nProducto = -1;
+                    seRedirecciona = false;
+                    urlPaginaMensaje = string.Empty;
 
                     if (Gestor.IsInRol(Global.UsuarioSistema, int.Parse(Application["MNU_GARANTIA_FIDUCIARIA"].ToString())))
                     {
@@ -210,6 +263,7 @@ namespace BCRGARANTIAS.Forms
                                 CargarCombos();
                                 LimpiarCampos();
                                 MostrarLlave();
+                                CargarDatosSession();
                                 BloquearCampos(true);
                                 btnInsertar.Enabled = true;
                                 btnModificar.Enabled = false;
@@ -220,12 +274,11 @@ namespace BCRGARANTIAS.Forms
                                 btnIngresos.Enabled = true;
 
                                 contenedorDatosModificacion.Visible = false;
-                                contenedorDatosModificacion.Controls.Clear();
 
-								if (Session["Accion"].ToString() == "INSERTAR")
-								{
-									btnBuscarFiador.Visible = true;
-								}
+                                if (Session["Accion"].ToString() == "INSERTAR")
+                                {
+                                    btnBuscarFiador.Visible = true;
+                                }
 
 
                                 if (Session["Tipo_Operacion"].ToString() == Application["TARJETA"].ToString())
@@ -239,7 +292,8 @@ namespace BCRGARANTIAS.Forms
                             }
                             else if ((Session["Accion"] != null) &&
                                      ((Session["Accion"].ToString() == "DEUDOR_MOD") ||
-                                     (Session["Accion"].ToString() == "FIADOR_MOD")))
+                                     (Session["Accion"].ToString() == "FIADOR_MOD") ||
+                                     (Session["Accion"].ToString() == "PR_MOD")))
                             {
                                 BloquearCampos(true);
                                 CargarDatosSession();
@@ -310,6 +364,12 @@ namespace BCRGARANTIAS.Forms
                                 CargarGridTarjetas();
                             }
 
+                            if (FilaSeleccionada != -1)
+                            {
+                                CommandEventArgs comando = new CommandEventArgs("SelectedFiador", FilaSeleccionada.ToString());
+                                GridViewCommandEventArgs evento = new GridViewCommandEventArgs(gdvGarantiasFiduciarias, comando);
+                                this.gdvGarantiasFiduciarias_RowCommand(gdvGarantiasFiduciarias, evento);
+                            }
                         }
                         else
                         {
@@ -327,17 +387,28 @@ namespace BCRGARANTIAS.Forms
                 catch (Exception ex)
                 {
                     if (ex.Message.StartsWith("ACCESO DENEGADO"))
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=1" +
-                                        "&strTitulo=" + "Acceso Denegado" +
-                                        "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
-                                        "&bBotonVisible=0");
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Acceso Denegado" +
+                                            "&strMensaje=" + "El usuario no posee permisos de acceso a esta página." +
+                                            "&bBotonVisible=0");
+                    }
                     else
-                        Response.Redirect("frmMensaje.aspx?" +
+                    {
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
                                         "bError=1" +
                                         "&strTitulo=" + "Problemas Cargando Página" +
                                         "&strMensaje=" + ex.Message +
                                         "&bBotonVisible=0");
+                    }
+                }
+
+                if (seRedirecciona)
+                {
+                    Response.Redirect(urlPaginaMensaje, true);
                 }
             }
 
@@ -348,49 +419,24 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
-        private void Button1_Click(object sender, System.EventArgs e)
-        {
-        }
-
         /// <summary>
         /// Este evento permite insertar una garantía fiduciaria a una operación crediticia
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnInsertar_Click(object sender, System.EventArgs e)
+        private void btnInsertar_Click(object sender, EventArgs e)
         {
-            decimal nPorcentaje;
+            decimal porcentajeResponsabilidad;
+            decimal porcentajeAceptacion;
             string strTrama = string.Empty;
-            string strTramaRespuesta;
-            DataSet ds = new DataSet();
-            string strArchivoXMLTemporal;
-
             string strCodigoEstadoTarjeta = string.Empty;
 
-            #region Obtiene el nombre de los nodos del web.config
-
-            string nodoSistar = ConfigurationManager.AppSettings["nodoSistar"].ToString();
-            string nodoCabecera = ConfigurationManager.AppSettings["nodoCabecera"].ToString();
-            string nodoRespuesta = ConfigurationManager.AppSettings["nodoRespuesta"].ToString();
-            string nodoTrans = ConfigurationManager.AppSettings["nodoTransaccion"].ToString();
-            string nodoTipoTarjeta = ConfigurationManager.AppSettings["nodoTipoTarjeta"].ToString();
-            string nodoCedula = ConfigurationManager.AppSettings["nodoCedula"].ToString();
-            string nodoCuentaAfectada = ConfigurationManager.AppSettings["nodoCuentaAfectada"].ToString();
-            string nodoMoneda = ConfigurationManager.AppSettings["nodoMoneda"].ToString();
-            string nodoOficinaOrigen = ConfigurationManager.AppSettings["nodoOficinaOrigen"].ToString();
-            string nodoDescripcion = ConfigurationManager.AppSettings["nodoDescripcion"].ToString();
-            string nodoTipoGarantia = ConfigurationManager.AppSettings["nodoTipoGarantia"].ToString();
-            string nodoEstadoTarjeta = ConfigurationManager.AppSettings["nodoEstadoTarjeta"].ToString();
-
-            #endregion
             try
             {
                 if (ValidarGarantiaTarjeta())
                 {
-                    if (txtPorcentajeResponsabilidad.Text.Trim().Length == 0)
-                        nPorcentaje = 0;
-                    else
-                        nPorcentaje = Convert.ToDecimal(txtPorcentajeResponsabilidad.Text.Trim());
+                    porcentajeResponsabilidad = Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "0"));
+                    porcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
 
                     Session["Accion"] = "INSERTAR";
                     GuardarDatosSession();
@@ -399,36 +445,7 @@ namespace BCRGARANTIAS.Forms
 
                     if ((Session["Plazo"] == null) || ((Session["Plazo"] != null) && (Session["Plazo"].ToString().CompareTo("01") != 0)))
                     {
-                        strTrama = new BCRGARANTIAS.Negocios.CreaXML().creaXMLConsultaTarjetaSISTAR(txtTarjeta.Text, "01");
-
-                        ProcesamientoMQ2003.ProcesamientoMQ oMQ = new ProcesamientoMQ2003.ProcesamientoMQ(Application["Qmanager"].ToString(),
-                                                                                                        Application["Cola_Entrada"].ToString(),
-                                                                                                        Application["Cola_Salida"].ToString(),
-                                                                                                        strTrama,
-                                                                                                        Application["Cola_Respuesta"].ToString(),
-                                                                                                        Application["IP"].ToString(),
-                                                                                                        Application["Channel"].ToString(),
-                                                                                                        Application["Port"].ToString());
-
-                        strTramaRespuesta = oMQ.respuestaMQ();
-
-                        strArchivoXMLTemporal = Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\" + txtTarjeta.Text.Trim() + ".xml";
-
-                        if (!Directory.Exists(Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\"))
-                        {
-                            Directory.CreateDirectory(Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\");
-                        }
-
-                        CrearArchivoXMLTemporal(strArchivoXMLTemporal, strTramaRespuesta);
-                        ds.ReadXml(strArchivoXMLTemporal);
-
-                        //Valida que la respuesta de MQ fuera "TRANSACCION SATISFACTORIA"
-                        if (ds.Tables[nodoCabecera].Rows[0][nodoRespuesta].ToString() == "000")
-                        {
-                            bActualizacionSistar = true;
-                        }
-
-                        EliminarArchivoXMLTemporal(strArchivoXMLTemporal);
+                        bActualizacionSistar = Gestor.ModificarGarantiaSISTAR(txtTarjeta.Text.Trim(), "01");
                     }
                     else if ((Session["Plazo"] != null) && (Session["Plazo"].ToString().CompareTo("01") == 0))
                     {
@@ -439,43 +456,44 @@ namespace BCRGARANTIAS.Forms
 
                     if (bActualizacionSistar)
                     {
-                       nMensaje = Gestor.CrearGarantiaFiduciariaTarjeta(txtTarjeta.Text.Trim(),
-                                                            int.Parse(Application["GARANTIA_FIDUCIARIA"].ToString()),
-                                                            int.Parse(Application["CLASE_GARANTIA_FIADOR"].ToString()),
-                                                            txtCedulaFiador.Text.Trim(),
-                                                            int.Parse(cbTipoFiador.SelectedValue.ToString()),
-                                                            txtNombreFiador.Text.Trim(),
-                                                            int.Parse(cbMitigador.SelectedValue.ToString()),
-                                                            int.Parse(cbTipoDocumento.SelectedValue.ToString()),
-                                                            Convert.ToDecimal(txtMontoMitigador.Text),
-                                                            nPorcentaje,
-                                                            int.Parse(cbOperacionEspecial.SelectedValue.ToString()),
-                                                            int.Parse(cbTipoAcreedor.SelectedValue.ToString()),
-                                                            txtAcreedor.Text.Trim(),
-                                                            DateTime.Parse(txtFechaExpiracion.Text.ToString()),
-                                                            Convert.ToDecimal(txtMontoCobertura.Text),
-                                                            Session["Deudor"].ToString(),
-                                                            long.Parse(Session["Bin"].ToString()),
-                                                            long.Parse(Session["CodigoInternoSISTAR"].ToString()),
-                                                            int.Parse(Session["Moneda"].ToString()),
-                                                            int.Parse(Session["Oficina_Registra"].ToString()),
-                                                            Session["strUSER"].ToString(),
-                                                            Request.UserHostAddress.ToString(), txtTarjeta.Text.Trim(),
-                                                            txtObservacion.Text,
-                                                            Convert.ToInt32(ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString()));
+                        nMensaje = Gestor.CrearGarantiaFiduciariaTarjeta(txtTarjeta.Text.Trim(),
+                                                             int.Parse(Application["GARANTIA_FIDUCIARIA"].ToString()),
+                                                             int.Parse(Application["CLASE_GARANTIA_FIADOR"].ToString()),
+                                                             txtCedulaFiador.Text.Trim(),
+                                                             int.Parse(cbTipoFiador.SelectedValue.ToString()),
+                                                             txtNombreFiador.Text.Trim(),
+                                                             int.Parse(cbMitigador.SelectedValue.ToString()),
+                                                             int.Parse(cbTipoDocumento.SelectedValue.ToString()),
+                                                             Convert.ToDecimal(txtMontoMitigador.Text),
+                                                             porcentajeResponsabilidad,
+                                                             int.Parse(cbOperacionEspecial.SelectedValue.ToString()),
+                                                             int.Parse(cbTipoAcreedor.SelectedValue.ToString()),
+                                                             txtAcreedor.Text.Trim(),
+                                                             DateTime.Parse(txtFechaExpiracion.Text.ToString()),
+                                                             Convert.ToDecimal(txtMontoCobertura.Text),
+                                                             Session["Deudor"].ToString(),
+                                                             long.Parse(Session["Bin"].ToString()),
+                                                             long.Parse(Session["CodigoInternoSISTAR"].ToString()),
+                                                             int.Parse(Session["Moneda"].ToString()),
+                                                             int.Parse(Session["Oficina_Registra"].ToString()),
+                                                             Session["strUSER"].ToString(),
+                                                             Request.UserHostAddress.ToString(), txtTarjeta.Text.Trim(),
+                                                             txtObservacion.Text,
+                                                             Convert.ToInt32(ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString()),
+                                                             porcentajeAceptacion);
 
-                       string[] mensajes = MostrarMensaje(nMensaje, 1);
+                        string[] mensajes = MostrarMensaje(nMensaje, 1);
 
-                       contenedorDatosModificacion.Visible = false;
-                       contenedorDatosModificacion.Controls.Clear();
+                        contenedorDatosModificacion.Visible = false;
 
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=" + mensajes[0] +
-                                        "&strTitulo=" + mensajes[1] +
-                                        "&strMensaje=" + mensajes[2] +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmGarantiasFiduciaria.aspx");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=" + mensajes[0] +
+                                            "&strTitulo=" + mensajes[1] +
+                                            "&strMensaje=" + mensajes[2] +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmGarantiasFiduciaria.aspx");
 
 
                     }
@@ -485,14 +503,20 @@ namespace BCRGARANTIAS.Forms
             {
                 if (ex.Message.StartsWith("The statement has been terminated."))
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Insertando Registro" +
-                                    "&strMensaje=" + "No se pudo insertar la garantía fiduciaria. " + "\r" + ex.Message +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasFiduciaria.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Insertando Registro" +
+                                        "&strMensaje=" + "No se pudo insertar la garantía fiduciaria. " + "\r" + ex.Message +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasFiduciaria.aspx");
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -501,7 +525,7 @@ namespace BCRGARANTIAS.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnLimpiar_Click(object sender, System.EventArgs e)
+        private void btnLimpiar_Click(object sender, EventArgs e)
         {
             try
             {
@@ -516,7 +540,10 @@ namespace BCRGARANTIAS.Forms
                 lblMensaje3.Text = string.Empty;
 
                 contenedorDatosModificacion.Visible = false;
-                contenedorDatosModificacion.Controls.Clear();
+
+                lblFechaReplica.Text = string.Empty;
+                lblFechaModificacion.Text = string.Empty;
+                lblUsrModifico.Text = string.Empty;
 
                 if (Session["Tipo_Operacion"].ToString() == Application["TARJETA"].ToString())
                 {
@@ -549,9 +576,9 @@ namespace BCRGARANTIAS.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnModificar_Click(object sender, System.EventArgs e)
+        private void btnModificar_Click(object sender, EventArgs e)
         {
-            decimal nPorcentaje;
+            string strOperacionCrediticia = string.Empty;
 
             try
             {
@@ -561,52 +588,37 @@ namespace BCRGARANTIAS.Forms
                     {
                         Session["Accion"] = "MODIFICAR";
 
-                        if (txtPorcentajeResponsabilidad.Text.Trim().Length == 0)
-                            nPorcentaje = 0;
-                        else
-                            nPorcentaje = Convert.ToDecimal(txtPorcentajeResponsabilidad.Text);
+                        GuardarDatosSession();
+
+                        clsGarantiaFiduciaria oGarantia = clsGarantiaFiduciaria.Current;
 
                         //Se crea el dato correspondiente a operación crediticia que se almacenará en la bitácora
-                      //  string strOperacionCrediticia = txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text;
-
-                        string strOperacionCrediticia = (txtContabilidad.Text.StartsWith("0") ? txtContabilidad.Text.Remove(0, 1) : txtContabilidad.Text) + "-" + 
-                                                         txtOficina.Text + "-" +
-                                                        (txtMoneda.Text.StartsWith("0") ? txtMoneda.Text.Remove(0, 1) : txtMoneda.Text);
-
-                        if (txtProducto.Visible)
+                        switch (oGarantia.TipoOperacion)
                         {
-                            //strOperacionCrediticia += "-" + txtProducto.Text;
-                            strOperacionCrediticia += "-" + (txtProducto.Text.StartsWith("0") ? txtProducto.Text.Remove(0, 1) : txtProducto.Text);
-
+                            case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                                strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Producto.ToString(), oGarantia.Numero.ToString());
+                                break;
+                            case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                                strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Numero.ToString());
+                                break;
+                            default:
+                                break;
                         }
 
-                        strOperacionCrediticia += "-" + txtOperacion.Text;
+                        Gestor.ModificarGarantiaFiduciaria(oGarantia, strOperacionCrediticia, Request.UserHostAddress.ToString());
 
-
-                        GuardarDatosSession();
-                        Gestor.ModificarGarantiaFiduciaria(long.Parse(Session["GarantiaFiduciaria"].ToString()),
-                                                            ConsecutivoOperacion,
-                                                            txtCedulaFiador.Text.Trim(),
-                                                            int.Parse(cbTipoFiador.SelectedValue.ToString()),
-                                                            txtNombreFiador.Text.Trim(),
-                                                            int.Parse(cbMitigador.SelectedValue.ToString()),
-                                                            int.Parse(cbTipoDocumento.SelectedValue.ToString()),
-                                                            Convert.ToDecimal(txtMontoMitigador.Text),
-                                                            nPorcentaje,
-                                                            int.Parse(cbOperacionEspecial.SelectedValue.ToString()),
-                                                            int.Parse(cbTipoAcreedor.SelectedValue.ToString()),
-                                                            txtAcreedor.Text.Trim(),
-                                                            Session["strUSER"].ToString(),
-                                                            Request.UserHostAddress.ToString(),
-                                                            strOperacionCrediticia);
-
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=0" +
-                                        "&strTitulo=" + "Modificación Exitosa" +
-                                        "&strMensaje=" + "La información de la garantía fiduciaria se modificó satisfactoriamente." +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmGarantiasFiduciaria.aspx");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=0" +
+                                            "&strTitulo=" + "Modificación Exitosa" +
+                                            "&strMensaje=" + "La información de la garantía fiduciaria se modificó satisfactoriamente." +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmGarantiasFiduciaria.aspx");
+                    }
+                    else
+                    {
+                        contenedorDatosModificacion.Visible = true;
                     }
                 }
                 else
@@ -615,10 +627,8 @@ namespace BCRGARANTIAS.Forms
                     {
                         Session["Accion"] = "MODIFICAR";
 
-                        if (txtPorcentajeResponsabilidad.Text.Trim().Length == 0)
-                            nPorcentaje = 0;
-                        else
-                            nPorcentaje = Convert.ToDecimal(txtPorcentajeResponsabilidad.Text);
+                        decimal porcentajeResponsabilidad = -1;  //ELIMINAR ESTE COMENTARIO HASTA QUE ESTE VALOR SEA CALCULADO// Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text: "0"));
+                        decimal porcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
 
                         GuardarDatosSession();
                         Gestor.ModificarGarantiaFiduciariaTarjeta(long.Parse(Session["GarantiaFiduciaria"].ToString()),
@@ -629,7 +639,7 @@ namespace BCRGARANTIAS.Forms
                                                                 int.Parse(cbMitigador.SelectedValue.ToString()),
                                                                 int.Parse(cbTipoDocumento.SelectedValue.ToString()),
                                                                 Convert.ToDecimal(txtMontoMitigador.Text),
-                                                                nPorcentaje,
+                                                                porcentajeResponsabilidad,
                                                                 int.Parse(cbOperacionEspecial.SelectedValue.ToString()),
                                                                 int.Parse(cbTipoAcreedor.SelectedValue.ToString()),
                                                                 txtAcreedor.Text.Trim(),
@@ -637,15 +647,17 @@ namespace BCRGARANTIAS.Forms
                                                                 Convert.ToDecimal(txtMontoCobertura.Text),
                                                                 Session["strUSER"].ToString(),
                                                                 Request.UserHostAddress.ToString(),
-                                                                txtTarjeta.Text, txtObservacion.Text);
+                                                                txtTarjeta.Text, txtObservacion.Text,
+                                                                porcentajeAceptacion);
 
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=0" +
-                                        "&strTitulo=" + "Modificación Exitosa" +
-                                        "&strMensaje=" + "La información de la garantía fiduciaria se modificó satisfactoriamente." +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmGarantiasFiduciaria.aspx");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=0" +
+                                            "&strTitulo=" + "Modificación Exitosa" +
+                                            "&strMensaje=" + "La información de la garantía fiduciaria se modificó satisfactoriamente." +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmGarantiasFiduciaria.aspx");
                     }
                 }
             }
@@ -653,14 +665,20 @@ namespace BCRGARANTIAS.Forms
             {
                 if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Modificando Registro" +
-                                    "&strMensaje=" + "No se pudo modificar la información de la garantía fiduciaria. " + "\r" + ex.Message +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasFiduciaria.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Modificando Registro" +
+                                        "&strMensaje=" + "No se pudo modificar la información de la garantía fiduciaria. " + "\r" + ex.Message +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasFiduciaria.aspx");
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -669,54 +687,59 @@ namespace BCRGARANTIAS.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnEliminar_Click(object sender, System.EventArgs e)
+        private void btnEliminar_Click(object sender, EventArgs e)
         {
+            string strOperacionCrediticia = string.Empty;
+
             if (int.Parse(cbTipoCaptacion.SelectedValue.ToString()) != int.Parse(Application["TARJETA"].ToString()))
             {
                 try
                 {
+                    GuardarDatosSession();
+
                     //Se crea el dato correspondiente a operación crediticia que se almacenará en la bitácora
-                   // string strOperacionCrediticia = txtContabilidad.Text + "-" + txtOficina.Text + "-" + txtMoneda.Text;
+                    clsGarantiaFiduciaria oGarantia = clsGarantiaFiduciaria.Current;
 
-                    string strOperacionCrediticia = (txtContabilidad.Text.StartsWith("0") ? txtContabilidad.Text.Remove(0, 1) : txtContabilidad.Text) + "-" + 
-                                                    txtOficina.Text + "-" +
-                                                    (txtMoneda.Text.StartsWith("0") ? txtMoneda.Text.Remove(0, 1) : txtMoneda.Text);
-
-                    if (txtProducto.Visible)
+                    //Se crea el dato correspondiente a operación crediticia que se almacenará en la bitácora
+                    switch (oGarantia.TipoOperacion)
                     {
-                       // strOperacionCrediticia += "-" + txtProducto.Text;
-                        strOperacionCrediticia += "-" + (txtProducto.Text.StartsWith("0") ? txtProducto.Text.Remove(0, 1) : txtProducto.Text);
-
+                        case ((int)Enumeradores.Tipos_Operaciones.Directa):
+                            strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}-{4}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Producto.ToString(), oGarantia.Numero.ToString());
+                            break;
+                        case ((int)Enumeradores.Tipos_Operaciones.Contrato):
+                            strOperacionCrediticia = string.Format("{0}-{1}-{2}-{3}", oGarantia.Contabilidad.ToString(), oGarantia.Oficina.ToString(), oGarantia.Moneda.ToString(), oGarantia.Numero.ToString());
+                            break;
+                        default:
+                            break;
                     }
 
-                    strOperacionCrediticia += "-" + txtOperacion.Text;
-
                     Session["Accion"] = "ELIMINAR";
-                    GuardarDatosSession();
+
                     Gestor.EliminarGarantiaFiduciaria(long.Parse(Session["GarantiaFiduciaria"].ToString()),
                                                     ConsecutivoOperacion,
                                                     Session["strUSER"].ToString(),
                                                     Request.UserHostAddress.ToString(), strOperacionCrediticia);
-
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=0" +
-                                    "&strTitulo=" + "Eliminación Exitosa" +
-                                    "&strMensaje=" + "La garantía fiduciaria se eliminó satisfactoriamente." +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasFiduciaria.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=0" +
+                                        "&strTitulo=" + "Eliminación Exitosa" +
+                                        "&strMensaje=" + "La garantía fiduciaria se eliminó satisfactoriamente." +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasFiduciaria.aspx");
                 }
                 catch (Exception ex)
                 {
                     if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
                     {
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=1" +
-                                        "&strTitulo=" + "Problemas Eliminando Registro" +
-                                        "&strMensaje=" + "No se pudo eliminar la garantía fiduciaria." + "\r" + ex.Message +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmGarantiasFiduciaria.aspx");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Eliminando Registro" +
+                                            "&strMensaje=" + "No se pudo eliminar la garantía fiduciaria." + "\r" + ex.Message +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmGarantiasFiduciaria.aspx");
                     }
                 }
             }
@@ -731,68 +754,37 @@ namespace BCRGARANTIAS.Forms
                                                             Session["strUSER"].ToString(),
                                                             Request.UserHostAddress.ToString(), txtTarjeta.Text);
 
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=0" +
-                                    "&strTitulo=" + "Eliminación Exitosa" +
-                                    "&strMensaje=" + "La garantía fiduciaria se eliminó satisfactoriamente." +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmGarantiasFiduciaria.aspx");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=0" +
+                                        "&strTitulo=" + "Eliminación Exitosa" +
+                                        "&strMensaje=" + "La garantía fiduciaria se eliminó satisfactoriamente." +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmGarantiasFiduciaria.aspx");
                 }
                 catch (Exception ex)
                 {
                     if (!ex.Message.StartsWith("Thread was being aborted.") && !ex.Message.StartsWith("Subproceso"))
                     {
-                        Response.Redirect("frmMensaje.aspx?" +
-                                        "bError=1" +
-                                        "&strTitulo=" + "Problemas Eliminando Registro" +
-                                        "&strMensaje=" + "No se pudo eliminar la garantía fiduciaria." + "\r" + ex.Message +
-                                        "&bBotonVisible=1" +
-                                        "&strTextoBoton=Regresar" +
-                                        "&strHref=frmGarantiasFiduciaria.aspx");
+                        seRedirecciona = true;
+                        urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                            "bError=1" +
+                                            "&strTitulo=" + "Problemas Eliminando Registro" +
+                                            "&strMensaje=" + "No se pudo eliminar la garantía fiduciaria." + "\r" + ex.Message +
+                                            "&bBotonVisible=1" +
+                                            "&strTextoBoton=Regresar" +
+                                            "&strHref=frmGarantiasFiduciaria.aspx");
                     }
                 }
             }
-            contenedorDatosModificacion.Visible = false;
-            contenedorDatosModificacion.Controls.Clear();
 
-        }
+            if (seRedirecciona)
+            {
+                contenedorDatosModificacion.Visible = false;
+                FilaSeleccionada = -1;
 
-        /// <summary>
-        /// Este evento permite validar la cédula del fiador
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnBuscarFiador_Click(object sender, System.Web.UI.ImageClickEventArgs e)
-        {
-            try
-            {
-                if (txtCedulaFiador.Text.Trim().Length > 0)
-                {
-                    System.Data.DataSet dsDatos = new System.Data.DataSet();
-                    oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                    OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("select distinct bsmcl_sno_clien from gar_sicc_bsmcl where bsmcl_sco_ident = '" + txtCedulaFiador.Text.Trim() + "' and bsmcl_estado = 'A'", oleDbConnection1);
-                    cmdConsulta.Fill(dsDatos, "Fiador");
-                    if (dsDatos.Tables["Fiador"].Rows.Count > 0)
-                    {
-                        lblMensaje3.Text = "";
-                        txtNombreFiador.Text = dsDatos.Tables["Fiador"].Rows[0][0].ToString();
-                    }
-                    else
-                    {
-                        lblMensaje3.Text = "Fiador no existe como cliente del Banco";
-                        txtNombreFiador.Text = "";
-                    }
-                }
-                else
-                {
-                    lblMensaje3.Text = "Debe ingresar el número de cédula del fiador";
-                    txtNombreFiador.Text = "";
-                }
-            }
-            catch (Exception ex)
-            {
-                lblMensaje3.Text = ex.Message;
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
@@ -801,92 +793,72 @@ namespace BCRGARANTIAS.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnValidarOperacion_Click(object sender, System.EventArgs e)
+        private void btnValidarOperacion_Click(object sender, EventArgs e)
         {
+            DataSet dsDatos = new DataSet();
+
             try
             {
                 int nProducto = -1;
+                int nContabilidad;
+                int nOficina;
+                int nMoneda;
+                long nOperacion;
 
                 Session["Tipo_Operacion"] = cbTipoCaptacion.SelectedValue.ToString();
+                FilaSeleccionada = -1;
 
                 if (ValidarDatosOperacion())
                 {
-					/*Se modifica la forma en como se validna las operaciones, esto para poder obtener la información de los contratos vencidos con giros activos*/
-                                        string strProducto = (((Session["Tipo_Operacion"] != null) && (Session["Tipo_Operacion"].ToString().Length > 0) && (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))) ? txtProducto.Text : string.Empty);
-                                        DataSet dsDatos = new DataSet();
+                    /*Se modifica la forma en como se validna las operaciones, esto para poder obtener la información de los contratos vencidos con giros activos*/
+                    string strProducto = (((Session["Tipo_Operacion"] != null) && (Session["Tipo_Operacion"].ToString().Length > 0) && (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))) ? txtProducto.Text : string.Empty);
 
-					oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-					OleDbCommand oComando = new OleDbCommand("pa_ValidarOperaciones", oleDbConnection1);
-					oComando.CommandTimeout = 120;
-					oComando.CommandType = CommandType.StoredProcedure;
-					oComando.Parameters.AddWithValue("@Contabilidad", txtContabilidad.Text);
-					oComando.Parameters.AddWithValue("@Oficina", txtOficina.Text);
-					oComando.Parameters.AddWithValue("@Moneda", txtMoneda.Text);
+                    nContabilidad = ((int.TryParse(txtContabilidad.Text, out nContabilidad)) ? nContabilidad : -1);
+                    nOficina = ((int.TryParse(txtOficina.Text, out nOficina)) ? nOficina : -1);
+                    nMoneda = ((int.TryParse(txtMoneda.Text, out nMoneda)) ? nMoneda : -1);
+                    nProducto = ((int.TryParse(((strProducto.Length > 0) ? strProducto : "-1"), out nProducto)) ? nProducto : -1);
+                    nOperacion = ((long.TryParse(txtOperacion.Text, out nOperacion)) ? nOperacion : -1);
 
-					if (!string.IsNullOrEmpty(strProducto))
-					{
-						oComando.Parameters.AddWithValue("@Producto", strProducto);
-					}
-					else
-					{
-						oComando.Parameters.AddWithValue("@Producto", DBNull.Value);
-					}
+                    clsOperacionCrediticia oOperacion = Gestor.ValidarOperacion(nContabilidad, nOficina, nMoneda, nProducto, nOperacion);
 
-					oComando.Parameters.AddWithValue("@Operacion", txtOperacion.Text);
-					oComando.Parameters["@Producto"].IsNullable = true;
-
-					OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(); 
-
-					if ((oleDbConnection1 != null) && (oleDbConnection1.State == ConnectionState.Closed))
-					{
-						oleDbConnection1.Open();
-					}
-
-					cmdConsulta.SelectCommand = oComando;
-					cmdConsulta.SelectCommand.Connection = oleDbConnection1;
-                    cmdConsulta.Fill(dsDatos, "Operacion");
-
-                    if (dsDatos.Tables["Operacion"].Rows.Count > 0)
+                    if (oOperacion.EsValida)
                     {
                         BloquearCampos(true);
 
-                        EsGiro = (((dsDatos.Tables["Operacion"].Columns.Contains("esGiro")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("esGiro")) && (dsDatos.Tables["Operacion"].Rows[0]["esGiro"].ToString().CompareTo("1") == 0)) ? true : false);
+                        EsGiro = oOperacion.EsGiro;
 
-                        ConsecutivoContrato = (((dsDatos.Tables["Operacion"].Columns.Contains("consecutivoContrato")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("consecutivoContrato"))) ? (long.Parse(dsDatos.Tables["Operacion"].Rows[0]["consecutivoContrato"].ToString())) : -1);
+                        ConsecutivoContrato = oOperacion.ConsecutivoContrato;
 
-                        _contratoDelGiro = (((EsGiro) && (dsDatos.Tables["Operacion"].Columns.Contains("Contrato")) && (!dsDatos.Tables["Operacion"].Rows[0].IsNull("Contrato"))) ? (dsDatos.Tables["Operacion"].Rows[0]["Contrato"].ToString()) : string.Empty);
+                        _contratoDelGiro = oOperacion.FormatoLargoContrato;
 
                         if (!EsGiro)
                         {
-                            ConsecutivoOperacion = long.Parse(dsDatos.Tables["Operacion"].Rows[0]["cod_operacion"].ToString());
+                            ConsecutivoOperacion = oOperacion.ConsecutivoOperacion;
 
-                        Session["Deudor"] = dsDatos.Tables["Operacion"].Rows[0]["cedula_deudor"].ToString();
+                            Session["Deudor"] = oOperacion.CedulaDeudor;
 
-                        if (txtProducto.Text.Length != 0)
-                            nProducto = int.Parse(txtProducto.Text);
+                            CargarGrid(int.Parse(cbTipoCaptacion.SelectedValue.ToString()),
+                                        ((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion),
+                                        nContabilidad,
+                                        nOficina,
+                                        nMoneda,
+                                        nProducto,
+                                        nOperacion);
 
-                        CargarGrid(int.Parse(cbTipoCaptacion.SelectedValue.ToString()),
-                                    ((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion),
-                                    int.Parse(txtContabilidad.Text),
-                                    int.Parse(txtOficina.Text),
-                                    int.Parse(txtMoneda.Text),
-                                    nProducto,
-                                    long.Parse(txtOperacion.Text));
-
-                        lblDeudor.Visible = true;
-                        lblNombreDeudor.Visible = true;
-                        Session["Nombre_Deudor"] = dsDatos.Tables["Operacion"].Rows[0]["cedula_deudor"].ToString() + " - " +
-                                                   dsDatos.Tables["Operacion"].Rows[0]["nombre_deudor"].ToString();
-                        lblNombreDeudor.Text = Session["Nombre_Deudor"].ToString();
-                        btnIngresos.Enabled = false;
-                        btnModificar.Enabled = false;
-                        btnEliminar.Enabled = false;
-                        Session["EsOperacionValida"] = true;
-                        GuardarDatosSession();
-                    }
-                    else
-                    {
-                        BloquearCampos(false);
+                            lblDeudor.Visible = true;
+                            lblNombreDeudor.Visible = true;
+                            string nombreDeudor = string.Format("{0} - {1}", oOperacion.CedulaDeudor, oOperacion.NombreDeudor);
+                            Session["Nombre_Deudor"] = nombreDeudor;
+                            lblNombreDeudor.Text = nombreDeudor;
+                            btnIngresos.Enabled = false;
+                            btnModificar.Enabled = false;
+                            btnEliminar.Enabled = false;
+                            Session["EsOperacionValida"] = true;
+                            GuardarDatosSession();
+                        }
+                        else
+                        {
+                            BloquearCampos(false);
                             btnModificar.Enabled = false;
                             btnLimpiar.Enabled = false;
                             lblDeudor.Text = string.Empty;
@@ -903,7 +875,8 @@ namespace BCRGARANTIAS.Forms
                         Session["EsOperacionValida"] = false;
                         lblDeudor.Visible = false;
                         lblNombreDeudor.Visible = false;
-                        Session["Nombre_Deudor"] = "";
+                        Session["Nombre_Deudor"] = string.Empty;
+
                         if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
                             lblMensaje.Text = "La operación crediticia no existe en el sistema o se encuentra cancelada. Por favor verifique.";
                         else if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["CONTRATO"].ToString()))
@@ -916,19 +889,18 @@ namespace BCRGARANTIAS.Forms
             }
             catch (Exception ex)
             {
-                Response.Redirect("frmMensaje.aspx?" +
-                                "bError=1" +
-                                "&strTitulo=" + "Problemas Cargando Página" +
-                                "&strMensaje=" + ex.Message +
-                                "&bBotonVisible=0");
+                seRedirecciona = true;
+                urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                    "bError=1" +
+                                    "&strTitulo=" + "Problemas Cargando Página" +
+                                    "&strMensaje=" + ex.Message +
+                                    "&bBotonVisible=0");
+            }            
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
-			finally
-			{
-				if ((oleDbConnection1 != null) && (oleDbConnection1.State == ConnectionState.Open))
-				{
-					oleDbConnection1.Close();
-				}
-			}
         }
 
         /// <summary>
@@ -936,7 +908,7 @@ namespace BCRGARANTIAS.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void cbTipoCaptacion_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void cbTipoCaptacion_SelectedIndexChanged(object sender, EventArgs e)
         {
             try
             {
@@ -1024,50 +996,23 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
-        private void btnIngresos_Click(object sender, System.EventArgs e)
-        {
-            if (btnModificar.Enabled)
-                Session["Accion"] = "FIADOR_MOD";
-            else
-                Session["Accion"] = "";
-
-            GuardarDatosSession();
-            Response.Redirect("frmValuaciones.aspx?strCedula=" + txtCedulaFiador.Text.Trim() +
-                                                "&strNombre=" + txtNombreFiador.Text.Trim() +
-                                                "&nGarantiaFiduciaria=" + Session["GarantiaFiduciaria"].ToString());
-        }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnValidarTarjeta_Click(object sender, System.EventArgs e)
+        private void btnValidarTarjeta_Click(object sender, EventArgs e)
         {
             string strTrama = string.Empty;
             string cedula = string.Empty;
-            string strTramaRespuesta;
-            DataSet ds = new DataSet();
-            string strArchivoXMLTemporal;
+            string numeroTarjeta = string.Empty;
+            string descripcionError = string.Empty;
+            clsTarjeta informacionTarjeta = new clsTarjeta();
+
+            XmlDocument xmlTrama = new XmlDocument();
+            XmlDocument xmlTarjeta = new XmlDocument();
 
             string strCodigoEstadoTarjeta = string.Empty;
-
-            #region Obtiene el nombre de los nodos del web.config
-
-            string nodoSistar = ConfigurationManager.AppSettings["nodoSistar"].ToString();
-            string nodoCabecera = ConfigurationManager.AppSettings["nodoCabecera"].ToString();
-            string nodoRespuesta = ConfigurationManager.AppSettings["nodoRespuesta"].ToString();
-            string nodoTrans = ConfigurationManager.AppSettings["nodoTransaccion"].ToString();
-            string nodoTipoTarjeta = ConfigurationManager.AppSettings["nodoTipoTarjeta"].ToString();
-            string nodoCedula = ConfigurationManager.AppSettings["nodoCedula"].ToString();
-            string nodoCuentaAfectada = ConfigurationManager.AppSettings["nodoCuentaAfectada"].ToString();
-            string nodoMoneda = ConfigurationManager.AppSettings["nodoMoneda"].ToString();
-            string nodoOficinaOrigen = ConfigurationManager.AppSettings["nodoOficinaOrigen"].ToString();
-            string nodoDescripcion = ConfigurationManager.AppSettings["nodoDescripcion"].ToString();
-            string nodoTipoGarantia = ConfigurationManager.AppSettings["nodoTipoGarantia"].ToString();
-            string nodoEstadoTarjeta = ConfigurationManager.AppSettings["nodoEstadoTarjeta"].ToString();
-
-            #endregion
 
             try
             {
@@ -1075,41 +1020,36 @@ namespace BCRGARANTIAS.Forms
                 lblObservacion.Visible = true;
 
                 Session["Tipo_Operacion"] = cbTipoCaptacion.SelectedValue.ToString();
+                FilaSeleccionada = -1;
+
                 if (ValidarFormatoTarjeta())
                 {
+                    numeroTarjeta = txtTarjeta.Text;
                     decimal nBin = Convert.ToDecimal(txtTarjeta.Text.Substring(0, 6));
 
                     if (Gestor.Verifica_Tarjeta_Sistar(nBin))
                     {
-                        strTrama = new BCRGARANTIAS.Negocios.CreaXML().creaXMLConsultaTarjetaSISTAR(txtTarjeta.Text, "");
+                        #region Método de Validación Anterior
+                        //strTrama = new CreaXML().creaXMLConsultaTarjetaSISTAR(txtTarjeta.Text, "");
 
-                        ProcesamientoMQ2003.ProcesamientoMQ oMQ = new ProcesamientoMQ2003.ProcesamientoMQ(Application["Qmanager"].ToString(),
-                                                                                                        Application["Cola_Entrada"].ToString(),
-                                                                                                        Application["Cola_Salida"].ToString(),
-                                                                                                        strTrama,
-                                                                                                        Application["Cola_Respuesta"].ToString(),
-                                                                                                        Application["IP"].ToString(),
-                                                                                                        Application["Channel"].ToString(),
-                                                                                                        Application["Port"].ToString());
+                        //ProcesamientoMQ2003.ProcesamientoMQ oMQ = new ProcesamientoMQ2003.ProcesamientoMQ(Application["Qmanager"].ToString(),
+                        //                                                                                Application["Cola_Entrada"].ToString(),
+                        //                                                                                Application["Cola_Salida"].ToString(),
+                        //                                                                                strTrama,
+                        //                                                                                Application["Cola_Respuesta"].ToString(),
+                        //                                                                                Application["IP"].ToString(),
+                        //                                                                                Application["Channel"].ToString(),
+                        //                                                                                Application["Port"].ToString());
 
-                        strTramaRespuesta = oMQ.respuestaMQ();
+                        //string strTramaRespuesta = oMQ.respuestaMQ();
 
-                        strArchivoXMLTemporal = Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\" + txtTarjeta.Text.Trim() + ".xml";
+                        #endregion Método de Validación Anterior
 
-                        if (!Directory.Exists(Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\"))
+                        informacionTarjeta = Gestor.ValidarTarjetaSISTAR(numeroTarjeta);
+
+                        if ((informacionTarjeta != null) && (informacionTarjeta.TarjetaValida))
                         {
-                            Directory.CreateDirectory(Directory.GetParent(Assembly.GetExecutingAssembly().CodeBase.ToString().Replace("file:///", "")).ToString().Replace("\\bin", "") + "\\Temporales\\");
-                        }
-
-                        CrearArchivoXMLTemporal(strArchivoXMLTemporal, strTramaRespuesta);
-                        ds.ReadXml(strArchivoXMLTemporal);
-
-                        //Valida que la respuesta de MQ fuera "TRANSACCION SATISFACTORIA"
-                        if (ds.Tables[nodoCabecera].Rows[0][nodoRespuesta].ToString() == "000")
-                        {
-                            //Tarjeta débito/crédito VISA
-                            if ((ds.Tables[nodoSistar].Rows[0][nodoTrans].ToString() == "1") ||
-                                    (ds.Tables[nodoSistar].Rows[0][nodoTipoTarjeta].ToString() == "D"))
+                            if (!informacionTarjeta.EsMasterCard)
                             {
                                 BloquearCampos(false);
                                 Session["EsOperacionValida"] = false;
@@ -1122,42 +1062,30 @@ namespace BCRGARANTIAS.Forms
                                 gdvGarantiasFiduciarias.DataBind();
                             }
                             //Valida que la tarjeta fuera débito/crédito MARTERCARD
-                            else if (ds.Tables[nodoSistar].Rows[0][nodoTrans].ToString() == "2")
+                            else if (informacionTarjeta.EsMasterCard)
                             {
                                 lblDeudor.Visible = true;
                                 lblNombreDeudor.Visible = true;
-                                lblNombreDeudor.Text = ds.Tables[nodoSistar].Rows[0][nodoCedula].ToString();
-                                string strDeudor = Gestor.ObtenerNombreDeudor(ds.Tables[nodoSistar].Rows[0][nodoCedula].ToString());
-                                lblNombreDeudor.Text = lblNombreDeudor.Text + " - " + strDeudor.Trim();
+                                lblNombreDeudor.Text = string.Format("{0} - {1}", informacionTarjeta.CedulaDeudor, informacionTarjeta.NombreDeudor.Trim());
 
                                 BloquearCampos(true);
                                 Session["Tarjeta"] = txtTarjeta.Text.Trim();
-                                Session["Deudor"] = ds.Tables[nodoSistar].Rows[0][nodoCedula].ToString();
-                                Session["Bin"] = ds.Tables[nodoSistar].Rows[0][nodoCuentaAfectada].ToString().Substring(0, 6);
-                                Session["CodigoInternoSISTAR"] = ds.Tables[nodoSistar].Rows[0][nodoCuentaAfectada].ToString().Substring(6);
+                                Session["Deudor"] = informacionTarjeta.CedulaDeudor;
+                                Session["Bin"] = informacionTarjeta.NumeroBin.ToString();
+                                Session["CodigoInternoSISTAR"] = informacionTarjeta.CodigoInternoSistar.ToString();
+                                Session["Moneda"] = informacionTarjeta.CodigoMoneda.ToString();
+                                Session["Oficina_Registra"] = informacionTarjeta.CodigoOficinaRegistra.ToString();
 
-                                if (ds.Tables[nodoSistar].Rows[0][nodoMoneda].ToString().Trim() == "188")
-                                    Session["Moneda"] = "1";
-                                else if (ds.Tables[nodoSistar].Rows[0][nodoMoneda].ToString().Trim() == "840")
-                                    Session["Moneda"] = "2";
-
-                                Session["Oficina_Registra"] = ds.Tables[nodoSistar].Rows[0][nodoOficinaOrigen].ToString().Trim();
-
-                                if ((ds.Tables[nodoSistar].Columns.Contains(nodoTipoGarantia)) 
-                                   && (!ds.Tables[nodoSistar].Rows[0].IsNull(nodoTipoGarantia)) 
-                                   && (ds.Tables[nodoSistar].Rows[0][nodoTipoGarantia].ToString() != string.Empty))
+                                if (informacionTarjeta.CodigoTipoGarantia != -1)
                                 {
-                                    Session["Plazo"] = ds.Tables[nodoSistar].Rows[0][nodoTipoGarantia].ToString().Trim();
+                                    Session["Plazo"] = informacionTarjeta.CodigoTipoGarantia.ToString();
 
-                                    int nCodigoTipoGarantiaObt = Convert.ToInt32(ds.Tables[nodoSistar].Rows[0][nodoTipoGarantia].ToString());
-
-                                    if (Gestor.CodigoTipoTarjetaEsPerfil(nCodigoTipoGarantiaObt))
+                                    if (Gestor.CodigoTipoTarjetaEsPerfil(informacionTarjeta.CodigoTipoGarantia))
                                     {
                                         Session["ValidarTarjeta"] = txtTarjeta.Text;
                                         lblMensaje.Text = "Esta tarjeta posee una <a href=frmGarantiasporPerfil.aspx>Garantía por Perfil<a>";
                                     }
                                 }
-                                
 
                                 txtCedulaFiador.Enabled = true;
                                 btnBuscarFiador.Visible = true;
@@ -1172,9 +1100,9 @@ namespace BCRGARANTIAS.Forms
                                 Session["EsOperacionValida"] = true;
                                 GuardarDatosSession();
 
-                                strCodigoEstadoTarjeta = ds.Tables[nodoSistar].Rows[0][nodoEstadoTarjeta].ToString().Trim();
+                                strCodigoEstadoTarjeta = informacionTarjeta.EstadoTarjeta.Trim();
 
-                                if (strCodigoEstadoTarjeta != string.Empty)
+                                if (strCodigoEstadoTarjeta.Length > 0)
                                 {
                                     ActualizarEstadoTarjeta(strCodigoEstadoTarjeta);
                                 }
@@ -1188,15 +1116,13 @@ namespace BCRGARANTIAS.Forms
                             BloquearCampos(false);
                             Session["EsOperacionValida"] = false;
                             Session["Nombre_Deudor"] = "";
-                            lblMensaje.Text = ds.Tables[nodoCabecera].Rows[0][nodoDescripcion].ToString();
+                            lblMensaje.Text = informacionTarjeta.DescripcionError;
                             lblDeudor.Text = "";
                             lblNombreDeudor.Text = "";
 
                             gdvGarantiasFiduciarias.DataSource = null;
                             gdvGarantiasFiduciarias.DataBind();
                         }
-
-                        EliminarArchivoXMLTemporal(strArchivoXMLTemporal);
 
                         txtObservacion.Visible = true;
                         lblObservacion.Visible = true;
@@ -1206,38 +1132,90 @@ namespace BCRGARANTIAS.Forms
                         lblMensaje.Text = "La tarjeta que se requiere validar en SISTAR no es de crédito o no se encuentra en SISTAR";
                     }
                 }
-                
             }
             catch (Exception ex)
             {
                 if ((ex.Message.StartsWith("Referencia a objeto no establecida"))
                    || (ex.Message.StartsWith("Object reference not set to an instance of an object.")))
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Cargando Página" +
-                                    "&strMensaje=" + "No hay comunicación con el sistema SISTAR" +
-                                    "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Cargando Página" +
+                                        "&strMensaje=" + "No hay comunicación con el sistema SISTAR" +
+                                        "&bBotonVisible=0");
                 }
-                else if (ex.Message.Contains("CODIGORESPUESTA")) 
+                else if (ex.Message.Contains("CODIGORESPUESTA"))
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                   "bError=1" +
-                                   "&strTitulo=" + "Problemas Cargando Página" +
-                                   "&strMensaje=" + "No hay comunicación con el sistema  utilizado para obtener la información de la tarjeta (Sistema MQ)" +
-                                   "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                       "bError=1" +
+                                       "&strTitulo=" + "Problemas Cargando Página" +
+                                       "&strMensaje=" + "No hay comunicación con el sistema  utilizado para obtener la información de la tarjeta (Sistema MQ)" +
+                                       "&bBotonVisible=0");
                 }
                 else
                 {
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=1" +
-                                    "&strTitulo=" + "Problemas Cargando Página" +
-                                    "&strMensaje=" + ex.Message +
-                                    "&bBotonVisible=0");
+                    seRedirecciona = true;
+                    urlPaginaMensaje = ("frmMensaje.aspx?" +
+                                        "bError=1" +
+                                        "&strTitulo=" + "Problemas Cargando Página" +
+                                        "&strMensaje=" + ex.Message +
+                                        "&bBotonVisible=0");
                 }
+            }
+
+            if (seRedirecciona)
+            {
+                Response.Redirect(urlPaginaMensaje, true);
             }
         }
 
+        private void btnIngresos_Click(object sender, System.EventArgs e)
+        {
+            if (btnModificar.Enabled)
+                Session["Accion"] = "FIADOR_MOD";
+            else
+                Session["Accion"] = "";
+
+            GuardarDatosSession();
+            Response.Redirect("frmValuaciones.aspx?strCedula=" + txtCedulaFiador.Text.Trim() +
+                                                "&strNombre=" + txtNombreFiador.Text.Trim() +
+                                                "&nGarantiaFiduciaria=" + Session["GarantiaFiduciaria"].ToString());
+        }
+
+        private void ImageButton_Click(object sender, ImageClickEventArgs e)
+        {
+            string tipoPersona = cbTipoFiador.SelectedItem.Value;
+            string cedulaFiador = txtCedulaFiador.Text;
+
+            lblMensaje3.Text = string.Empty;
+            lblMensaje.Text = string.Empty;
+
+            if (btnModificar.Enabled)
+                Session["Accion"] = "PR_MOD";
+            else
+                Session["Accion"] = "";
+
+            GuardarDatosSession();
+
+            if ((tipoPersona.Length > 0) && (tipoPersona.CompareTo("-1") != 0) && (cedulaFiador.Length > 0))
+            {
+                string url = "frmMantenimientoSaldosTotalesPorcentajeResponsabilidad.aspx?tipogarantia=1&tipofiador=" + Server.HtmlEncode(tipoPersona) + "&idfiador=" + Server.HtmlEncode(cedulaFiador);
+                Response.Redirect(url);
+            }
+            else {
+                if ((tipoPersona.Length > 0) && (tipoPersona.CompareTo("-1") != 0))
+                {
+                    lblMensaje.Text = "El tipo de persona es requerido";
+                }
+                else if (cedulaFiador.Length > 0)
+                {
+                    lblMensaje.Text = "La cédula del fiador es requerido";
+                }
+            }
+        }
+                        
         #endregion
 
         #region Métodos GridView
@@ -1256,17 +1234,18 @@ namespace BCRGARANTIAS.Forms
                         rowIndex = (int.Parse(e.CommandArgument.ToString()));
 
                         gdvGarantiasFiduciarias.SelectedIndex = rowIndex;
+                        FilaSeleccionada = rowIndex;
 
                         #region DATOS
 
-
+                        //CargarDatos();
                         if (gdvGarantiasFiduciarias.SelectedDataKey[11].ToString() != null)
                             Session["CodigoTarjeta"] = gdvGarantiasFiduciarias.SelectedDataKey[11].ToString();
 
                         if (gdvGarantiasFiduciarias.SelectedDataKey[3].ToString() != null)
                         {
                             cbTipoFiador.ClearSelection();
-                            cbTipoFiador.SelectedValue = gdvGarantiasFiduciarias.SelectedDataKey[3].ToString();
+                            cbTipoFiador.Items.FindByValue(((cbTipoFiador.Items.FindByValue(gdvGarantiasFiduciarias.SelectedDataKey[3].ToString()) != null) ? gdvGarantiasFiduciarias.SelectedDataKey[3].ToString() : "-1")).Selected = true;
                         }
 
                         if (gdvGarantiasFiduciarias.SelectedDataKey[1].ToString() != null)
@@ -1281,19 +1260,22 @@ namespace BCRGARANTIAS.Forms
 
                         CargarTipoMitigador();
                         if (gdvGarantiasFiduciarias.SelectedDataKey[4].ToString() != null)
-                            cbMitigador.SelectedValue = gdvGarantiasFiduciarias.SelectedDataKey[4].ToString();
+                        {
+                            cbMitigador.ClearSelection();
+                            cbMitigador.Items.FindByValue(((cbMitigador.Items.FindByValue(gdvGarantiasFiduciarias.SelectedDataKey[4].ToString()) != null) ? gdvGarantiasFiduciarias.SelectedDataKey[4].ToString() : "-1")).Selected = true;
+                        }
 
                         CargarTiposDocumentos();
                         if (gdvGarantiasFiduciarias.SelectedDataKey[5].ToString() != null)
                         {
                             cbTipoDocumento.ClearSelection();
-                            cbTipoDocumento.SelectedValue = gdvGarantiasFiduciarias.SelectedDataKey[5].ToString();
+                            cbTipoDocumento.Items.FindByValue(((cbTipoDocumento.Items.FindByValue(gdvGarantiasFiduciarias.SelectedDataKey[5].ToString()) != null) ? gdvGarantiasFiduciarias.SelectedDataKey[5].ToString() : "-1")).Selected = true;
                         }
 
                         if (!string.IsNullOrEmpty(gdvGarantiasFiduciarias.SelectedDataKey[6].ToString()))
                         {
                             decimal nMontoMitigador = Convert.ToDecimal(gdvGarantiasFiduciarias.SelectedDataKey[6].ToString());
-                            txtMontoMitigador.Text = nMontoMitigador.ToString("N");
+                            txtMontoMitigador.Text = nMontoMitigador.ToString("N2");
                         }
                         else
                         {
@@ -1302,8 +1284,8 @@ namespace BCRGARANTIAS.Forms
 
                         if (!string.IsNullOrEmpty(gdvGarantiasFiduciarias.SelectedDataKey[7].ToString()))
                         {
-                            decimal nPorcentaje = Convert.ToDecimal(gdvGarantiasFiduciarias.SelectedDataKey[7].ToString());
-                            txtPorcentajeResponsabilidad.Text = nPorcentaje.ToString("N");
+                            decimal porcentajeResponsabilidad = Convert.ToDecimal(gdvGarantiasFiduciarias.SelectedDataKey[7].ToString());
+                            txtPorcentajeResponsabilidad.Text = ((porcentajeResponsabilidad > -1) ? porcentajeResponsabilidad.ToString("N2") : "0.00");
                         }
                         else
                         {
@@ -1313,13 +1295,24 @@ namespace BCRGARANTIAS.Forms
                         if (gdvGarantiasFiduciarias.SelectedDataKey[9].ToString() != null)
                         {
                             cbTipoAcreedor.ClearSelection();
-                            cbTipoAcreedor.SelectedValue = gdvGarantiasFiduciarias.SelectedDataKey[9].ToString();
+                            cbTipoAcreedor.Items.FindByValue(((cbTipoAcreedor.Items.FindByValue(gdvGarantiasFiduciarias.SelectedDataKey[9].ToString()) != null) ? gdvGarantiasFiduciarias.SelectedDataKey[9].ToString() : "-1")).Selected = true;
                         }
 
                         if (gdvGarantiasFiduciarias.SelectedDataKey[10].ToString() != null)
                             txtAcreedor.Text = gdvGarantiasFiduciarias.SelectedDataKey[10].ToString();
                         else
                             txtAcreedor.Text = "";
+
+                        if (!string.IsNullOrEmpty(gdvGarantiasFiduciarias.SelectedDataKey[19].ToString()))
+                        {
+                            decimal porcentajeAceptacion = Convert.ToDecimal(gdvGarantiasFiduciarias.SelectedDataKey[19].ToString());
+                            txtPorcentajeAceptacion.Text = ((porcentajeAceptacion > -1) ? porcentajeAceptacion.ToString("N2") : "0.00");
+                        }
+                        else
+                        {
+                            txtPorcentajeAceptacion.Text = "0.00";
+                        }
+
 
                         if (Session["Tipo_Operacion"].ToString() == Application["TARJETA"].ToString())
                         {
@@ -1337,12 +1330,22 @@ namespace BCRGARANTIAS.Forms
                             {
                                 txtObservacion.Text = gdvGarantiasFiduciarias.SelectedDataKey[16].ToString();
                             }
+
+                            if (!string.IsNullOrEmpty(gdvGarantiasFiduciarias.SelectedDataKey[17].ToString()))
+                            {
+                                decimal porcentajeAceptacion = Convert.ToDecimal(gdvGarantiasFiduciarias.SelectedDataKey[17].ToString());
+                                txtPorcentajeAceptacion.Text = ((porcentajeAceptacion > -1) ? porcentajeAceptacion.ToString("N2") : "0.00");
+                            }
+                            else
+                            {
+                                txtPorcentajeAceptacion.Text = "0.00";
+                            }
                         }
 
                         if (gdvGarantiasFiduciarias.SelectedDataKey[8].ToString() != null)
                         {
                             cbOperacionEspecial.ClearSelection();
-                            cbOperacionEspecial.SelectedValue = gdvGarantiasFiduciarias.SelectedDataKey[8].ToString();
+                            cbOperacionEspecial.Items.FindByValue(((cbOperacionEspecial.Items.FindByValue(gdvGarantiasFiduciarias.SelectedDataKey[8].ToString()) != null) ? gdvGarantiasFiduciarias.SelectedDataKey[8].ToString() : "-1")).Selected = true;
                         }
 
                         if (gdvGarantiasFiduciarias.SelectedDataKey[12].ToString() != null)
@@ -1359,24 +1362,24 @@ namespace BCRGARANTIAS.Forms
                         lblMensaje.Text = "";
                         lblMensaje3.Text = "";
 
-                        contenedorDatosModificacion.Visible = true;         
+                        contenedorDatosModificacion.Visible = true;
 
                         DateTime fechaReplicag = DateTime.Parse(gdvGarantiasFiduciarias.SelectedDataKey[18].ToString());
-                        DateTime fechaModificacion = DateTime.Parse(gdvGarantiasFiduciarias.SelectedDataKey[16].ToString());                     
+                        DateTime fechaModificacion = DateTime.Parse(gdvGarantiasFiduciarias.SelectedDataKey[16].ToString());
                         string usrModifico = gdvGarantiasFiduciarias.SelectedDataKey[14].ToString();
                         string nombreUsrModifico = gdvGarantiasFiduciarias.SelectedDataKey[15].ToString();
 
                         string usuarioModifico = (((usrModifico.Length > 0) && (nombreUsrModifico.Length > 0)) ? (usrModifico + " - " + nombreUsrModifico) : string.Empty);
-                        string fechaModifico = ((fechaModificacion != DateTime.Parse("01/01/1900 12:00:00 AM")  ) ? fechaModificacion.ToString("dd/MM/yyyy hh:mm:ss tt") : string.Empty);
+                        string fechaModifico = ((fechaModificacion != DateTime.Parse("01/01/1900 12:00:00 AM")) ? fechaModificacion.ToString("dd/MM/yyyy hh:mm:ss tt") : string.Empty);
                         string fechaReplica = ((fechaReplicag != DateTime.Parse("01/01/1900 12:00:00 AM")) ? (fechaReplicag.ToString("dd/MM/yyyy hh:mm:ss tt")) : string.Empty);
 
                         ViewState.Add(LLAVE_FECHA_MODIFICACION, fechaModifico);
                         ViewState.Add(LLAVE_FECHA_REPLICA, fechaReplica);
-                        
-                        lblUsrModifico.Text = " Usuario Modificó: " + usuarioModifico;
+
+                        lblUsrModifico.Text = "Usuario Modificó: " + usuarioModifico;
                         lblFechaModificacion.Text = "Fecha Modificación: " + fechaModifico;
-                        lblFechaReplica.Text = "Fecha Replica: " + fechaReplica;                        
-                        
+                        lblFechaReplica.Text = "Fecha Replica: " + fechaReplica;
+
                         break;
 
                 }
@@ -1397,7 +1400,7 @@ namespace BCRGARANTIAS.Forms
             if (txtProducto.Text.Length != 0)
                 nProducto = int.Parse(txtProducto.Text);
 
-            CargarGrid( int.Parse(cbTipoCaptacion.SelectedValue.ToString()),
+            CargarGrid(int.Parse(cbTipoCaptacion.SelectedValue.ToString()),
                         ((EsGiro) ? ConsecutivoContrato : ConsecutivoOperacion),
                         int.Parse(txtContabilidad.Text),
                         int.Parse(txtOficina.Text),
@@ -1412,19 +1415,19 @@ namespace BCRGARANTIAS.Forms
             {
                 GridView gdvGF = ((GridView)sender);
 
-                string[] strLlavesNoTarjeta = {"tipo_persona", "cedula_fiador", "nombre_fiador", "cod_tipo_fiador", "cod_tipo_mitigador", 
-                                               "cod_tipo_documento_legal", "monto_mitigador", "porcentaje_responsabilidad", "cod_operacion_especial", 
+                string[] strLlavesNoTarjeta = {"tipo_persona", "cedula_fiador", "nombre_fiador", "cod_tipo_fiador", "cod_tipo_mitigador",
+                                               "cod_tipo_documento_legal", "monto_mitigador", "porcentaje_responsabilidad", "cod_operacion_especial",
                                                "cod_tipo_acreedor", "cedula_acreedor", "cod_operacion", "cod_garantia_fiduciaria", "cod_estado",
-                                                "Usuario_Modifico","Nombre_Usuario_Modifico","Fecha_Modifico","Fecha_Inserto","Fecha_Replica"};
+                                                "Usuario_Modifico","Nombre_Usuario_Modifico","Fecha_Modifico","Fecha_Inserto","Fecha_Replica", "Porcentaje_Aceptacion"};
 
-                string[] strLlavesTarjeta = {"tipo_persona", "cedula_fiador", "nombre_fiador", "cod_tipo_fiador", "cod_tipo_mitigador", 
-                                             "cod_tipo_documento_legal", "monto_mitigador", "porcentaje_responsabilidad", "cod_operacion_especial", 
+                string[] strLlavesTarjeta = {"tipo_persona", "cedula_fiador", "nombre_fiador", "cod_tipo_fiador", "cod_tipo_mitigador",
+                                             "cod_tipo_documento_legal", "monto_mitigador", "porcentaje_responsabilidad", "cod_operacion_especial",
                                              "cod_tipo_acreedor", "cedula_acreedor", "cod_operacion", "cod_garantia_fiduciaria", "cod_estado",
-                                             "fecha_expiracion", "monto_cobertura", "des_observacion"};
+                                             "fecha_expiracion", "monto_cobertura", "des_observacion", "Porcentaje_Aceptacion"};
 
                 if ((Session["Tipo_Operacion"] != null) && (Session["Tipo_Operacion"].ToString() == Application["TARJETA"].ToString()))
                 {
-                    
+
                     BoundField bnfColumnaInvisible = new BoundField();
 
                     bnfColumnaInvisible.DataField = "fecha_expiracion";
@@ -1454,12 +1457,12 @@ namespace BCRGARANTIAS.Forms
                     }
 
                     gdvGF.DataKeyNames = strLlavesTarjeta;
-                    
+
                 }
                 else
                 {
 
-                    
+
                     BoundField bnfColumnaInvisible = new BoundField();
 
                     bnfColumnaInvisible.DataField = "fecha_expiracion";
@@ -1596,29 +1599,29 @@ namespace BCRGARANTIAS.Forms
             try
             {
                 System.Data.DataSet dsDatos = new System.Data.DataSet();
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = null;
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    SqlCommand oComando = null;
 
-					oComando = new SqlCommand("pa_ObtenerGarantiasFiduciariasXTarjeta", oConexion);
-					SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-					//declara las propiedades del comando
-					oComando.CommandType = CommandType.StoredProcedure;
-					oComando.CommandTimeout = 120;
-					oComando.Parameters.AddWithValue("@strTarjeta", txtTarjeta.Text.Trim());
+                    oComando = new SqlCommand("pa_ObtenerGarantiasFiduciariasXTarjeta", oConexion);
+                    SqlDataAdapter oDataAdapter = new SqlDataAdapter();
+                    //declara las propiedades del comando
+                    oComando.CommandType = CommandType.StoredProcedure;
+                    oComando.CommandTimeout = 120;
+                    oComando.Parameters.AddWithValue("@psNumero_Tarjeta", txtTarjeta.Text.Trim());
 
-					//Abre la conexion
-					oConexion.Open();
-					oDataAdapter.SelectCommand = oComando;
-					oDataAdapter.SelectCommand.Connection = oConexion;
-					oDataAdapter.Fill(dsDatos, "Datos");
+                    //Abre la conexion
+                    oConexion.Open();
+                    oDataAdapter.SelectCommand = oComando;
+                    oDataAdapter.SelectCommand.Connection = oConexion;
+                    oDataAdapter.Fill(dsDatos, "Datos");
 
-					this.gdvGarantiasFiduciarias.DataSource = dsDatos.Tables["Datos"].DefaultView;
-					this.gdvGarantiasFiduciarias.DataBind();
+                    this.gdvGarantiasFiduciarias.DataSource = dsDatos.Tables["Datos"].DefaultView;
+                    this.gdvGarantiasFiduciarias.DataBind();
 
-					txtObservacion.Visible = true;
-					lblObservacion.Visible = true;
-				}
+                    txtObservacion.Visible = true;
+                    lblObservacion.Visible = true;
+                }
             }
             catch (Exception ex)
             {
@@ -1647,109 +1650,16 @@ namespace BCRGARANTIAS.Forms
             return bRespuesta;
         }
 
-        private void CrearArchivoXMLTemporal(string strArchivo, string strXML)
-        {
-            try
-            {
-                StreamWriter writer = File.CreateText(strArchivo);
-                writer.WriteLine(strXML);
-                writer.Close();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        }
-
-        private void EliminarArchivoXMLTemporal(string strArchivo)
-        {
-            File.Delete(strArchivo);
-        }
-
-        /// <summary>
-        /// Este método devuelve un string con el Header para MQ
-        /// </summary>
-        /// <param name="strReferencia"></param>
-        /// <param name="strCanal"></param>
-        /// <param name="strTrans"></param>
-        /// <param name="strAccion"></param>
-        /// <param name="strUsuario"></param>
-        /// <param name="strOficinaOrigen"></param>
-        /// <param name="strEstacion"></param>
-        /// <param name="strFechaHora"></param>
-        /// <returns></returns>
-        private string GenerarHeaderMQ(string strReferencia, string strCanal, string strTrans, string strAccion,
-                                       string strUsuario, string strOficinaOrigen, string strEstacion, string strFechaHora)
-        {
-            string strHeader = "";
-            try
-            {
-                strHeader = "<HEADER><REFERENCIA>";
-                strHeader = strHeader + strReferencia;
-                strHeader = strHeader + "</REFERENCIA><CANAL>";
-                strHeader = strHeader + strCanal;
-                strHeader = strHeader + "</CANAL><TRANS>";
-                strHeader = strHeader + strTrans;
-                strHeader = strHeader + "</TRANS><ACCION>";
-                strHeader = strHeader + strAccion;
-                strHeader = strHeader + "</ACCION><USUARIO>";
-                strHeader = strHeader + strUsuario;
-                strHeader = strHeader + "</USUARIO><OFICINAORIGEN>";
-                strHeader = strHeader + strOficinaOrigen;
-                strHeader = strHeader + "</OFICINAORIGEN><ESTACION>";
-                strHeader = strHeader + strEstacion;
-                strHeader = strHeader + "</ESTACION><FECHAHORA>";
-                strHeader = strHeader + strFechaHora;
-                strHeader = strHeader + "</FECHAHORA></HEADER>";
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return strHeader;
-        }
-
-        /// <summary>
-        /// Este método genera la trama de consulta de tarjetas para MQ
-        /// </summary>
-        /// <param name="strCanal"></param>
-        /// <param name="strTrans"></param>
-        /// <param name="strAccion"></param>
-        /// <param name="strTipoMovimiento"></param>
-        /// <param name="strTarjeta"></param>
-        /// <returns></returns>
-        private string GenerarTramaMQ(string strCanal, string strTrans, string strAccion, string strTipoMovimiento, string strTarjeta)
-        {
-            string strTrama = "";
-            try
-            {
-                strTrama = "<SISTAR><CANAL>";
-                strTrama = strTrama + strCanal;
-                strTrama = strTrama + "</CANAL><TRANS>";
-                strTrama = strTrama + strTrans;
-                strTrama = strTrama + "</TRANS><ACCION>";
-                strTrama = strTrama + strAccion;
-                strTrama = strTrama + "</ACCION><TIPOMOVIMIENTO>";
-                strTrama = strTrama + strTipoMovimiento;
-                strTrama = strTrama + "</TIPOMOVIMIENTO><NROTARJETA>";
-                strTrama = strTrama + strTarjeta;
-                strTrama = strTrama + "</NROTARJETA></SISTAR>";
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return strTrama;
-        }
-
         /// <summary>
         /// Este método guarda los datos de la pantalla en el objeto Session
         /// </summary>
         private void GuardarDatosSession()
         {
+            DateTime fechaBase = new DateTime(1900, 01, 01);
+
             try
             {
-                CGarantiaFiduciaria oGarantia = CGarantiaFiduciaria.Current;
+                clsGarantiaFiduciaria oGarantia = clsGarantiaFiduciaria.Current;
 
                 //Campos llave
                 if (int.Parse(cbTipoCaptacion.SelectedValue.ToString()) != int.Parse(Application["TARJETA"].ToString()))
@@ -1770,57 +1680,51 @@ namespace BCRGARANTIAS.Forms
                 }
 
                 oGarantia.TipoOperacion = int.Parse(cbTipoCaptacion.SelectedValue.ToString());
-                oGarantia.ClaseGarantia = int.Parse(Application["CLASE_GARANTIA_FIADOR"].ToString());
+                oGarantia.CodigoClaseGarantia = int.Parse(Application["CLASE_GARANTIA_FIADOR"].ToString());
                 //Informacion del fiador
-                oGarantia.TipoFiador = int.Parse(cbTipoFiador.SelectedValue.ToString());
+                oGarantia.CodigoTipoPersonaFiador = int.Parse(cbTipoFiador.SelectedValue.ToString());
                 oGarantia.CedulaFiador = txtCedulaFiador.Text.Trim();
                 oGarantia.NombreFiador = txtNombreFiador.Text.Trim();
-                oGarantia.TipoMitigador = int.Parse(cbMitigador.SelectedValue.ToString());
-                oGarantia.TipoDocumento = int.Parse(cbTipoDocumento.SelectedValue.ToString());
+                oGarantia.CodigoTipoMitigador = int.Parse(cbMitigador.SelectedValue.ToString());
+                oGarantia.CodigoTipoDocumentoLegal = int.Parse(cbTipoDocumento.SelectedValue.ToString());
 
-                if (txtMontoMitigador.Text.Trim().Length > 0)
-                    oGarantia.MontoMitigador = Convert.ToDecimal(txtMontoMitigador.Text);
-                else
-                    oGarantia.MontoMitigador = 0;
+                oGarantia.MontoMitigador = Convert.ToDecimal(((txtMontoMitigador.Text.Trim().Length > 0) ? txtMontoMitigador.Text : "0"));
 
-                if (txtPorcentajeResponsabilidad.Text.Trim().Length > 0)
-                    oGarantia.PorcentajeResposabilidad = Convert.ToDecimal(txtPorcentajeResponsabilidad.Text);
-                else
-                    oGarantia.PorcentajeResposabilidad = 0;
+                oGarantia.PorcentajeResponsabilidad = Convert.ToDecimal(((txtPorcentajeResponsabilidad.Text.Trim().Length > 0) ? txtPorcentajeResponsabilidad.Text : "-1"));
 
-                oGarantia.TipoAcreedor = int.Parse(cbTipoAcreedor.SelectedValue.ToString());
+                oGarantia.PorcentajeAceptacion = Convert.ToDecimal(((txtPorcentajeAceptacion.Text.Trim().Length > 0) ? txtPorcentajeAceptacion.Text : "0"));
+
+                oGarantia.CodigoTipoPersonaAcreedor = int.Parse(cbTipoAcreedor.SelectedValue.ToString());
                 oGarantia.CedulaAcreedor = txtAcreedor.Text.Trim();
-                oGarantia.OperacionEspecial = int.Parse(cbOperacionEspecial.SelectedValue.ToString());
+                oGarantia.CodigoOperacionEspecial = int.Parse(cbOperacionEspecial.SelectedValue.ToString());
 
-                if (txtFechaExpiracion.Text.Trim().Length > 0)
-                    oGarantia.FechaExpiracion = DateTime.Parse(txtFechaExpiracion.Text.ToString());
+                oGarantia.FechaExpiracion = ((txtFechaExpiracion.Text.Trim().Length > 0) ? DateTime.Parse(txtFechaExpiracion.Text.ToString()) : fechaBase);
 
-                if (txtMontoCobertura.Text.Trim().Length > 0)
-                    oGarantia.MontoCobertura = Convert.ToDecimal(txtMontoCobertura.Text);
-                else
-                    oGarantia.MontoCobertura = 0;
+                oGarantia.MontoCobertura = Convert.ToDecimal(((txtMontoCobertura.Text.Trim().Length > 0) ? txtMontoCobertura.Text : "0"));
 
                 oGarantia.UsuarioModifico = lblUsrModifico.Text.Trim();
 
-
                 if ((ViewState[LLAVE_FECHA_MODIFICACION] != null))
                 {
-                    if (!ViewState[LLAVE_FECHA_MODIFICACION].ToString().Equals(""))
+                    if (ViewState[LLAVE_FECHA_MODIFICACION].ToString().Length > 0)
                     {
                         oGarantia.FechaModifico = DateTime.Parse(ViewState[LLAVE_FECHA_MODIFICACION].ToString());
-                    }                  
-              
+                    }
                 }
 
-                if ((ViewState[LLAVE_FECHA_REPLICA] != null) )
+                if ((ViewState[LLAVE_FECHA_REPLICA] != null))
                 {
-                  if (!ViewState[LLAVE_FECHA_REPLICA].ToString().Equals(""))
-                  {
-                      oGarantia.FechaReplica = DateTime.Parse(ViewState[LLAVE_FECHA_REPLICA].ToString());
-                  }                  
+                    if (ViewState[LLAVE_FECHA_REPLICA].ToString().Length > 0)
+                    {
+                        oGarantia.FechaReplica = DateTime.Parse(ViewState[LLAVE_FECHA_REPLICA].ToString());
+                    }
                 }
 
-                oGarantia = null;           
+                oGarantia.ConsecutivoGarantiaFiduciaria = long.Parse((((Session["GarantiaFiduciaria"] != null) && (Session["GarantiaFiduciaria"].ToString().Length > 0)) ? Session["GarantiaFiduciaria"].ToString() : "-1"));
+                oGarantia.ConsecutivoOperacion = ConsecutivoOperacion;
+                oGarantia.UsuarioModifico = Session["strUSER"].ToString();
+
+                oGarantia = null;
             }
             catch (Exception ex)
             {
@@ -1835,30 +1739,25 @@ namespace BCRGARANTIAS.Forms
         {
             try
             {
-                CGarantiaFiduciaria oGarantia = CGarantiaFiduciaria.Current;
+                clsGarantiaFiduciaria oGarantia = clsGarantiaFiduciaria.Current;
 
                 //Campos llave
+                cbTipoCaptacion.Items.FindByValue(((oGarantia.TipoOperacion != 0) ? oGarantia.TipoOperacion.ToString() : "1")).Selected = true;
+
                 if (oGarantia.TipoOperacion != int.Parse(Application["TARJETA"].ToString()))
                 {
-                    if (oGarantia.TipoOperacion != 0)
-                        cbTipoCaptacion.Items.FindByValue(oGarantia.TipoOperacion.ToString()).Selected = true;
+                    txtContabilidad.Text = ((oGarantia.Contabilidad != 0) ? oGarantia.Contabilidad.ToString() : string.Empty);
 
-                    if (oGarantia.Contabilidad != 0)
-                        txtContabilidad.Text = oGarantia.Contabilidad.ToString();
+                    txtOficina.Text = ((oGarantia.Oficina != 0) ? oGarantia.Oficina.ToString() : string.Empty);
 
-                    if (oGarantia.Oficina != 0)
-                        txtOficina.Text = oGarantia.Oficina.ToString();
-
-                    if (oGarantia.Moneda != 0)
-                        txtMoneda.Text = oGarantia.Moneda.ToString();
+                    txtMoneda.Text = ((oGarantia.Moneda != 0) ? oGarantia.Moneda.ToString() : string.Empty);
 
                     if (oGarantia.TipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
                     {
                         lblProducto.Visible = true;
                         txtProducto.Visible = true;
 
-                        if (oGarantia.Producto != 0)
-                            txtProducto.Text = oGarantia.Producto.ToString();
+                        txtProducto.Text = ((oGarantia.Producto != 0) ? oGarantia.Producto.ToString() : string.Empty);
                     }
                     else
                     {
@@ -1866,86 +1765,52 @@ namespace BCRGARANTIAS.Forms
                         txtProducto.Visible = false;
                     }
 
-                    if (oGarantia.Numero != 0)
-                        txtOperacion.Text = oGarantia.Numero.ToString();
+                    txtOperacion.Text = ((oGarantia.Numero != 0) ? oGarantia.Numero.ToString() : string.Empty);
                 }
                 else
                 {
-                    if (oGarantia.TipoOperacion != 0)
-                        cbTipoCaptacion.Items.FindByValue(oGarantia.TipoOperacion.ToString()).Selected = true;
-
                     txtTarjeta.Text = oGarantia.Tarjeta;
 
                     txtObservacion.Text = oGarantia.Observacion;
                 }
 
                 //Informacion del fiador
-                if (oGarantia.TipoFiador != 0)
-                {
-                    cbTipoFiador.ClearSelection();
-                    cbTipoFiador.Items.FindByValue(oGarantia.TipoFiador.ToString()).Selected = true;
-                }
+                cbTipoFiador.ClearSelection();
+                cbTipoFiador.Items.FindByValue(((oGarantia.CodigoTipoPersonaFiador != 0) ? oGarantia.CodigoTipoPersonaFiador.ToString() : "-1")).Selected = true;
 
-                if (oGarantia.CedulaFiador != null)
-                    txtCedulaFiador.Text = oGarantia.CedulaFiador;
+                txtCedulaFiador.Text = ((oGarantia.CedulaFiador != null) ? oGarantia.CedulaFiador : string.Empty);
 
-                if (oGarantia.NombreFiador != null)
-                    txtNombreFiador.Text = oGarantia.NombreFiador;
+                txtNombreFiador.Text = ((oGarantia.NombreFiador != null) ? oGarantia.NombreFiador : string.Empty);
 
-                if (oGarantia.TipoMitigador != -1)
-                {
-                    cbMitigador.ClearSelection();
-                    cbMitigador.Items.FindByValue(oGarantia.TipoMitigador.ToString()).Selected = true;
-                }
+                cbMitigador.ClearSelection();
+                cbMitigador.Items.FindByValue(((oGarantia.CodigoTipoMitigador != -1) ? oGarantia.CodigoTipoMitigador.ToString() : "-1")).Selected = true;
 
-                if (oGarantia.TipoDocumento != 0)
-                {
-                    cbTipoDocumento.ClearSelection();
-                    cbTipoDocumento.Items.FindByValue(oGarantia.TipoDocumento.ToString()).Selected = true;
-                }
+                cbTipoDocumento.ClearSelection();
+                cbTipoDocumento.Items.FindByValue(((oGarantia.CodigoTipoDocumentoLegal != 0) ? oGarantia.CodigoTipoDocumentoLegal.ToString() : "-1")).Selected = true;
 
-                if (oGarantia.MontoMitigador != 0)
-                    txtMontoMitigador.Text = oGarantia.MontoMitigador.ToString("N");
+                txtMontoMitigador.Text = ((oGarantia.MontoMitigador != 0) ? oGarantia.MontoMitigador.ToString("N2") : "0.00");
 
-                if (oGarantia.PorcentajeResposabilidad != 0)
-                    txtPorcentajeResponsabilidad.Text = oGarantia.PorcentajeResposabilidad.ToString("N");
+                txtPorcentajeResponsabilidad.Text = ((oGarantia.PorcentajeResponsabilidad != -1) ? oGarantia.PorcentajeResponsabilidad.ToString("N2") : "0.00");
 
-                if (oGarantia.TipoAcreedor != 0)
-                {
-                    cbTipoAcreedor.ClearSelection();
-                    cbTipoAcreedor.Items.FindByValue(oGarantia.TipoAcreedor.ToString()).Selected = true;
-                }
+                txtPorcentajeAceptacion.Text = ((oGarantia.PorcentajeAceptacion != 0) ? oGarantia.PorcentajeAceptacion.ToString("N2") : "0.00");
 
-                if (oGarantia.CedulaAcreedor != null)
-                    txtAcreedor.Text = oGarantia.CedulaAcreedor;
+                cbTipoAcreedor.ClearSelection();
+                cbTipoAcreedor.Items.FindByValue(((oGarantia.CodigoTipoPersonaAcreedor != 0) ? oGarantia.CodigoTipoPersonaAcreedor.ToString() : "-1")).Selected = true;
 
-                if (oGarantia.OperacionEspecial != -1)
-                {
-                    cbOperacionEspecial.ClearSelection();
-                    cbOperacionEspecial.Items.FindByValue(oGarantia.OperacionEspecial.ToString()).Selected = true;
-                }
+                txtAcreedor.Text = ((oGarantia.CedulaAcreedor != null) ? oGarantia.CedulaAcreedor : string.Empty);
+
+                cbOperacionEspecial.ClearSelection();
+                cbOperacionEspecial.Items.FindByValue(((oGarantia.CodigoOperacionEspecial != 0) ? oGarantia.CodigoOperacionEspecial.ToString() : "-1")).Selected = true;
 
                 txtFechaExpiracion.Text = oGarantia.FechaExpiracion.ToShortDateString();
 
-                if (oGarantia.MontoCobertura != 0)
-                    txtMontoCobertura.Text = oGarantia.MontoCobertura.ToString("N");
+                txtMontoCobertura.Text = ((oGarantia.MontoCobertura != 0) ? oGarantia.MontoCobertura.ToString("N2") : "0.00");
 
                 contenedorDatosModificacion.Visible = true;
 
-
-                string usuarioModifico = ((oGarantia.UsuarioModifico.Length > 0) ? (oGarantia.UsuarioModifico) : string.Empty);
-                string fechaModifico = ((oGarantia.FechaModifico != DateTime.MinValue) ? oGarantia.FechaModifico.ToString("dd/MM/yyyy") : string.Empty);
-                string fechaReplica = ((oGarantia.FechaReplica != DateTime.MinValue) ? (oGarantia.FechaReplica.ToString("dd/MM/yyyy hh:mm:ss tt")) : string.Empty);
-
-                lblUsrModifico.Text = " Usuario Modificó: " + usuarioModifico;
-                lblFechaModificacion.Text = "Fecha Modificación: " + fechaModifico;
-                lblFechaReplica.Text = "Fecha Replica: " + fechaReplica;
-
-
-                //lblUsrModifico.Text = oGarantia.UsuarioModifico;          
-                //lblFechaModificacion.Text = "Fecha Modificacion: "  + oGarantia.FechaModifico.ToShortDateString();
-                //lblFechaReplica.Text = "Fecha Replica: " + oGarantia.FechaReplica.ToShortDateString() + "-" + oGarantia.FechaReplica.ToShortTimeString(); 
-
+                lblUsrModifico.Text = string.Format("Usuario Modificó: {0}", ((oGarantia.UsuarioModifico.Length > 0) ? (oGarantia.UsuarioModifico) : string.Empty));
+                lblFechaModificacion.Text = string.Format("Fecha Modificación: {0}", ((oGarantia.FechaModifico != DateTime.MinValue) ? oGarantia.FechaModifico.ToString("dd/MM/yyyy") : string.Empty));
+                lblFechaReplica.Text = string.Format("Fecha Replica: {0}", ((oGarantia.FechaReplica != DateTime.MinValue) ? (oGarantia.FechaReplica.ToString("dd/MM/yyyy hh:mm:ss tt")) : string.Empty));
 
                 oGarantia = null;
 
@@ -2090,10 +1955,11 @@ namespace BCRGARANTIAS.Forms
                 cbMitigador.Enabled = bBloqueado;
                 cbTipoDocumento.Enabled = bBloqueado;
                 txtMontoMitigador.Enabled = bBloqueado;
-                txtPorcentajeResponsabilidad.Enabled = bBloqueado;
+                //txtPorcentajeResponsabilidad.Enabled = bBloqueado;
                 cbOperacionEspecial.Enabled = bBloqueado;
                 txtFechaExpiracion.Enabled = bBloqueado;
                 txtMontoCobertura.Enabled = bBloqueado;
+                txtPorcentajeAceptacion.Enabled = bBloqueado;
                 //Botones
                 btnIngresos.Enabled = bBloqueado;
                 btnInsertar.Enabled = bBloqueado;
@@ -2102,6 +1968,8 @@ namespace BCRGARANTIAS.Forms
                 //Mensajes
                 lblMensaje.Text = "";
                 lblMensaje3.Text = "";
+
+                imgCalculadoraGF.Enabled = bBloqueado;
             }
             catch (Exception ex)
             {
@@ -2123,7 +1991,7 @@ namespace BCRGARANTIAS.Forms
                 txtMontoCobertura.Text = string.Empty;
                 lblMensaje.Text = string.Empty;
                 lblMensaje3.Text = string.Empty;
-                txtObservacion.Text = string.Empty;           
+                txtObservacion.Text = string.Empty;
 
             }
             catch (Exception ex)
@@ -2149,98 +2017,89 @@ namespace BCRGARANTIAS.Forms
 
         private void CargarTipoMitigador()
         {
-			try
-			{
-				System.Data.DataSet dsDatos = new System.Data.DataSet();
-				oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-				OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cat_campo, convert(varchar(10),cat_campo) + '-' + cat_descripcion as cat_descripcion FROM cat_elemento WHERE cat_catalogo = " + int.Parse(Application["CAT_TIPO_MITIGADOR"].ToString()) + " UNION ALL SELECT -1, '' ORDER BY cat_campo", oleDbConnection1);
-				cmdConsulta.Fill(dsDatos, "Codigos");
-				cbMitigador.DataSource = null;
-				cbMitigador.DataSource = dsDatos.Tables["Codigos"].DefaultView;
-				cbMitigador.DataValueField = "CAT_CAMPO";
-				cbMitigador.DataTextField = "CAT_DESCRIPCION";
-				cbMitigador.DataBind();
-				cbMitigador.ClearSelection();
-				cbMitigador.Items.FindByValue("0").Selected = true;
-			}
-			finally
-			{
-				oleDbConnection1.Close();
-			}
+            if (!ListaCatalogosGF.ErrorDatos)
+            {
+                List<clsCatalogo> listaTiposMitigadoress = ListaCatalogosGF.Items(((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPO_MITIGADOR));
+
+                cbMitigador.DataSource = null;
+                cbMitigador.DataSource = listaTiposMitigadoress;
+                cbMitigador.DataValueField = "CodigoElemento";
+                cbMitigador.DataTextField = "DescripcionCodigoElemento";
+                cbMitigador.DataBind();
+                cbMitigador.ClearSelection();
+                cbMitigador.Items.FindByValue("0").Selected = true;
+            }
+            else
+            {
+                lblMensaje.Text = ListaCatalogosGF.DescripcionError;
+            }          
         }
 
         private void CargarOperacionEspecial()
         {
-			try
-			{
-				System.Data.DataSet dsDatos = new System.Data.DataSet();
-				oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-				OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cat_campo, convert(varchar(10),cat_campo) + '-' + cat_descripcion as cat_descripcion FROM cat_elemento WHERE cat_catalogo = " + int.Parse(Application["CAT_OPERACION_ESPECIAL"].ToString()) + " UNION ALL SELECT -1, '' ORDER BY cat_campo", oleDbConnection1);
-				cmdConsulta.Fill(dsDatos, "Codigos");
-				cbOperacionEspecial.DataSource = null;
-				cbOperacionEspecial.DataSource = dsDatos.Tables["Codigos"].DefaultView;
-				cbOperacionEspecial.DataValueField = "CAT_CAMPO";
-				cbOperacionEspecial.DataTextField = "CAT_DESCRIPCION";
-				cbOperacionEspecial.DataBind();
-				cbOperacionEspecial.ClearSelection();
-				cbOperacionEspecial.Items.FindByValue(Application["DEFAULT_OPERACION_ESPECIAL"].ToString()).Selected = true;
-			}
-			finally
-			{
-				oleDbConnection1.Close();
-			}
-		}
+            if (!ListaCatalogosGF.ErrorDatos)
+            {
+                List<clsCatalogo> listaTiposOperacionesEspeciales = ListaCatalogosGF.Items(((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_OPERACION_ESPECIAL));
 
-		private void CargarTiposDocumentos()
-		{
-			try
-			{
-				System.Data.DataSet dsDatos = new System.Data.DataSet();
-				oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-				OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cat_campo, convert(varchar(10),cat_campo) + '-' + cat_descripcion as cat_descripcion FROM cat_elemento WHERE cat_catalogo = " + int.Parse(Application["CAT_TIPOS_DOCUMENTOS"].ToString()) + " UNION ALL SELECT -1, '' ORDER BY cat_campo", oleDbConnection1);
-				cmdConsulta.Fill(dsDatos, "Codigos");
-				cbTipoDocumento.DataSource = null;
-				cbTipoDocumento.DataSource = dsDatos.Tables["Codigos"].DefaultView;
-				cbTipoDocumento.DataValueField = "CAT_CAMPO";
-				cbTipoDocumento.DataTextField = "CAT_DESCRIPCION";
-				cbTipoDocumento.DataBind();
-				cbTipoDocumento.ClearSelection();
-				cbTipoDocumento.Items.FindByValue(Application["DEFAULT_TIPO_DOCUMENTO_LEGAL_FIADORES"].ToString()).Selected = true;
-			}
-			finally
-			{
-				oleDbConnection1.Close();
-			}
-		}
+                cbOperacionEspecial.DataSource = null;
+                cbOperacionEspecial.DataSource = listaTiposOperacionesEspeciales;
+                cbOperacionEspecial.DataValueField = "CodigoElemento";
+                cbOperacionEspecial.DataTextField = "DescripcionCodigoElemento";
+                cbOperacionEspecial.DataBind();
+                cbOperacionEspecial.ClearSelection();
+                cbOperacionEspecial.Items.FindByValue(Application["DEFAULT_OPERACION_ESPECIAL"].ToString()).Selected = true;
+           }
+            else
+            {
+                lblMensaje.Text = ListaCatalogosGF.DescripcionError;
+            }
+         }
+
+        private void CargarTiposDocumentos()
+        {
+            if (!ListaCatalogosGF.ErrorDatos)
+            {
+                List<clsCatalogo> listaTiposDocumentosLegales = ListaCatalogosGF.Items(((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPOS_DOCUMENTOS));
+
+                cbTipoDocumento.DataSource = null;
+                cbTipoDocumento.DataSource = listaTiposDocumentosLegales;
+                cbTipoDocumento.DataValueField = "CodigoElemento";
+                cbTipoDocumento.DataTextField = "DescripcionCodigoElemento";
+                cbTipoDocumento.DataBind();
+                cbTipoDocumento.ClearSelection();
+                cbTipoDocumento.Items.FindByValue(Application["DEFAULT_TIPO_DOCUMENTO_LEGAL_FIADORES"].ToString()).Selected = true;
+            }
+            else
+            {
+                lblMensaje.Text = ListaCatalogosGF.DescripcionError;
+            }
+        }
 
 		private void CargarTiposPersona()
 		{
-			try
-			{
-				System.Data.DataSet dsDatos = new System.Data.DataSet();
-				oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-				OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cat_campo, convert(varchar(10),cat_campo) + '-' + cat_descripcion as cat_descripcion FROM cat_elemento WHERE cat_catalogo = " + int.Parse(Application["CAT_TIPO_PERSONA"].ToString()) + " UNION ALL SELECT -1, '' ORDER BY cat_campo", oleDbConnection1);
-				cmdConsulta.Fill(dsDatos, "Tipos");
+            if (!ListaCatalogosGF.ErrorDatos)
+            {
+                List<clsCatalogo> listaTiposPersona = ListaCatalogosGF.Items(((int)Enumeradores.Catalogos_Garantias_Fiduciarias.CAT_TIPO_PERSONA));
 
-				cbTipoAcreedor.DataSource = null;
-				cbTipoAcreedor.DataSource = dsDatos.Tables["Tipos"].DefaultView;
-				cbTipoAcreedor.DataValueField = "CAT_CAMPO";
-				cbTipoAcreedor.DataTextField = "CAT_DESCRIPCION";
-				cbTipoAcreedor.DataBind();
-				cbTipoAcreedor.ClearSelection();
-				cbTipoAcreedor.Items.FindByValue(Application["DEFAULT_TIPO_ACREEDOR"].ToString()).Selected = true;
+                cbTipoAcreedor.DataSource = null;
+                cbTipoAcreedor.DataSource = listaTiposPersona;
+                cbTipoAcreedor.DataValueField = "CodigoElemento";
+                cbTipoAcreedor.DataTextField = "DescripcionCodigoElemento";
+                cbTipoAcreedor.DataBind();
+                cbTipoAcreedor.ClearSelection();
+                cbTipoAcreedor.Items.FindByValue(Application["DEFAULT_TIPO_ACREEDOR"].ToString()).Selected = true;
 
-				cbTipoFiador.DataSource = null;
-				cbTipoFiador.DataSource = dsDatos.Tables["Tipos"].DefaultView;
-				cbTipoFiador.DataValueField = "CAT_CAMPO";
-				cbTipoFiador.DataTextField = "CAT_DESCRIPCION";
-				cbTipoFiador.DataBind();
-				cbTipoFiador.ClearSelection();
-			}
-			finally
-			{
-				oleDbConnection1.Close();
-			}
+                cbTipoFiador.DataSource = null;
+                cbTipoFiador.DataSource = listaTiposPersona;
+                cbTipoFiador.DataValueField = "CodigoElemento";
+                cbTipoFiador.DataTextField = "DescripcionCodigoElemento";
+                cbTipoFiador.DataBind();
+                cbTipoFiador.ClearSelection();
+            }
+            else
+            {
+                lblMensaje.Text = ListaCatalogosGF.DescripcionError;
+            }            
 		}
 
         /// <summary>
@@ -2318,7 +2177,7 @@ namespace BCRGARANTIAS.Forms
                     lblMensaje3.Text = "Debe ingresar el monto mitigador de la garantía.";
                     bRespuesta = false;
                 }
-                if (bRespuesta && txtPorcentajeResponsabilidad.Text.Trim().Length == 0)
+                if (bRespuesta && txtPorcentajeAceptacion.Text.Trim().Length == 0)
                 {
                     lblMensaje3.Text = "Debe ingresar el porcentaje de aceptación de la garantía.";
                     bRespuesta = false;
@@ -2337,55 +2196,7 @@ namespace BCRGARANTIAS.Forms
 
             return bRespuesta;
         }
-
-        private bool ValidarMontoMitigador(decimal nMontoMitigador)
-        {
-            bool bRespuesta = false;
-            try
-            {
-                string strSQLQuery = "SELECT " +
-                                        "isnull(a.saldo_actual,0) as saldo_actual " +
-                                    "FROM " +
-                                        "gar_operacion a " +
-                                    "WHERE " +
-                                        " a.cod_contabilidad = " + txtContabilidad.Text +
-                                        " and a.cod_oficina = " + txtOficina.Text +
-                                        " and a.cod_moneda = " + txtMoneda.Text;
-
-                if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-                {
-                    strSQLQuery = strSQLQuery + " and a.cod_producto = " + txtProducto.Text +
-                                                " and a.num_operacion = " + txtOperacion.Text;
-                }
-                else if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["CONTRATO"].ToString()))
-                {
-                    strSQLQuery = strSQLQuery + " and a.num_operacion is null " +
-                                                " and a.num_contrato = " + txtOperacion.Text;
-                }
-
-                System.Data.DataSet dsDatos = new System.Data.DataSet();
-                oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(strSQLQuery, oleDbConnection1);
-                cmdConsulta.Fill(dsDatos, "Operacion");
-
-                if (dsDatos.Tables["Operacion"].Rows.Count > 0)
-                {
-                    if (nMontoMitigador <= Convert.ToDecimal(dsDatos.Tables["Operacion"].Rows[0]["saldo_actual"].ToString()))
-                        bRespuesta = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-			finally
-			{
-				oleDbConnection1.Close();
-			}
-
-            return bRespuesta;
-        }
-
+        
         /// <summary>
         /// Este método permite validar los campos llave de la operación
         /// </summary>
@@ -2441,82 +2252,44 @@ namespace BCRGARANTIAS.Forms
                                 int nOficina, int nMoneda, int nProducto, long nOperacion)
         {
             try
-			{
-				System.Data.DataSet dsDatos = new System.Data.DataSet();
-				using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-				{
-					SqlCommand oComando = null;
+            {
+                DataSet dsDatos = Gestor.ObtenerListaGarantiasFiduciarias(nTipoOperacion, nCodOperacion, nContabilidad, nOficina, nMoneda, nProducto, nOperacion, Session["strUSER"].ToString());
+                
+                if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Datos"].Rows.Count > 0))
+                {
 
-					if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-						oComando = new SqlCommand("pa_ObtenerGarantiasFiduciariasOperaciones", oConexion);
-					else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
-						oComando = new SqlCommand("pa_ObtenerGarantiasFiduciariasContratos", oConexion);
+                    if ((!dsDatos.Tables["Datos"].Rows[0].IsNull(clsGarantiaFiduciaria._codigoTipoPersonaFiador)) &&
+                        (!dsDatos.Tables["Datos"].Rows[0].IsNull(clsGarantiaFiduciaria._cedulaFiador)) &&
+                        (!dsDatos.Tables["Datos"].Rows[0].IsNull(clsGarantiaFiduciaria._nombreFiador)))
+                    {
+                        this.gdvGarantiasFiduciarias.DataSource = dsDatos.Tables["Datos"].DefaultView;
+                        this.gdvGarantiasFiduciarias.DataBind();
+                    }
+                    else
+                    {
+                        dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
+                        this.gdvGarantiasFiduciarias.DataSource = dsDatos;
+                        this.gdvGarantiasFiduciarias.DataBind();
 
-					SqlDataAdapter oDataAdapter = new SqlDataAdapter();
-					//declara las propiedades del comando
-					oComando.CommandType = CommandType.StoredProcedure;
-					oComando.CommandTimeout = 120;
-					oComando.Parameters.AddWithValue("@nCodOperacion", nCodOperacion);
-					oComando.Parameters.AddWithValue("@nContabilidad", nContabilidad);
-					oComando.Parameters.AddWithValue("@nOficina", nOficina);
-					oComando.Parameters.AddWithValue("@nMoneda", nMoneda);
+                        int TotalColumns = this.gdvGarantiasFiduciarias.Rows[0].Cells.Count;
+                        this.gdvGarantiasFiduciarias.Rows[0].Cells.Clear();
+                        this.gdvGarantiasFiduciarias.Rows[0].Cells.Add(new TableCell());
+                        this.gdvGarantiasFiduciarias.Rows[0].Cells[0].ColumnSpan = TotalColumns;
+                        this.gdvGarantiasFiduciarias.Rows[0].Cells[0].Text = "No existen registros";
+                    }
+                }
+                else
+                {
+                    dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
+                    this.gdvGarantiasFiduciarias.DataSource = dsDatos;
+                    this.gdvGarantiasFiduciarias.DataBind();
 
-					if (nTipoOperacion == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-					{
-						oComando.Parameters.AddWithValue("@nProducto", nProducto);
-						oComando.Parameters.AddWithValue("@nOperacion", nOperacion);
-					}
-					else if (nTipoOperacion == int.Parse(Application["CONTRATO"].ToString()))
-					{
-						oComando.Parameters.AddWithValue("@nContrato", nOperacion);
-					}
-
-					oComando.Parameters.AddWithValue("@IDUsuario", Global.UsuarioSistema);
-
-
-
-					//Abre la conexion
-					oConexion.Open();
-					oDataAdapter.SelectCommand = oComando;
-					oDataAdapter.SelectCommand.Connection = oConexion;
-					oDataAdapter.Fill(dsDatos, "Datos");
-
-					if ((dsDatos != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Datos"].Rows.Count > 0))
-					{
-
-						if ((!dsDatos.Tables["Datos"].Rows[0].IsNull("tipo_persona")) &&
-							(!dsDatos.Tables["Datos"].Rows[0].IsNull("cedula_fiador")) &&
-							(!dsDatos.Tables["Datos"].Rows[0].IsNull("nombre_fiador")))
-						{
-							this.gdvGarantiasFiduciarias.DataSource = dsDatos.Tables["Datos"].DefaultView;
-							this.gdvGarantiasFiduciarias.DataBind();
-						}
-						else
-						{
-							dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
-							this.gdvGarantiasFiduciarias.DataSource = dsDatos;
-							this.gdvGarantiasFiduciarias.DataBind();
-
-							int TotalColumns = this.gdvGarantiasFiduciarias.Rows[0].Cells.Count;
-							this.gdvGarantiasFiduciarias.Rows[0].Cells.Clear();
-							this.gdvGarantiasFiduciarias.Rows[0].Cells.Add(new TableCell());
-							this.gdvGarantiasFiduciarias.Rows[0].Cells[0].ColumnSpan = TotalColumns;
-							this.gdvGarantiasFiduciarias.Rows[0].Cells[0].Text = "No existen registros";
-						}
-					}
-					else
-					{
-						dsDatos.Tables["Datos"].Rows.Add(dsDatos.Tables["Datos"].NewRow());
-						this.gdvGarantiasFiduciarias.DataSource = dsDatos;
-						this.gdvGarantiasFiduciarias.DataBind();
-
-						int TotalColumns = this.gdvGarantiasFiduciarias.Rows[0].Cells.Count;
-						this.gdvGarantiasFiduciarias.Rows[0].Cells.Clear();
-						this.gdvGarantiasFiduciarias.Rows[0].Cells.Add(new TableCell());
-						this.gdvGarantiasFiduciarias.Rows[0].Cells[0].ColumnSpan = TotalColumns;
-						this.gdvGarantiasFiduciarias.Rows[0].Cells[0].Text = "No existen registros";
-					}
-				}
+                    int TotalColumns = this.gdvGarantiasFiduciarias.Rows[0].Cells.Count;
+                    this.gdvGarantiasFiduciarias.Rows[0].Cells.Clear();
+                    this.gdvGarantiasFiduciarias.Rows[0].Cells.Add(new TableCell());
+                    this.gdvGarantiasFiduciarias.Rows[0].Cells[0].ColumnSpan = TotalColumns;
+                    this.gdvGarantiasFiduciarias.Rows[0].Cells[0].Text = "No existen registros";
+                }
             }
             catch (Exception ex)
             {
@@ -2527,163 +2300,17 @@ namespace BCRGARANTIAS.Forms
         private bool ValidarGarantiaFiduciaria()
         {
             bool bRespuesta = true;
+
             try
             {
-                string strSQL = "SELECT " +
-                                    "b.cod_operacion, " +
-                                    "b.cod_garantia_fiduciaria " +
-                                "FROM " +
-                                    "dbo.GAR_OPERACION a, " +
-                                    "dbo.GAR_GARANTIAS_FIDUCIARIAS_X_OPERACION b, " +
-                                    "dbo.GAR_GARANTIA_FIDUCIARIA c " +
-                                "WHERE " +
-                                    "a.cod_contabilidad= " + txtContabilidad.Text +
-                                    " and a.cod_oficina= " + txtOficina.Text +
-                                    " and a.cod_moneda= " + txtMoneda.Text;
-
-                if (int.Parse(cbTipoCaptacion.SelectedValue.ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-                {
-                    strSQL = strSQL + " and a.cod_producto= " + txtProducto.Text +
-                                    " and a.num_operacion= " + txtOperacion.Text;
-                }
-                else
-                {
-                    strSQL = strSQL + " and a.num_operacion is null " +
-                                    " and a.num_contrato = " + txtOperacion.Text;
-                }
-                strSQL = strSQL +
-                                " and a.cod_operacion = b.cod_operacion " +
-                                " and b.cod_garantia_fiduciaria = c.cod_garantia_fiduciaria " +
-                                " and c.cedula_fiador = '" + txtCedulaFiador.Text + "'";
-
-                System.Data.DataSet dsDatos = new System.Data.DataSet();
-                oleDbConnection1 = BCRGARANTIAS.Datos.AccesoBD.ObtenerStringConexion();
-                OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(strSQL, oleDbConnection1);
-                cmdConsulta.Fill(dsDatos, "Datos");
-
-                if (dsDatos.Tables["Datos"].Rows.Count > 0)
-                    bRespuesta = false;
+                bRespuesta = Gestor.ExisteGarantiaFiduciaria(txtContabilidad.Text, txtOficina.Text, txtMoneda.Text, txtProducto.Text, txtOperacion.Text, (int.Parse(cbTipoCaptacion.SelectedValue.ToString())), txtCedulaFiador.Text, cbTipoFiador.SelectedValue);
             }
             catch (Exception ex)
             {
                 lblMensaje.Text = ex.Message;
-			}
-			finally
-			{
-				oleDbConnection1.Close();
-			}
-			
-			return bRespuesta;
-        }
-
-        /// <summary>
-        /// Este método procesa la respuesta enviada por MQ
-        /// </summary>
-        /// <param name="strXML">XML de respuesta</param>
-        private void ProcesarRespuestaMQ(string strXML)
-        {
-            try
-            {
-                //Carga el XML en un archivo 
-                StreamWriter writer = File.CreateText(Application["ARCHIVOS"].ToString() + "TMPXML.xml");
-                writer.WriteLine(strXML);
-                writer.Close();
-
-                XmlDocument xDoc = new XmlDocument();
-                xDoc.Load(Application["ARCHIVOS"].ToString() + "TMPXML.xml");
-
-                XmlNodeList oEvento = xDoc.GetElementsByTagName("TRAMAXML");
-
-                //Valida que la transacción se haya procesado
-                if (ValidarRespuestaMQ(oEvento))
-                {
-                    XmlNodeList oElementos = ((XmlElement)oEvento[0]).GetElementsByTagName(Application["PRC18"].ToString());
-
-                    int i = 0;
-                    XmlNodeList ndElemento;
-                    if (oElementos.Count > 0)
-                    {
-                        foreach (XmlElement nodo in oElementos)
-                        {
-                            //Obtiene el número de cédula del deudor de la operación
-                            XmlNodeList ndCliente = nodo.GetElementsByTagName("NUMERO");
-
-                            if (ndCliente[i] != null)
-                                Session["Deudor"] = long.Parse(ndCliente[i].InnerText).ToString();
-
-                            //Obtiene el consecutivo de la operación en BCR_GARANTIAS
-                            ConsecutivoOperacion = Gestor.ObtenerConsecutivoOperacion(int.Parse(txtContabilidad.Text),
-                                                                                    int.Parse(txtOficina.Text),
-                                                                                    int.Parse(txtMoneda.Text),
-                                                                                    int.Parse(txtProducto.Text),
-                                                                                    long.Parse(txtOperacion.Text),
-                                                                                    long.Parse(ndCliente[i].InnerText).ToString());
-                            BloquearCampos(true);
-                            btnModificar.Enabled = false;
-                            btnEliminar.Enabled = false;
-                            Session["EsOperacionValida"] = true;
-                            GuardarDatosSession();
-
-                            //Carga las garantias fiduciarias en el Grid
-                            ndElemento = nodo.GetElementsByTagName("CLAGAR");
-                            if (ndElemento[i] != null)
-                            {
-                                if (ndElemento[i].InnerText == "00")
-                                {
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        BloquearCampos(false);
-                        Session["EsOperacionValida"] = false;
-                        if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["OPERACION_CREDITICIA"].ToString()))
-                            lblMensaje.Text = "La operación crediticia no existe en el sistema.";
-                        else if (int.Parse(Session["Tipo_Operacion"].ToString()) == int.Parse(Application["CONTRATO"].ToString()))
-                            lblMensaje.Text = "El contrato no existe en el sistema.";
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Este método permite validar el código de respuesta enviado por MQ
-        /// </summary>
-        /// <param name="oEvento"></param>
-        /// <returns></returns>
-        private bool ValidarRespuestaMQ(XmlNodeList oEvento)
-        {
-            bool bRespuesta = false;
-            try
-            {
-                XmlNodeList oElementos = ((XmlElement)oEvento[0]).GetElementsByTagName("HEADER");
-                if (oElementos.Count > 0)
-                {
-                    foreach (XmlElement nodo in oElementos)
-                    {
-                        //Obtiene el código de respuesta del MQ
-                        XmlNodeList ndRespuesta = nodo.GetElementsByTagName("CODIGORESPUESTA");
-                        XmlNodeList ndDescripcion = nodo.GetElementsByTagName("DESCRIPCION");
-
-                        if (ndRespuesta[0] != null)
-                            if (int.Parse(ndRespuesta[0].InnerText) == int.Parse(Application["TRANSACCION_PROCESADA"].ToString()))
-                                bRespuesta = true;
-                            else
-                                lblMensaje.Text = "Error: " + ndDescripcion[0].InnerText;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
             }
 
-            return bRespuesta;
+            return bRespuesta;           
         }
 
         /// <summary>
@@ -2848,7 +2475,7 @@ namespace BCRGARANTIAS.Forms
                 cbMitigador.Enabled = bBloqueado;
                 cbTipoDocumento.Enabled = bBloqueado;
                 txtMontoMitigador.Enabled = bBloqueado;
-                txtPorcentajeResponsabilidad.Enabled = bBloqueado;
+                //txtPorcentajeResponsabilidad.Enabled = bBloqueado;
                 cbTipoAcreedor.Enabled = bBloqueado;
                 txtAcreedor.Enabled = bBloqueado;
                 cbOperacionEspecial.Enabled = bBloqueado;
@@ -2856,6 +2483,7 @@ namespace BCRGARANTIAS.Forms
                 txtMontoCobertura.Enabled = bBloqueado;
                 txtFechaExpiracion.Enabled = bBloqueado;
                 txtObservacion.Enabled = bBloqueado;
+                txtPorcentajeAceptacion.Enabled = bBloqueado;
                 //Botones
                 btnIngresos.Enabled = bBloqueado;
                 btnInsertar.Enabled = bBloqueado;
@@ -2870,7 +2498,8 @@ namespace BCRGARANTIAS.Forms
                 lblMensaje.Text = ex.Message;
             }
         }
-        #endregion
 
-}
+       #endregion
+
+    }
 }

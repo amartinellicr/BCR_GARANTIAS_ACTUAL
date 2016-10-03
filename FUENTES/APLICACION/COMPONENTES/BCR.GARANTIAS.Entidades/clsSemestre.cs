@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Collections.Specialized;
@@ -486,35 +485,50 @@ namespace BCR.GARANTIAS.Entidades
                                     //En base al valor de la llave, se convierte y se asigna el dato del valor
                                     switch ((llaveValor[0].Replace('"', ' ').Trim()))
                                     {
-                                        case _numeroSemestre: this.numeroSemestre = ((int.TryParse(llaveValor[1], out numSemestre)) ? numSemestre : 0);
+                                        case _numeroSemestre:
+                                            numeroSemestre = ((int.TryParse(llaveValor[1], out numSemestre)) ? numSemestre : 0);
                                             break;
-                                        case _fechaSemestre: this.fechaSemestre = ((DateTime.TryParse(llaveValor[1], out fechora)) ? fechora : new DateTime(1900, 01, 01));
+                                        case _fechaSemestre:
+                                            fechaSemestre = ((DateTime.TryParse(llaveValor[1], out fechora)) ? fechora : new DateTime(1900, 01, 01));
                                             break;
-                                        case _tipoCambio: this.tipoCambio = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out tipoCambioCompra)) ? tipoCambioCompra : (decimal?)null));
+                                        case _tipoCambio:
+                                            tipoCambio = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out tipoCambioCompra)) ? tipoCambioCompra : (decimal?)null));
                                             break;
-                                        case _ipc: this.indicePreciosConsumidor = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out ipc)) ? ipc : (decimal?)null));
+                                        case _ipc:
+                                            indicePreciosConsumidor = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out ipc)) ? ipc : (decimal?)null));
                                             break;
-                                        case _tipoCambioAnterior: this.tipoCambioAnterior = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out tipoCambioCompraAnterior)) ? tipoCambioCompraAnterior : (decimal?)null));
+                                        case _tipoCambioAnterior:
+                                            tipoCambioAnterior = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out tipoCambioCompraAnterior)) ? tipoCambioCompraAnterior : (decimal?)null));
                                             break;
-                                        case _ipcAnterior: this.ipcAnterior = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out ipcAnt)) ? ipcAnt : (decimal?)null));
+                                        case _ipcAnterior:
+                                            ipcAnterior = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out ipcAnt)) ? ipcAnt : (decimal?)null));
                                             break;
-                                        case _totalRegistros: this.totalRegistros = ((int.TryParse(llaveValor[1], out registrosTotales)) ? registrosTotales : 0);
+                                        case _totalRegistros:
+                                            totalRegistros = ((int.TryParse(llaveValor[1], out registrosTotales)) ? registrosTotales : 0);
                                             break;
-                                        case _porcentajeDepreciacion: this.porcentajeDepreciacion = ((decimal.TryParse(llaveValor[1], out porDepreciacion)) ? porDepreciacion : 0);
+                                        case _porcentajeDepreciacion:
+                                            porcentajeDepreciacion = ((decimal.TryParse(llaveValor[1], out porDepreciacion)) ? porDepreciacion : 0);
                                             break;
-                                        case _montoUltimaTasacionTerreno: this.montoUltimaTasacionTerreno = ((decimal.TryParse(llaveValor[1], out montoUTT)) ? montoUTT : 0);
+                                        case _montoUltimaTasacionTerreno:
+                                            montoUltimaTasacionTerreno = ((decimal.TryParse(llaveValor[1], out montoUTT)) ? montoUTT : 0);
                                             break;
-                                        case _montoUltimaTasacionNoTerreno: this.montoUltimaTasacionNoTerreno = ((decimal.TryParse(llaveValor[1], out montoUTNT)) ? montoUTNT : 0);
+                                        case _montoUltimaTasacionNoTerreno:
+                                            montoUltimaTasacionNoTerreno = ((decimal.TryParse(llaveValor[1], out montoUTNT)) ? montoUTNT : 0);
                                             break;
-                                        case _montoTasacionActualizadaTerreno: this.montoTasacionActualizadaTerreno = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out montoTAT)) ? montoTAT : (decimal?)null));
+                                        case _montoTasacionActualizadaTerreno:
+                                            montoTasacionActualizadaTerreno = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out montoTAT)) ? montoTAT : (decimal?)null));
                                             break;
-                                        case _montoTasacionActualizadaNoTerreno: this.montoTasacionActualizadaNoTerreno = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out montoTANT)) ? montoTANT : (decimal?)null));
+                                        case _montoTasacionActualizadaNoTerreno:
+                                            montoTasacionActualizadaNoTerreno = (((llaveValor[1].CompareTo("null") != 0) && (decimal.TryParse(llaveValor[1], out montoTANT)) ? montoTANT : (decimal?)null));
                                             break;
-                                        case _operacionCrediticia: this.operacionCrediticia = llaveValor[1];
+                                        case _operacionCrediticia:
+                                            operacionCrediticia = llaveValor[1];
                                             break;
-                                        case _identificacionGarantia: this.identificacionGarantia = llaveValor[1];
+                                        case _identificacionGarantia:
+                                            identificacionGarantia = llaveValor[1];
                                             break;
-                                        case _fechaHoraCalculoSemestre: this.fechaHoraCalculo = ((DateTime.TryParse(llaveValor[1], out fecHoraCalc)) ? fecHoraCalc : DateTime.Now);
+                                        case _fechaHoraCalculoSemestre:
+                                            fechaHoraCalculo = ((DateTime.TryParse(llaveValor[1], out fecHoraCalc)) ? fecHoraCalc : DateTime.Now);
                                             break;
                                         default:
                                             break;

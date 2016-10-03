@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 
@@ -48,6 +47,7 @@ namespace BCR.GARANTIAS.Entidades
         private const string _identificacionBien = "Identificacion_Bien";
         private const string _codigoTipoCobertura = "Codigo_Tipo_Cobertura";
         private const string _codigoAseguradora = "Codigo_Aseguradora";
+
 
         #endregion Constantes
 
@@ -121,7 +121,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsPolizasSap()
         {
-            this.tramaPolizas = string.Empty;
+            tramaPolizas = string.Empty;
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaPolizasBD">Trama que posee los datos de las pólizas obtenidas de la Base de Datos</param>
         public clsPolizasSap(string tramaPolizasBD)
         {
-            this.tramaPolizas = string.Empty;
+            tramaPolizas = string.Empty;
 
             if (tramaPolizasBD.Length > 0)
             {
@@ -153,7 +153,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlPolizas != null)
                 {
-                    this.tramaPolizas = tramaPolizasBD;
+                    tramaPolizas = tramaPolizasBD;
 
                     if (xmlPolizas.HasChildNodes)
                     {
@@ -165,13 +165,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadPoliza.ErrorDatos)
                             {
-                                this.errorDatos = entidadPoliza.ErrorDatos;
-                                this.descripcionError = entidadPoliza.DescripcionError;
+                                errorDatos = entidadPoliza.ErrorDatos;
+                                descripcionError = entidadPoliza.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadPoliza);
+                                Agregar(entidadPoliza);
                             }
                         }
                     }
@@ -403,7 +403,7 @@ namespace BCR.GARANTIAS.Entidades
 
             if (InnerList.Count > 0)
             {
-                foreach (clsPolizaSap polizaSap in this.InnerList)
+                foreach (clsPolizaSap polizaSap in InnerList)
                 {
                     objEscritor.WriteStartElement(_tagPoliza);
 
@@ -600,7 +600,7 @@ namespace BCR.GARANTIAS.Entidades
             int cantidadPolizas = 0;
 
 
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
                 if ((tipoGarantia != Enumeradores.Tipos_Garantia_Real.Prenda) && ((codigoPartido >= 1) && (codigoPartido <= 7)) && (identificacionBien.Length > 0) && (codigoBien != -1))
                 {
@@ -643,13 +643,13 @@ namespace BCR.GARANTIAS.Entidades
             StringBuilder listaPolizasJSON = new StringBuilder();
 
             //Se revisa que la lista posea pólizas
-            if (this.InnerList.Count > 0)
+            if (InnerList.Count > 0)
             {
                 //Se agrega la llave de inicio
                 listaPolizasJSON.Append("[");
 
                 //Se recorren las pólizas y se genera la cedena JSON de cada uno
-                foreach (clsPolizaSap convertirPoliza in this.InnerList)
+                foreach (clsPolizaSap convertirPoliza in InnerList)
                 {
                     listaPolizasJSON.Append(convertirPoliza.ConvertirJSON());
                     listaPolizasJSON.Append(",");

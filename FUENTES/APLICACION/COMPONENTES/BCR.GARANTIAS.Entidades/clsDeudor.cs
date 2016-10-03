@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace BCR.GARANTIAS.Entidades
@@ -9,24 +6,37 @@ namespace BCR.GARANTIAS.Entidades
     {
         #region Constantes
 
+        public const string _entidadDeudor              = "GAR_DEUDOR";
+
         private const string _codigo                    = "CODIGO";
         private const string _mensaje                   = "MENSAJE";
-        private const string _cedulaDeudor              = "cedula_deudor";
-        private const string _nombreDeudor              = "nombre_deudor";
-        private const string _codTipoDeudor             = "cod_tipo_deudor";
-        private const string _codCondicionEspecial      = "cod_condicion_especial";
-        private const string _codTipoAsignacion         = "cod_tipo_asignacion";
-        private const string _codGeneradorDivisas       = "cod_generador_divisas";
-        private const string _codVinculadoEntidad       = "cod_vinculado_entidad";
-        private const string _codTipoRegistro           = "cod_tipo_registro";
-        private const string _desTipoRegistro           = "des_tipo_registro";
+        public const string _cedulaDeudor               = "cedula_deudor";
+        public const string _nombreDeudor               = "nombre_deudor";
+        public const string _codTipoDeudor              = "cod_tipo_deudor";
+        public const string _codCondicionEspecial       = "cod_condicion_especial";
+        public const string _codTipoAsignacion          = "cod_tipo_asignacion";
+        public const string _codGeneradorDivisas        = "cod_generador_divisas";
+        public const string _codVinculadoEntidad        = "cod_vinculado_entidad";
+        public const string _codTipoRegistro            = "cod_tipo_registro";
+        public const string _desTipoRegistro            = "des_tipo_registro";
         private const string _capacidades               = "CAPACIDADES";
         private const string _capacidad                 = "CAPACIDAD";
         private const string _fechaCapacidadPago        = "fecha_capacidad_pago";
         private const string _codCapacidadPago          = "cod_capacidad_pago";
         private const string _porSensibilidadTipoCambio = "sensibilidad_tipo_cambio";
         private const string _desCapacidadPago          = "des_capacidad_pago";
+        private const string _indicadorEstadoRegistro   = "cod_estado";
+        private const string _cedulaDeudorSugef         = "cedula_deudor_sugef";
+        private const string _indicadorActualizacionCedulaSugef = "ind_actualizo_cedulasugef";
+        private const string _tipoIdentificacionSugef   = "tipo_id_sugef";
+        public const string _identificacionSicc         = "Identificacion_Sicc";
 
+
+        
+      
+      
+      
+      
         #endregion Constantes
 
         #region Variables

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace BCR.GARANTIAS.Entidades
@@ -8,13 +6,16 @@ namespace BCR.GARANTIAS.Entidades
     public class clsCapacidadPago
     {
         #region Constantes
+        public const string _entidadCapacidadPagoDeudor = "GAR_CAPACIDAD_PAGO";
 
-        private const string _capacidad                 = "CAPACIDAD";
-        private const string _fechaCapacidadPago        = "fecha_capacidad_pago";
-        private const string _codCapacidadPago          = "cod_capacidad_pago";
-        private const string _porSensibilidadTipoCambio = "sensibilidad_tipo_cambio";
-        private const string _desCapacidadPago          = "des_capacidad_pago";
+        private const string _capacidad                = "CAPACIDAD";
+        public const string _cedulaDeudor              = "cedula_deudor";
+        public const string _fechaCapacidadPago        = "fecha_capacidad_pago";
+        public const string _codCapacidadPago          = "cod_capacidad_pago";
+        public const string _porSensibilidadTipoCambio = "sensibilidad_tipo_cambio";
+        private const string _desCapacidadPago         = "des_capacidad_pago";
 
+ 
         #endregion Constantes
 
         #region Variables

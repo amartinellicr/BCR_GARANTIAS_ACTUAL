@@ -1,11 +1,7 @@
 using System;
 using System.Data;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Text;
-using System.Xml;
-using System.Collections.Specialized;
 
 using BCRGARANTIAS.Datos;
 using BCR.GARANTIAS.Comun;
@@ -53,6 +49,9 @@ namespace BCRGARANTIAS.Negocios
                         AccesoBD.ExecuteNonQuery(CommandType.StoredProcedure, "Insertar_Indice_Actualizacion_Avaluo", parameters);
 
                         respuestaObtenida = parameters[4].Value.ToString();
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
 
                     if (respuestaObtenida.Length > 0)
@@ -80,10 +79,13 @@ namespace BCRGARANTIAS.Negocios
 
                     #region Armar String de Inserción del registro
 
-                    string insertaIndiceActAvaluo = "INSERT INTO dbo.CAT_INDICES_ACTUALIZACION_AVALUO" +
-                      "(Fecha_Hora, Tipo_Cambio, Indice_Precios_Consumidor)" +
-                      "VALUES (" + entidadIndicePreciosConsumidor.FechaHora.ToString("dd/MM/yyyy HH:mm:ss") + "," + entidadIndicePreciosConsumidor.TipoCambio.ToString() + "," +
-                        entidadIndicePreciosConsumidor.IndicePreciosConsumidor.ToString() + ")";
+                string[] listaCampos = new string[] { clsIndiceActualizacionAvaluo._indicesActualizacionAvaluo,
+                                                      clsIndiceActualizacionAvaluo._fechaHora, clsIndiceActualizacionAvaluo._tipoCambio, clsIndiceActualizacionAvaluo._indicesActualizacionAvaluo,
+                                                      entidadIndicePreciosConsumidor.FechaHora.ToString("dd/MM/yyyy HH:mm:ss"),
+                                                      entidadIndicePreciosConsumidor.TipoCambio.ToString(),
+                                                      entidadIndicePreciosConsumidor.IndicePreciosConsumidor.ToString()};
+
+                string insertaIndiceActAvaluo = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3} VALUES ({4}, {5}, {6})", listaCampos);
 
                     #endregion
 
@@ -141,6 +143,9 @@ namespace BCRGARANTIAS.Negocios
                         oConexion.Open();
 
                         tramaObtenida = AccesoBD.ExecuteXmlReader(oConexion, CommandType.StoredProcedure, "Consultar_Indice_Actualizacion_Avaluo", out parametrosSalida, parameters);
+
+                        oConexion.Close();
+                        oConexion.Dispose();
                     }
                 }
                 catch (Exception ex)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
 using System.Diagnostics;
 using System.Xml;
 using System.Data;
@@ -86,14 +85,14 @@ namespace BCR.GARANTIAS.Entidades
 
         #endregion Propiedades
 
-           #region Construtores
+        #region Construtores
 
         /// <summary>
         /// Constructor base del a clase
         /// </summary>
         public clsHistoricosPorcentajesAceptacion()
         {
-            this.tramaDatos = string.Empty;
+            tramaDatos = string.Empty;
         }
 
         /// <summary>
@@ -102,7 +101,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaListaCambios">Trama que posee los datos de los porcentajes obtenidas de la Base de Datos</param>
         public clsHistoricosPorcentajesAceptacion(string tramaListaCambios)
         {
-            this.tramaDatos = string.Empty;
+            tramaDatos = string.Empty;
 
             if (tramaListaCambios.Length > 0)
             {
@@ -126,7 +125,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlCambioHistorico != null)
                 {
-                    this.tramaDatos = tramaListaCambios;
+                    tramaDatos = tramaListaCambios;
 
                     if (xmlCambioHistorico.HasChildNodes)
                     {
@@ -140,13 +139,13 @@ namespace BCR.GARANTIAS.Entidades
 
                                 if (entidadHistorico.ErrorDatos)
                                 {
-                                    this.errorDatos = entidadHistorico.ErrorDatos;
-                                    this.descripcionError = entidadHistorico.DesError;
+                                    errorDatos = entidadHistorico.ErrorDatos;
+                                    descripcionError = entidadHistorico.DesError;
                                     break;
                                 }
                                 else
                                 {
-                                    this.Agregar(entidadHistorico);
+                                    Agregar(entidadHistorico);
                                 }
                             }
                         }
@@ -254,7 +253,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 DataRow drFila = dtHistorico.NewRow();
 
-                foreach (clsHistoricoPorcentajeAceptacion historico in this.InnerList)
+                foreach (clsHistoricoPorcentajeAceptacion historico in InnerList)
                 {
                     drFila[_descripcionCampoAfectado] = historico.DescripcionCampoAfectado;
                     drFila[_estadoAnteriorCampoAfectado] = historico.EstadoAnteriorCampoAfectado;

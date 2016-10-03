@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -198,22 +190,22 @@ namespace BCR.GARANTIAS.Entidades
         {
             bool camposRequeridos = true;
 
-            if (camposRequeridos && this.tipoPolizaSugef == -1)
+            if (camposRequeridos && tipoPolizaSugef == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SUGEF", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SUGEF", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.nombreTipoPolizaSugef.Length == 0)
+            if (camposRequeridos && nombreTipoPolizaSugef.Length == 0)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "a la descripción del tipo de póliza SUGEF", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "a la descripción del tipo de póliza SUGEF", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.descripcionTipoPolizaSugef.Length == 0)
+            if (camposRequeridos && descripcionTipoPolizaSugef.Length == 0)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al detalle del tipo de póliza SUGEF", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al detalle del tipo de póliza SUGEF", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
 

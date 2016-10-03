@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using System.Diagnostics;
@@ -16,7 +15,13 @@ namespace BCR.GARANTIAS.Comun
 	/// </remarks>
 	public static class UtilitariosComun
 	{
-		public static void RegistraEventLog(string Mensaje, System.Diagnostics.EventLogEntryType Level)
+        #region Constantes
+
+        public const string ValorNulo = "NULL";
+
+        #endregion Constantes
+
+        public static void RegistraEventLog(string Mensaje, EventLogEntryType Level)
 		{
 			try
 			{
@@ -73,8 +78,7 @@ namespace BCR.GARANTIAS.Comun
 				}
 			}
 		}
-
-
+        
         /// <summary>
         /// Elimina los encabezados de la trama. Deja sólo el contenido del tag "DETALLE"
         /// </summary>
@@ -164,7 +168,7 @@ namespace BCR.GARANTIAS.Comun
 		/// <param name="startDate">fecha menor en el rango a comparar en la operacio</param>
 		/// <param name="endDate">fecha mayor en el rango a comparar en la operacion</param>
 		/// <returns>Diferencia entre las fechas</returns>
-		public static double DateDiff(string howtocompare, System.DateTime startDate, System.DateTime endDate)
+		public static double DateDiff(string howtocompare, DateTime startDate, System.DateTime endDate)
 		{
 			double diff = 0;
 			System.TimeSpan TS = new System.TimeSpan(endDate.Ticks - startDate.Ticks);
@@ -268,6 +272,16 @@ namespace BCR.GARANTIAS.Comun
             else
                 return string.Empty;
         }
-	}
+
+        public static decimal Round(decimal num, int decimales)
+
+        {
+
+            decimal multi = (decimal) Math.Pow(10, decimales);
+
+            return ((long)((num * multi) + 0.5m)) / multi;
+
+        }
+    }
 }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
@@ -28,8 +27,31 @@ namespace BCR.GARANTIAS.Entidades
         #region Constantes
 
         /// <summary>
+        /// Estas constantes representan los campos de la tabla
+        /// </summary>
+        /// 
+        public const string _entidadOperacion = "GAR_OPERACION";
+
+        public const string _consecutivoOperacion = "cod_operacion";
+        public const string _codigoContabilidad = "cod_contabilidad";
+        public const string _codigoOficina = "cod_oficina";
+        public const string _codigoMoneda = "cod_moneda";
+        public const string _codigoProducto = "cod_producto";
+        public const string _numeroDeOperacion = "num_operacion";
+        public const string _numeroContrato = "num_contrato";
+        public const string _fechaConstitucion = "fecha_constitucion";
+        public const string _cedulaDeudor = "cedula_deudor";
+        public const string _fechaVencimiento = "fecha_vencimiento";
+        public const string _montoOriginal = "monto_original";
+        public const string _montoSaldoActual = "saldo_actual";
+        public const string _indicadorEstadoRegistro = "cod_estado";
+        public const string _codigoOficinaContable = "cod_oficon";
+ 
+
+        /// <summary>
         /// Estas constantes representan los tag de la trama obtenida
         /// </summary>
+
         private const string _contabilidad = "contabilidad";
         private const string _oficina = "oficina";
         private const string _moneda = "moneda";
@@ -39,6 +61,15 @@ namespace BCR.GARANTIAS.Entidades
         private const string _codigoOperacion = "codigoOperacion";
         private const string _codigoGarantia = "codigoGarantia";
         private const string _montoAcreenciaPoliza = "Monto_Acreencia_Poliza";
+
+        /// <summary>
+        /// Estas constantes representan los campos de la consulta de la validación de las operaciones
+        /// </summary>
+
+        public const string _nombreDeudor = "nombre_deudor";
+        public const string _indicadorEsGiro = "esGiro";
+        public const string _consecutivoContrato = "consecutivoContrato";
+        public const string _formatoLargoContrato = "Contrato";
 
         #endregion Constantes
 
@@ -191,6 +222,42 @@ namespace BCR.GARANTIAS.Entidades
             get { return montoAcreenciaPoliza; }
         }
 
+        /// <summary>
+        /// Se establece si la operación consultada es válida
+        /// </summary>
+        public bool EsValida { get; set; }
+
+        /// <summary>
+        /// Se establece si la operación consultada corresponde a un giro de contrato
+        /// </summary>
+        public bool EsGiro { get; set; }
+
+        /// <summary>
+        /// Se establece si la operación consultada corresponde a un giro de contrato, de serlo, 
+        /// esta propiedad contendrá el consecutivo de dicho contrato
+        /// </summary>
+        public long ConsecutivoContrato { get; set; }
+
+        /// <summary>
+        /// Se establece si la operación consultada corresponde a un giro de contrato, de serlo, 
+        /// esta propiedad contendrá el número del contrato
+        /// </summary>
+        public string FormatoLargoContrato { get; set; }
+
+        /// <summary>
+        /// Consecutivo de la operación
+        /// </summary>
+        public long ConsecutivoOperacion { get; set; }
+
+        /// <summary>
+        /// Cédula del deudor
+        /// </summary>
+        public string CedulaDeudor { get; set; }
+
+        /// <summary>
+        /// Nombre del deudor
+        /// </summary>
+        public string NombreDeudor { get; set; }
 
         #endregion Propiedades
 
@@ -205,42 +272,42 @@ namespace BCR.GARANTIAS.Entidades
         {
             StringBuilder cadenaRetornada = new StringBuilder();
 
-            if (this.TipoOperacion == 1)
+            if (TipoOperacion == 1)
             {
                 if (paraMensaje)
                 {
                     cadenaRetornada.Append("<br />");
                 }
 
-                cadenaRetornada.Append(this.Contabilidad.ToString());
+                cadenaRetornada.Append(Contabilidad.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Oficina.ToString());
+                cadenaRetornada.Append(Oficina.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Moneda.ToString());
+                cadenaRetornada.Append(Moneda.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Producto.ToString());
+                cadenaRetornada.Append(Producto.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Operacion.ToString());
+                cadenaRetornada.Append(Operacion.ToString());
 
                 if (paraMensaje)
                 {
                     cadenaRetornada.Append(".");
                 }
             }
-            else if (this.TipoOperacion == 2)
+            else if (TipoOperacion == 2)
             {
                 if (paraMensaje)
                 {
                     cadenaRetornada.Append("<br />");
                 }
                 
-                cadenaRetornada.Append(this.Contabilidad.ToString());
+                cadenaRetornada.Append(Contabilidad.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Oficina.ToString());
+                cadenaRetornada.Append(Oficina.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Moneda.ToString());
+                cadenaRetornada.Append(Moneda.ToString());
                 cadenaRetornada.Append(" - ");
-                cadenaRetornada.Append(this.Operacion.ToString());
+                cadenaRetornada.Append(Operacion.ToString());
 
                 if (paraMensaje)
                 {

@@ -1,0 +1,408 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="mtpMenuPrincipal.master.cs" Inherits="BCRGARANTIAS.Presentacion.mtpMenuPrincipal" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <title>BCR - Garantías</title>
+
+    <link href="../Estilos/jquery.ui.all.css" type="text/css" rel="stylesheet" />
+
+    <script src="<%#ResolveUrl("~/JSLib/FuncionesGenericas.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery-1.9.1.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.core.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.position.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.widget.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.mouse.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.mousewheel.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.draggable.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.resizable.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-blind.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-fade.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-explode.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.button.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.dialog.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.accordion.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/moment.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/Utiles.min.js")%>" type="text/javascript"></script>
+       
+    <script language="javascript" type="text/javascript">
+        //<![CDATA[
+        $(document).ready(function () {
+
+            var $Alerta;
+            var $MensajeFechaPresentacion;
+            var $MensajeIndicadorInscripcionFPFA;
+            var $MensajeMontoMitigadorSinAvaluo;
+            var $MensajeCalculoMontoMitigadorMayor;
+            var $MensajeCalculoMontoMitigadorMenor;
+            var $MensajePorcentajeAceptacionInvalido;
+            var $MensajePartidoInvalido;
+            var $MensajeFincaInvalida;
+            var $MensajeClaseGarantiaInvalida;
+            var $MensajeTipoBienInvalido;
+            var $MensajeTipoMitigadorInvalido;
+            var $MensajeTipoDocumentoLegalInvalido;
+            var $MensajeValuacionesTerreno;
+            var $MensajeValuacionesNoTerreno;
+            var $MensajeIndicadorInscripcionInvalido;
+            var $MensajeValuacionesNoTerrenoFecha;
+            var $MensajeIndicadorInscripcionFCInvalida;
+            var $MensajeFechaUltimoSeguimiento;
+            var $MensajeFechaConstruccion;
+            var $MensajeFechaVencimiento;
+            var $MensajeFechaPrescripcion;
+            var $MensajeFechaAvaluoDiferenteSICC;
+            var $MensajeMontoTotalAvaluoDiferenteSICC;
+            var $MensajeDatosAvaluoDiferenteSICC;
+            var $MensajeMontoTotalizadoAvaluoDiferenteSICC;
+            var $MensajeFechaConstruccionMayorFechaConstitucion;
+            var $MensajeFechaUltimoSeguimientoFaltante;
+            var $MensajeValidezMtoAvalActTerrenoPorcMay;
+            var $MensajeValidezMtoAvalActTerrenoPorcMen;
+            var $MensajeValidezMtoAvalActTerrenoSinDatos;
+            var $MensajeValidezMtoAvalActTerrenoMontosDiff;
+            var $MensajeValidezMtoAvalActNoTerrenoDifSICC;
+            var $MensajeValidezMtoAvalActNoTerrenoMontosDif;
+            var $MensajeValidezMtoAvalActNoTerrenoSinDatos;
+            var $MensajeFechaPrescripcionMenor;
+            var $MensajeTipoDocumentoLegalInvalidoSegunGradoGravamen;
+            var $MensajePorcentajeAceptacionInvalidoIndIns;
+            var $MensajeFechaAvaluoNoExisteSICC;
+            var $MensajeFechaConstitucion;
+            var $MensajeFechaPrescripcionSinCalcular;
+            var $MensajeMontoUltimaTasacionNoTerrenoCero;
+            var $MensajeMontoUltimaTasacionTerrenoCero;
+            var $MensajeCatalogoTipoBien;
+            var $MensajePolizaVencida;
+            var $MensajePolizaInvalida;
+            var $MensajeCambioMontoPoliza;
+            var $MensajeCambioAcreedorPoliza;
+            var $MensajeCambioCedulaAcreedorPoliza;
+            var $MensajeCambioDatosAcreedorPoliza;
+            var $MensajeCambioFechaVencimientoPoliza;
+            var $MensajeMontoAcreenciaDigitadoInvalido;
+            var $MensajeMontoAcreenciaTotalizadoInvalido;
+            var $MensajeMontoPolizaMenorMontoUltimaTasacionNoTerreno;
+            var $MensajePolizaInvalidaRelacionTipoBienPoliza;
+            var $MensajeClaseGarantia56;
+            var $MensajeClaseGarantia57;
+            var $MensajeClaseGarantia58;
+            var $MensajeCoberturasObligatoriasInvalidas;
+
+            var $errorFechaPresentacion;
+            var $camposMensajeFechaPrescripcionMenor;
+            var $arregloCamposValuacion;
+            var $listaSemestreEvaluar;
+            var $listaPolizas;
+            var $calculoMontoMitigadorAplicado;
+
+            var $MensajeDuplicadoTipoPolizaBienRelacionado;
+
+            //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            var $MensajePorcAceptTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptTerrenoCalcFechaValuacionInvalido;
+            var $MensajePorceAcepTerrenoMayorPorceAcepTerrenoCalculado;
+            var $MensajePorcAceptNoTerrenoCalcNoAnotadaNoInscritaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcAnotadaInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipoInvalido;
+            var $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido;
+            var $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado;
+
+            var $MostrarMensajesPorAceptAvaluo;
+
+            PageInit();
+
+            MostrarAvaluoReal(false);
+            MostrarPoliza(false);
+
+            if (typeof (Sys) !== 'undefined') {
+                var prm = Sys.WebForms.PageRequestManager.getInstance();
+                if (prm != null) {
+                    prm.add_endRequest(function (sender, e) {
+                        if (sender._postBackSettings.panelsToUpdate != null) {
+                            $("#accordion").accordion();
+                            $("#accPoliza").accordion();
+                        }
+                    });
+                };
+            };
+        }); 
+            
+       
+        //]]>
+    </script>
+    
+    <script language="javascript" type="text/javascript">
+       //<![CDATA[
+		    window.history.forward(1); 
+       //]]>
+    </script>
+
+
+    <script language="javascript" type="text/javascript">
+		function EsNumerico(nCampo)
+		{
+		    if(nCampo.value.length > 0)
+		    {
+			    if(!IsNum(nCampo))
+			    {
+				    alert('El campo debe ser numérico.'); 
+				    nCampo.focus();
+			    }
+		    }
+		}
+		
+		function EsPorcentaje(nCampo)
+		{
+			if(nCampo.value.length > 0)
+			{
+				if(!IsNum(nCampo))
+				{
+					alert('El campo debe ser numérico.'); 
+					nCampo.focus();
+				}
+			}
+			if(nCampo.value.length > 0)
+			{
+				if(nCampo.value > 100)
+				{
+					alert('El valor del campo debe estar entre 0 y 100.'); 
+					nCampo.focus();
+				}
+			}	
+		}
+		       
+        
+    </script>
+
+    <script language="javascript" type="text/javascript"> 
+	
+		var message="BCR GARANTIAS - Sistema de Control y Captura de Garantías" 
+		var message=message+" "
+		i="0"			      
+		var temptitle=""      
+		var speed="150"       
+
+		function titler(){
+			if (!document.all&&!document.getElementById)
+				return
+			document.title=temptitle+message.charAt(i) 
+			temptitle=temptitle+message.charAt(i)      
+			i++					   
+			if(i==message.length)
+			{
+				i="0"				
+				temptitle=""		
+			}
+			setTimeout("titler()",speed)
+		}
+
+		window.onload=titler
+		
+    </script>
+
+    <script language="javascript" type="text/javascript">
+
+            function FormatNumber(oControl, num, decimalPlaces, appendZeros, insertCommas, EsPorcentaje) 
+            {
+                var $Aplica_Calculo_Porcentaje_Aceptacion = parseInt(((typeof ($$('hdnAplicaCalculoPA')) !== 'undefined') && (typeof ($$('hdnAplicaCalculoPA').val()) !== 'undefined') && ($$('hdnAplicaCalculoPA').val().length > 0) ? $$('hdnAplicaCalculoPA').val() : '1'));
+                
+                var bSeFormatea = true;
+                var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
+                var bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerreno") != -1) ? true : false);
+
+                bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacionCalculado") != -1) ? true : ((bValidarPorAcept) ? true : false));
+            
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerreno") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+
+                if(num.toString().length > 0)
+		        {
+			        if(!IsNum(oControl))
+			        {
+				        alert('El campo debe ser numérico.'); 
+				        oControl.focus();
+			        }
+			        else
+			        {
+			            if(EsPorcentaje)
+			            {
+			                if(num.toString().length > 0)
+			                {
+				                if(num > 100)
+				                {
+					                alert('El valor del campo debe estar entre 0 y 100.'); 
+					                oControl.focus();
+					                bSeFormatea = false;
+				                }
+			                }	
+			            }
+			        
+			            if(bSeFormatea)
+			            {
+                            var powerOfTen = Math.pow(10, decimalPlaces);
+
+                            if (!appendZeros && !insertCommas) 
+                            {
+                                return num;
+                            }
+                            else 
+                            {
+                                var strNum = num.toString();
+                            
+                                var posDecimal = strNum.indexOf(".");
+                                if (appendZeros) 
+                                {
+                                    var zeroToAppendCnt = 0;
+                                    if (posDecimal < 0) 
+                                    {
+                                        strNum += ".";
+                                        zeroToAppendCnt = decimalPlaces;
+                                    }
+                                    else 
+                                    {
+                                        zeroToAppendCnt = decimalPlaces - (strNum.length -
+                                        posDecimal - 1);
+                                    }
+                                    for (var i = 0; i < zeroToAppendCnt; i++) 
+                                    {
+                                        strNum += "0";
+                                    }
+                                }
+                                if (insertCommas && (Math.abs(num) >= 1000)) 
+                                {
+                                    var i = strNum.indexOf(".");
+                                    if (i < 0) 
+                                    {
+                                        i = strNum.length;
+                                    }
+                                    i -= 3;
+                                    while (i >= 1) 
+                                    {
+                                        strNum = strNum.substring(0, i) + ',' +
+                                        strNum.substring(i, strNum.length);
+                                        i -= 3;
+                                    }
+                                }
+
+                                var Arreglo = strNum.split('.');
+
+                                if(Arreglo.length = 2)
+                                {
+
+
+                                    strNum = Arreglo[0] + '.' + Arreglo[1].substring(0, 2);
+                                }
+
+                                oControl.value = strNum;
+                            
+                                //return strNum;
+                            }
+                        }
+                    }
+                }
+
+                 if ((bSeFormatea) && (bValidarPorAcept) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
+                    ValidarPorcentajeAceptacionCalculado();
+                    ValidarPorcentajeAceptacion();
+                }
+
+                if ((bSeFormatea) && (bValidarPorAceptAvaluo) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
+                    ValidarPorcentajeAceptacionCalculado();
+                }
+
+                if (bSeFormatea) {
+                    return strNum;
+                }
+            }
+        
+            function numbersonly(e)
+            {
+        
+                var unicode=e.charCode? e.charCode : e.keyCode;
+            
+                if (unicode!=8)
+                { //if the key isn't the backspace key (which we should allow)
+                    if (unicode<48||unicode>57) //if not a number
+                    {
+                        if(unicode!=46)
+                            return false //disable key press
+                    }
+                }
+            }
+
+            function Count(text,long) 
+    {
+        var maxlength = new Number(long); 
+
+        if(text.value.length > maxlength)
+        {
+                text.value = text.value.substring(0,maxlength);
+        }
+
+    }
+ 
+    </script>
+
+</head>
+<body bgcolor="#e5e9ef" topmargin="0">
+
+    <form id="frmActividades" method="post" runat="server">
+        <div id="divPrincipal">
+            <table id="tblPrincipal" cellspacing="0" cellpadding="0" width="300" align="center"
+                bgcolor="window" border="0">
+                <tr>
+                    <td align="center">
+                        <div class="erb-image-wrapper">
+                            <asp:Image ID="Image2" runat="server" ImageUrl="..\Images\Encabezado.jpg" Width="100%"></asp:Image>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" bgcolor="#F7F6F3" style="width:880px; text-align:center;">
+                        <asp:Menu ID="menuPrincipal" runat="server" BackColor="#F7F6F3" Font-Bold="False" ForeColor="#7C6F57"
+                            Orientation="Horizontal" OnMenuItemClick="NavigationMenu_MenuItemClick" CssClass="MenuPrincipal"
+                            StaticSubMenuIndent="1px" DynamicHorizontalOffset="0" DynamicVerticalOffset="0" Width="740px">
+                            <StaticMenuStyle CssClass="MenuPrincipal" />
+                            <StaticMenuItemStyle CssClass="MenuPrincipal" HorizontalPadding="5px" VerticalPadding="2px" />
+                            <DynamicHoverStyle CssClass="MenuPrincipal" BackColor="#96A1B6" ForeColor="White" />
+                            <DynamicMenuStyle CssClass="MenuPrincipal" BackColor="#F7F6F3" />
+                            <StaticSelectedStyle BackColor="#F7F6F3" />
+                            <DynamicSelectedStyle BackColor="#F7F6F3" />
+                            <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="2px" />
+                            <StaticHoverStyle BackColor="#96A1B6" ForeColor="White" />
+                        </asp:Menu>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width: 880px; height: 19px" bgcolor="#e0e0df">
+                        <table>
+                            <tr>
+                                <td align="left" style="width:880px; float:left; padding-left:5px;">
+                                    <asp:Label ID="lblUsrConectado" runat="server" CssClass="Txt_Fecha" Width="472px"></asp:Label></td>
+                                <td align="right" style="width:870px; float:right; padding-right:5px;">
+                                    <asp:Label ID="lblFecha" runat="server" CssClass="Txt_Fecha" Width="286px"></asp:Label></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>         
+                           
+                <tr>
+                    <td>
+                        <asp:ContentPlaceHolder ID="cphPrincipal" runat="server">
+                        </asp:ContentPlaceHolder>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</body>
+</html>

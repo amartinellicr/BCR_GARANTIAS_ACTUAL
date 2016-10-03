@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 using System.Xml;
-using System.Data;
 using System.Diagnostics;
 
 using BCR.GARANTIAS.Comun;
@@ -77,7 +75,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         public clsTiposPolizasSugef()
         {
-            this.tramaDatos = string.Empty;
+            tramaDatos = string.Empty;
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace BCR.GARANTIAS.Entidades
         /// <param name="tramaDatosBD">Trama que posee los datos de las relaciones entre el tipo de bien y los tipos de pólizas obtenidas de la Base de Datos</param>
         public clsTiposPolizasSugef(string tramaDatosBD)
         {
-            this.tramaDatos = string.Empty;
+            tramaDatos = string.Empty;
 
             if (tramaDatosBD.Length > 0)
             {
@@ -109,7 +107,7 @@ namespace BCR.GARANTIAS.Entidades
 
                 if (xmlDatos != null)
                 {
-                    this.tramaDatos = tramaDatosBD;
+                    tramaDatos = tramaDatosBD;
 
                     if (xmlDatos.HasChildNodes)
                     {
@@ -121,13 +119,13 @@ namespace BCR.GARANTIAS.Entidades
 
                             if (entidadTipoPolizaSugef.ErrorDatos)
                             {
-                                this.errorDatos = entidadTipoPolizaSugef.ErrorDatos;
-                                this.descripcionError = entidadTipoPolizaSugef.DescripcionError;
+                                errorDatos = entidadTipoPolizaSugef.ErrorDatos;
+                                descripcionError = entidadTipoPolizaSugef.DescripcionError;
                                 break;
                             }
                             else
                             {
-                                this.Agregar(entidadTipoPolizaSugef);
+                                Agregar(entidadTipoPolizaSugef);
                             }
                         }
                     }

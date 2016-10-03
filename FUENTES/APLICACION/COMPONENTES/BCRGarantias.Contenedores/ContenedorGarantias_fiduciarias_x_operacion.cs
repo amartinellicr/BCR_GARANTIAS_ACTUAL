@@ -19,8 +19,9 @@ namespace BCRGarantias.Contenedores
         public const string COD_TIPO_ACREEDOR = "cod_tipo_acreedor";
         public const string CEDULA_ACREEDOR = "cedula_acreedor";
         public const string COD_ESTADO = "cod_estado";
+        public const string PORCENTAJE_ACEPTACION = "Porcentaje_Aceptacion";
 
-		#endregion
+        #endregion
 
         public ContenedorGarantias_fiduciarias_x_operacion()
 		{

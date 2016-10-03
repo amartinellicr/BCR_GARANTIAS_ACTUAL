@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Data;
-using System.IO;
-using System.Reflection;
 
 using BCR.GARANTIAS.Comun;
-using BCRGARANTIAS.Datos;
 
 namespace BCR.GARANTIAS.Entidades
 {
@@ -332,22 +324,22 @@ namespace BCR.GARANTIAS.Entidades
         {
             bool camposRequeridos = true;
 
-            if (camposRequeridos && this.tipoBien == -1)
+            if (camposRequeridos && tipoBien == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de bien", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de bien", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.tipoPolizaSap == -1)
+            if (camposRequeridos && tipoPolizaSap == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SAP", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SAP", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
-            if (camposRequeridos && this.tipoPolizaSugef == -1)
+            if (camposRequeridos && tipoPolizaSugef == -1)
             {
-                this.descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SUGEF", Mensajes.ASSEMBLY);
-                this.errorDatos = true;
+                descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "al tipo de póliza SUGEF", Mensajes.ASSEMBLY);
+                errorDatos = true;
                 camposRequeridos = false;
             }
 

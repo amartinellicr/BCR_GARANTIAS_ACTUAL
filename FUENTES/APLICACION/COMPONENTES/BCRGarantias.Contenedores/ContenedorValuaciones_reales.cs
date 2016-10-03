@@ -22,8 +22,20 @@ namespace BCRGarantias.Contenedores
         public const string COD_RECOMENDACION_PERITO = "cod_recomendacion_perito";
         public const string COD_INSPECCION_MENOR_TRES_MESES = "cod_inspeccion_menor_tres_meses";
         public const string FECHA_CONSTRUCCION = "fecha_construccion";
+        public const string INDICADOR_TIPO_REGISTRO = "Indicador_Tipo_Registro";
+        public const string INDICADOR_ACTUALIZADO_CALCULO = "Indicador_Actualizado_Calculo";
+        public const string FECHA_SEMESTRE_CALCULADO = "Fecha_Semestre_Calculado";
+        public const string USUARIO_MODIFICO = "Usuario_Modifico";
+        public const string FECHA_MODIFICO = "Fecha_Modifico";
+        public const string FECHA_INSERTO = "Fecha_Inserto";
+        public const string FECHA_REPLICA = "Fecha_Replica";
+        public const string PORCENTAJE_ACEPTACION_TERRENO = "Porcentaje_Aceptacion_Terreno";
+        public const string PORCENTAJE_ACEPTACION_NO_TERRENO = "Porcentaje_Aceptacion_No_Terreno";
+        public const string PORCENTAJE_ACEPTACION_TERRENO_CALCULADO = "Porcentaje_Aceptacion_Terreno_Calculado";
+        public const string PORCENTAJE_ACEPTACION_NO_TERRENO_CALCULADO = "Porcentaje_Aceptacion_No_Terreno_Calculado";
+ 
 
-		#endregion
+        #endregion
 
         public ContenedorValuaciones_reales()
 		{
@@ -84,9 +96,53 @@ namespace BCRGarantias.Contenedores
             campo.Llave = FECHA_CONSTRUCCION;
 			Campos.Agregar(campo);
 
+            campo = new CampoBase();
+            campo.Llave = INDICADOR_TIPO_REGISTRO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = INDICADOR_ACTUALIZADO_CALCULO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_SEMESTRE_CALCULADO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = USUARIO_MODIFICO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_MODIFICO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_INSERTO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = FECHA_REPLICA;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = PORCENTAJE_ACEPTACION_TERRENO;
+            campo.EsLlave = true;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = PORCENTAJE_ACEPTACION_NO_TERRENO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = PORCENTAJE_ACEPTACION_TERRENO_CALCULADO;
+            Campos.Agregar(campo);
+
+            campo = new CampoBase();
+            campo.Llave = PORCENTAJE_ACEPTACION_NO_TERRENO_CALCULADO;
+            Campos.Agregar(campo);
 
 
-			NombreEntidad = NOMBRE_ENTIDAD;
+            NombreEntidad = NOMBRE_ENTIDAD;
 
 		}
     }

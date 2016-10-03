@@ -2,14 +2,22 @@ using System;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
-using BCRGARANTIAS.Datos;
-using BCRGarantias.Contenedores;
 using System.Configuration;
+
+using BCRGARANTIAS.Datos;
+using BCR.GARANTIAS.Entidades;
 
 namespace BCRGARANTIAS.Negocios
 {
     public class Tarjetas
     {
+        #region Variables Globales
+
+        string sentenciaSql = string.Empty;
+        string[] listaCampos = { string.Empty };
+
+        #endregion Variables Globales
+
         #region Métodos Públicos
 
         /// <summary>
@@ -24,137 +32,139 @@ namespace BCRGARANTIAS.Negocios
             int nCodigoRetornado = -1;
             string strTipoGarantia = "-";
             Bitacora oBitacora = new Bitacora();
+            DataSet dsData = new DataSet();
+            DataSet dsTarjeta = new DataSet();
+            long nNumeroTarjeta = 0;
 
             try
             {
                 if ((strEstadoTarjeta != string.Empty) && (strNumeroTarjeta != string.Empty))
                 {
-					using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
-					{
-						SqlCommand oComando = new SqlCommand("pa_ModificarEstadoTarjeta", oConexion);
-						DataSet dsData = new DataSet();
-						SqlParameter oParam = new SqlParameter();
+                    #region Obtener los datos de la BD antes de ser actualizados
 
-						long nNumeroTarjeta = 0;
+                    //Se obtienen los datos antes de ser modificados, para luego insertalos en la bitácora
+                    strNumeroTarjeta = ((Int64.TryParse(strNumeroTarjeta, out nNumeroTarjeta)) ? nNumeroTarjeta.ToString() : string.Empty);
 
-						if (Int64.TryParse(strNumeroTarjeta, out nNumeroTarjeta))
-						{
-							//nNumeroTarjeta = Convert.ToInt64(strNumeroTarjeta);
-							strNumeroTarjeta = nNumeroTarjeta.ToString();
-						}
+                    listaCampos = new string[] { clsTarjeta._indicadorEstadoTarjeta, clsTarjeta._codigoTipoGarantia,
+                                                 clsTarjeta._entidadTarjeta,
+                                                 clsTarjeta._numeroTarjeta, strNumeroTarjeta};
 
-						#region Obtener los datos de la BD antes de ser actualizados
+                    sentenciaSql = string.Format("SELECT {0}, {1} FROM dbo.{2} WHERE {3} = '{4}'", listaCampos);
 
-						DataSet dsTarjeta = new DataSet();
+                    dsTarjeta = AccesoBD.ejecutarConsulta(sentenciaSql);
 
-						//Se obtienen los datos antes de ser modificados, para luego insertalos en la bitácora
-						string strConsultaTarjeta = "select " +
-								 ContenedorTarjeta.COD_ESTADO_TARJETA + "," +
-								 ContenedorTarjeta.COD_TIPO_GARANTIA +
-								 " from " + ContenedorTarjeta.NOMBRE_ENTIDAD +
-								 " where " + ContenedorTarjeta.NUM_TARJETA + " = '" + strNumeroTarjeta + "'";
-
-						dsTarjeta = AccesoBD.ejecutarConsulta(strConsultaTarjeta);
-
-						#endregion
-
-						//Declara las propiedades del comando
-						oComando.CommandType = CommandType.StoredProcedure;
-
-						//Agrega los parametros
-						oComando.Parameters.AddWithValue("@strNumeroTarjeta", strNumeroTarjeta);
-						oComando.Parameters.AddWithValue("@strEstadoTarjeta", strEstadoTarjeta);
-
-						//Abre la conexion
-						oConexion.Open();
-
-						//Ejecuta el comando
-						nCodigoRetornado = Convert.ToInt32(oComando.ExecuteScalar().ToString());
-
-						if (nCodigoRetornado == 0)
-						{
-							#region Inserción en Bitácora
-
-							TraductordeCodigos oTraductor = new TraductordeCodigos();
-
-							string strModificarTarjeta = "UPDATE TAR_TARJETA SET cod_estado_tarjeta = '" + strEstadoTarjeta +
-								"' WHERE num_tarjeta = '" + strNumeroTarjeta + "'";
+                    #endregion
 
 
-							if ((dsTarjeta != null) && (dsTarjeta.Tables.Count > 0) && (dsTarjeta.Tables[0].Rows.Count > 0))
-							{
-								if (nTipoGarantia == -1)
-								{
-									if (!dsTarjeta.Tables[0].Rows[0].IsNull(ContenedorTarjeta.COD_TIPO_GARANTIA))
-									{
-										strTipoGarantia = dsTarjeta.Tables[0].Rows[0][ContenedorTarjeta.COD_TIPO_GARANTIA].ToString();
+                    using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                    {
+                        using (SqlCommand oComando = new SqlCommand("pa_ModificarEstadoTarjeta", oConexion))
+                        {
+                            SqlParameter oParam = new SqlParameter();
 
-										if (strTipoGarantia.CompareTo("1") != 0)
-										{
-											nTipoGarantia = 4;
-										}
-										else
-										{
-											nTipoGarantia = 1;
-										}
-									}
-								}
+                            //Declara las propiedades del comando
+                            oComando.CommandType = CommandType.StoredProcedure;
 
-								if (!dsTarjeta.Tables[0].Rows[0].IsNull(ContenedorTarjeta.COD_ESTADO_TARJETA))
-								{
-									string strTipoEstadoObt = dsTarjeta.Tables[0].Rows[0][ContenedorTarjeta.COD_ESTADO_TARJETA].ToString();
+                            //Agrega los parametros
+                            oComando.Parameters.AddWithValue("@strNumeroTarjeta", strNumeroTarjeta);
+                            oComando.Parameters.AddWithValue("@strEstadoTarjeta", strEstadoTarjeta);
 
-									if (strTipoEstadoObt.CompareTo(strEstadoTarjeta) != 0)
-									{
+                            //Abre la conexion
+                            oComando.Connection.Open();
 
-										oBitacora.InsertarBitacora(ContenedorTarjeta.NOMBRE_ENTIDAD, "SISTAR", "-", null,
-										   2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
-										   ContenedorTarjeta.COD_ESTADO_TARJETA,
-										   oTraductor.TraducirCodigoEstadoTarjeta(strTipoEstadoObt),
-										   oTraductor.TraducirCodigoEstadoTarjeta(strEstadoTarjeta));
-									}
-								}
-								else
-								{
+                            //Ejecuta el comando
+                            nCodigoRetornado = Convert.ToInt32(oComando.ExecuteScalar().ToString());
 
-									oBitacora.InsertarBitacora(ContenedorTarjeta.NOMBRE_ENTIDAD, "SISTAR", "-", null,
-										   2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
-										   ContenedorTarjeta.COD_ESTADO_TARJETA,
-										   string.Empty,
-										   oTraductor.TraducirCodigoEstadoTarjeta(strEstadoTarjeta));
-								}
-							}
-							else
-							{
-								if (nTipoGarantia != -1)
-								{
-									oBitacora.InsertarBitacora(ContenedorTarjeta.NOMBRE_ENTIDAD, "SISTAR", "-", null,
-										2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
-										string.Empty,
-										string.Empty,
-										string.Empty);
-								}
-								else
-								{
-									oBitacora.InsertarBitacora(ContenedorTarjeta.NOMBRE_ENTIDAD, "SISTAR", "-", null,
-										2, null, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
-										string.Empty,
-										string.Empty,
-										string.Empty);
-								}
-							}
+                            oComando.Connection.Close();
+                            oComando.Connection.Dispose();
+                        }
+                    }
 
-							#endregion
-						}
-						else
-						{
-							oBitacora.InsertarBitacora(ContenedorTarjeta.NOMBRE_ENTIDAD, "SISTAR", "-", null,
-							   2, nTipoGarantia, string.Empty, strNumeroTarjeta, "Error al cambiar estado: " + nCodigoRetornado.ToString(), string.Empty,
-							   ContenedorTarjeta.COD_ESTADO_TARJETA,
-							   string.Empty,
-							   strEstadoTarjeta);
-						}
-					}
+                    if (nCodigoRetornado == 0)
+                    {
+                        #region Inserción en Bitácora
+
+                        TraductordeCodigos oTraductor = new TraductordeCodigos();
+
+                        listaCampos = new string[] { clsTarjeta._entidadTarjeta,
+                                                     clsTarjeta._indicadorEstadoTarjeta, strEstadoTarjeta,
+                                                     clsTarjeta._numeroTarjeta, strNumeroTarjeta};
+
+                        string strModificarTarjeta = string.Format("UPDATE {0} SET {1} = '{2}' WHERE {3} = '{4}'", listaCampos);
+                        
+                        if ((dsTarjeta != null) && (dsTarjeta.Tables.Count > 0) && (dsTarjeta.Tables[0].Rows.Count > 0))
+                        {
+                            if (nTipoGarantia == -1)
+                            {
+                                if (!dsTarjeta.Tables[0].Rows[0].IsNull(clsTarjeta._codigoTipoGarantia))
+                                {
+                                    strTipoGarantia = dsTarjeta.Tables[0].Rows[0][clsTarjeta._codigoTipoGarantia].ToString();
+
+                                    if (strTipoGarantia.CompareTo("1") != 0)
+                                    {
+                                        nTipoGarantia = 4;
+                                    }
+                                    else
+                                    {
+                                        nTipoGarantia = 1;
+                                    }
+                                }
+                            }
+
+                            if (!dsTarjeta.Tables[0].Rows[0].IsNull(clsTarjeta._indicadorEstadoTarjeta))
+                            {
+                                string strTipoEstadoObt = dsTarjeta.Tables[0].Rows[0][clsTarjeta._indicadorEstadoTarjeta].ToString();
+
+                                if (strTipoEstadoObt.CompareTo(strEstadoTarjeta) != 0)
+                                {
+
+                                    oBitacora.InsertarBitacora(clsTarjeta._entidadTarjeta, "SISTAR", "-", null,
+                                       2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
+                                       clsTarjeta._indicadorEstadoTarjeta,
+                                       oTraductor.TraducirCodigoEstadoTarjeta(strTipoEstadoObt),
+                                       oTraductor.TraducirCodigoEstadoTarjeta(strEstadoTarjeta));
+                                }
+                            }
+                            else
+                            {
+
+                                oBitacora.InsertarBitacora(clsTarjeta._entidadTarjeta, "SISTAR", "-", null,
+                                       2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
+                                       clsTarjeta._indicadorEstadoTarjeta,
+                                       string.Empty,
+                                       oTraductor.TraducirCodigoEstadoTarjeta(strEstadoTarjeta));
+                            }
+                        }
+                        else
+                        {
+                            if (nTipoGarantia != -1)
+                            {
+                                oBitacora.InsertarBitacora(clsTarjeta._entidadTarjeta, "SISTAR", "-", null,
+                                    2, nTipoGarantia, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
+                                    string.Empty,
+                                    string.Empty,
+                                    string.Empty);
+                            }
+                            else
+                            {
+                                oBitacora.InsertarBitacora(clsTarjeta._entidadTarjeta, "SISTAR", "-", null,
+                                    2, null, string.Empty, strNumeroTarjeta, strModificarTarjeta, string.Empty,
+                                    string.Empty,
+                                    string.Empty,
+                                    string.Empty);
+                            }
+                        }
+
+                        #endregion
+                    }
+                    else
+                    {
+                        oBitacora.InsertarBitacora(clsTarjeta._entidadTarjeta, "SISTAR", "-", null,
+                           2, nTipoGarantia, string.Empty, strNumeroTarjeta, "Error al cambiar estado: " + nCodigoRetornado.ToString(), string.Empty,
+                           clsTarjeta._indicadorEstadoTarjeta,
+                           string.Empty,
+                           strEstadoTarjeta);
+                    }
                 }
                 else
                 {
@@ -174,7 +184,7 @@ namespace BCRGARANTIAS.Negocios
                     {
                         nCodigoRetornado = 2;
                     }
-                    
+
                 }
             }
             catch
@@ -197,19 +207,35 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-				using (OleDbConnection oleDbConnection1 = AccesoBD.ObtenerStringConexion())
-				{
-					OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT cod_estado_tarjeta FROM " + ContenedorTarjeta.NOMBRE_ENTIDAD + " WHERE num_tarjeta = '" + strNumeroTarjeta + "'", oleDbConnection1);
-					cmdConsulta.Fill(dsDatos, "Tarjeta");
+                listaCampos = new string[] {clsTarjeta._indicadorEstadoTarjeta, 
+                                            clsTarjeta._entidadTarjeta,
+                                            clsTarjeta._numeroTarjeta, strNumeroTarjeta};
 
-					if ((dsDatos.Tables["Tarjeta"] != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Tarjeta"].Rows.Count > 0))
-					{
-						if (!dsDatos.Tables["Tarjeta"].Rows[0].IsNull(ContenedorTarjeta.COD_ESTADO_TARJETA))
-						{
-							strEstadoActual = dsDatos.Tables["Tarjeta"].Rows[0][ContenedorTarjeta.COD_ESTADO_TARJETA].ToString();
-						}
-					}
-				}
+                sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = '{3}'", listaCampos);
+
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                    {
+                        oComando.Connection.Open();
+
+                        using (SqlDataAdapter cmdUsuario = new SqlDataAdapter(oComando))
+                        {
+                            cmdUsuario.Fill(dsDatos, "Tarjeta");
+                        }
+
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
+
+                if ((dsDatos.Tables["Tarjeta"] != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Tarjeta"].Rows.Count > 0))
+                {
+                    if (!dsDatos.Tables["Tarjeta"].Rows[0].IsNull(clsTarjeta._indicadorEstadoTarjeta))
+                    {
+                        strEstadoActual = dsDatos.Tables["Tarjeta"].Rows[0][clsTarjeta._indicadorEstadoTarjeta].ToString();
+                    }
+                }
             }
             catch
             {
@@ -231,19 +257,35 @@ namespace BCRGARANTIAS.Negocios
 
             try
             {
-				using (OleDbConnection oleDbConnection1 = AccesoBD.ObtenerStringConexion())
-				{
-					OleDbDataAdapter cmdConsulta = new OleDbDataAdapter("SELECT bin FROM TAR_BIN_SISTAR WHERE bin = '" + nBin + "'", oleDbConnection1);
-					cmdConsulta.Fill(dsDatos, "Tarjeta");
+                listaCampos = new string[] {clsTarjeta._numeroBin,
+                                            clsTarjeta._entidadBinSistar,
+                                            clsTarjeta._numeroBin, nBin.ToString()};
 
-					if ((dsDatos.Tables["Tarjeta"] != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Tarjeta"].Rows.Count > 0))
-					{
-						if (!dsDatos.Tables["Tarjeta"].Rows[0].IsNull("bin"))
-						{
-							bPerteneceASistar = true;
-						}
-					}
-				}
+                sentenciaSql = string.Format("SELECT {0} FROM dbo.{1} WHERE {2} = '{3}'", listaCampos);
+
+                using (SqlConnection oConexion = new SqlConnection(AccesoBD.ObtenerConnectionString()))
+                {
+                    using (SqlCommand oComando = new SqlCommand(sentenciaSql, oConexion))
+                    {
+                        oComando.Connection.Open();
+
+                        using (SqlDataAdapter cmdUsuario = new SqlDataAdapter(oComando))
+                        {
+                            cmdUsuario.Fill(dsDatos, "Tarjeta");
+                        }
+
+                        oComando.Connection.Close();
+                        oComando.Connection.Dispose();
+                    }
+                }
+
+                if ((dsDatos.Tables["Tarjeta"] != null) && (dsDatos.Tables.Count > 0) && (dsDatos.Tables["Tarjeta"].Rows.Count > 0))
+                {
+                    if (!dsDatos.Tables["Tarjeta"].Rows[0].IsNull("bin"))
+                    {
+                        bPerteneceASistar = true;
+                    }
+                }
             }
             catch
             {
@@ -316,10 +358,11 @@ namespace BCRGARANTIAS.Negocios
                         _cmdGarantiaEliminada.CommandTimeout = 120;
 
                         /*ingresa los parámetro requeridos por el procedimiento almacenado*/
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@codigo_catalogo", ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString());
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@numero_tarjeta", _numeroTarjeta);
-                        _cmdGarantiaEliminada.Parameters.AddWithValue("@codigo_tipo_Garantia", _codigoGarantiaNuevo);
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@piCodigo_Catalogo", ConfigurationManager.AppSettings["CAT_TIPO_GARANTIA_TARJETA"].ToString());
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@pnNumero_Tarjeta", _numeroTarjeta);
+                        _cmdGarantiaEliminada.Parameters.AddWithValue("@piCodigo_Tipo_Garantia", _codigoGarantiaNuevo);
 
+                        
                         /*declara el sqlDataAdapter que realizará la consulta*/
                         SqlDataAdapter _daGarantiaEliminada = new SqlDataAdapter(_cmdGarantiaEliminada);
                         /*declara el DataTable que se utilizará para almacenar la información consultada*/
@@ -353,19 +396,16 @@ namespace BCRGARANTIAS.Negocios
                         #region Selecciona el valor del campo observaciones
 
                         /*declara el sqlCommand que se utilizará para la consulta*/
-                        SqlCommand _cmdObservaciones = new SqlCommand("declare @codigo_tarjeta int; " +
-                                                        "set @codigo_tarjeta = (select cod_tarjeta " +
-                                                        "from dbo.Tar_tarjeta " +
-                                                        "where num_tarjeta " + " = " + _numeroTarjeta + ") " +
-                                                        "select observaciones " +
-                                                        "from dbo.TAR_GARANTIAS_X_PERFIL_X_TARJETA " +
-                                                        "where cod_tarjeta = @codigo_tarjeta");
+
+                        sentenciaSql = string.Format("DECLARE @codigo_tarjeta INT; SET @codigo_tarjeta = (SELECT cod_tarjeta FROM dbo.Tar_tarjeta WHERE num_tarjeta = {0}) SELECT observaciones FROM dbo.TAR_GARANTIAS_X_PERFIL_X_TARJETA WHERE cod_tarjeta = @codigo_tarjeta", _numeroTarjeta);
+
+                        SqlCommand _cmdObservaciones = new SqlCommand(sentenciaSql);
 
                         /*se asigna la conexión*/
                         _cmdObservaciones.Connection = oConexion;
 
                         /*indica al sqlCommand el tiempo que puede durar la ejecución*/
-                        _cmdObservaciones.CommandTimeout = 120;
+                        _cmdObservaciones.CommandTimeout = AccesoBD.TiempoEsperaEjecucion;
 
 
                         string _observacionesAnteriores = string.Empty;
@@ -375,9 +415,9 @@ namespace BCRGARANTIAS.Negocios
                         #region Selecciona el valor del campo cod_tipo_garantia de la tabla tar_tarjeta
 
                         /*declara el sqlCommand que se utilizará para la consulta*/
-                        SqlCommand _cmdCodigoGarantia = new SqlCommand("select cod_tipo_garantia " +
-                                                        "from dbo.TAR_TARJETA " +
-                                                        "where num_tarjeta = " + _numeroTarjeta);
+                        sentenciaSql = string.Format("SELECT cod_tipo_garantia FROM dbo.TAR_TARJETA WHERE num_tarjeta = '{0}'", _numeroTarjeta);
+
+                        SqlCommand _cmdCodigoGarantia = new SqlCommand(sentenciaSql);
 
                         /*se asigna la conexión*/
                         _cmdCodigoGarantia.Connection = oConexion;
@@ -502,36 +542,22 @@ namespace BCRGARANTIAS.Negocios
 
             if (_drInfoFilaEliminada.Table.Columns.Count == 2)
             {
-                string strEliminarGarXPerfilXTarjeta = "declare @codigo_tarjeta int; " +
-                                                       "set @codigo_tarjeta = (select cod_tarjeta " +
-                                                       "from dbo.Tar_tarjeta " +
-                                                       "where num_tarjeta = " + numeroTarjeta + ") " +
-                                                       "delete TAR_GARANTIAS_X_PERFIL_X_TARJETA " +
-                                                       "where cod_tarjeta = @codigo_tarjeta";
+                string strEliminarGarXPerfilXTarjeta = string.Format("DECLARE @codigo_tarjeta INT; SET @codigo_tarjeta = (SELECT cod_tarjeta FROM dbo.Tar_tarjeta WHERE num_tarjeta = {0}) DELETE FROM dbo.TAR_GARANTIAS_X_PERFIL_X_TARJETA WHERE cod_tarjeta = @codigo_tarjeta", numeroTarjeta);
 
                 oBitacora.InsertarBitacora("TAR_GARANTIAS_X_PERFIL_X_TARJETA", strUsuario, strIP, null,
                                            3, 4, null, numeroTarjeta, strEliminarGarXPerfilXTarjeta, string.Empty,
-                                           _drInfoFilaEliminada.Table.Columns[ContenedorGarantias_x_perfil_x_tarjeta.OBSERVACIONES].ColumnName,
-                                           _drInfoFilaEliminada[ContenedorGarantias_x_perfil_x_tarjeta.OBSERVACIONES].ToString(),
+                                           _drInfoFilaEliminada.Table.Columns[clsGarantiasXPerfil._observacion].ColumnName,
+                                           _drInfoFilaEliminada[clsGarantiasXPerfil._observacion].ToString(),
                                            string.Empty);
             }/*fin del if (_drInfoFilaEliminada.Table.Columns.Count == 1)*/
             else
             {
 
-                string strEliminarGarFiduXTarjeta = "declare @codigo_tarjeta int; " +
-                                                    "set @codigo_tarjeta = (select cod_tarjeta " +
-                                                    "from dbo.Tar_tarjeta " +
-                                                    "where num_tarjeta = " + numeroTarjeta + ") " +
-                                                    "delete TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA " +
-                                                    "where cod_tarjeta = @codigo_tarjeta";
-
+                string strEliminarGarFiduXTarjeta = string.Format("DECLARE @codigo_tarjeta INT; SET @codigo_tarjeta = (SELECT cod_tarjeta FROM dbo.Tar_tarjeta WHERE num_tarjeta = {0}) DELETE FROM dbo.TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA WHERE cod_tarjeta = @codigo_tarjeta", numeroTarjeta);
 
                 string strCedulaFiador = oTraductor.ObtenerCedulaFiadorGarFiduTar(
-                    _drInfoFilaEliminada[ContenedorGarantias_fiduciarias_x_tarjeta.COD_GARANTIA_FIDUCIARIA].ToString());
+                    _drInfoFilaEliminada[clsGarantiaFiduciariaTarjeta._consecutivoGarantiaFiduciaria].ToString());
 
-                //string strCedulaDeudor = oTraductor.ObtenerCedulaDeudorTarjeta(nTarjeta.ToString());
-
-                //if ((dsGarantiaFiduciariaXTarjeta != null) && (dsGarantiaFiduciariaXTarjeta.Tables.Count > 0) && (dsGarantiaFiduciariaXTarjeta.Tables[0].Rows.Count > 0))
                 if (_drInfoFilaEliminada != null)
                 {
                     #region Garantía Fiduciaria por Tarjeta
@@ -542,21 +568,21 @@ namespace BCRGARANTIAS.Negocios
                     {
                         switch (_drInfoFilaEliminada.Table.Columns[nIndice].ColumnName)
                         {
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_GARANTIA_FIDUCIARIA: oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
+                            case clsGarantiaFiduciariaTarjeta._consecutivoGarantiaFiduciaria: oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
                                                                                            3, 1, strCedulaFiador, numeroTarjeta, strEliminarGarFiduXTarjeta, string.Empty,
                                                                                            _drInfoFilaEliminada.Table.Columns[nIndice].ColumnName,
                                                                                            strCedulaFiador,
                                                                                            string.Empty);
                                 break;
 
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_TARJETA: oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
+                            case clsGarantiaFiduciariaTarjeta._consecutivoTarjeta: oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
                                                                                            3, 1, strCedulaFiador, numeroTarjeta, strEliminarGarFiduXTarjeta, string.Empty,
                                                                                            _drInfoFilaEliminada.Table.Columns[nIndice].ColumnName,
                                                                                            numeroTarjeta,
                                                                                            string.Empty);
                                 break;
 
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_OPERACION_ESPECIAL:
+                            case clsGarantiaFiduciariaTarjeta._codigoOperacionEspecial:
                                 if (_drInfoFilaEliminada[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                 {
                                     oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
@@ -576,7 +602,7 @@ namespace BCRGARANTIAS.Negocios
 
                                 break;
 
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_TIPO_ACREEDOR:
+                            case clsGarantiaFiduciariaTarjeta._codigoTipoPersonaAcreedor:
                                 if (_drInfoFilaEliminada[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                 {
                                     oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
@@ -595,7 +621,7 @@ namespace BCRGARANTIAS.Negocios
                                 }
                                 break;
 
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_TIPO_DOCUMENTO_LEGAL:
+                            case clsGarantiaFiduciariaTarjeta._codigoTipoDocumentoLegal:
                                 if (_drInfoFilaEliminada[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                 {
                                     oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
@@ -614,7 +640,7 @@ namespace BCRGARANTIAS.Negocios
                                 }
                                 break;
 
-                            case ContenedorGarantias_fiduciarias_x_tarjeta.COD_TIPO_MITIGADOR:
+                            case clsGarantiaFiduciariaTarjeta._codigoTipoMitigador:
                                 if (_drInfoFilaEliminada[nIndice, DataRowVersion.Current].ToString() != string.Empty)
                                 {
                                     oBitacora.InsertarBitacora("TAR_GARANTIAS_FIDUCIARIAS_X_TARJETA", strUsuario, strIP, null,
@@ -642,8 +668,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                     }
-                    //}
-
+ 
                     #endregion
                 }
                 else
@@ -696,13 +721,15 @@ namespace BCRGARANTIAS.Negocios
 
             if (!mensaje.Equals(1))
             {
-                string strModificarTarjeta = "update dbo.TAR_TARJETA " +
-                                             "set cod_tipo_garantia = " + _codigoTipoGarantia + " " +
-                                             "where num_tarjeta = " + _numeroTarjeta;
+                listaCampos = new string[] { clsTarjeta._entidadTarjeta,
+                                             clsTarjeta._codigoTipoGarantia, _codigoTipoGarantia,
+                                             clsTarjeta._numeroTarjeta, _numeroTarjeta};
+
+                string strModificarTarjeta = string.Format("UPDATE dbo.{0} SET {1} = {2} WHERE {3} = '{4}'", listaCampos);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, null,
                                            2, 4, null, _numeroTarjeta, strModificarTarjeta, string.Empty,
-                                           ContenedorTarjeta.COD_TIPO_GARANTIA,
+                                           clsTarjeta._codigoTipoGarantia,
                                            traductor.TraducirCodigoTipoGarantiaTarjeta(_codigoGarantiaAnterior),
                                            traductor.TraducirCodigoTipoGarantiaTarjeta(_codigoTipoGarantia));
             }
@@ -711,55 +738,55 @@ namespace BCRGARANTIAS.Negocios
 
             if (mensaje.Equals(1))
             {
-                string strInsertarTarjeta = "insert into tar_tarjeta (cedula_deudor, num_tarjeta, cod_bin, " +
-                                            "cod_interno_sistar, cod_moneda, cod_oficina_registra, " +
-                                            "@cod_tipo_garantia, cod_estado_tarjeta) " +
-                                            "values (" + _infoTarjeta[0] + ", " + _numeroTarjeta + ", " + _infoTarjeta[0] + ", " +
-                                            _infoTarjeta[2] + ", " + _infoTarjeta[3] + ", " + _infoTarjeta[4] + ", " +
-                                            _codigoTipoGarantia + ", 'N') " +
-                                            "set @codigo_tarjeta = scope_identity(); " +
-                                            "insert into dbo.TAR_GARANTIAS_x_PERFIL_X_TARJETA (cod_tarjeta, observaciones) " +
-                                            "values(@codigo_tarjeta, " + _valorActual + ")";
+                listaCampos = new string[] { clsTarjeta._entidadTarjeta,
+                                             clsTarjeta._cedulaDeudor, clsTarjeta._numeroTarjeta, clsTarjeta._codigoBin, clsTarjeta._codigoInternoSistar, clsTarjeta._codigoMoneda,
+                                             clsTarjeta._codigoOficinaRegistra, clsTarjeta._codigoTipoGarantia, clsTarjeta._indicadorEstadoTarjeta,
+                                             _infoTarjeta[0], _numeroTarjeta, _infoTarjeta[0], _infoTarjeta[2], _infoTarjeta[3], _infoTarjeta[4], _codigoTipoGarantia,
+                                             clsGarantiasXPerfil._entidadGarantiaPerfilXTarjeta,
+                                             clsGarantiasXPerfil._consecutivoTarjeta, clsGarantiasXPerfil._observacion,
+                                             _valorActual};
+
+                string strInsertarTarjeta = string.Format("INSERT INTO dbo.{0} ({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}) VALUES({9}, {10}, {11}, {12}, {13}, {14}, {15}, 'N') SET @codigo_tarjeta = SCOPE_IDENTITY(); INSERT INTO dbo.{16} ({17}, {18}) VALUES(@codigo_tarjeta, {19})", listaCampos);
 
                 #region Tarjeta
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.CEDULA_DEUDOR, string.Empty, _infoTarjeta[0]);
+                    clsTarjeta._cedulaDeudor, string.Empty, _infoTarjeta[0]);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.NUM_TARJETA, string.Empty, _numeroTarjeta);
+                    clsTarjeta._numeroTarjeta, string.Empty, _numeroTarjeta);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_BIN, string.Empty, _infoTarjeta[1]);
+                    clsTarjeta._codigoBin, string.Empty, _infoTarjeta[1]);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_INTERNO_SISTAR, string.Empty, _infoTarjeta[2]);
+                    clsTarjeta._codigoInternoSistar, string.Empty, _infoTarjeta[2]);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_MONEDA, string.Empty, 
+                    clsTarjeta._codigoMoneda, string.Empty, 
                     traductor.TraducirTipoMoneda(Convert.ToInt32(_infoTarjeta[3])));
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_OFICINA_REGISTRA, string.Empty, _infoTarjeta[4]);
+                    clsTarjeta._codigoOficinaRegistra, string.Empty, _infoTarjeta[4]);
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_TIPO_GARANTIA, string.Empty, 
+                    clsTarjeta._codigoTipoGarantia, string.Empty, 
                     traductor.TraducirCodigoTipoGarantiaTarjeta(_codigoTipoGarantia));
 
                 oBitacora.InsertarBitacora("TAR_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorTarjeta.COD_ESTADO_TARJETA, string.Empty, traductor.TraducirCodigoEstadoTarjeta("N"));
+                    clsTarjeta._indicadorEstadoTarjeta, string.Empty, traductor.TraducirCodigoEstadoTarjeta("N"));
 
                 oBitacora.InsertarBitacora("TAR_GARANTIAS_x_PERFIL_X_TARJETA", _usuario, _iP, Convert.ToInt32(_infoTarjeta[4]),
                     1, 4, "-", _numeroTarjeta, strInsertarTarjeta, string.Empty,
-                    ContenedorGarantias_x_perfil_x_tarjeta.OBSERVACIONES, string.Empty, _valorActual);
+                    clsGarantiasXPerfil._observacion, string.Empty, _valorActual);
 
                 #endregion
 
@@ -777,7 +804,7 @@ namespace BCRGARANTIAS.Negocios
 
                     oBitacora.InsertarBitacora("TAR_GARANTIAS_x_PERFIL_X_TARJETA", _usuario, _iP, null,
                                                1, 4, null, _numeroTarjeta, strInsertarGarantiaPerfil, string.Empty,
-                                               ContenedorGarantias_x_perfil_x_tarjeta.OBSERVACIONES,
+                                               clsGarantiasXPerfil._observacion,
                                                _valorAnterior, _valorActual);
                 }
                 else
@@ -793,7 +820,7 @@ namespace BCRGARANTIAS.Negocios
 
                         oBitacora.InsertarBitacora("TAR_GARANTIAS_x_PERFIL_X_TARJETA", _usuario, _iP, null,
                                                    2, 4, null, _numeroTarjeta, strModificarGarantiaPerfil, string.Empty,
-                                                   ContenedorGarantias_x_perfil_x_tarjeta.OBSERVACIONES,
+                                                   clsGarantiasXPerfil._observacion,
                                                    _valorAnterior, _valorActual);
                     }
 

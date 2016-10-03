@@ -1,0 +1,50 @@
+https://usbcrgarantias:14005/usGARANTIAS_Actual/frmLogin.aspx
+
+HIPOTECAS
+
+OPERACION           CLASE GAR.  ID. GAR.        POLIZA
+1-302-1-2-5908840   10            2-411158     5048       
+1-341-1-2-5854363   11           2-453449     115363 
+1-215-1-2-5844182   12           2-413120     171285 
+1-943-2-2-5870526   13           4-210612     217484 
+1-250-1-2-5803213   17           2-265897     162174 
+
+CEDULAS HIPOTECARIAS
+
+OPERACION           CLASE GAR.  GRADO   ID. GAR.     POLIZA
+1-562-1-2-5868889   18           2      1-604760     179613 
+
+
+PRENDAS
+
+OPERACION           CLASE GAR.  ID. GAR.           POLIZA
+1-558-2-2-5876261   35           35-10164         221279    
+1-405-1-2-5892500   36           MAQ-34104        282203    
+1-250-1-2-5818733   40           AB-4746          155701    
+1-931-2-2-5904923   41           LB-988           267488    
+1-226-2-2-5936724   43           CH50FB601779     334053    
+
+
+
+
+
+
+HIPOTECAS
+ 
+CONTRATO           CLASE GAR.     ID. GAR.     POLIZA
+1-302-1-2403255     10            2-411158     5048   
+1-205-1-2402204     12           1-109769     171671  Poliza vencida
+1-597-1-2404519     13           2-440035     260244  Poliza vencida
+ 
+ 
+CEDULA HIPOTECARIA
+ 
+CONTRATO           CLASE GAR.  GRADO    ID. GAR.     POLIZA
+1-405-1-2403315     18           2      1-429708     156389  Bien no cubierto por poliza
+1-905-2-2403133     18           1      1-571251     292742  Bien no cubierto por poliza
+ 
+PRENDAS
+ 
+CONTRATO           CLASE GAR.     ID. GAR.     POLIZA
+1-562-1-2404914     41           SJB-14614    345586   Póliza Invalida
+ 

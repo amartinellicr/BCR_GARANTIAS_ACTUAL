@@ -9,26 +9,42 @@
     <link href="../Estilos/jquery.ui.all.css" type="text/css" rel="stylesheet" />
 
     <script src="<%#ResolveUrl("~/JSLib/FuncionesGenericas.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery-1.9.1.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.core.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.position.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.widget.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.mouse.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery-1.12.2.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/jquery-ui.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/jquery.mousewheel.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.draggable.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.resizable.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-blind.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-fade.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.effect-explode.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.button.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.dialog.min.js")%>" type="text/javascript"></script>
-    <script src="<%#ResolveUrl("~/JSLib/jquery.ui.accordion.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/moment.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/blockUI.min.js")%>" type="text/javascript"></script>
+    <script src="<%#ResolveUrl("~/JSLib/accounting.min.js")%>" type="text/javascript"></script>
     <script src="<%#ResolveUrl("~/JSLib/Utiles.min.js")%>" type="text/javascript"></script>
-       
+    <script src="<%#ResolveUrl("~/JSLib/SaldosTotalesPorcResp.min.js")%>" type="text/javascript"></script>
+
     <script language="javascript" type="text/javascript">
         //<![CDATA[
+
+        $(document).ajaxStop($.unblockUI);
+
+ /********************************************************************************************************************************************************************************************************************
+
+VARIABLES
+
+********************************************************************************************************************************************************************************************************************/
+        window.$CambioManual;
+        window.$SumatoriaValida;
+        window.$RegistroExcluido;
+        window.$PermisoEdicion;
+        window.$registroSeleccionado;
+        window.$cuentaMensajes;
+        window.$porcentajeCien;
+        window.$datosConsulta;
+        window.$arregloOperaciones;
+        window.$queryString;
+ 
+/********************************************************************************************************************************************************************************************************************
+
+FUNCION PRINCIPAL
+
+********************************************************************************************************************************************************************************************************************/
+
         $(document).ready(function () {
 
             var $Alerta;
@@ -115,10 +131,25 @@
 
             var $MostrarMensajesPorAceptAvaluo;
 
+            //var $RegistroExcluido;
+            //var $PermisoEdicion;
+            //var $registroSeleccionado;
+            //var $cuentaMensajes;
+            //var $porcentajeCien;
+            //var $datosConsulta;
+            //var $arregloOperaciones;
+            //var $queryString;
+            //var $CambioManual;
+            //var $SumatoriaValida;
+
+            var $MensajePorcentajeMaximo;
+
             PageInit();
+            SaldosTotalesPorcResp_PageInit();
 
             MostrarAvaluoReal(false);
             MostrarPoliza(false);
+                        
 
             if (typeof (Sys) !== 'undefined') {
                 var prm = Sys.WebForms.PageRequestManager.getInstance();
@@ -131,9 +162,25 @@
                     });
                 };
             };
+
+            //$(document).ajaxStart($.blockUI({ message: null })).ajaxStop(setTimeout($.unblockUI, 2000));
+
         }); 
             
+        (function ($) {
+            $.fn.valAndTrigger = function (element) {
+                return $(this).val(element).trigger('change');
+            };
+        }(jQuery));
+
+        
+
+        $.ajaxSetup({
+            timeout: 20000
+        });
+
        
+
         //]]>
     </script>
     
@@ -208,138 +255,138 @@
 
     <script language="javascript" type="text/javascript">
 
-        function FormatNumber(oControl, num, decimalPlaces, appendZeros, insertCommas, EsPorcentaje) 
-        {
-            var bSeFormatea = true;
-            var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
-            var bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerreno") != -1) ? true : false);
+            function FormatNumber(oControl, num, decimalPlaces, appendZeros, insertCommas, EsPorcentaje) 
+            {
+                var $Aplica_Calculo_Porcentaje_Aceptacion = parseInt(((typeof ($$('hdnAplicaCalculoPA')) !== 'undefined') && (typeof ($$('hdnAplicaCalculoPA').val()) !== 'undefined') && ($$('hdnAplicaCalculoPA').val().length > 0) ? $$('hdnAplicaCalculoPA').val() : '1'));
+                
+                var bSeFormatea = true;
+                var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
+                var bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerreno") != -1) ? true : false);
+
+                bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacionCalculado") != -1) ? true : ((bValidarPorAcept) ? true : false));
             
-            bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacionCalculado") != -1) ? true : ((bValidarPorAcept) ? true : false));
-            
-            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerreno") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
-            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
-            bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
-           
-            
-            if(num.toString().length > 0)
-		    {
-			    if(!IsNum(oControl))
-			    {
-				    alert('El campo debe ser numérico.'); 
-				    oControl.focus();
-			    }
-			    else
-			    {
-			        if(EsPorcentaje)
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerreno") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+                bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
+
+                if(num.toString().length > 0)
+		        {
+			        if(!IsNum(oControl))
 			        {
-			            if(num.toString().length > 0)
-			            {
-				            if(num > 100)
-				            {
-					            alert('El valor del campo debe estar entre 0 y 100.'); 
-					            oControl.focus();
-					            bSeFormatea = false;
-				            }
-			            }	
+				        alert('El campo debe ser numérico.'); 
+				        oControl.focus();
 			        }
-			        
-			        if(bSeFormatea)
+			        else
 			        {
-                        var powerOfTen = Math.pow(10, decimalPlaces);
+			            if(EsPorcentaje)
+			            {
+			                if(num.toString().length > 0)
+			                {
+				                if(num > 100)
+				                {
+					                alert('El valor del campo debe estar entre 0 y 100.'); 
+					                oControl.focus();
+					                bSeFormatea = false;
+				                }
+			                }	
+			            }
+			        
+			            if(bSeFormatea)
+			            {
+                            var powerOfTen = Math.pow(10, decimalPlaces);
 
-                        if (!appendZeros && !insertCommas) 
-                        {
-                            return num;
-                        }
-                        else 
-                        {
-                            var strNum = num.toString();
-                            
-                            var posDecimal = strNum.indexOf(".");
-                            if (appendZeros) 
+                            if (!appendZeros && !insertCommas) 
                             {
-                                var zeroToAppendCnt = 0;
-                                if (posDecimal < 0) 
-                                {
-                                    strNum += ".";
-                                    zeroToAppendCnt = decimalPlaces;
-                                }
-                                else 
-                                {
-                                    zeroToAppendCnt = decimalPlaces - (strNum.length -
-                                    posDecimal - 1);
-                                }
-                                for (var i = 0; i < zeroToAppendCnt; i++) 
-                                {
-                                    strNum += "0";
-                                }
+                                return num;
                             }
-                            if (insertCommas && (Math.abs(num) >= 1000)) 
+                            else 
                             {
-                                var i = strNum.indexOf(".");
-                                if (i < 0) 
+                                var strNum = num.toString();
+                            
+                                var posDecimal = strNum.indexOf(".");
+                                if (appendZeros) 
                                 {
-                                    i = strNum.length;
+                                    var zeroToAppendCnt = 0;
+                                    if (posDecimal < 0) 
+                                    {
+                                        strNum += ".";
+                                        zeroToAppendCnt = decimalPlaces;
+                                    }
+                                    else 
+                                    {
+                                        zeroToAppendCnt = decimalPlaces - (strNum.length -
+                                        posDecimal - 1);
+                                    }
+                                    for (var i = 0; i < zeroToAppendCnt; i++) 
+                                    {
+                                        strNum += "0";
+                                    }
                                 }
-                                i -= 3;
-                                while (i >= 1) 
+                                if (insertCommas && (Math.abs(num) >= 1000)) 
                                 {
-                                    strNum = strNum.substring(0, i) + ',' +
-                                    strNum.substring(i, strNum.length);
+                                    var i = strNum.indexOf(".");
+                                    if (i < 0) 
+                                    {
+                                        i = strNum.length;
+                                    }
                                     i -= 3;
+                                    while (i >= 1) 
+                                    {
+                                        strNum = strNum.substring(0, i) + ',' +
+                                        strNum.substring(i, strNum.length);
+                                        i -= 3;
+                                    }
                                 }
-                            }
 
-                            var Arreglo = strNum.split('.');
+                                var Arreglo = strNum.split('.');
 
-                            if(Arreglo.length = 2)
-                            {
+                                if(Arreglo.length = 2)
+                                {
 
 
-                                strNum = Arreglo[0] + '.' + Arreglo[1].substring(0, 2);
-                            }
+                                    strNum = Arreglo[0] + '.' + Arreglo[1].substring(0, 2);
+                                }
 
-                            oControl.value = strNum;
+                                oControl.value = strNum;
                             
-                            //return strNum;
+                                //return strNum;
+                            }
                         }
+                    }
+                }
+
+                 if ((bSeFormatea) && (bValidarPorAcept) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
+                    ValidarPorcentajeAceptacionCalculado();
+                    ValidarPorcentajeAceptacion();
+                }
+
+                if ((bSeFormatea) && (bValidarPorAceptAvaluo) && ($Aplica_Calculo_Porcentaje_Aceptacion === 1)) {
+                    $MostrarMensajesPorAceptAvaluo = true;
+                    ValidarPorcentajeAceptacionCalculado();
+                }
+
+                if (bSeFormatea) {
+                    return strNum;
+                }
+            }
+        
+            function numbersonly(e)
+            {
+        
+                var unicode=e.charCode? e.charCode : e.keyCode;
+            
+                if (unicode!=8)
+                { //if the key isn't the backspace key (which we should allow)
+                    if (unicode<48||unicode>57) //if not a number
+                    {
+                        if(unicode!=46)
+                            return false //disable key press
                     }
                 }
             }
 
-            if ((bSeFormatea) && (bValidarPorAcept)) {
-                $MostrarMensajesPorAceptAvaluo = true;
-                ValidarPorcentajeAceptacionCalculado();
-                ValidarPorcentajeAceptacion();
-            }
-
-            if ((bSeFormatea) && (bValidarPorAceptAvaluo)) {
-                $MostrarMensajesPorAceptAvaluo = true;
-                ValidarPorcentajeAceptacionCalculado();
-            }
-
-            if (bSeFormatea) {
-                return strNum;
-            }
-        }
-        
-        function numbersonly(e)
-        {
-        
-            var unicode=e.charCode? e.charCode : e.keyCode;
-            
-            if (unicode!=8)
-            { //if the key isn't the backspace key (which we should allow)
-                if (unicode<48||unicode>57) //if not a number
-                {
-                    if(unicode!=46)
-                        return false //disable key press
-                }
-            }
-        }
-
-
-    function Count(text,long) 
+            function Count(text,long) 
     {
         var maxlength = new Number(long); 
 
@@ -349,7 +396,7 @@
         }
 
     }
-
+ 
     </script>
 
 </head>
@@ -403,6 +450,15 @@
                 </tr>
             </table>
         </div>
+
+        <div class="loading" align="center">     
+            <br /> 
+            <span id="textoCarga" class="Texto_Carga">Procesando...</span> 
+            <br />
+            <br />                     
+            <asp:Image ID="imgCargando" runat="server" ImageUrl="~/Images/108.GIF"></asp:Image>
+        </div>
+
     </form>
 </body>
 </html>

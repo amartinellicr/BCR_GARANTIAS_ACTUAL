@@ -1,0 +1,9 @@
+Archivo creado 03/03/2016 12:54:04 PM
+
+
+NUEVO EVENTO______Fecha y Hora:03/03/2016 12:54:04 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+Se presentaron problemas técnicos al extraer los datos del archivo 'Contratos'. Detalle técnico: Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+

@@ -1,0 +1,9 @@
+Archivo creado 02/05/2016 03:12:06 PM
+
+
+NUEVO EVENTO______Fecha y Hora:02/05/2016 03:12:06 PM   -   Tipo: Error
+
+DESCRIPCION:
+
+El usuario no existe en el AD.
+
