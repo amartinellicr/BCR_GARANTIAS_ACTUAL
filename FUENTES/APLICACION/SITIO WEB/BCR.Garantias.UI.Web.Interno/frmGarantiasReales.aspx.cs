@@ -78,6 +78,9 @@ namespace BCRGARANTIAS.Forms
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PATC = "EIFVMPATC";
         private const string LLAVE_ERROR_INCONSISTENCIA_FECHA_VALUACION_MAYOR_PANTC = "EIFVMPANTC";
 
+        //PBI 13977
+        private const string LLAVE_ERROR_MONTO_POLIZA_NEGATIVO = "EMPN";
+
         #endregion Constantes
 
         #region Variables Globales
@@ -1767,7 +1770,38 @@ namespace BCRGARANTIAS.Forms
             }
         }
 
+        /// <summary>
+        /// Se establece si se debe mostrar el error de que el monto de la póliza es negativo (1) o no (0)
+        /// </summary>
+        public bool MostrarErrorMontoPolizaNegativo
+        {
+            get
+            {
 
+                if ((btnValidarOperacion.Attributes[LLAVE_ERROR_MONTO_POLIZA_NEGATIVO] != null)
+                   && (btnValidarOperacion.Attributes[LLAVE_ERROR_MONTO_POLIZA_NEGATIVO].Length > 0))
+                {
+                    return ((btnValidarOperacion.Attributes[LLAVE_ERROR_MONTO_POLIZA_NEGATIVO].CompareTo("1") == 0) ? true : false);
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_MONTO_POLIZA_NEGATIVO, "0");
+                    return false;
+                }
+            }
+            set
+            {
+
+                if (value)
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_MONTO_POLIZA_NEGATIVO, "1");
+                }
+                else
+                {
+                    btnValidarOperacion.Attributes.Add(LLAVE_ERROR_MONTO_POLIZA_NEGATIVO, "0");
+                }
+            }
+        }
         #endregion Propiedades
 
         #region Eventos
@@ -2003,6 +2037,7 @@ namespace BCRGARANTIAS.Forms
             MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = false;
             MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = false;
             MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = false;
+            MostrarErrorMontoPolizaNegativo = false;
 
             if (!IsPostBack)
             {
@@ -2040,6 +2075,7 @@ namespace BCRGARANTIAS.Forms
                             MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
                             MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
                             MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                            MostrarErrorMontoPolizaNegativo = true;
 
                         }
 
@@ -2152,6 +2188,7 @@ namespace BCRGARANTIAS.Forms
                                 MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
                                 MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
                                 MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                                MostrarErrorMontoPolizaNegativo = true;
 
                                 CargarDatosSession(true);
 
@@ -2269,6 +2306,7 @@ namespace BCRGARANTIAS.Forms
                     MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq = true;
                     MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado = true;
                     MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado = true;
+                    MostrarErrorMontoPolizaNegativo = true;
 
                     CargaInicial = true;
 
@@ -2522,8 +2560,13 @@ namespace BCRGARANTIAS.Forms
                 //Realizado por: Arnoldo Martinelli M. - Lidersoft Internacional S.A., 26/09/2013.
                 entidadValida = entidadGarantia.EntidadValida(true);
 
-                if ((!entidadValida) && (entidadGarantia.ListaErroresValidaciones.Count == 0) &&
-                   ((entidadGarantia.InconsistenciaMontoMitigador == 0) || (entidadGarantia.InconsistenciaMontoMitigador == 3) || (entidadGarantia.InconsistenciaMontoMitigador == 4)))
+                if ((!entidadValida) && (entidadGarantia.ErrorDatosRequeridos))
+                {
+                    lblMensaje.Text = entidadGarantia.DescripcionError;
+                    return;
+                }
+                else if ((!entidadValida) && (entidadGarantia.ListaErroresValidaciones.Count == 0) &&
+                        ((entidadGarantia.InconsistenciaMontoMitigador == 0) || (entidadGarantia.InconsistenciaMontoMitigador == 3) || (entidadGarantia.InconsistenciaMontoMitigador == 4)))
                 {
                     entidadValida = true;
                 }
@@ -2540,7 +2583,8 @@ namespace BCRGARANTIAS.Forms
                         || (!MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculado)
                         || (!MostrarErrorFechaUltimoSeguimientoMayorPorcentajeAceptacionNoTerrenoCalculadoMaq)
                         || (!MostrarErrorFechaValuacionMayorPorcentajeAceptacionTerrenoCalculado)
-                        || (!MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado))
+                        || (!MostrarErrorFechaValuacionMayorPorcentajeAceptacionNoTerrenoCalculado)
+                        || (!MostrarErrorMontoPolizaNegativo))
                     {
                         if ((entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoMitigador))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.ListaOperaciones))) ||
@@ -2557,7 +2601,8 @@ namespace BCRGARANTIAS.Forms
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimiento))) ||
                             (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaUltimoSeguimientoMaquinariaEquipo))) ||
-                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion))) ||
+                            (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)))                            
                             )
                         {
                             MostrarMensajesInformativos();
@@ -3306,6 +3351,10 @@ namespace BCRGARANTIAS.Forms
 
                 //RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías
                 txtPorcentajeResponsabilidad.Text = string.Empty;
+
+                //PBI 13977
+                cbTipoMonedaAvaluo.SelectedIndex = -1;
+                lblMontoTotalAvaluoColonizado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3418,6 +3467,10 @@ namespace BCRGARANTIAS.Forms
 
                 //RQ_MANT_2015111010495738_00610 Creación nuevo campo en mantenimiento de garantías
                 txtPorcentajeResponsabilidad.Text = string.Empty;
+
+                //PBI 13977
+                cbTipoMonedaAvaluo.SelectedIndex = -1;
+                lblMontoTotalAvaluoColonizado.Text = string.Empty;
             }
             catch (Exception ex)
             {
@@ -3473,6 +3526,9 @@ namespace BCRGARANTIAS.Forms
                 filaPorAcepCalc.Visible = ((bloqueoInicial) ? false : bBloqueado);
                 imgCalculadoraGR.Enabled = ((bloqueoInicial) ? false : bBloqueado);
 
+                //PBI 13977
+                cbTipoMonedaAvaluo.Enabled = false;
+                lblMontoTotalAvaluoColonizado.Visible = ((bloqueoInicial) ? false : bBloqueado);
 
                 //Pólizas
                 cbCodigoSap.Enabled = ((bloqueoInicial) ? false : bBloqueado);
@@ -3747,10 +3803,26 @@ namespace BCRGARANTIAS.Forms
                 fechaUltimoSeguimiento = DateTime.Parse(((txtFechaSeguimiento.Text.Length > 0) ? txtFechaSeguimiento.Text : "1900-01-01"));
                 fechaConstruccion = DateTime.Parse(((txtFechaConstruccion.Text.Length > 0) ? txtFechaConstruccion.Text : "1900-01-01"));
 
+                
                 montoUltTasacionTerreno = Convert.ToDecimal((((txtMontoUltTasacionTerreno.Text.Length > 0) && (txtMontoUltTasacionTerreno.Text.CompareTo("0.00") != 0)) ? txtMontoUltTasacionTerreno.Text : "0"));
                 montoUltTasacionNoTerreno = Convert.ToDecimal((((txtMontoUltTasacionNoTerreno.Text.Length > 0) && (txtMontoUltTasacionNoTerreno.Text.CompareTo("0.00") != 0)) ? txtMontoUltTasacionNoTerreno.Text : "0"));
                 montoTasacionActTerreno = Convert.ToDecimal(((txtMontoTasActTerreno.Text.Length > 0) ? txtMontoTasActTerreno.Text : "0"));
                 montoTasacionActNoTerreno = Convert.ToDecimal(((txtMontoTasActNoTerreno.Text.Length > 0) ? txtMontoTasActNoTerreno.Text : "0"));
+
+                //Inicio PBI 13977: Asignación de valores según tipo de bien.
+                if (nTipoBien == 1)
+                {
+                    montoUltTasacionNoTerreno = 0;
+                    montoTasacionActNoTerreno = 0;
+                }
+
+                if ((nTipoBien >= 3) && (nTipoBien <= 14))
+                {
+                    montoUltTasacionTerreno = 0;
+                    montoTasacionActTerreno = 0;
+                }
+
+                //Fin PBI 13977: Asignación de valores según tipo de bien.
 
                 montoTotalAvaluo = ((montoUltTasacionTerreno > 0) ? montoUltTasacionTerreno : 0) + ((montoUltTasacionNoTerreno > 0) ? montoUltTasacionNoTerreno : 0);
 
@@ -4331,6 +4403,30 @@ namespace BCRGARANTIAS.Forms
         }
 
         /// <summary>
+        /// Carga la lista de tipos de moneda de la tasación
+        /// </summary>
+        private void CargarTiposMonedaTasacion()
+        {
+            try
+            {
+                string catalogoTipoMoneda = "|" + Application["CAT_MONEDA"].ToString() + "|";
+                List<clsCatalogo> catalogoTiposMonedas = Gestor.ObtenerCatalogos(catalogoTipoMoneda).Items((int.Parse(Application["CAT_MONEDA"].ToString())));
+
+                cbTipoMonedaAvaluo.DataSource = null;
+                cbTipoMonedaAvaluo.DataSource = catalogoTiposMonedas;
+                cbTipoMonedaAvaluo.DataValueField = "CodigoElemento";
+                cbTipoMonedaAvaluo.DataTextField = "DescripcionCodigoElemento";
+                cbTipoMonedaAvaluo.DataBind();
+                cbTipoMonedaAvaluo.ClearSelection();
+
+            }
+            catch (Exception ex)
+            {
+                lblMensaje.Text = ex.Message;
+            }
+        }
+
+        /// <summary>
         /// Método de validación de datos
         /// </summary>
         /// <returns></returns>
@@ -4886,6 +4982,18 @@ namespace BCRGARANTIAS.Forms
                 CargarValuadores(Enumeradores.TiposValuadores.Empresa);
                 cbEmpresa.ClearSelection();
                 cbEmpresa.Items.FindByValue(((cbEmpresa.Items.FindByValue(entidadGarantia.CedulaEmpresa.ToString()) != null) ? entidadGarantia.CedulaEmpresa.ToString() : "-1")).Selected = true;
+
+                //PBI 13977
+                //Se carga el tipo de moneda
+                CargarTiposMonedaTasacion();
+                cbTipoMonedaAvaluo.ClearSelection();
+                cbTipoMonedaAvaluo.Items.FindByValue(((cbTipoMonedaAvaluo.Items.FindByValue(entidadGarantia.CodMonedaTasacion.ToString()) != null) ? entidadGarantia.CodMonedaTasacion.ToString() : "-1")).Selected = true;
+
+                //Se carga el monto total del avalúo colonizado
+                lblMontoTotalAvaluoColonizado.Visible = (((entidadGarantia.CodMonedaTasacion != 1) && (entidadGarantia.CodMonedaTasacion > 0)) ? true : false);
+                lblMontoTotalAvaluoColonizado.Text = entidadGarantia.MontoTotalAvaluoColonizado.ToString("N");
+
+                //PBI 13977
 
                 //Se habilitan o no controles, según el tipo de bien seleccionado
                 if (entidadGarantia.CodTipoBien == 1)
@@ -6218,6 +6326,69 @@ namespace BCRGARANTIAS.Forms
                             #endregion
                         }
 
+                        
+
+                        #region Inconsistencia de que el monto de la póliza es negativo
+
+                        //Se valida si el error es debido a que el monto de la póliza es negativo
+                        if (entidadGarantiaReal.InconsistenciaMontoPolizaNegativo)
+                        {
+                            estadoVerificacion = false;
+
+                            MostrarErrorMontoPolizaNegativo = false;
+
+                            if (mostrarErrorEmergente)
+                            {
+                                //Se obtiene el error de la lista de errores
+                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                {
+                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                            typeof(Page),
+                                                                            Guid.NewGuid().ToString(),
+                                                                            entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)],
+                                                                            false);
+                                }
+                                else
+                                {
+                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                           Guid.NewGuid().ToString(),
+                                                                           entidadGarantiaReal.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)],
+                                                                           false);
+                                }
+                            }
+                        }
+
+                        #endregion Inconsistencia de que el monto de la póliza es negativo
+
+                        #region Inconsistencia Fechas Mayores a la Actual
+
+                        //Se valida si el error es debido a la validación de la fecha de precripción
+                        if (entidadGarantiaReal.InconsistenciaFechasMayoresActual)
+                        {
+                            estadoVerificacion = false;
+
+                            if (mostrarErrorEmergente)
+                            {
+                                //Se obtiene el error de la lista de errores
+                                if (requestSM != null && requestSM.IsInAsyncPostBack)
+                                {
+                                    ScriptManager.RegisterClientScriptBlock(this,
+                                                                            typeof(Page),
+                                                                            Guid.NewGuid().ToString(),
+                                                                            entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechasMayoresActual)],
+                                                                            false);
+                                }
+                                else
+                                {
+                                    this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                                           Guid.NewGuid().ToString(),
+                                                                           entidadGarantiaReal.ListaErroresValidaciones[((int)Enumeradores.Inconsistencias.FechasMayoresActual)],
+                                                                           false);
+                                }
+                            }
+                        }
+
+                        #endregion Inconsistencia Fechas Mayores a la Actual
 
                         #region Inconsistencia de que las coberturas obligatorias no fueron asignadas en su totalidad en el SAP
 
@@ -8922,6 +9093,35 @@ namespace BCRGARANTIAS.Forms
                 }
                 //
 
+                //
+                if (entidadGarantia.ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)))
+                {
+                    existeMensaje = true;
+                    MostrarErrorMontoPolizaNegativo = false;
+
+                    //Se obtiene el error de la lista de errores
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)],
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                               entidadGarantia.ListaMensajesValidaciones[((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)],
+                                                               false);
+                    }
+                }
+                else
+                {
+                    MostrarErrorMontoPolizaNegativo = true;
+                }
+                //
+
                 if (existeMensaje)
                 {
                     if ((this.Entidad_Real != null) && (this.Entidad_Real.PolizaSapAsociada != null))
@@ -8964,6 +9164,7 @@ namespace BCRGARANTIAS.Forms
             }
 
         }
+                
 
         /// <summary>
         /// Método que se encarga de cargar la lista de pólizas según el tipo de bien seleccionado

@@ -1856,6 +1856,34 @@ function PageInit() {
             });
 
 
+    //Función que muestra el mensaje de alerta cuando el monto de la póliza es negativo
+    $MensajeMontoPolizaNegativo = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El campo \"Monto Póliza\" presentó un valor negativo, el mismo debe ser corregido en el Sistema de Seguros.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Monto de la Póliza Negativo',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+
+                        $$('txtMontoPoliza').val('');
+
+                        $$('btnValidarOperacion').attr('EMPN', '1');
+                        ModificarGarantia();
+                    }
+                }
+            });
+
+
+
     /***********************************************************************/
     /* VALIDACIONES DEL CATALOGO DE PORCENTAJE DE ACEPTACION */
 
@@ -2200,6 +2228,27 @@ function PageInit() {
                 }
             });
 
+    /***********************************************************************/
+    /* VALIDACIONES DEL CAMPO REFERENTE A LA FECHA PRESENTACIÓN, FECHA DE CONSTITUCIÓN, FECHA ÚLTIMO SEGUIMIENTO GARANTÍA Y FECHA ÚLTIMA TASACIÓN GARANTÍA */
+    $MensajeFechasMayoresActual = $('<div class="ui-widget" style="padding-top:2.2em;"><div class="ui-state-error ui-corner-all" style="padding: 0 .7em;"><p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em; margin-bottom: 1.8em;"></span>El valor de estos campos: Fecha Presentación, Fecha de Constitución, Fecha Último Seguimiento Garantía y Fecha Última Tasación Garantía, no puede ser mayor a la fecha actual.</p></div></div>')
+            .dialog({
+                autoOpen: false,
+                title: 'Fechas Mayores a la Actual',
+                resizable: false,
+                draggable: false,
+                height: 235,
+                width: 650,
+                closeOnEscape: false,
+                open: function (event, ui) { $(".ui-dialog-titlebar-close").hide(); $(this).dialog('widget').position({ my: "center bottom", at: "center bottom", of: window, collision: "none" }); },
+                modal: true,
+                buttons: {
+                    "Aceptar": function () {
+                        $(this).dialog("close");
+
+                        document.body.style.cursor = 'default';
+                    }
+                }
+            });
 
 
 } //FIN METODO DEL DIALOGO
@@ -3376,7 +3425,8 @@ function ModificarGarantia() {
                 && (($$('btnValidarOperacion').attr('EIFUSMPANTC')) == '1')
                 && (($$('btnValidarOperacion').attr('EIFUSMPANTCMAQ')) == '1')
                 && (($$('btnValidarOperacion').attr('EIFVMPATC')) == '1')
-                && (($$('btnValidarOperacion').attr('EIFVMPANTC')) == '1')) {
+                && (($$('btnValidarOperacion').attr('EIFVMPANTC')) == '1')
+                && (($$('btnValidarOperacion').attr('EMPN')) == '1')) {
         __doPostBack('btnModificar', 'Metodo');
     }
 }
@@ -3755,6 +3805,8 @@ function cargarDatosPoliza() {
 
                 $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
 
+                var montoPoliza = parseFloat(polizasSap[i].Monto_Poliza);
+                var montoPolizaColonizado = parseFloat(polizasSap[i].Monto_Poliza_Colonizado);
 
                 if (polizasSap[i].Cobertura !== "undefined") {
                     for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
@@ -3813,7 +3865,11 @@ function cargarDatosPoliza() {
                         $MensajeCambioFechaVencimientoPoliza.dialog('open');
                     }
                 }
-
+                else if ((montoPoliza < 0) || (montoPolizaColonizado < 0)) {
+                    if (typeof ($MensajeMontoPolizaNegativo) !== 'undefined') {
+                        $MensajeMontoPolizaNegativo.dialog('open');
+                    }
+                }
 
                 if (polizasSap[i].Poliza_Vigente === 0) {
                     $$('rdlEstadoPoliza').find("input[value='0']").css('backgroundColor', 'Red');
@@ -3872,6 +3928,9 @@ function cargarPoliza(arregloPolizas) {
 
                 $$('txtMontoAcreenciaPoliza').removeAttr('disabled');
 
+                var montoPoliza = parseFloat(polizasSap[i].Monto_Poliza);
+                var montoPolizaColonizado = parseFloat(polizasSap[i].Monto_Poliza_Colonizado);
+
                 for (var indice = 0; indice < polizasSap[i].Cobertura.length; indice++) {
                     if (polizasSap[i].Cobertura[indice].Tipo_Lista_Cobertura === '1') {
                         formarOpcion = '<span style="padding: 5px; white-space: nowrap; display:inline;">';
@@ -3924,6 +3983,11 @@ function cargarPoliza(arregloPolizas) {
                     if (typeof ($MensajeCambioFechaVencimientoPoliza) !== 'undefined') {
 
                         $MensajeCambioFechaVencimientoPoliza.dialog('open');
+                    }
+                }
+                else if ((montoPoliza < 0) || (montoPolizaColonizado < 0)) {
+                    if (typeof ($MensajeMontoPolizaNegativo) !== 'undefined') {
+                        $MensajeMontoPolizaNegativo.dialog('open');
                     }
                 }
 

@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BCR.Garantias.UI.Web.Interno", "http://localhost/BCR.Garantias.UI.Web.Interno", "{C748731F-A71C-4306-9459-70A53D2CBD8C}"
 	ProjectSection(WebsiteProperties) = preProject
-		SccProjectName = ""$/CONTRATO_MANTENIMIENTO/03 - ENTREGABLES/REQUERIMIENTO 038/Solución/SITIO WEB/BCR.Garantias.UI.Web.Interno", QENBAAAA"
+		SccProjectName = ""
 		SccAuxPath = ""
-		SccLocalPath = "."
-		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		SccLocalPath = ""
+		SccProvider = ""
 		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv3.5"
 		ProjectReferences = "{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}|BCR.GARANTIAS.Comun.dll;{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}|BCR.GARANTIAS.Entidades.dll;{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}|Datos.dll;{646A5EBB-35FD-4497-8C35-8D4EFC921541}|BCRGarantias.Contenedores.dll;{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}|Utilidades.dll;{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}|Negocios.dll;"
@@ -31,10 +31,10 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BCR.Garantias.UI.Web.Intern
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "BCR.Garantias.WSI", "http://localhost/BCR.Garantias.WSI", "{72ECCED6-12EF-43A2-B6CA-B30E46418184}"
 	ProjectSection(WebsiteProperties) = preProject
-		SccProjectName = ""$/CONTRATO_MANTENIMIENTO/03 - ENTREGABLES/REQUERIMIENTO 038/Solución/SERVICIO WEB/BCR.Garantias.WSI", WXMBAAAA"
+		SccProjectName = ""
 		SccAuxPath = ""
-		SccLocalPath = "."
-		SccProvider = "MSSCCI:Microsoft Visual SourceSafe"
+		SccLocalPath = ""
+		SccProvider = ""
 		UseIISExpress = "false"
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv2.0"
 		ProjectReferences = "{5EAAF057-0042-4DE2-BC47-5BBE101F1DAB}|Negocios.dll;{66FB53D0-CCBA-49FE-9F9E-5A527EE3B649}|BCR.GARANTIAS.Comun.dll;{5E279BA9-5C7F-4AAF-83F1-C372E94C4BB9}|BCR.GARANTIAS.Entidades.dll;{E37AE4D5-6C62-4AB8-96FE-04915C99FD17}|Datos.dll;{646A5EBB-35FD-4497-8C35-8D4EFC921541}|BCRGarantias.Contenedores.dll;{4192C71C-BAA5-49F9-B83B-7C6FFBDBF9AD}|Utilidades.dll;"

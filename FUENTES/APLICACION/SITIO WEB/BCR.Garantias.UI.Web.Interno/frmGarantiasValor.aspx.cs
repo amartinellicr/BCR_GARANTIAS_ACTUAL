@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Web.UI;
-using System.Web;
 
 using BCRGARANTIAS.Negocios;
 using BCR.GARANTIAS.Comun;
@@ -201,6 +200,30 @@ namespace BCRGARANTIAS.Forms
             imgCalculadoraGV.Click += new ImageClickEventHandler(ImageButton_Click);
         }
 
+        protected override void OnLoadComplete(EventArgs e)
+        {
+            ScriptManager requestSM = ScriptManager.GetCurrent(this.Page);
+
+            //Se ejecutan las funciones que manipulan el objeto "Acordeón" de la interfaz de usuario
+            if (requestSM != null && requestSM.IsInAsyncPostBack)
+            {
+                ScriptManager.RegisterClientScriptBlock(this,
+                                                        typeof(Page),
+                                                        Guid.NewGuid().ToString(),
+                                                        "<script type=\"text/javascript\" language=\"javascript\">document.body.style.cursor = 'default';" +
+                                                        " </script>",
+                                                        false);
+            }
+            else
+            {
+                this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                       Guid.NewGuid().ToString(),
+                                                        "<script type=\"text/javascript\" language=\"javascript\">document.body.style.cursor = 'default';" +
+                                                        " </script>",
+                                                       false);
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             contenedorDatosModificacion.Visible = false;
@@ -239,6 +262,7 @@ namespace BCRGARANTIAS.Forms
             txtValorMercado.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtValorMercado.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
 
+            btnValidarOperacion.Attributes["onclick"] = "javascript:document.body.style.cursor = 'wait'; return true;";
 
             if (!IsPostBack)
             {

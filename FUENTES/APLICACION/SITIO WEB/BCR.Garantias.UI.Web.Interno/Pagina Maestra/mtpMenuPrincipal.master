@@ -106,7 +106,7 @@ FUNCION PRINCIPAL
             var $MensajeClaseGarantia57;
             var $MensajeClaseGarantia58;
             var $MensajeCoberturasObligatoriasInvalidas;
-
+            
             var $errorFechaPresentacion;
             var $camposMensajeFechaPrescripcionMenor;
             var $arregloCamposValuacion;
@@ -130,6 +130,10 @@ FUNCION PRINCIPAL
             var $MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado;
 
             var $MostrarMensajesPorAceptAvaluo;
+
+            //PBI 13977 Mantenimiento Garantias Reales
+            var $MensajeMontoPolizaNegativo;
+            var $MensajeFechasMayoresActual;
 
             //var $RegistroExcluido;
             //var $PermisoEdicion;

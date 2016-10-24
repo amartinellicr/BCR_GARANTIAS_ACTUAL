@@ -480,6 +480,15 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private decimal porcentajeAceptacionNoTerrenoCalculado;
 
+        /// <summary>
+        /// Tipo Moneda de la Tasación
+        /// </summary>
+        private short codMonedaTasacion;
+
+        /// <summary>
+        /// Monto total del avalúo colonizado
+        /// </summary>
+        private decimal montoTotalAvaluoColonizado;
 
         #endregion Avalúos
 
@@ -670,6 +679,7 @@ namespace BCR.GARANTIAS.Entidades
         /// </summary>
         private bool inconsistenciaCoberturasObligatoriasInvalidas;
 
+
         ///////////////////
 
 
@@ -778,7 +788,18 @@ namespace BCR.GARANTIAS.Entidades
         private bool inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion;
         private bool inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado;
 
-        
+
+        //PBI 13977
+        /// <summary>
+        /// Indicador de que se presentó un error con el monto de la póliza, el dato es negativo
+        /// </summary>
+        private bool inconsistenciaMontoPolizaNergativo;
+
+        /// <summary>
+        /// Indicador de que se presentó un error con varias fechas que no pueden ser mayores a la actual
+        /// </summary>
+        private bool inconsistenciaFechasMayoresActual;
+
         #endregion Inconsistencias
 
         #region Generales
@@ -1197,6 +1218,11 @@ namespace BCR.GARANTIAS.Entidades
         private const string _mensajePorcAceptNoTerrenoCalcFechaValuacion = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined'){$MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open');} </script>";
         private const string _mensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado) !== 'undefined'){$MensajePorceAcepNoTerrenoMayorPorceAcepNoTerrenoCalculado.dialog('open');} </script>";
 
+        //PBI 13977
+        private const string _mensajeMontoPolizaNegativo = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeMontoPolizaNegativo) !== 'undefined'){$MensajeMontoPolizaNegativo.dialog('open');} </script>";
+        private const string _mensajeFechasMayoresActual = "<script type=\"text/javascript\" language=\"javascript\">if(typeof($MensajeFechasMayoresActual) !== 'undefined'){$MensajeFechasMayoresActual.dialog('open');} </script>";
+
+
 
 
 
@@ -1222,6 +1248,9 @@ namespace BCR.GARANTIAS.Entidades
         private const string _porcentajeAceptacionNoTerreno = "Porcentaje_Aceptacion_No_Terreno";
         private const string _porcentajeAceptacionTerrenoCalculado = "Porcentaje_Aceptacion_Terreno_Calculado";
         private const string _porcentajeAceptacionNoTerrenoCalculado = "Porcentaje_Aceptacion_No_Terreno_Calculado";
+        private const string _tipoMonedaTasacion = "Tipo_Moneda_Tasacion";
+        private const string _montoTotalAvaluoColonizado = "Monto_Total_Avaluo_Colonizado";
+
 
 
         //Tags referentes a la parte del avalúo del SICC
@@ -1380,35 +1409,40 @@ namespace BCR.GARANTIAS.Entidades
             #region Avalúos
 
             fechaValuacion = new DateTime(1900, 01, 01);
-                cedulaEmpresa = string.Empty;
-                cedulaPerito = string.Empty;
-                montoUltimaTasacionTerreno = 0;
-                montoUltimaTasacionNoTerreno = 0;
-                montoTasacionActualizadaTerreno = 0;
-                montoTasacionActualizadaNoTerreno = 0;
-                fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
-                montoTotalAvaluo = 0;
-                fechaConstruccion = new DateTime(1900, 01, 01);
-                fechaValuacionSICC = new DateTime(1900, 01, 01);
-                fechaAvaluoSICC = new DateTime(1900, 01, 01);
-                montoTotalAvaluoSICC = 0;
-                fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
-                fechaActualBD = new DateTime(1900, 01, 01);
-                avaluoActualizado = false;
-                fechaSemestreCalculado = new DateTime(1900, 01, 01);
-                montoTasacionActualizadaTerrenoCalculado = null;
-                montoTasacionActualizadaNoTerrenoCalculado = null;
+            cedulaEmpresa = string.Empty;
+            cedulaPerito = string.Empty;
+            montoUltimaTasacionTerreno = 0;
+            montoUltimaTasacionNoTerreno = 0;
+            montoTasacionActualizadaTerreno = 0;
+            montoTasacionActualizadaNoTerreno = 0;
+            fechaUltimoSeguimiento = new DateTime(1900, 01, 01);
+            montoTotalAvaluo = 0;
+            fechaConstruccion = new DateTime(1900, 01, 01);
+            fechaValuacionSICC = new DateTime(1900, 01, 01);
+            fechaAvaluoSICC = new DateTime(1900, 01, 01);
+            montoTotalAvaluoSICC = 0;
+            fechaPenultimoAvaluo = new DateTime(1900, 01, 01);
+            fechaActualBD = new DateTime(1900, 01, 01);
+            avaluoActualizado = false;
+            fechaSemestreCalculado = new DateTime(1900, 01, 01);
+            montoTasacionActualizadaTerrenoCalculado = null;
+            montoTasacionActualizadaNoTerrenoCalculado = null;
 
-                #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
+            #region RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
 
-                porcentajeAceptacionTerreno = 0;
-                porcentajeAceptacionNoTerreno = 0;
-                porcentajeAceptacionTerrenoCalculado = 0;
-                porcentajeAceptacionNoTerrenoCalculado = 0;
+            porcentajeAceptacionTerreno = 0;
+            porcentajeAceptacionNoTerreno = 0;
+            porcentajeAceptacionTerrenoCalculado = 0;
+            porcentajeAceptacionNoTerrenoCalculado = 0;
 
-                #endregion
+            #endregion
 
-                #endregion Avalúos
+            #region PBI 13977
+            codMonedaTasacion = -1;
+            montoTotalAvaluoColonizado = 0;
+            #endregion PBI 13977
+
+            #endregion Avalúos
 
             #region Inconsistencias
 
@@ -1481,6 +1515,10 @@ namespace BCR.GARANTIAS.Entidades
             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
             inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
 
+            //PBI 13977
+            inconsistenciaMontoPolizaNergativo = false;
+            inconsistenciaFechasMayoresActual = false;
+
 
             #endregion Inconsistencias
 
@@ -1502,21 +1540,21 @@ namespace BCR.GARANTIAS.Entidades
             listaDatosInsertadosGarPoliza = new Dictionary<string, string>();
             listaDatosEliminadosGarPoliza = new Dictionary<string, string>();
 
-            string[] listaCamposGar = { _codGarantiaReal, _codTipoGarantia, _codTipoGarantiaReal, _codClaseGarantia, _codPartido, _numeroFinca, 
+            string[] listaCamposGar = { _codGarantiaReal, _codTipoGarantia, _codTipoGarantiaReal, _codClaseGarantia, _codPartido, _numeroFinca,
                                                         _codGrado, _cedulaHipotecaria, _codClaseBien, _numPlacaBien, _codTipoBien,
                                                         _fechaModifico, _usuarioModifico, _indicadorViviendaHabitadaDeudor };
             listaCamposGarantias = new List<string>(listaCamposGar);
 
-            string[] listaCamposGarXOper = { _codOperacion, _codGarantiaReal, _codTipoMitigador, _codTipoDocumentoLegal,  _montoMitigador, 
-                                                        _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen, 
-                                                        _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor, 
-                                                        _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion, 
+            string[] listaCamposGarXOper = { _codOperacion, _codGarantiaReal, _codTipoMitigador, _codTipoDocumentoLegal,  _montoMitigador,
+                                                        _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen,
+                                                        _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor,
+                                                        _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion,
                                                         _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado, _porcentajeAceptacion};
             listaCamposGarantiaOperacion = new List<string>(listaCamposGarXOper);
 
-            string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
-                                              _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno, 
-                                              _fechaUltimoSeguimiento, _montoTotalAvaluo, _fechaConstruccion ,
+            string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno,
+                                              _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno,
+                                              _fechaUltimoSeguimiento, _montoTotalAvaluo, _fechaConstruccion,
                                               //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
                                               _porcentajeAceptacionTerreno, _porcentajeAceptacionNoTerreno, _porcentajeAceptacionNoTerrenoCalculado, _porcentajeAceptacionTerrenoCalculado,
                                               _fechaModifico, _usuarioModifico};
@@ -1802,6 +1840,11 @@ namespace BCR.GARANTIAS.Entidades
 
             #endregion
 
+            #region PBI 13977
+            codMonedaTasacion = -1;
+            montoTotalAvaluoColonizado = 0;
+            #endregion PBI 13977
+
             #endregion Avalúos
 
             #region Inconsistencias
@@ -1886,6 +1929,9 @@ namespace BCR.GARANTIAS.Entidades
             inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
             inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
 
+            //PBI 13977
+            inconsistenciaMontoPolizaNergativo = false;
+            inconsistenciaFechasMayoresActual = false;
 
             #endregion Inconsistencias
 
@@ -1907,18 +1953,18 @@ namespace BCR.GARANTIAS.Entidades
             listaDatosInsertadosGarPoliza = new Dictionary<string, string>();
             listaDatosEliminadosGarPoliza = new Dictionary<string, string>();
 
-            string[] listaCamposGar = { _codGarantiaReal, _codTipoGarantia, _codTipoGarantiaReal, _codClaseGarantia, _codPartido, _numeroFinca, 
+            string[] listaCamposGar = { _codGarantiaReal, _codTipoGarantia, _codTipoGarantiaReal, _codClaseGarantia, _codPartido, _numeroFinca,
                                                         _codGrado, _cedulaHipotecaria, _codClaseBien, _numPlacaBien, _codTipoBien, _fechaModifico, _usuarioModifico, _indicadorViviendaHabitadaDeudor };
             listaCamposGarantias = new List<string>(listaCamposGar);
 
-            string[] listaCamposGarXOper = { _codOperacion, _codGarantiaReal, _codTipoMitigador, _codTipoDocumentoLegal,  _montoMitigador, 
-                                                        _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen, 
-                                                        _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor, 
+            string[] listaCamposGarXOper = { _codOperacion, _codGarantiaReal, _codTipoMitigador, _codTipoDocumentoLegal,  _montoMitigador,
+                                                        _codInscripcion, _fechaPresentacion, _porcentajeResponsabilidad, _codGradoGravamen,
+                                                        _codOperacionEspecial, _fechaConstitucion, _fechaVencimiento, _codTipoAcreedor, _cedAcreedor,
                                                         _codLiquidez, _codTenencia, _codMoneda, _fechaPrescripcion, _codEstado,_fechaModifico, _usuarioModifico,_porcentajeAceptacionCalculado, _porcentajeAceptacion };
             listaCamposGarantiaOperacion = new List<string>(listaCamposGarXOper);
 
-            string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno, 
-                                              _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno, 
+            string[] listaCamposValuacion = { _codGarantiaReal, _fechaValuacion, _cedulaEmpresa, _cedulaPerito, _montoUltimaTasacionTerreno,
+                                              _montoUltimaTasacionNoTerreno, _montoTasacionActualizadaTerreno, _montoTasacionActualizadaNoTerreno,
                                               _fechaUltimoSeguimiento, _montoTotalAvaluo, _fechaConstruccion, _avaluoActualizado, 
                                                //RQ_MANT_2015062410418218_00025 Requerimiento Segmentación Campos Porcentaje Aceptación Terreno y No Terreno
                                               _porcentajeAceptacionTerreno, _porcentajeAceptacionNoTerreno, _porcentajeAceptacionNoTerrenoCalculado, _porcentajeAceptacionTerrenoCalculado,
@@ -2213,7 +2259,7 @@ namespace BCR.GARANTIAS.Entidades
                             //////////////////
 
                             IndicadorPorcentajeResponsabilidadMaximo = ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorPorcentajeResponsabilidadMaximo).InnerText.CompareTo("0") == 0) ? false : true) : false);
-                            IndicadorCuentaContableEspecial =  ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial).InnerText.CompareTo("0") == 0) ? false : true) : false);
+                            IndicadorCuentaContableEspecial = ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial) != null) ? ((xmlTrama.SelectSingleNode("//" + _indicadorCuentaContableEspecial).InnerText.CompareTo("0") == 0) ? false : true) : false);
 
 
                             /////////////////
@@ -2371,6 +2417,8 @@ namespace BCR.GARANTIAS.Entidades
                         decimal porcAceptNoTerreno;
                         decimal porcAceptTerrenoCalc;
                         decimal porcAceptNoTerrenoCalc;
+                        short monedaTasacion;
+                        decimal montoTAC;
 
                         try
                         {
@@ -2405,6 +2453,25 @@ namespace BCR.GARANTIAS.Entidades
                                 porcentajeAceptacionNoTerrenoCalculado = ((porcentajeAceptacionNoTerrenoCalculado >= 0) ? porcentajeAceptacionNoTerrenoCalculado : porcentajeAceptacionCalculado);
                                 porcentajeAceptacionTerrenoCalculado = ((porcentajeAceptacionTerrenoCalculado >= 0) ? porcentajeAceptacionTerrenoCalculado : porcentajeAceptacionCalculado);
                             }
+
+                            //Inicio PBI 13977: Asignación de valores según tipo de bien.
+
+                            codMonedaTasacion = ((xmlAvaluo.SelectSingleNode("//" + _tipoMonedaTasacion) != null) ? ((short.TryParse((xmlAvaluo.SelectSingleNode("//" + _tipoMonedaTasacion).InnerText), out monedaTasacion)) ? monedaTasacion : (short)-1) : (short)-1);
+                            montoTotalAvaluoColonizado = ((xmlAvaluo.SelectSingleNode("//" + _montoTotalAvaluoColonizado) != null) ? ((decimal.TryParse((xmlAvaluo.SelectSingleNode("//" + _montoTotalAvaluoColonizado).InnerText), out montoTAC)) ? montoTAC : 0) : 0);
+
+                            if (codTipoBien == 1)
+                            {
+                                montoUltimaTasacionNoTerreno = 0;
+                                montoTasacionActualizadaNoTerreno = 0;
+                            }
+
+                            if ((codTipoBien >= 3) && (codTipoBien <= 14))
+                            {
+                                montoUltimaTasacionTerreno = 0;
+                                montoTasacionActualizadaTerreno = 0;
+                            }
+
+                            //Fin PBI 13977: Asignación de valores según tipo de bien.
                         }
                         catch (Exception ex)
                         {
@@ -3581,6 +3648,30 @@ namespace BCR.GARANTIAS.Entidades
 
         #endregion
 
+
+        #region PBI 13977
+
+        /// <summary>
+        /// Propiedad que obtiene y establece el código de moneda de la tasación
+        /// </summary>
+        public short CodMonedaTasacion
+        {
+            get { return codMonedaTasacion; }
+            set { codMonedaTasacion = value; }
+        }
+
+        /// <summary>
+        /// Propiedad que obtiene y establece el monto total del avalúo colonizado
+        /// </summary>
+        public decimal MontoTotalAvaluoColonizado
+        {
+            get { return montoTotalAvaluoColonizado; }
+            set { montoTotalAvaluoColonizado = value; }
+        }
+
+        #endregion PBI 13977
+
+
         #endregion Avalúo
 
         #region Inconsistencias
@@ -4133,6 +4224,25 @@ namespace BCR.GARANTIAS.Entidades
         }
 
 
+        //PBI 13977
+        /// <summary>
+        /// /// Obtiene o establece el indicador de que se presentó la inconsistenca en la que el monto de la póliza es negativo
+        /// </summary>
+        public bool InconsistenciaMontoPolizaNegativo
+        {
+            get { return inconsistenciaMontoPolizaNergativo; }
+            set { inconsistenciaMontoPolizaNergativo = value; }
+        }
+
+        /// <summary>
+        /// /// Obtiene o establece el indicador de que se presentó la inconsistenca en la que existe alguna fecha mayor a la actual
+        /// </summary>
+        public bool InconsistenciaFechasMayoresActual
+        {
+            get { return inconsistenciaFechasMayoresActual; }
+            set { inconsistenciaFechasMayoresActual = value; }
+        }
+
         #endregion Inconsistencias
 
         #region Generales
@@ -4523,7 +4633,7 @@ namespace BCR.GARANTIAS.Entidades
                 descripcionError = Mensajes.Obtener(Mensajes._errorDatosAvaluoRequeridos, Mensajes.ASSEMBLY);
                 camposRequeridos = false;
             }
-            if (camposRequeridos && (cedulaPerito.Length == 0) && (cedulaEmpresa.Length == 0))
+            if (camposRequeridos && ((cedulaPerito.Length == 0) && (cedulaEmpresa.Length == 0)) || ((cedulaPerito.CompareTo("-1") == 0) && (cedulaEmpresa.CompareTo("-1") == 0)) )
             {
                 descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "el perito o la empresa", Mensajes.ASSEMBLY);
                 camposRequeridos = false;
@@ -4531,6 +4641,44 @@ namespace BCR.GARANTIAS.Entidades
             if (camposRequeridos && fechaUltimoSeguimiento == (new DateTime(1900, 01, 01)))
             {
                 descripcionError = Mensajes.Obtener(Mensajes.ERROR_DATO_REQUERIDO, "la fecha de último seguimiento", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            //PBI 13977
+            if (camposRequeridos && codTipoBien == 2 && montoUltimaTasacionTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Última Tasación Terreno", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            if (camposRequeridos && codTipoBien == 2 && montoUltimaTasacionNoTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Última Tasación no Terreno", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            if (camposRequeridos && codTipoBien == 2 && montoTasacionActualizadaTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Tasación Actualizada Terreno Calculado", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            if (camposRequeridos && codTipoBien == 2 && MontoTasacionActualizadaNoTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Tasación Actualizada No Terreno Calculado", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+
+            if (camposRequeridos && codTipoBien >= 3 && codTipoBien <= 14 && montoUltimaTasacionNoTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Última Tasación no Terreno", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            if (camposRequeridos && codTipoBien >= 3 && codTipoBien <= 14 && MontoTasacionActualizadaNoTerreno <= 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Tasación Actualizada No Terreno Calculado", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+
+            if (camposRequeridos && codMonedaTasacion == -1)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorTipoMonedaTasacion, Mensajes.ASSEMBLY);
                 camposRequeridos = false;
             }
 
@@ -4638,6 +4786,9 @@ namespace BCR.GARANTIAS.Entidades
                 inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = false;
                 inconsistenciaPorceAcepNoTerrenoMayorPorceAcepCalculado = false;
 
+                //PBI 13977
+                inconsistenciaMontoPolizaNergativo = false;
+                inconsistenciaFechasMayoresActual = false;
 
                 #region Cargar listas de datos
 
@@ -4658,7 +4809,7 @@ namespace BCR.GARANTIAS.Entidades
                 List<int> listaClasesGarantiasPrendaInvalidas = new List<int>(new int[] { 56, 57, 58 });
 
                 #endregion Cargar listas de datos
-
+                                
                 #region Se aplica la validación correspondiente a la fecha de presentación
 
                 //Se valida si la fecha de presentación es nula o vacía
@@ -4687,6 +4838,19 @@ namespace BCR.GARANTIAS.Entidades
                     desplegarErrorVentanaEmergente = true;
                     inconsistenciaFechaPresentacion = true;
                     listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaPresentacion), _mensajeFechaPresentacion);
+                }
+                //PBI 13977: Se valida si la fecha de presnetación es mayor a la fecha actual
+                else if (fechaPresentacion > fechaActualBD)
+                {
+                    esValida = false;
+                    errorValidaciones = true;
+                    desplegarErrorVentanaEmergente = true;
+                    inconsistenciaFechasMayoresActual = true;
+
+                    if (!listaErroresValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechasMayoresActual)))
+                    {
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechasMayoresActual), _mensajeFechasMayoresActual);
+                    }
                 }
 
                 #endregion Se aplica la validación correspondiente a la fecha de presentación
@@ -5288,7 +5452,7 @@ namespace BCR.GARANTIAS.Entidades
                     listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.DatosAvaluosIncorrectos), _mensajeFechaAvaluoDiferenteSICC);
                 }
                 //Se valida que sólo el monto total del avalúo sea diferente
-                else if (montoTotalAvaluoSICC != montoTotalAvaluo)
+                else if (montoTotalAvaluoColonizado != montoTotalAvaluo)
                 {
                     esValida = false;
                     errorValidaciones = true;
@@ -5303,6 +5467,19 @@ namespace BCR.GARANTIAS.Entidades
                     else
                     {
                         listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.DatosAvaluosIncorrectos), _mensajeMontoTotalAvaluoDiferenteSICC);
+                    }
+                }
+                //PBI 13977: Se valida si la fecha de valuación es mayor a la fecha actual
+                else if (fechaValuacion > fechaActualBD)
+                {
+                    esValida = false;
+                    errorValidaciones = true;
+                    desplegarErrorVentanaEmergente = true;
+                    inconsistenciaFechasMayoresActual = true;
+
+                    if (!listaErroresValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechasMayoresActual)))
+                    {
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechasMayoresActual), _mensajeFechasMayoresActual);
                     }
                 }
 
@@ -5345,6 +5522,19 @@ namespace BCR.GARANTIAS.Entidades
                     desplegarErrorVentanaEmergente = ((desplegarErrorVentanaEmergente) ? true : false);
                     inconsistenciaFechaUltimoSeguimiento = 1;
                     listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaUltimoSeguimiento), _mensajeFechaUltimoSeguimientoFaltante);
+                }
+                //PBI 13977: Se valida si la fecha de último seguimiento es mayor a la fecha actual
+                else if (fechaUltimoSeguimiento > fechaActualBD)
+                {
+                    esValida = false;
+                    errorValidaciones = true;
+                    desplegarErrorVentanaEmergente = true;
+                    inconsistenciaFechasMayoresActual = true;
+
+                    if (!listaErroresValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechasMayoresActual)))
+                    {
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechasMayoresActual), _mensajeFechasMayoresActual);
+                    }
                 }
 
                 #endregion Se aplica la validación correspondiente a la fecha del último seguimiento
@@ -5424,6 +5614,19 @@ namespace BCR.GARANTIAS.Entidades
                     inconsistenciaFechaConstitucion = true;
                     listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaConstitucion), _mensajeFechaConstitucionInvalida);
                 }
+                //PBI 13977: Se valida si la fecha de constitución es mayor a la fecha actual
+                else if (fechaConstitucion > fechaActualBD)
+                {
+                    esValida = false;
+                    errorValidaciones = true;
+                    desplegarErrorVentanaEmergente = true;
+                    inconsistenciaFechasMayoresActual = true;
+
+                    if (!listaErroresValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechasMayoresActual)))
+                    {
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.FechasMayoresActual), _mensajeFechasMayoresActual);
+                    }
+                }
 
                 #endregion Se aplica la validación correspondiente a la fecha de constitución
 
@@ -5459,150 +5662,165 @@ namespace BCR.GARANTIAS.Entidades
                 }
                 else //La garantía posee una póliza asociada
                     if (polizaSapAsociada != null)
+                {
+                    if ((MostrarErrorRelacionTipoBienTipoPolizaSap) && (errorRelacionGarantiaPoliza))
                     {
-                        if ((MostrarErrorRelacionTipoBienTipoPolizaSap) && (errorRelacionGarantiaPoliza))
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+
+                        if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaInvalidaTipoBienPoliza)))
                         {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-
-                            if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PolizaInvalidaTipoBienPoliza)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaInvalidaTipoBienPoliza), _mensajePolizaInvalidaRelacionTipoBienPoliza);
-                            }
-                        }
-
-                        //Se valida si la póliza ha sido cambiada
-                        if (!polizaSapAsociada.CodigoSapValido)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPolizaInvalida = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaInvalida), _mensajePolizaInvalida);
-                        }
-
-                        //Se verifica la existencia de un infraseguro
-                        if (polizaSapAsociada.MontoPolizaSapColonizado < montoUltimaTasacionNoTerreno)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            InconsistenciaGarantiaInfraSeguro = true;
-                            //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.InfraSeguro), _mensajeMontoPolizaMenorMontoUltimaTasacionTerreno);
-
-                            if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien), _mensajeMontoPolizaMenorMontoUltimaTasacionTerreno);
-                            }
-
-                            listaMensajesValidaciones.Remove(((int)Enumeradores.Inconsistencias.InfraSeguro));
-                            string[] listaOperaciones = OperacionesRelacionadas.ObtenerDatosOperaciones(Enumeradores.Tipos_Operaciones.Todos);
-                            string listaOperacionesDirecta = (((listaOperaciones.Length > 1) && (listaOperaciones[0].Length > 0)) ? listaOperaciones[0] : string.Empty);
-                            string listaOperacionesContrato = (((listaOperaciones.Length > 1) && (listaOperaciones[1].Length > 0)) ? listaOperaciones[1] : string.Empty);
-
-                            if ((listaOperacionesDirecta.Length > 0) || (listaOperacionesContrato.Length > 0))
-                            {
-                                listaMensajesValidaciones.Remove(((int)Enumeradores.Inconsistencias.InfraSeguro));
-
-                                string mensajeMostrar = mensajeGarantiaInfraSeguro.Replace("@1", listaOperacionesDirecta).Replace("@2", listaOperacionesContrato);
-
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.InfraSeguro), mensajeMostrar);
-                            }
-                        }
-
-                        //Se verifica si existen montos de acrencia diferente de una misma garantía y póliza
-                        //if ((this.OperacionesRelacionadas != null) && (this.OperacionesRelacionadas.Count > 0) && (this.OperacionesRelacionadas.TieneGarantiasDiferentes()))
-                        //{
-                        //    esValida = false;
-                        //    errorValidaciones = true;
-                        //    desplegarErrorVentanaEmergente = true;
-                        //    inconsistenciaMontoAcreenciaDiferente = true;
-
-                        //    string[] listaOperaciones = OperacionesRelacionadas.ObtenerDatosOperaciones(Enumeradores.Tipos_Operaciones.Todos);
-                        //    string listaOperacionesDirecta = (((listaOperaciones.Length > 1) && (listaOperaciones[0].Length > 0)) ? listaOperaciones[0] : string.Empty);
-                        //    string listaOperacionesContrato = (((listaOperaciones.Length > 1) && (listaOperaciones[1].Length > 0)) ? listaOperaciones[1] : string.Empty);
-
-                        //    if ((listaOperacionesDirecta.Length > 0) || (listaOperacionesContrato.Length > 0))
-                        //    {
-                        //        string mensajeMostrar = mensajeMontoAcreenciaDiferente.Replace("@1", listaOperacionesDirecta).Replace("@2", listaOperacionesContrato);
-
-                        //        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.AcreenciasDiferentes), mensajeMostrar);
-                        //    }
-                        // }
-
-                        //Se revisa si se dió algún cambio en el monto de la póliza, esto en el SAP, y el mismo es menor al anterior
-                        if (polizaSapAsociada.MontoPolizaMenor)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaCambioMontoPoliza = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoPolizaMenor), _mensajeCambioMontoPoliza);
-                        }
-
-                        //Se verifica si la fecha de vencimiento fue modificada en el SAP y la misma es menor a la anterior
-                        if (polizaSapAsociada.FechaVencimientoMenor)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaCambioFechaVencimiento = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.VencimientoPolizaMenor), _mensajeCambioFechaVencimientoPoliza);
-                        }
-
-                        //Se revisa si el monto de la acreencia es mayor al monto de la póliza
-                        if (polizaSapAsociada.MontoAcreenciaPolizaSap > polizaSapAsociada.MontoPolizaSapColonizado)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaMontoAcreenciaInvalido = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoAcreenciaInvalido), _mensajeMontoAcreenciaInvalido);
-                        }
-
-                        //Se verifica si se ha dado algún cambio en los datos del acreedor
-                        if ((polizaSapAsociada.CambioIdAcreedor) && (polizaSapAsociada.CambioNombreAcreedor))
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaCambioDatosAcreedor = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.DatosAcreedorDiferentes), _mensajeCambioDatosAcreedorPoliza);
-                        }
-                        //Se revisa si el cambio se dio sólo en la cédula del acreedor
-                        else if ((polizaSapAsociada.CambioIdAcreedor) && (!polizaSapAsociada.CambioNombreAcreedor))
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaCambioIdAcreedor = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.IdAcreedorDiferente), _mensajeCambioCedulaAcreedorPoliza);
-                        }
-                        //Se verifica si el cambio se dio sólo en el nombre del acreedor
-                        else if ((polizaSapAsociada.CambioNombreAcreedor) && (!polizaSapAsociada.CambioIdAcreedor))
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaCambioAcreedor = true;
-                            listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.NombreAcreedorDiferente), _mensajeCambioAcreedorPoliza);
-                        }
-
-                        //Se verifica las coberturas obligatorias fueron asignadas
-                        if (polizaSapAsociada.DiferenciaCoberturasObligatorias != 0)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            InconsistenciaCoberturasObligatoriasInvalidas = true;
-
-                            if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas), _mensajeCoberturasObligatoriasInvalidas);
-                            }
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaInvalidaTipoBienPoliza), _mensajePolizaInvalidaRelacionTipoBienPoliza);
                         }
                     }
+
+                    //Se valida si la póliza ha sido cambiada
+                    if (!polizaSapAsociada.CodigoSapValido)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaPolizaInvalida = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.PolizaInvalida), _mensajePolizaInvalida);
+                    }
+
+                    //Se verifica la existencia de un infraseguro
+                    if (polizaSapAsociada.MontoPolizaSapColonizado < montoUltimaTasacionNoTerreno)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        InconsistenciaGarantiaInfraSeguro = true;
+                        //listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.InfraSeguro), _mensajeMontoPolizaMenorMontoUltimaTasacionTerreno);
+
+                        if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoPolizaNoCubreBien), _mensajeMontoPolizaMenorMontoUltimaTasacionTerreno);
+                        }
+
+                        listaMensajesValidaciones.Remove(((int)Enumeradores.Inconsistencias.InfraSeguro));
+                        string[] listaOperaciones = OperacionesRelacionadas.ObtenerDatosOperaciones(Enumeradores.Tipos_Operaciones.Todos);
+                        string listaOperacionesDirecta = (((listaOperaciones.Length > 1) && (listaOperaciones[0].Length > 0)) ? listaOperaciones[0] : string.Empty);
+                        string listaOperacionesContrato = (((listaOperaciones.Length > 1) && (listaOperaciones[1].Length > 0)) ? listaOperaciones[1] : string.Empty);
+
+                        if ((listaOperacionesDirecta.Length > 0) || (listaOperacionesContrato.Length > 0))
+                        {
+                            listaMensajesValidaciones.Remove(((int)Enumeradores.Inconsistencias.InfraSeguro));
+
+                            string mensajeMostrar = mensajeGarantiaInfraSeguro.Replace("@1", listaOperacionesDirecta).Replace("@2", listaOperacionesContrato);
+
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.InfraSeguro), mensajeMostrar);
+                        }
+                    }
+
+                    //Se verifica si existen montos de acrencia diferente de una misma garantía y póliza
+                    //if ((this.OperacionesRelacionadas != null) && (this.OperacionesRelacionadas.Count > 0) && (this.OperacionesRelacionadas.TieneGarantiasDiferentes()))
+                    //{
+                    //    esValida = false;
+                    //    errorValidaciones = true;
+                    //    desplegarErrorVentanaEmergente = true;
+                    //    inconsistenciaMontoAcreenciaDiferente = true;
+
+                    //    string[] listaOperaciones = OperacionesRelacionadas.ObtenerDatosOperaciones(Enumeradores.Tipos_Operaciones.Todos);
+                    //    string listaOperacionesDirecta = (((listaOperaciones.Length > 1) && (listaOperaciones[0].Length > 0)) ? listaOperaciones[0] : string.Empty);
+                    //    string listaOperacionesContrato = (((listaOperaciones.Length > 1) && (listaOperaciones[1].Length > 0)) ? listaOperaciones[1] : string.Empty);
+
+                    //    if ((listaOperacionesDirecta.Length > 0) || (listaOperacionesContrato.Length > 0))
+                    //    {
+                    //        string mensajeMostrar = mensajeMontoAcreenciaDiferente.Replace("@1", listaOperacionesDirecta).Replace("@2", listaOperacionesContrato);
+
+                    //        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.AcreenciasDiferentes), mensajeMostrar);
+                    //    }
+                    // }
+
+                    //Se revisa si se dió algún cambio en el monto de la póliza, esto en el SAP, y el mismo es menor al anterior
+                    if (polizaSapAsociada.MontoPolizaMenor)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaCambioMontoPoliza = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoPolizaMenor), _mensajeCambioMontoPoliza);
+                    }
+
+                    //Se verifica si la fecha de vencimiento fue modificada en el SAP y la misma es menor a la anterior
+                    if (polizaSapAsociada.FechaVencimientoMenor)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaCambioFechaVencimiento = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.VencimientoPolizaMenor), _mensajeCambioFechaVencimientoPoliza);
+                    }
+
+                    //Se revisa si el monto de la acreencia es mayor al monto de la póliza
+                    if (polizaSapAsociada.MontoAcreenciaPolizaSap > polizaSapAsociada.MontoPolizaSapColonizado)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaMontoAcreenciaInvalido = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoAcreenciaInvalido), _mensajeMontoAcreenciaInvalido);
+                    }
+
+                    //Se verifica si se ha dado algún cambio en los datos del acreedor
+                    if ((polizaSapAsociada.CambioIdAcreedor) && (polizaSapAsociada.CambioNombreAcreedor))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaCambioDatosAcreedor = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.DatosAcreedorDiferentes), _mensajeCambioDatosAcreedorPoliza);
+                    }
+                    //Se revisa si el cambio se dio sólo en la cédula del acreedor
+                    else if ((polizaSapAsociada.CambioIdAcreedor) && (!polizaSapAsociada.CambioNombreAcreedor))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaCambioIdAcreedor = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.IdAcreedorDiferente), _mensajeCambioCedulaAcreedorPoliza);
+                    }
+                    //Se verifica si el cambio se dio sólo en el nombre del acreedor
+                    else if ((polizaSapAsociada.CambioNombreAcreedor) && (!polizaSapAsociada.CambioIdAcreedor))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        inconsistenciaCambioAcreedor = true;
+                        listaErroresValidaciones.Add(((int)Enumeradores.Inconsistencias.NombreAcreedorDiferente), _mensajeCambioAcreedorPoliza);
+                    }
+
+                    //Se verifica las coberturas obligatorias fueron asignadas
+                    if (polizaSapAsociada.DiferenciaCoberturasObligatorias != 0)
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        InconsistenciaCoberturasObligatoriasInvalidas = true;
+
+                        if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.CoberturasObligatoriasInvalidas), _mensajeCoberturasObligatoriasInvalidas);
+                        }
+                    }
+
+                    //PBI 13977
+                    //Se verifica el monto de la póliza
+                    if ((polizaSapAsociada.MontoPolizaSapColonizado < 0) || (polizaSapAsociada.MontoPolizaSap < 0))
+                    {
+                        esValida = false;
+                        errorValidaciones = true;
+                        desplegarErrorVentanaEmergente = true;
+                        InconsistenciaMontoPolizaNegativo = true;
+
+                        if (!listaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.MontoPolizaNegativo)))
+                        {
+                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.MontoPolizaNegativo), _mensajeMontoPolizaNegativo);
+                        }
+                    }
+                }
 
                 #endregion Se aplican las validaciones correspondientes a la póliza
 
@@ -5769,22 +5987,22 @@ namespace BCR.GARANTIAS.Entidades
 
                             //}                     
 
-                            //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
-                            if ((fechaValuacion != fechaNula) && (fechaValuacion != DateTime.MinValue) &&
-                                (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5))
-                            {
-                                //esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
-                                inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //Se verifica que la fecha de valuación es mayor a 5 años en realacion a la fecha del sistema             
+                            //if ((fechaValuacion != fechaNula) && (fechaValuacion != DateTime.MinValue) &&
+                            //    (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5))
+                            //{
+                            //    //esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorDieciochoMeses = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
 
-                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                                {
-                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                                }
+                            //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            //    {
+                            //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                            //    }
 
-                            }
+                            //}
 
                             //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema             
                             if ((fechaUltimoSeguimiento != fechaNula) && (fechaUltimoSeguimiento != DateTime.MinValue) &&
@@ -5870,19 +6088,19 @@ namespace BCR.GARANTIAS.Entidades
                         if ((codTipoBien == 3) && (codTipoGarantiaReal == 3))
                         {
                             //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                            if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
-                            {
-                                //esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
-                                inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
+                            //{
+                            //    //esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
 
-                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                                {
-                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                                }
-                            }
+                            //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            //    {
+                            //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                            //    }
+                            //}
 
                             //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
                             //if (UtilitariosComun.DateDiff("Y", this.fechaUltimoSeguimiento, fechaActualSistema) > 1)
@@ -5958,19 +6176,19 @@ namespace BCR.GARANTIAS.Entidades
                         if ((codTipoBien == 4) && (codTipoGarantiaReal == 3))
                         {
                             //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                            if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
-                            {
-                                //esValida = false;
-                                errorValidaciones = true;
-                                desplegarErrorVentanaEmergente = true;
-                                inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
-                                inconsistenciaPorcentajeAceptacionCalculado = true;
+                            //if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
+                            //{
+                            //    //esValida = false;
+                            //    errorValidaciones = true;
+                            //    desplegarErrorVentanaEmergente = true;
+                            //    inconsistenciaPorceAcepFechaValuacionMayorCincoAnnosBienTres = true;
+                            //    inconsistenciaPorcentajeAceptacionCalculado = true;
 
-                                if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
-                                {
-                                    listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
-                                }
-                            }
+                            //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.FechaValuacionMayor)))
+                            //    {
+                            //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.FechaValuacionMayor), _mensajePorceAcepFechaValuacionMayorCincoAnnosBienTres);
+                            //    }
+                            //}
 
                             if (fechaUltimoSeguimiento != fechaNula)
                             {
@@ -6201,24 +6419,24 @@ namespace BCR.GARANTIAS.Entidades
                     }
 
                     //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
-                    if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
-                    {
-                        esValida = false;
-                        errorValidaciones = true;
-                        desplegarErrorVentanaEmergente = true;
-                        inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
+                    //if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
+                    //{
+                    //    esValida = false;
+                    //    errorValidaciones = true;
+                    //    desplegarErrorVentanaEmergente = true;
+                    //    inconsistenciaPorcAceptTerrenoCalcFechaValuacion = true;
  
-                        if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)))
-                        {
-                            listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion), _mensajePorcAceptTerrenoCalcFechaValuacion);
-                        }
+                    //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion)))
+                    //    {
+                    //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptTerrenoCalcFechaValuacion), _mensajePorcAceptTerrenoCalcFechaValuacion);
+                    //    }
 
-                        if (!castigoAplicado)
-                        {
-                            porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                            castigoAplicado = true;
-                        }
-                    }
+                    //    if (!castigoAplicado)
+                    //    {
+                    //        porcentajeAceptacionTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                    //        castigoAplicado = true;
+                    //    }
+                    //}
 
                     if(porcentajeAceptacionTerreno > porcentajeAceptacionTerrenoCalculado)
                     {
@@ -6431,24 +6649,24 @@ namespace BCR.GARANTIAS.Entidades
                     if (!codTipoBien.Equals(3))
                     {
                         //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
-                        if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
-                        {
-                            esValida = false;
-                            errorValidaciones = true;
-                            desplegarErrorVentanaEmergente = true;
-                            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
+                        //if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
+                        //{
+                        //    esValida = false;
+                        //    errorValidaciones = true;
+                        //    desplegarErrorVentanaEmergente = true;
+                        //    inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
   
-                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
-                            {
-                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion), _mensajePorcAceptNoTerrenoCalcFechaValuacion);
-                            }
+                        //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
+                        //    {
+                        //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion), _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+                        //    }
 
-                            if (!castigoAplicado)
-                            {
-                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                                castigoAplicado = true;
-                            }
-                        }
+                        //    if (!castigoAplicado)
+                        //    {
+                        //        porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                        //        castigoAplicado = true;
+                        //    }
+                        //}
                     }
 
                     //SI TIENE POLIZA ASOCIADA
@@ -7345,6 +7563,13 @@ namespace BCR.GARANTIAS.Entidades
                                     objEscritor.WriteString(DBNull.Value.ToString());
                                     objEscritor.WriteEndElement();
                                 }
+                                else if ((valorActual.CompareTo("-") == 0) && (codTipoBien == 1) &&
+                                    (datosAvaluo.Key.CompareTo(clsGarantiaReal._fechaConstruccion) == 0))
+                                    {
+                                    objEscritor.WriteStartElement(datosAvaluo.Key);
+                                    objEscritor.WriteString(DBNull.Value.ToString());
+                                    objEscritor.WriteEndElement();
+                                }
                             }
 
                             //Se registran los campos correspondientes a la pista de seguimiento del registro
@@ -8199,7 +8424,7 @@ namespace BCR.GARANTIAS.Entidades
             if (((aplicarCalculoMTANT) && (montoUltimaTasacionNoTerreno == 0))
                || ((aplicarCalculoMTAT) && (montoUltimaTasacionTerreno == 0))
                || (fechaValuacion != fechaValuacionSICC)
-               || (montoTotalAvaluo != montoTotalAvaluoSICC))
+               || (montoTotalAvaluo != montoTotalAvaluoColonizado))
             {
                 calculoMontoActualizadoTerrenoNoTerreno = 1;
                 montoTasacionActualizadaTerrenoCalculado = null;
@@ -9207,6 +9432,20 @@ namespace BCR.GARANTIAS.Entidades
                     objEscritor.WriteEndElement();
 
                     #endregion
+
+                    #region PBI 13977
+
+                    //Crea el nodo de la moenda del avalúo
+                    objEscritor.WriteStartElement(_tipoMonedaTasacion);
+                    objEscritor.WriteString(codMonedaTasacion.ToString());
+                    objEscritor.WriteEndElement();
+
+                    //Crea el nodo del monto total del avalúo colonizado
+                    objEscritor.WriteStartElement(_montoTotalAvaluoColonizado);
+                    objEscritor.WriteString(montoTotalAvaluoColonizado.ToString("N2"));
+                    objEscritor.WriteEndElement();
+
+                    #endregion PBI 13977
 
                     //Final del tag AVALUO_MAS_RECIENTE
                     objEscritor.WriteEndElement();

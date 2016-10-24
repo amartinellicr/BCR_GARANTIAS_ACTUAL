@@ -6,7 +6,6 @@ using System.Web.UI.WebControls;
 using System.Configuration;
 using System.Web.UI;
 using System.Collections.Generic;
-using System.Web;
 
 using BCRGARANTIAS.Datos;
 using BCRGARANTIAS.Negocios;
@@ -203,6 +202,30 @@ namespace BCRGARANTIAS.Forms
             imgCalculadoraGF.Click += new ImageClickEventHandler(ImageButton_Click); 
         }
 
+        protected override void OnLoadComplete(EventArgs e)
+        {
+            ScriptManager requestSM = ScriptManager.GetCurrent(this.Page);
+
+            //Se ejecutan las funciones que manipulan el objeto "Acordeón" de la interfaz de usuario
+            if (requestSM != null && requestSM.IsInAsyncPostBack)
+            {
+                ScriptManager.RegisterClientScriptBlock(this,
+                                                        typeof(Page),
+                                                        Guid.NewGuid().ToString(),
+                                                        "<script type=\"text/javascript\" language=\"javascript\">document.body.style.cursor = 'default';" +
+                                                        " </script>",
+                                                        false);
+            }
+            else
+            {
+                this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                       Guid.NewGuid().ToString(),
+                                                        "<script type=\"text/javascript\" language=\"javascript\">document.body.style.cursor = 'default';" +
+                                                        " </script>",
+                                                       false);
+            }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             txtContabilidad.Attributes["onblur"] = "javascript:EsNumerico(this);";
@@ -232,6 +255,8 @@ namespace BCRGARANTIAS.Forms
 
             txtMontoCobertura.Attributes.Add("onkeypress", "javascript:return numbersonly(event);");
             txtMontoCobertura.Attributes.Add("onblur", "javascript:FormatNumber(this,this.value,2,true,true,false)");
+
+            btnValidarOperacion.Attributes["onclick"] = "javascript:document.body.style.cursor = 'wait'; return true;";
 
             txtObservacion.Visible = false;
             lblObservacion.Visible = false;

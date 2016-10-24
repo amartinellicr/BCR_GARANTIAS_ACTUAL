@@ -672,4 +672,10 @@
   <data name="ERROR_APLICANDO_CALCULO_DISTRIBUCION_PR" xml:space="preserve">
     <value>Se ha presentado un error al aplicar el cálculo de la distribución del porcentanje de responsabilidad. </value>
   </data>
+  <data name="ERROR_MONTOS_MAYORES_A_CERO" xml:space="preserve">
+    <value>El  campo @1 debe tener un valor mayor a cero.</value>
+  </data>
+  <data name="ERROR_TIPO_MONEDA_TASACION" xml:space="preserve">
+    <value>El campo Tipo Moneda Tasación debe contener un valor.</value>
+  </data>
 </root>

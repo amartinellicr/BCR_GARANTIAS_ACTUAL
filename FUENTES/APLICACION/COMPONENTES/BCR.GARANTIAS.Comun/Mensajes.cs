@@ -259,6 +259,9 @@ namespace BCR.GARANTIAS.Comun
         public const string _errorObteniendoOperacionesGarantias                                = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS";
         public const string _errorObteniendoOperacionesGarantiasDetalle                         = "ERROR_OBTENIENDO_OPERACIONES_GARANTIAS_DETALLE";
 
+        //PBI 13977
+        public const string _errorMontosMayoresACero                                            = "ERROR_MONTOS_MAYORES_A_CERO";
+        public const string _errorTipoMonedaTasacion                                            = "ERROR_TIPO_MONEDA_TASACION";
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>
