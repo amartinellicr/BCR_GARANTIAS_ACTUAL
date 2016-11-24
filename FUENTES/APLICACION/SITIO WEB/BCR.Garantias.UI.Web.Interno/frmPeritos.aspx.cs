@@ -30,10 +30,10 @@ namespace BCRGARANTIAS.Forms
         {
             base.OnInit(e);
 
-            btnEliminar.Click +=new EventHandler(btnEliminar_Click);
-            btnInsertar.Click +=new EventHandler(btnInsertar_Click);
-            btnLimpiar.Click +=new EventHandler(btnLimpiar_Click);
-            btnModificar.Click +=new EventHandler(btnModificar_Click);
+            btnEliminar.Click += new EventHandler(btnEliminar_Click);
+            btnInsertar.Click += new EventHandler(btnInsertar_Click);
+            btnLimpiar.Click += new EventHandler(btnLimpiar_Click);
+            btnModificar.Click += new EventHandler(btnModificar_Click);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -85,17 +85,24 @@ namespace BCRGARANTIAS.Forms
             {
                 if (ValidarPeritos())
                 {
-                    Gestor.CrearPerito(txtCedula.Text, txtNombre.Text, int.Parse(cbTipo.SelectedValue.ToString()),
+                    if (ValidarLlave())
+                    {
+                        Gestor.CrearPerito(txtCedula.Text, txtNombre.Text, int.Parse(cbTipo.SelectedValue.ToString()),
                                        txtTelefono.Text.Trim(), txtEmail.Text.Trim(), txtDireccion.Text,
                                        Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
 
-                    Response.Redirect("frmMensaje.aspx?" +
-                                    "bError=0" +
-                                    "&strTitulo=" + "Inserción Exitosa" +
-                                    "&strMensaje=" + "El perito se insertó satisfactoriamente." +
-                                    "&bBotonVisible=1" +
-                                    "&strTextoBoton=Regresar" +
-                                    "&strHref=frmPeritos.aspx");
+                        Response.Redirect("frmMensaje.aspx?" +
+                                        "bError=0" +
+                                        "&strTitulo=" + "Inserción Exitosa" +
+                                        "&strMensaje=" + "El perito se insertó satisfactoriamente." +
+                                        "&bBotonVisible=1" +
+                                        "&strTextoBoton=Regresar" +
+                                        "&strHref=frmPeritos.aspx");
+                    }
+                    else
+                    {
+                        lblMensaje.Text = "Ya existe este perito. Por favor verifique...";
+                    }
                 }
             }
             catch (Exception ex)
@@ -141,7 +148,7 @@ namespace BCRGARANTIAS.Forms
                 if (ValidarPeritos())
                 {
                     //Gestor.ModificarPerito(strCedula, strNombre, nTipo, strTelefono, strEmail, strDireccion);
-                    Gestor.ModificarPerito(txtCedula.Text, txtNombre.Text, int.Parse(cbTipo.SelectedValue.ToString()), 
+                    Gestor.ModificarPerito(txtCedula.Text, txtNombre.Text, int.Parse(cbTipo.SelectedValue.ToString()),
                                            txtTelefono.Text.Trim(), txtEmail.Text.Trim(), txtDireccion.Text,
                                            Session["strUSER"].ToString(), Request.UserHostAddress.ToString());
 
@@ -275,7 +282,7 @@ namespace BCRGARANTIAS.Forms
                 lblMensaje.Text = ex.Message;
             }
         }
-        
+
         protected void gdvPeritos_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             this.gdvPeritos.SelectedIndex = -1;
@@ -404,6 +411,38 @@ namespace BCRGARANTIAS.Forms
                     lblMensaje.Text = "Debe ingresar la dirección del perito.";
                     bRespuesta = false;
                 }
+            }
+            catch (Exception ex)
+            {
+                lblMensaje.Text = ex.Message;
+            }
+
+            return bRespuesta;
+        }
+
+        /// <summary>
+        /// Metodo de validación de datos de la llave
+        /// </summary>
+        /// <returns></returns>
+        private bool ValidarLlave()
+        {
+            bool bRespuesta = true;
+            try
+            {
+                string strSQL = "SELECT " +
+                    "cedula_perito " +
+                    "FROM " +
+                    "dbo.GAR_PERITO " +
+                    "WHERE " +
+                    "cedula_perito = '" + txtCedula.Text + "'";
+
+                DataSet dsDatos = new DataSet();
+                oleDbConnection1 = Datos.AccesoBD.ObtenerStringConexion();
+                OleDbDataAdapter cmdConsulta = new OleDbDataAdapter(strSQL, oleDbConnection1);
+                cmdConsulta.Fill(dsDatos, "Datos");
+
+                if (dsDatos.Tables["Datos"].Rows.Count > 0)
+                    bRespuesta = false;
             }
             catch (Exception ex)
             {

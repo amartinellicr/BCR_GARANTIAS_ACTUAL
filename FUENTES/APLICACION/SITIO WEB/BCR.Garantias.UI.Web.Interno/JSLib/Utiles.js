@@ -4213,10 +4213,10 @@ function ValidarPorcentajeAceptacionCalculado() {
             if (fechaValu.length > 0) {
 
                 //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
-                    $$('txtPorcentajeAceptacionCalculado').val('0.00');
-                    porceAceptaCalculadoMenor = 0.00;
-                }
+                //if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                //    $$('txtPorcentajeAceptacionCalculado').val('0.00');
+                //    porceAceptaCalculadoMenor = 0.00;
+                //}
 
             }
 
@@ -4287,10 +4287,10 @@ function ValidarPorcentajeAceptacionCalculado() {
 
             if (fechaValu.length > 0) {
                 //Se verifica que el fecha de valuacion sea mayor a 5 años en relacion a la fecha del sistema
-                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
-                    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
+                //if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                //    $$('txtPorcentajeAceptacionCalculado').val(porceAceptaCalculadoMitad);
 
-                }
+                //}
             }
 
             //Se verifica que la fecha de ultimo seguimiento es mayor 1 año en realacion a la fecha del sistema
@@ -4486,15 +4486,17 @@ function ValidarPorcentajeAceptacionCalculado() {
         //SE VERIFICA QUE EL FECHA DE VALUACION SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA
 
         if (fechaValu.length > 0) {
-            if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
-                if (castigoAplicado === 0) {
-                    $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                    castigoAplicado = 1;
-                }
+            if ((tipoBien !== 2) && (tipoBien !== 3) && (tipoBien !== 5) && (tipoBien !== 6)) {
+                if ((getDateDiff(fechaValuacion, fechaActual, "years")) > 5) {
+                    if (castigoAplicado === 0) {
+                        $$('txtPorcentajeAceptacionTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1;
+                    }
 
-                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
-                    $MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open'); 
-                }               
+                    if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
+                        $MensajePorcAceptTerrenoCalcFechaValuacionInvalido.dialog('open');
+                    }
+                }
             }
         }
 
@@ -4561,15 +4563,17 @@ function ValidarPorcentajeAceptacionCalculado() {
         
         //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
         if (tipoBien !== 3) {
-            //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
-            if (parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
-                if (castigoAplicado === 0) {
-                    $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
-                    castigoAplicado = 1
-                }
+            if ((tipoBien !== 2) && (tipoBien !== 3) && (tipoBien !== 5) && (tipoBien !== 6)) {
+                //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
+                if (parseInt((getDateDiff(fechaValuacion, fechaActual, "years"))) > 5) {
+                    if (castigoAplicado === 0) {
+                        $$('txtPorcentajeAceptacionNoTerrenoCalculado').val(porceAceptaCalculadoMitad);
+                        castigoAplicado = 1
+                    }
 
-                if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
-                    $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open'); 
+                    if (($MostrarMensajesPorAceptAvaluo) && (typeof ($MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido) !== 'undefined')) {
+                        $MensajePorcAceptNoTerrenoCalcFechaValuacionInvalido.dialog('open');
+                    }
                 }
             }
         }

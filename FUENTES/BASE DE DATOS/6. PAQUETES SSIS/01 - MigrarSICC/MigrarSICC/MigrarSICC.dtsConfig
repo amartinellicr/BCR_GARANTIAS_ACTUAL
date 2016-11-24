@@ -4,7 +4,7 @@
     <DTSConfigurationFileInfo GeneratedBy="BCR\401640970" GeneratedFromPackageName="MigrarSICC" GeneratedFromPackageID="{FD4E4F3D-EA4A-4C2F-A1E9-05B1E0DEB042}" GeneratedDate="07/01/2014 02:12:59 p.m."/>
   </DTSConfigurationHeading>
   <Configuration ConfiguredType="Property" Path="\Package.Variables[User::cadenaConexionGarantias].Properties[Value]" ValueType="String">
-    <ConfiguredValue>Data Source=BCR0106SQL81, 10015;User ID=AccesoGarantias;Password=123456Aa;Initial Catalog=SIGANEM;Provider=SQLNCLI10.1;Persist Security Info=True;</ConfiguredValue>
+    <ConfiguredValue>Data Source=BCR0106SQL81, 10015;User ID=AccesoGarantias;Password=123456Aa;Initial Catalog=usGARANTIAS;Provider=SQLNCLI10.1;Persist Security Info=True;</ConfiguredValue>
   </Configuration>
   <Configuration ConfiguredType="Property" Path="\Package.Variables[User::cadenaConexionSICC].Properties[Value]" ValueType="String">
     <ConfiguredValue>Data Source=BCR0106DBE81,10000;User ID=AccesoGarantias;Password=123456Aa;Initial Catalog=SICC;Persist Security Info=True;</ConfiguredValue>
@@ -19,7 +19,7 @@
     <ConfiguredValue>D:\ArchivosSEGUI\bitacoraTemp.raw</ConfiguredValue>
   </Configuration>
   <Configuration ConfiguredType="Property" Path="\Package.Variables[User::rutaPaqueteSSIS].Properties[Value]" ValueType="String">
-    <ConfiguredValue>D:\BCR_GARANTIAS\ACTUAL\CONTRATO_MANTENIMIENTO\03 - ENTREGABLES\REQUERIMIENTO 028\Scripts\01 - MigrarSICC\MigrarSICC\</ConfiguredValue>
+    <ConfiguredValue>D:\BCRGarantias\BCR_GARANTIAS_ACTUAL\FUENTES\BASE DE DATOS\6. PAQUETES SSIS\01 - MigrarSICC\MigrarSICC\</ConfiguredValue>
   </Configuration>
   <Configuration ConfiguredType="Property" Path="\Package.Properties[VersionBuild]" ValueType="Int32">
     <ConfiguredValue>19</ConfiguredValue>

@@ -2465,11 +2465,11 @@ namespace BCR.GARANTIAS.Entidades
                                 montoTasacionActualizadaNoTerreno = 0;
                             }
 
-                            if ((codTipoBien >= 3) && (codTipoBien <= 14))
-                            {
-                                montoUltimaTasacionTerreno = 0;
-                                montoTasacionActualizadaTerreno = 0;
-                            }
+                            //if ((codTipoBien >= 3) && (codTipoBien <= 14))
+                            //{
+                            //    montoUltimaTasacionTerreno = 0;
+                            //    montoTasacionActualizadaTerreno = 0;
+                            //}
 
                             //Fin PBI 13977: Asignación de valores según tipo de bien.
                         }
@@ -4649,6 +4649,11 @@ namespace BCR.GARANTIAS.Entidades
                 descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Última Tasación Terreno", Mensajes.ASSEMBLY);
                 camposRequeridos = false;
             }
+            if (camposRequeridos && codTipoBien > 2 && codTipoBien < 15 && montoUltimaTasacionTerreno > 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosIgualesACero, "Mto Última Tasación Terreno", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }            
             if (camposRequeridos && codTipoBien == 2 && montoUltimaTasacionNoTerreno <= 0)
             {
                 descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Última Tasación no Terreno", Mensajes.ASSEMBLY);
@@ -4657,6 +4662,11 @@ namespace BCR.GARANTIAS.Entidades
             if (camposRequeridos && codTipoBien == 2 && montoTasacionActualizadaTerreno <= 0)
             {
                 descripcionError = Mensajes.Obtener(Mensajes._errorMontosMayoresACero, "Mto Tasación Actualizada Terreno Calculado", Mensajes.ASSEMBLY);
+                camposRequeridos = false;
+            }
+            if (camposRequeridos && codTipoBien > 2 && codTipoBien < 15 && montoTasacionActualizadaTerreno > 0)
+            {
+                descripcionError = Mensajes.Obtener(Mensajes._errorMontosIgualesACero, "Mto Tasación Actualizada Terreno Calculado", Mensajes.ASSEMBLY);
                 camposRequeridos = false;
             }
             if (camposRequeridos && codTipoBien == 2 && MontoTasacionActualizadaNoTerreno <= 0)
@@ -6646,27 +6656,27 @@ namespace BCR.GARANTIAS.Entidades
                     }
 
                     //SI TIPO BIEN DIFERENTE A VEHICULOS Y TIPO GARANTIA REAL DISTINTO A PRENDAS
-                    if (!codTipoBien.Equals(3))
+                    if ((!codTipoBien.Equals(2)) && (!codTipoBien.Equals(3)) && (!codTipoBien.Equals(5)) && (!codTipoBien.Equals(6)))
                     {
                         //SE VERIFICA QUE LA FECHA ULTIMO VALUACION SEA SEA MAYOR A 5 AÑOS EN RELACION A LA FECHA DEL SISTEMA 
-                        //if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
-                        //{
-                        //    esValida = false;
-                        //    errorValidaciones = true;
-                        //    desplegarErrorVentanaEmergente = true;
-                        //    inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
-  
-                        //    if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
-                        //    {
-                        //        listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion), _mensajePorcAceptNoTerrenoCalcFechaValuacion);
-                        //    }
+                        if (UtilitariosComun.DateDiff("Y", fechaValuacion, fechaActualSistema) > 5)
+                        {
+                            esValida = false;
+                            errorValidaciones = true;
+                            desplegarErrorVentanaEmergente = true;
+                            inconsistenciaPorcAceptNoTerrenoCalcFechaValuacion = true;
 
-                        //    if (!castigoAplicado)
-                        //    {
-                        //        porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
-                        //        castigoAplicado = true;
-                        //    }
-                        //}
+                            if (!ListaMensajesValidaciones.ContainsKey(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion)))
+                            {
+                                listaMensajesValidaciones.Add(((int)Enumeradores.Inconsistencias.PorcAceptNoTerrenoCalcFechaValuacion), _mensajePorcAceptNoTerrenoCalcFechaValuacion);
+                            }
+
+                            if (!castigoAplicado)
+                            {
+                                porcentajeAceptacionNoTerrenoCalculado = porcentajeAceptacionCalculadoOriginal / 2;
+                                castigoAplicado = true;
+                            }
+                        }
                     }
 
                     //SI TIENE POLIZA ASOCIADA

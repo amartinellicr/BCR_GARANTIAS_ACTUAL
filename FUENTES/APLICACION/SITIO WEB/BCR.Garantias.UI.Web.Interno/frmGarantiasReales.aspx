@@ -17,8 +17,8 @@
                                 <div style="text-align:right; width:320px; float:right; display:inline; background-color:transparent; border-color:transparent;">
                                     <asp:Label ID="lblFechaModificacion" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
                                 </div>
-                                <div style="text-align:right; float:right; display:block; background-color:transparent; border-color:transparent;">
-                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha"></asp:Label>
+                                <div style="text-align:right; float:right; display:inline-block; width:320px; padding-left:250px; background-color:transparent; border-color:transparent;">
+                                    <asp:Label ID="lblFechaReplica" runat="server" CssClass="Txt_Fecha" Width="320px"></asp:Label>
                                 </div>
 			                </div> 
                         </td> 

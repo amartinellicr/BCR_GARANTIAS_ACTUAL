@@ -678,4 +678,7 @@
   <data name="ERROR_TIPO_MONEDA_TASACION" xml:space="preserve">
     <value>El campo Tipo Moneda Tasación debe contener un valor.</value>
   </data>
+  <data name="ERROR_MONTOS_IGUALES_A_CERO" xml:space="preserve">
+    <value>El  campo @1 debe tener un valor igual a cero.</value>
+  </data>
 </root>

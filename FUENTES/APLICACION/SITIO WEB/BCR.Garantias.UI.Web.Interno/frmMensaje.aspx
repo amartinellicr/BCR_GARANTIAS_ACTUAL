@@ -21,9 +21,9 @@
 													</td>
 												</tr>
 												<tr>
-													<td width="100%" align="center">
-														<img src="<%=ObtenerImagen()%>">
-														<asp:Label CssClass="TextoMensaje" id="lblMensaje" runat="server"></asp:Label>
+													<td width="100%">                                                       
+														<img src="<%=ObtenerImagen()%>">                                                       
+														<asp:Label CssClass="TextoMensaje" id="lblMensajeMostrar" runat="server"></asp:Label>                                                        
 													</td>
 												</tr>
 												<tr>

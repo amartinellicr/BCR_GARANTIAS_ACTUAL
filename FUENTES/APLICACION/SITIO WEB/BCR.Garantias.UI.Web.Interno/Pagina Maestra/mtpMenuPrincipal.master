@@ -266,6 +266,7 @@ FUNCION PRINCIPAL
                 var bSeFormatea = true;
                 var bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacion") != -1) ? true : false);
                 var bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionTerreno") != -1) ? true : false);
+                var valorNumerico = 0;
 
                 bValidarPorAcept = ((oControl.id.indexOf("txtPorcentajeAceptacionCalculado") != -1) ? true : ((bValidarPorAcept) ? true : false));
             
@@ -274,12 +275,17 @@ FUNCION PRINCIPAL
                 bValidarPorAceptAvaluo = ((oControl.id.indexOf("txtPorcentajeAceptacionNoTerrenoCalculado") != -1) ? true : ((bValidarPorAceptAvaluo) ? true : false));
 
                 if(num.toString().length > 0)
-		        {
-			        if(!IsNum(oControl))
+                {
+                    valorNumerico = parseFloat(num);
+
+                    if(!IsNum(oControl))
 			        {
 				        alert('El campo debe ser numérico.'); 
 				        oControl.focus();
-			        }
+                    }
+                    else if (valorNumerico < 0) {
+                        oControl.value = '';
+                    }
 			        else
 			        {
 			            if(EsPorcentaje)

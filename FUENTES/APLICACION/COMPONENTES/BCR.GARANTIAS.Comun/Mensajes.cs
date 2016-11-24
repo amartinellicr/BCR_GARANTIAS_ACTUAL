@@ -262,6 +262,8 @@ namespace BCR.GARANTIAS.Comun
         //PBI 13977
         public const string _errorMontosMayoresACero                                            = "ERROR_MONTOS_MAYORES_A_CERO";
         public const string _errorTipoMonedaTasacion                                            = "ERROR_TIPO_MONEDA_TASACION";
+        public const string _errorMontosIgualesACero                                            = "ERROR_MONTOS_IGUALES_A_CERO";
+
         /// <summary>
         /// Error generado cuando se va a enviar un correo electrónico
         /// </summary>

@@ -1,20 +1,5 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Web;
-using System.Web.SessionState;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
-using System.Diagnostics;
-using System.Text;
-using System.Threading;
-using System.Data.OleDb;
 
-using BCRGARANTIAS.Negocios;
-using BCR.GARANTIAS.Comun;
 
 namespace BCRGARANTIAS.Presentacion
 {
@@ -42,8 +27,14 @@ namespace BCRGARANTIAS.Presentacion
         {
             if (!IsPostBack)
             {
+                string rutaImagen = ObtenerImagen();
+                string textoMostrar = Request.QueryString["strMensaje"].ToString();
+
+               // string contenidoLabel = string.Format("<img src=\"{0}\"> {1}", rutaImagen, textoMostrar);
+
+                // <img src = "<%=ObtenerImagen()%>">
                 lblTitulo.Text = Request.QueryString["strTitulo"].ToString();
-                lblMensaje.Text = Request.QueryString["strMensaje"].ToString();
+                lblMensajeMostrar.Text = textoMostrar;//  Request.QueryString["strMensaje"].ToString();
                 //valida si se hace uso del boton o no
                 if (Request.QueryString["bBotonVisible"].ToString() == "1")
                 {
@@ -89,6 +80,16 @@ namespace BCRGARANTIAS.Presentacion
             else
                 //es un caso de exito
                 return "Images/CheckOK.ICO";
+        }//ObtenerImagen
+
+        public string ObtenerMensaje()
+        {
+            if (Request.QueryString["strMensaje"].ToString().Length > 0)
+                //es un caso de error
+                return Request.QueryString["strMensaje"].ToString();
+            else
+                //es un caso de exito
+                return string.Empty;
         }//ObtenerImagen
 
         /// <summary>

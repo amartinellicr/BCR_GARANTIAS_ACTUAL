@@ -3816,11 +3816,11 @@ namespace BCRGARANTIAS.Forms
                     montoTasacionActNoTerreno = 0;
                 }
 
-                if ((nTipoBien >= 3) && (nTipoBien <= 14))
-                {
-                    montoUltTasacionTerreno = 0;
-                    montoTasacionActTerreno = 0;
-                }
+                //if ((nTipoBien >= 3) && (nTipoBien <= 14))
+                //{
+                //    montoUltTasacionTerreno = 0;
+                //    montoTasacionActTerreno = 0;
+                //}
 
                 //Fin PBI 13977: Asignación de valores según tipo de bien.
 
@@ -4724,6 +4724,16 @@ namespace BCRGARANTIAS.Forms
                 {
                     ExisteValuacion = true;
                 }
+
+                //Inicio PBI 13977: Asignación de valores según tipo de bien.
+
+                if ((entidadGarantia.CodTipoBien >= 3) && (entidadGarantia.CodTipoBien <= 14))
+                {
+                    entidadGarantia.MontoUltimaTasacionTerreno = 0;
+                    entidadGarantia.MontoTasacionActualizadaTerreno = 0;
+                }
+
+                //Fin PBI 13977: Asignación de valores según tipo de bien.
             }
             else
             {
@@ -8119,6 +8129,16 @@ namespace BCRGARANTIAS.Forms
                     }
                 }
             }
+
+            //Inicio PBI 13977: Asignación de valores según tipo de bien.
+
+            if ((entidadGarantia.CodTipoBien >= 3) && (entidadGarantia.CodTipoBien <= 14))
+            {
+                entidadGarantia.MontoUltimaTasacionTerreno = 0;
+                entidadGarantia.MontoTasacionActualizadaTerreno = 0;
+            }
+
+            //Fin PBI 13977: Asignación de valores según tipo de bien.
 
 
             Gestor.ModificarGarantiaReal(entidadGarantia, Session["strUSER"].ToString(), Request.UserHostAddress.ToString(), strOperacionCrediticia, strGarantia);
