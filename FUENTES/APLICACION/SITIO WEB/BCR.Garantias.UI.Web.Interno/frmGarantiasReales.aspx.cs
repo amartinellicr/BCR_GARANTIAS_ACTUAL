@@ -1881,6 +1881,7 @@ namespace BCRGARANTIAS.Forms
                                                         " </script>",
                                                        false);
             }
+
             if ((ErrorGrave) || (ErrorGraveAvaluo))
             {
                 this.txtMontoTasActTerreno.Text = string.Empty;
@@ -2563,6 +2564,31 @@ namespace BCRGARANTIAS.Forms
                 if ((!entidadValida) && (entidadGarantia.ErrorDatosRequeridos))
                 {
                     lblMensaje.Text = entidadGarantia.DescripcionError;
+
+                    ScriptManager requestSM = ScriptManager.GetCurrent(this.Page);
+
+                    //$('html, body').animate({scrollTop:0}, 'slow'); 
+
+                    if (requestSM != null && requestSM.IsInAsyncPostBack)
+                    {
+                        ScriptManager.RegisterClientScriptBlock(this,
+                                                                typeof(Page),
+                                                                Guid.NewGuid().ToString(),
+                                                                "<script type=\"text/javascript\" language=\"javascript\">" +
+                                                                " $(document).ready(function () { $('html, body').animate({scrollTop:0}, 'slow'); });" +
+                                                               " </script>",
+                                                                false);
+                    }
+                    else
+                    {
+                        this.Page.ClientScript.RegisterClientScriptBlock(typeof(Page),
+                                                               Guid.NewGuid().ToString(),
+                                                                "<script type=\"text/javascript\" language=\"javascript\">" +
+                                                                " $(document).ready(function () { $('html, body').animate({scrollTop:0}, 'slow'); });" +
+                                                                " </script>",
+                                                               false);
+                    }
+
                     return;
                 }
                 else if ((!entidadValida) && (entidadGarantia.ListaErroresValidaciones.Count == 0) &&
