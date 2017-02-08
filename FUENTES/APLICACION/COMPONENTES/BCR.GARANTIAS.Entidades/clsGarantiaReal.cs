@@ -4686,11 +4686,11 @@ namespace BCR.GARANTIAS.Entidades
                 camposRequeridos = false;
             }
 
-            if (camposRequeridos && codMonedaTasacion == -1)
-            {
-                descripcionError = Mensajes.Obtener(Mensajes._errorTipoMonedaTasacion, Mensajes.ASSEMBLY);
-                camposRequeridos = false;
-            }
+            //if (camposRequeridos && codMonedaTasacion == -1)
+            //{
+            //    descripcionError = Mensajes.Obtener(Mensajes._errorTipoMonedaTasacion, Mensajes.ASSEMBLY);
+            //    camposRequeridos = false;
+            //}
 
             return camposRequeridos;
 

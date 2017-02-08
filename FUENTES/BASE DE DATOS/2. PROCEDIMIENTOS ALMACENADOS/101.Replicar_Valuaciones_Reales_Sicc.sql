@@ -1,16 +1,7 @@
 USE [GARANTIAS]
 GO
 
-SET ANSI_NULLS OFF
-GO
-SET QUOTED_IDENTIFIER OFF
-GO
-
-IF OBJECT_ID ('dbo.Replicar_Valuaciones_Reales_Sicc', 'P') IS NOT NULL
-	DROP PROCEDURE dbo.Replicar_Valuaciones_Reales_Sicc;
-GO
-
-CREATE PROCEDURE [dbo].[Replicar_Valuaciones_Reales_Sicc]
+ALTER PROCEDURE [dbo].[Replicar_Valuaciones_Reales_Sicc]
 	@piIndicadorProceso		TINYINT,
 	@psCodigoProceso		VARCHAR(20)	
 AS
@@ -47,6 +38,13 @@ BEGIN
 			<Fecha>Octubre - 2016</Fecha>
 			<Descripción>Se agregra el campo referente al monto total del avalúo colonizado. 
 						 Adicionalmente, se incorpora el control de errores.
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>PBI 13977: Mantenimientos Garantías Reales</Requerimiento>
+			<Fecha>Febrero - 2017</Fecha>
+			<Descripción>Se ajusta la forma de seleccionar las garantías prendarias de acuerdo al código de la clase de garantía.
 			</Descripción>
 		</Cambio>
 		<Cambio>
@@ -246,7 +244,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -269,7 +268,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -292,7 +292,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -306,7 +307,9 @@ BEGIN
 			WHERE	MG1.prmgt_estado = 'A'
 				AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 				AND CGV.Ind_Clase_Alfanumerica = 0
-					
+				
+			DELETE FROM dbo.AUX_GAR_HIPOTECAS_SICC 
+			WHERE  Fecha_Valuacion = '19000101' 	
 				
 			CREATE INDEX AUX_GAR_HIPOTECAS_SICC_IX_01 ON dbo.AUX_GAR_HIPOTECAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar) ON [PRIMARY]
 
@@ -342,7 +345,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -363,7 +367,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -384,7 +389,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -396,6 +402,9 @@ BEGIN
 				AND MG1.prmgt_pcoclagar = 11
 				AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0	
 
+			
+			DELETE FROM  dbo.AUX_GAR_HIPOTECAS_ALF_SICC
+			WHERE  Fecha_Valuacion = '19000101'
 
 			CREATE INDEX AUX_GAR_HIPOTECAS_ALF_SICC_IX_01 ON dbo.AUX_GAR_HIPOTECAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf) ON [PRIMARY]
 
@@ -430,7 +439,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -451,7 +461,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -472,7 +483,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -494,7 +506,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -519,7 +532,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -544,7 +558,8 @@ BEGIN
 					MG1.prmgt_pmoavaing,
 					MG1.prmgt_pco_grado,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -559,6 +574,9 @@ BEGIN
 				AND MG1.prmgt_pcotengar = 1
 				AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 				AND CGV.Ind_Clase_Alfanumerica = 0
+
+			DELETE FROM dbo.AUX_GAR_CEDULAS_SICC
+			WHERE Fecha_Valuacion = '19000101'
 
 			CREATE INDEX AUX_GAR_CEDULAS_SICC_IX_01 ON dbo.AUX_GAR_CEDULAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar) ON [PRIMARY]
 
@@ -581,7 +599,7 @@ BEGIN
 				Monto_Total_Avaluo DECIMAL(14, 2)
 			) ON [PRIMARY]
 		 
-				
+			--INICIO PBI 13977: Ajuste al 08/02/2017	
 			/*Se obtienen las prendas no alfanuméricas relacionadas a operaciones y contratos*/
 		
 			INSERT	INTO dbo.AUX_GAR_PRENDAS_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
@@ -591,7 +609,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 				FROM	dbo.GAR_SICC_PRMGT MG1
 					INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -613,7 +632,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -635,7 +655,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -650,6 +671,10 @@ BEGIN
 				AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 				AND CGV.Ind_Clase_Alfanumerica = 0
 
+			--FIN PBI 13977: Ajuste al 08/02/2017
+
+			DELETE FROM dbo.AUX_GAR_PRENDAS_SICC
+			WHERE Fecha_Valuacion = '19000101'
 					
 			CREATE INDEX AUX_GAR_PRENDAS_SICC_IX_01 ON dbo.AUX_GAR_PRENDAS_SICC (prmgt_pcoclagar, prmgt_pnuidegar) ON [PRIMARY]
 
@@ -672,7 +697,7 @@ BEGIN
 				Monto_Total_Avaluo DECIMAL(14, 2)
 			) ON [PRIMARY]
 		 
-
+			--INICIO PBI 13977: Ajuste al 08/02/2017
 			/*Se obtienen las prendas alfanuméricas relacionadas a operaciones y contratos*/
 			INSERT	INTO dbo.AUX_GAR_PRENDAS_ALF_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 			SELECT  MG1.prmgt_pcoclagar,
@@ -682,7 +707,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_OPERACIONES_SICC MOC
@@ -705,7 +731,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_CONTRATOS_VIGENTES_SICC MCA
@@ -728,7 +755,8 @@ BEGIN
 					MG1.prmgt_pco_mongar,
 					MG1.prmgt_pmoavaing,
 					0 AS Indicador_Fecha_Mayor,
-					CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) AS Fecha_Valuacion,
+					CASE WHEN ISDATE(CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) = 0 THEN '19000101'
+					ELSE CONVERT(DATETIME,CONVERT(CHAR(8), MG1.prmgt_pfeavaing)) END AS Fecha_Valuacion,
 					0 AS Monto_Total_Avaluo
 			FROM	dbo.GAR_SICC_PRMGT MG1
 				INNER JOIN dbo.AUX_GIROS_ACTIVOS_SICC MCA
@@ -743,19 +771,21 @@ BEGIN
 				AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0	
 				AND CGV.Ind_Clase_Alfanumerica = 1
 
+			--FIN PBI 13977: Ajuste al 08/02/2017
+
+			DELETE FROM  dbo.AUX_GAR_PRENDAS_ALF_SICC
+			WHERE Fecha_Valuacion = '19000101'
 
 			CREATE INDEX AUX_GAR_PRENDAS_ALF_SICC_IX_01 ON dbo.AUX_GAR_PRENDAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf) ON [PRIMARY]
 
 
 			/*SE OBTIENE LA FECHA MÁS RECIENTE POR CADA GARANTÍA*/
 
-			;WITH HIPOTECAS_COMUNES (prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
-			AS (
-				
-				SELECT MAX(prmgt_pfeavaing) AS prmgt_pfeavaing, MIN(prmgt_pmoavaing) AS Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar
+			;WITH HIPOTECAS_COMUNES AS  (
+				SELECT prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, 
+				   RANK() OVER( PARTITION BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar ORDER BY prmgt_pmoavaing, prmgt_pfeavaing DESC) AS Rnk
 				FROM dbo.AUX_GAR_HIPOTECAS_SICC
-				GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar				
-			) 
+			)
 			UPDATE	TMP
 			SET		Indicador_Fecha_Mayor = 1,
 					Monto_Total_Avaluo = HC1.Monto_Total_Avaluo
@@ -765,7 +795,7 @@ BEGIN
 				AND HC1.prmgt_pnu_part = TMP.prmgt_pnu_part
 				AND HC1.prmgt_pnuidegar = TMP.prmgt_pnuidegar
 				AND HC1.prmgt_pfeavaing = TMP.prmgt_pfeavaing
-			
+
 
 			/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
 			DELETE	FROM dbo.AUX_GAR_HIPOTECAS_SICC
@@ -775,7 +805,7 @@ BEGIN
 			DELETE	FROM dbo.AUX_GAR_HIPOTECAS_SICC
 			WHERE	prmgt_pfeavaing = 19000101
 			
-			WITH HIPOTECAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
+			;WITH HIPOTECAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
 			AS
 			(
 				SELECT	prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, 
@@ -786,13 +816,11 @@ BEGIN
 			FROM HIPOTECAS_SICC
 			WHERE cantidadRegistrosDuplicados > 1;
 
-			;WITH HIPOTECAS_COMUNES_ALF (prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf)
-			AS (
-				
-				SELECT MAX(prmgt_pfeavaing) AS prmgt_pfeavaing, MIN(prmgt_pmoavaing) AS Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf
+			;WITH HIPOTECAS_COMUNES_ALF AS  (
+				SELECT prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf,
+				   RANK() OVER( PARTITION BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf ORDER BY prmgt_pmoavaing, prmgt_pfeavaing DESC) AS Rnk
 				FROM dbo.AUX_GAR_HIPOTECAS_ALF_SICC
-				GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf
-			) 
+			)
 			UPDATE	TMP
 			SET		Indicador_Fecha_Mayor = 1,
 					Monto_Total_Avaluo = HC1.Monto_Total_Avaluo
@@ -805,6 +833,8 @@ BEGIN
 				AND HC1.prmgt_pfeavaing = TMP.prmgt_pfeavaing
 
 			
+
+			
 			/*Se eliminan los registros cuya fecha de valuación no es la más reciente*/
 			DELETE	FROM dbo.AUX_GAR_HIPOTECAS_ALF_SICC
 			WHERE	Indicador_Fecha_Mayor = 0
@@ -813,7 +843,7 @@ BEGIN
 			DELETE	FROM dbo.AUX_GAR_HIPOTECAS_ALF_SICC
 			WHERE	prmgt_pfeavaing = 19000101
 
-			WITH HIPOTECAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
+			;WITH HIPOTECAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
 			AS
 			(
 				SELECT	prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, 
@@ -825,13 +855,11 @@ BEGIN
 			WHERE cantidadRegistrosDuplicados > 1;
 
 
-			;WITH CEDULAS_HIPOTECARIAS (prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar)
-			AS (
-				
-				SELECT MAX(prmgt_pfeavaing) AS prmgt_pfeavaing, MIN(prmgt_pmoavaing) AS Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar
+			;WITH CEDULAS_HIPOTECARIAS AS  (
+				SELECT prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, 
+				   RANK() OVER( PARTITION BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar ORDER BY prmgt_pmoavaing, prmgt_pfeavaing DESC) AS Rnk
 				FROM dbo.AUX_GAR_CEDULAS_SICC
-				GROUP BY prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar
-			) 
+			)
 			UPDATE	TMP
 			SET		Indicador_Fecha_Mayor = 1,
 					Monto_Total_Avaluo = CH1.Monto_Total_Avaluo
@@ -851,7 +879,7 @@ BEGIN
 			DELETE	FROM dbo.AUX_GAR_CEDULAS_SICC
 			WHERE	prmgt_pfeavaing = 19000101
 
-			WITH CEDULAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
+			;WITH CEDULAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
 			AS
 			(
 				SELECT	prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, 
@@ -863,13 +891,11 @@ BEGIN
 			WHERE cantidadRegistrosDuplicados > 1;
 
 
-			;WITH PRENDAS (prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar)
-			AS (
-				
-				SELECT MAX(prmgt_pfeavaing) AS prmgt_pfeavaing, MIN(prmgt_pmoavaing) AS Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar
+			;WITH PRENDAS AS  (
+				SELECT prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar, 
+				   RANK() OVER( PARTITION BY prmgt_pcoclagar, prmgt_pnuidegar ORDER BY prmgt_pmoavaing, prmgt_pfeavaing DESC) AS Rnk
 				FROM dbo.AUX_GAR_PRENDAS_SICC
-				GROUP BY prmgt_pcoclagar, prmgt_pnuidegar
-			) 
+			)
 			UPDATE	TMP
 			SET		Indicador_Fecha_Mayor = 1,
 					Monto_Total_Avaluo = PRD.Monto_Total_Avaluo
@@ -888,7 +914,7 @@ BEGIN
 			DELETE	FROM dbo.AUX_GAR_PRENDAS_SICC
 			WHERE	prmgt_pfeavaing = 19000101
 
-			WITH PRENDAS_SICC (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
+			;WITH PRENDAS_SICC (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, cantidadRegistrosDuplicados)
 			AS
 			(
 				SELECT	prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo, 
@@ -900,14 +926,11 @@ BEGIN
 			WHERE cantidadRegistrosDuplicados > 1;
 
 
-
-			;WITH PRENDAS_ALF (prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf)
-			AS (
-				
-				SELECT MAX(prmgt_pfeavaing) AS prmgt_pfeavaing, MIN(prmgt_pmoavaing) AS Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf
+			;WITH PRENDAS_ALF AS  (
+				SELECT prmgt_pfeavaing, Monto_Total_Avaluo, prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, 
+				   RANK() OVER( PARTITION BY prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf ORDER BY prmgt_pmoavaing, prmgt_pfeavaing DESC) AS Rnk
 				FROM dbo.AUX_GAR_PRENDAS_ALF_SICC
-				GROUP BY prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf
-			) 
+			)
 			UPDATE	TMP
 			SET		Indicador_Fecha_Mayor = 1,
 					Monto_Total_Avaluo = PRD.Monto_Total_Avaluo
@@ -2041,7 +2064,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar
@@ -2077,7 +2100,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar
@@ -2112,7 +2135,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar
@@ -2147,7 +2170,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar 
@@ -2182,7 +2205,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar 
@@ -2215,7 +2238,7 @@ BEGIN
 				BEGIN TRY
 		
 					UPDATE	GV1
-					SET		GV1.monto_total_avaluo = TMP.monto_total_avaluo,
+					SET		GV1.monto_total_avaluo = TMP.prmgt_pmoavaing,
 							GV1.Indicador_Tipo_Registro = 1,
 							GV1.Fecha_Replica = GETDATE(),
 							GV1.Tipo_Moneda_Tasacion = TMP.prmgt_pco_mongar 
@@ -2273,20 +2296,30 @@ BEGIN
 			CREATE INDEX AUX_AVALUOS_COLONIZADOS_IX_01 ON dbo.AUX_AVALUOS_COLONIZADOS (cod_garantia_real) ON [PRIMARY]
 
 			--SE ACTUALIZA EL TIPO DE CAMBIO
-			;WITH AVALUOS (cod_garantia_real, Tipo_Cambio) 
-			AS
-			(
-				SELECT GVR.cod_garantia_real, MAX(IA1.Tipo_Cambio) AS Tipo_Cambio
-				FROM dbo.AUX_AVALUOS_COLONIZADOS GVR
-					LEFT JOIN dbo.CAT_INDICES_ACTUALIZACION_AVALUO IA1
-					ON CONVERT(DATE, IA1.Fecha_Hora) <= CONVERT(DATE, GVR.fecha_valuacion) 
-				GROUP BY GVR.cod_garantia_real				
-			)			
+			
 			UPDATE	AAC
-			SET		Tipo_Cambio = ISNULL(TMP.Tipo_Cambio, 0)
+			SET		Tipo_Cambio = ISNULL(IAA.Tipo_Cambio, 0)
 			FROM	dbo.AUX_AVALUOS_COLONIZADOS AAC	
-				INNER JOIN AVALUOS TMP
-				ON TMP.cod_garantia_real = AAC.cod_garantia_real
+				INNER JOIN dbo.CAT_INDICES_ACTUALIZACION_AVALUO IAA
+				ON CONVERT(DATE, IAA.Fecha_Hora) = CONVERT(DATE, AAC.fecha_valuacion)
+			WHERE ISNULL(AAC.Tipo_Cambio, 0) = 0
+
+			UPDATE	AAC
+			SET		Tipo_Cambio = ISNULL(IAA.Tipo_Cambio, 0)
+			FROM dbo.AUX_AVALUOS_COLONIZADOS AAC
+				INNER JOIN (
+					SELECT TOP 1 TM2.cod_garantia_real, TM2.fecha_valuacion, TM1.Tipo_Cambio
+					FROM  dbo.CAT_INDICES_ACTUALIZACION_AVALUO TM1
+					INNER JOIN (
+					SELECT cod_garantia_real, fecha_valuacion
+					FROM dbo.AUX_AVALUOS_COLONIZADOS
+					WHERE ISNULL(Tipo_Cambio, 0) = 0) TM2
+					ON CONVERT(DATE, TM2.fecha_valuacion) > CONVERT(DATE, TM1.Fecha_Hora)
+					ORDER BY TM1.Fecha_Hora DESC) IAA
+				ON AAC.cod_garantia_real = IAA.cod_garantia_real
+				AND AAC.fecha_valuacion = IAA.fecha_valuacion
+			WHERE ISNULL(AAC.Tipo_Cambio, 0) = 0
+		
 
 			--Se coloniza el monto total del avaluo, tipo moneda: Colones
 			BEGIN TRANSACTION TRA_Act_MTAC
@@ -2602,10 +2635,3 @@ BEGIN
 	END CATCH
 
 END
-GO
-
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-

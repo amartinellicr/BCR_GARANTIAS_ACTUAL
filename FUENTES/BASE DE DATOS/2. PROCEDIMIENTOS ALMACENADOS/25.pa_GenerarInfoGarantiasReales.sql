@@ -350,6 +350,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado DECIMAL(5, 2) NULL,
 					Porcentaje_Aceptacion_No_Terreno_Calculado DECIMAL(5, 2) NULL,
 					Porcentaje_Aceptacion DECIMAL(5, 2) NOT NULL CONSTRAINT DF_AUX_GIROS_GARANTIAS_REALES_PorcentajeAceptacion  DEFAULT ((-1)),
+					Tipo_Moneda_Tasacion SMALLINT,
 					Monto_Total_Avaluo_Colonizado MONEY NULL
 				) ON [PRIMARY]
 
@@ -365,7 +366,7 @@ SET NOCOUNT ON
 						cod_grado, cedula_hipotecaria, cod_clase_garantia, cod_operacion, cod_garantia_real,
 						cod_tipo_garantia_real, numero_finca, num_placa_bien, cod_clase_bien, cedula_deudor, cod_estado, 
 						Porcentaje_Aceptacion_Terreno, Porcentaje_Aceptacion_No_Terreno, Porcentaje_Aceptacion_Terreno_Calculado, 
-						Porcentaje_Aceptacion_No_Terreno_Calculado, Porcentaje_Aceptacion, Monto_Total_Avaluo_Colonizado)
+						Porcentaje_Aceptacion_No_Terreno_Calculado, Porcentaje_Aceptacion, Tipo_Moneda_Tasacion, Monto_Total_Avaluo_Colonizado)
 				SELECT	GO1.cod_contabilidad, 
 						GO1.cod_oficina, 
 						GO1.cod_moneda, 
@@ -453,6 +454,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado, 
 						--FIN RQ: RQ_MANT_2015062410418218_00090
 						GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_OPERACION GO1 
 					INNER JOIN dbo.AUX_PRMOC MOC
@@ -517,6 +519,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						CGV.Ind_Clase_Alfanumerica,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado 
 
 				CREATE NONCLUSTERED INDEX AUX_GIROS_GARANTIAS_REALES_IX_01 ON dbo.AUX_GIROS_GARANTIAS_REALES (cod_estado ASC) ON [PRIMARY]
@@ -652,9 +655,7 @@ SET NOCOUNT ON
 				--Se eliminan los registros que fueron seteados a 2
 				DELETE	FROM dbo.AUX_GIROS_GARANTIAS_REALES
 				WHERE	cod_estado = 2
-
-				DROP TABLE dbo.AUX_PRMOC
-
+				
 			END
 			IF(@piEjecutar_Parte = 1)
 			BEGIN
@@ -762,7 +763,7 @@ SET NOCOUNT ON
 				/*TABLA AUXILIAR DE CONTRATOS VENCIDOS CON GIROS ACTIVOS*/
 				IF OBJECT_ID('dbo.AUX_CONTRATOS_VENCIDOS_GA') IS NOT NULL
 					DROP TABLE dbo.AUX_CONTRATOS_VENCIDOS_GA
-
+				
 
 				CREATE TABLE dbo.AUX_CONTRATOS_VENCIDOS_GA(
 					Cod_Operacion_Contrato BIGINT, 
@@ -1031,6 +1032,7 @@ SET NOCOUNT ON
 					--AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 					
 				INSERT	INTO dbo.AUX_GAR_HIPOTECAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1055,6 +1057,7 @@ SET NOCOUNT ON
 					--AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 					
 				INSERT	INTO dbo.AUX_GAR_HIPOTECAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1079,6 +1082,7 @@ SET NOCOUNT ON
 					--AND ((MG1.prmgt_pcoclagar = 10) OR ((MG1.prmgt_pcoclagar >= 12) AND (MG1.prmgt_pcoclagar <= 17))) 
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 					
 				
 				CREATE INDEX AUX_GAR_HIPOTECAS_SICC_IX_01 ON dbo.AUX_GAR_HIPOTECAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar) ON [PRIMARY]
@@ -1126,6 +1130,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 11
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_HIPOTECAS_ALF_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1147,6 +1152,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 11
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_HIPOTECAS_ALF_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1167,7 +1173,8 @@ SET NOCOUNT ON
 					AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 11
-					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0	
+					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1	
 
 
 				CREATE INDEX AUX_GAR_HIPOTECAS_ALF_SICC_IX_01 ON dbo.AUX_GAR_HIPOTECAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pnuide_alf) ON [PRIMARY]
@@ -1215,6 +1222,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 18
 					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_CEDULAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1236,6 +1244,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 18
 					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_CEDULAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1256,7 +1265,8 @@ SET NOCOUNT ON
 					AND MCA.prmca_pnu_contr = MG1.prmgt_pnu_oper																
 				WHERE	MG1.prmgt_estado = 'A'
 					AND MG1.prmgt_pcoclagar = 18
-					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0		
+					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1		
 		
 		
 				INSERT	INTO dbo.AUX_GAR_CEDULAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
@@ -1283,6 +1293,7 @@ SET NOCOUNT ON
 					AND MG1.prmgt_pcoclagar > 18 
 					AND MG1.prmgt_pcotengar = 1
 					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_CEDULAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1308,6 +1319,7 @@ SET NOCOUNT ON
 					AND MG1.prmgt_pcoclagar > 18
 					AND MG1.prmgt_pcotengar = 1
 					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_CEDULAS_SICC(prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, prmgt_pco_grado, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1333,6 +1345,7 @@ SET NOCOUNT ON
 					AND MG1.prmgt_pcoclagar > 18
 					AND MG1.prmgt_pcotengar = 1
 					AND COALESCE(MG1.prmgt_pfeavaing, 0) > 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 
 				CREATE INDEX AUX_GAR_CEDULAS_SICC_IX_01 ON dbo.AUX_GAR_CEDULAS_SICC (prmgt_pcoclagar, prmgt_pnu_part, prmgt_pnuidegar) ON [PRIMARY]
@@ -1381,6 +1394,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_PRENDAS_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1403,6 +1417,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_PRENDAS_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1425,6 +1440,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 0
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 					
 				CREATE INDEX AUX_GAR_PRENDAS_SICC_IX_01 ON dbo.AUX_GAR_PRENDAS_SICC (prmgt_pcoclagar, prmgt_pnuidegar) ON [PRIMARY]
@@ -1473,6 +1489,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 1
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_PRENDAS_ALF_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1496,6 +1513,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0
 					AND CGV.Ind_Clase_Alfanumerica = 1
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 				INSERT	INTO dbo.AUX_GAR_PRENDAS_ALF_SICC(prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf, prmgt_pfeavaing, prmgt_pco_mongar, prmgt_pmoavaing, Indicador_Fecha_Mayor, Fecha_Valuacion, Monto_Total_Avaluo)
 				SELECT  MG1.prmgt_pcoclagar,
@@ -1519,6 +1537,7 @@ SET NOCOUNT ON
 				WHERE	MG1.prmgt_estado = 'A'
 					AND ISNULL(MG1.prmgt_pfeavaing, 0) > 0	
 					AND CGV.Ind_Clase_Alfanumerica = 1
+					AND ISDATE(MG1.prmgt_pfeavaing) = 1
 
 
 				CREATE INDEX AUX_GAR_PRENDAS_ALF_SICC_IX_01 ON dbo.AUX_GAR_PRENDAS_ALF_SICC (prmgt_pcoclagar, prmgt_pnuidegar, prmgt_pnuide_alf) ON [PRIMARY]
@@ -1608,6 +1627,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_No_Terreno  DECIMAL(5,2) NULL,
 					Porcentaje_Aceptacion_Terreno_Calculado  DECIMAL(5,2) NULL,
 					Porcentaje_Aceptacion_No_Terreno_Calculado  DECIMAL(5,2) NULL,
+					Tipo_Moneda_Tasacion SMALLINT NULL,
 					Monto_Total_Avaluo_Colonizado    MONEY  NULL
 				) ON [PRIMARY]
 
@@ -1639,6 +1659,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -1663,6 +1684,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -1702,6 +1724,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 				/*Se obtienen los valúos de las garantías de hipoteca común relacionadas a los contratos*/
@@ -1728,6 +1751,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -1752,6 +1776,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -1791,6 +1816,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 
@@ -1869,6 +1895,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -1893,6 +1920,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -1928,6 +1956,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 				/*Se obtienen los valúos de las garantías de hipoteca común alfanuméricas relacionadas a los contratos*/
@@ -1954,6 +1983,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -1978,6 +2008,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2013,6 +2044,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 				
@@ -2092,6 +2124,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2116,6 +2149,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2154,6 +2188,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 				/*Se obtienen los valúos de las garantías de cédula hipotecaria no alfanuméricas relacionadas a los contratos*/
@@ -2180,6 +2215,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2204,6 +2240,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2242,6 +2279,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 
@@ -2322,6 +2360,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo 
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2346,6 +2385,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2385,6 +2425,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 				/*Se obtienen los valúos de las garantías de prenda relacionadas a los contratos*/
@@ -2411,6 +2452,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2435,6 +2477,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2474,6 +2517,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 
@@ -2556,6 +2600,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2580,6 +2625,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2619,6 +2665,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado 
 
 
@@ -2646,6 +2693,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion_Terreno_Calculado,
 					Porcentaje_Aceptacion_No_Terreno_Calculado,
 					--FIN RQ: RQ_MANT_2015062410418218_00090
+					Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 					Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 					)
 				SELECT	GVR.cod_garantia_real, 
@@ -2670,6 +2718,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 				FROM	dbo.GAR_VALUACIONES_REALES GVR
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO
@@ -2709,6 +2758,7 @@ SET NOCOUNT ON
 						GVR.Porcentaje_Aceptacion_No_Terreno,
 						GVR.Porcentaje_Aceptacion_Terreno_Calculado,
 						GVR.Porcentaje_Aceptacion_No_Terreno_Calculado,
+						GVR.Tipo_Moneda_Tasacion,
 						GVR.Monto_Total_Avaluo_Colonizado
 
 
@@ -2791,6 +2841,7 @@ SET NOCOUNT ON
 					Porcentaje_Aceptacion DECIMAL(5,2)  NOT NULL 
 					CONSTRAINT DF_AUX_GARANTIAS_REALES_GR_PorcentajeAceptacion
 						 DEFAULT  -1,
+					Tipo_Moneda_Tasacion SMALLINT NULL,
 					Monto_Total_Avaluo_Colonizado DECIMAL(18,2)  NULL 
 				) ON [PRIMARY]
 			
@@ -2893,6 +2944,7 @@ SET NOCOUNT ON
 						NULL AS Indicador_Coberturas_Obligatorias,
 						--FIN RQ: RQ_MANT_2015062410418218_00090
 						GRO.Porcentaje_Aceptacion, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+						VGR.Tipo_Moneda_Tasacion, --PBI 13977: Se agrega este campo
 						VGR.Monto_Total_Avaluo_Colonizado --PBI 13977: Se agrega este campo
 				FROM	dbo.GAR_OPERACION GO1 
 					INNER JOIN dbo.GAR_GARANTIAS_REALES_X_OPERACION GRO 
@@ -4263,7 +4315,8 @@ SET NOCOUNT ON
 				COALESCE((CONVERT(VARCHAR(100), TMP.Porcentaje_Aceptacion_No_Terreno_Calculado)), '') AS '%_ACEPTACION_NO_TERRENO_CALCULADO',
 				COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN,			
 				--FIN RQ: RQ_MANT_2015062410418218_00090
-				COALESCE((CONVERT(VARCHAR(50),TMP.porcentaje_responsabilidad)), '') AS PORCENTAJE_RESPONSABILIDAD --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+				COALESCE((CONVERT(VARCHAR(50),TMP.porcentaje_responsabilidad)), '') AS PORCENTAJE_RESPONSABILIDAD, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+				COALESCE((CONVERT(VARCHAR(5), TMP.Tipo_Moneda_Tasacion)), '') AS TIPO_MONEDA_TASACION
 			FROM	dbo.AUX_GIROS_GARANTIAS_REALES GGR 
 				INNER JOIN dbo.GAR_SICC_BSMPC MPC 
 				ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
@@ -4335,8 +4388,33 @@ SET NOCOUNT ON
 				TMP.Porcentaje_Aceptacion_No_Terreno_Calculado,
 				TMP.Indicador_Coberturas_Obligatorias,
 				--FIN RQ: RQ_MANT_2015062410418218_00090
-				TMP.Porcentaje_Aceptacion  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+				TMP.Porcentaje_Aceptacion,  --RQ_MANT_2015111010495738_00610: Se agrega este campo.
+				TMP.Tipo_Moneda_Tasacion
+
+				DROP TABLE dbo.AUX_CLASES_GAR_VALIDAS
+				DROP TABLE dbo.AUX_PRMOC
+				DROP TABLE dbo.AUX_GIROS_GARANTIAS_REALES
+				DROP TABLE dbo.AUX_GIROS_ACTIVOS
+				DROP TABLE dbo.AUX_CONTRATOS_VIGENTES
+				DROP TABLE dbo.AUX_CONTRATOS_VENCIDOS_GA
+				DROP TABLE dbo.AUX_OPERACIONES_GR
+				DROP TABLE dbo.AUX_OPERACIONES_SICC
+				DROP TABLE dbo.AUX_CONTRATOS_VIGENTES_SICC
+				DROP TABLE dbo.AUX_GIROS_ACTIVOS_SICC
+				DROP TABLE dbo.AUX_GAR_HIPOTECAS_SICC
+				DROP TABLE dbo.AUX_GAR_HIPOTECAS_ALF_SICC
+				DROP TABLE dbo.AUX_GAR_CEDULAS_SICC
+				DROP TABLE dbo.AUX_GAR_PRENDAS_SICC
+				DROP TABLE dbo.AUX_GAR_PRENDAS_ALF_SICC
+				DROP TABLE dbo.AUX_GARANTIA_REAL_GR
+				DROP TABLE dbo.AUX_VALUACIONES_REALES_GR
+				DROP TABLE dbo.AUX_GARANTIAS_REALES_GR
+				DROP TABLE dbo.TMP_PORCENTAJE_ACEPTACION_CALCULADO
+				DROP TABLE dbo.AUX_COBERTURAS_ASIGNAR
+				DROP TABLE dbo.AUX_COBERTURAS_ASIGNADAS
+
 			END
+
 
 	END TRY
 	BEGIN CATCH
