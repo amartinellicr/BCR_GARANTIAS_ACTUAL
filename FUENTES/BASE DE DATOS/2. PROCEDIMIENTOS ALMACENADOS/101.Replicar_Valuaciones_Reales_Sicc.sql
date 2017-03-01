@@ -48,6 +48,14 @@ BEGIN
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>PBI 26539: Mantenimientos Garantías Reales</Requerimiento>
+			<Fecha>Febrero - 2017</Fecha>
+			<Descripción>
+					Se realiza el ajuste de asignar el valor 0 (cero) a los montos del avalúo, según el tipo de bien que tengan asignado.
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -2365,6 +2373,60 @@ BEGIN
 			END CATCH
 		
 		
+		/***************************************************************************************************************************************************/
+
+			--INICIO PBI: 26539
+			BEGIN TRANSACTION TRA_Val_Act_Datos
+				BEGIN TRY
+
+					--SE AJUSTAN LAS GARANTIAS QUE POSEEN ASIGNADO EL TIPO DE BIEN IGULA A 1 (TERRENOS)
+					UPDATE	GVR	
+					SET		GVR.monto_ultima_tasacion_no_terreno = 0,
+							GVR.monto_tasacion_actualizada_no_terreno = 0
+					FROM	dbo.GAR_VALUACIONES_REALES GVR
+						INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+							ON GGR.cod_garantia_real = GVR.cod_garantia_real
+					WHERE	GGR.cod_tipo_bien = 1
+
+					--SE AJUSTAN LAS GARANTIAS QUE POSEEN ASIGNADO EL TIPO DE BIEN IGULA A 2 (EDIFICACIONES)
+					UPDATE	GVR	
+					SET		GVR.monto_ultima_tasacion_terreno = ISNULL(GVR.monto_ultima_tasacion_terreno, 0),
+							GVR.monto_tasacion_actualizada_terreno = ISNULL(GVR.monto_tasacion_actualizada_terreno, 0),
+							GVR.monto_ultima_tasacion_no_terreno = ISNULL(GVR.monto_ultima_tasacion_no_terreno, 0),
+							GVR.monto_tasacion_actualizada_no_terreno = ISNULL(GVR.monto_tasacion_actualizada_no_terreno, 0)
+					FROM	dbo.GAR_VALUACIONES_REALES GVR
+						INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+							ON GGR.cod_garantia_real = GVR.cod_garantia_real
+					WHERE	GGR.cod_tipo_bien = 2
+
+
+					--SE AJUSTAN LAS GARANTIAS QUE POSEEN ASIGNADO EL TIPO DE BIEN IGULA MAYORES O IGUALES A 3 Y MENORES O IGUALES A 14
+					UPDATE	GVR	
+					SET		GVR.monto_ultima_tasacion_terreno = 0,
+							GVR.monto_tasacion_actualizada_terreno = 0
+					FROM	dbo.GAR_VALUACIONES_REALES GVR
+						INNER JOIN dbo.GAR_GARANTIA_REAL GGR
+							ON GGR.cod_garantia_real = GVR.cod_garantia_real
+					WHERE	GGR.cod_tipo_bien >= 3
+						AND GGR.cod_tipo_bien <= 14
+
+					COMMIT TRANSACTION TRA_Val_Act_Datos
+				END TRY
+				BEGIN CATCH
+				
+					ROLLBACK TRANSACTION TRA_Val_Act_Datos
+
+					SELECT @vsDescripcion_Bitacora_Errores = 'Se produjo un error al actualizar los montos del terreno y no terreno, según el tipo de bien. Detalle Técnico: ' + ERROR_MESSAGE() + ('. Código de error: ' + CONVERT(VARCHAR(1000), ERROR_NUMBER()))
+					EXEC dbo.pa_RegistroEjecucionProceso @psCodigoProceso, @vdFecha_Actual_Sin_Hora, @vsDescripcion_Bitacora_Errores, 1
+
+				END CATCH
+
+			--FIN PBI: 26539
+
+		/***************************************************************************************************************************************************/
+
+
+
 		
 			/*CREACION DE TABLA TEMPORAL QUE SERA USADA EN LAS CONSULTA DE GARANTIUAS REALES DESDE LA APP*/
 			BEGIN TRANSACTION TRA_Gar_Rea_Valid

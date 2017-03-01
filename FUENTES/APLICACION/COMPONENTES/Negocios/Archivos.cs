@@ -294,7 +294,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = File.CreateText(fileName))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tPORCENTAJE_RESPONSABILIDAD");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tINGRESO_NETO\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -305,7 +305,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_FIADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_PERSONA_FIADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_VERIFICACION_ASALARIADO"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["SALARIO_NETO_FIADOR"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["INGRESO_NETO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_MITIGADOR_RIESGO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_DOCUMENTO_LEGAL"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
@@ -511,7 +511,7 @@ namespace BCRGARANTIAS.Negocios
                     using (StreamWriter writer = File.CreateText(fileName))
                     {
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tSALARIO_NETO_FIADOR\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tES_CONTRATO_VENCIDO\tPORCENTAJE_RESPONSABILIDAD");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tCEDULA_FIADOR\tTIPO_PERSONA_FIADOR\tFECHA_VERIFICACION_ASALARIADO\tINGRESO_NETO\tTIPO_MITIGADOR_RIESGO\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tPORCENTAJE_ACEPTACION\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tOPERACION_ESPECIAL\tNOMBRE_FIADOR\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tBIN\tCODIGO_INTERNO_SISTAR\tES_CONTRATO_VENCIDO\tPORCENTAJE_RESPONSABILIDAD");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -522,7 +522,7 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["CEDULA_FIADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_PERSONA_FIADOR"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["FECHA_VERIFICACION_ASALARIADO"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["SALARIO_NETO_FIADOR"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["INGRESO_NETO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_MITIGADOR_RIESGO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["TIPO_DOCUMENTO_LEGAL"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["MONTO_MITIGADOR"].ToString() + "\t" +
@@ -650,7 +650,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_ULTIMA_TASACION_GARANTIA\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO_GARANTIA\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD\tTIPO_MONEDA_TASACION");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_ULTIMA_TASACION_GARANTIA\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO_GARANTIA\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD\tTIPO_MONEDA_TASACION\tMONTO_TOTAL_AVALUO_CALCULADO");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -701,7 +701,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO_CALCULADO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["TIPO_MONEDA_TASACION"].ToString() + "\t"                                             
+                                             dsDatos.Tables["Datos"].Rows[i]["TIPO_MONEDA_TASACION"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["MONTO_TOTAL_AVALUO_CALCULADO"].ToString() + "\t"  
                                             );
                         }
                     }
@@ -945,7 +946,7 @@ namespace BCRGARANTIAS.Negocios
                         }
 
                         //Escribe el encabezado del archivo
-                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_ULTIMA_TASACION_GARANTIA\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO_GARANTIA\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tESTA_VENCIDO\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD\tTIPO_MONEDA_TASACION");
+                        writer.WriteLine("CONTABILIDAD\tOFICINA\tMONEDA\tPRODUCTO\tOPERACION\tTIPO_BIEN\tCODIGO_BIEN\tTIPO_MITIGADOR\tTIPO_DOCUMENTO_LEGAL\tMONTO_MITIGADOR\tFECHA_PRESENTACION\tINDICADOR_INSCRIPCION\tPORCENTAJE_ACEPTACION\tFECHA_CONSTITUCION\tGRADO_GRAVAMEN\tTIPO_PERSONA_ACREEDOR\tCEDULA_ACREEDOR\tFECHA_VENCIMIENTO\tOPERACION_ESPECIAL\tFECHA_ULTIMA_TASACION_GARANTIA\tCEDULA_EMPRESA\tTIPO_PERSONA_EMPRESA\tCEDULA_PERITO\tTIPO_PERSONA_PERITO\tMONTO_ULTIMA_TASACION_TERRENO\tMONTO_ULTIMA_TASACION_NO_TERRENO\tMONTO_TASACION_ACTUALIZADA_TERRENO\tMONTO_TASACION_ACTUALIZADA_NO_TERRENO\tFECHA_ULTIMO_SEGUIMIENTO_GARANTIA\tMONTO_TOTAL_AVALUO\tFECHA_CONSTRUCCION\tCOD_GRADO\tCEDULA_HIPOTECARIA\tCEDULA_DEUDOR\tNOMBRE_DEUDOR\tOFICINA_DEUDOR\tTIPO_GARANTIA\tESTA_VENCIDO\tCODIGO_SAP\tMONTO_POLIZA\tFECHA_VENCIMIENTO_POLIZA\tTIPO_POLIZA_SUGEF\tINDICADOR_POLIZA\t%_ACEPTACION_TERRENO\t%_ACEPTACION_NO_TERRENO\t%_ACEPTACION_TERRENO_CALCULADO\t%_ACEPTACION_NO_TERRENO_CALCULADO\tCOBERTURA_DE_BIEN\tPORCENTAJE_RESPONSABILIDAD\tTIPO_MONEDA_TASACION\tMONTO_TOTAL_AVALUO_CALCULADO");
                         for (int i = 0; i <= dsDatos.Tables["Datos"].Rows.Count - 1; i++)
                         {
                             writer.WriteLine(dsDatos.Tables["Datos"].Rows[i]["CONTABILIDAD"].ToString() + "\t" +
@@ -997,7 +998,8 @@ namespace BCRGARANTIAS.Negocios
                                              dsDatos.Tables["Datos"].Rows[i]["%_ACEPTACION_NO_TERRENO_CALCULADO"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["COBERTURA_DE_BIEN"].ToString() + "\t" +
                                              dsDatos.Tables["Datos"].Rows[i]["PORCENTAJE_RESPONSABILIDAD"].ToString() + "\t" +
-                                             dsDatos.Tables["Datos"].Rows[i]["TIPO_MONEDA_TASACION"].ToString() + "\t"
+                                             dsDatos.Tables["Datos"].Rows[i]["TIPO_MONEDA_TASACION"].ToString() + "\t" +
+                                             dsDatos.Tables["Datos"].Rows[i]["MONTO_TOTAL_AVALUO_CALCULADO"].ToString() + "\t"
                                             ); 
                                             
                         }

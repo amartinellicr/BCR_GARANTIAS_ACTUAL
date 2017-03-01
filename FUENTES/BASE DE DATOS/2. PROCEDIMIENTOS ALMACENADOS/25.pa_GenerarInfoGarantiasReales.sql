@@ -175,6 +175,22 @@ AS
 			</Descripción>
 		</Cambio>
 		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>PBI 26539: Mantenimientos Garantías Reales</Requerimiento>
+			<Fecha>Febrero - 2017</Fecha>
+			<Descripción>Se agregra el campo referente al monto total del avalúo calculado. 
+							Adicionalmente, se realizan ajustes a varios campos.
+			</Descripción>
+		</Cambio>
+		<Cambio>
+			<Autor>Arnoldo Martinelli Marín, GrupoMas</Autor>
+			<Requerimiento>PBI 26539: Mantenimientos Garantías Reales</Requerimiento>
+			<Fecha>Febrero - 2017</Fecha>
+			<Descripción>
+					Se realizan ajustes a varios campos de los avalúos, según el tipo de bien que posea la garantía.
+			</Descripción>
+		</Cambio>
+		<Cambio>
 			<Autor></Autor>
 			<Requerimiento></Requerimiento>
 			<Fecha></Fecha>
@@ -3923,6 +3939,28 @@ SET NOCOUNT ON
 
 			/***************************************************************************************************************************************************/
 
+			--INICIO PBI: 26539
+
+			--SE AJUSTAN LAS GARANTIAS QUE POSEEN ASIGNADO EL TIPO DE BIEN IGULA A 1 (TERRENOS)
+			UPDATE	TMP	
+			SET		TMP.monto_ultima_tasacion_no_terreno = 0,
+					TMP.monto_tasacion_actualizada_no_terreno = 0
+			FROM	dbo.AUX_GARANTIAS_REALES_GR TMP
+			WHERE	TMP.cod_tipo_bien = 1
+
+			--SE AJUSTAN LAS GARANTIAS QUE POSEEN ASIGNADO EL TIPO DE BIEN IGULA MAYORES O IGUALES A 3 Y MENORES O IGUALES A 14
+			UPDATE	TMP	
+			SET		TMP.monto_ultima_tasacion_terreno = 0,
+					TMP.monto_tasacion_actualizada_terreno = 0
+			FROM	dbo.AUX_GARANTIAS_REALES_GR TMP
+			WHERE	TMP.cod_tipo_bien >= 3
+				AND TMP.cod_tipo_bien <= 14
+
+			--FIN PBI: 26539
+
+			/***************************************************************************************************************************************************/
+
+
 			--INICIO RQ: 2016012710534870
 
 			/*SE ACTUALIZAN CIERTOS VALORES CON EL FIN DE OPTIMIZAR LA OBTENCION DE REGISTROS*/
@@ -4254,6 +4292,8 @@ SET NOCOUNT ON
 
 			/***************************************************************************************************************************************************/
 
+
+
 			SELECT	GGR.cod_contabilidad AS CONTABILIDAD,
 				GGR.cod_oficina AS OFICINA,
 				GGR.cod_moneda AS MONEDA,
@@ -4285,10 +4325,10 @@ SET NOCOUNT ON
 				COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_empresa)), '') AS TIPO_PERSONA_EMPRESA,
 				COALESCE(TMP.cedula_perito, '') AS CEDULA_PERITO,
 				COALESCE((CONVERT(VARCHAR(3),TMP.cod_tipo_perito)), '') AS TIPO_PERSONA_PERITO,
-				COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_terreno)), '') AS MONTO_ULTIMA_TASACION_TERRENO,
-				COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_no_terreno)), '') AS MONTO_ULTIMA_TASACION_NO_TERRENO,
-				COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_TERRENO,
-				COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_no_terreno)), '') AS MONTO_TASACION_ACTUALIZADA_NO_TERRENO,
+				COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_terreno)), '0') AS MONTO_ULTIMA_TASACION_TERRENO, --PBI 26539: SE AJUSTA EL VALOR EN CASO DE NULO.
+				COALESCE((CONVERT(VARCHAR(50),TMP.monto_ultima_tasacion_no_terreno)), '0') AS MONTO_ULTIMA_TASACION_NO_TERRENO, --PBI 26539: SE AJUSTA EL VALOR EN CASO DE NULO.
+				COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_terreno)), '0') AS MONTO_TASACION_ACTUALIZADA_TERRENO, --PBI 26539: SE AJUSTA EL VALOR EN CASO DE NULO.
+				COALESCE((CONVERT(VARCHAR(50),TMP.monto_tasacion_actualizada_no_terreno)), '0') AS MONTO_TASACION_ACTUALIZADA_NO_TERRENO, --PBI 26539: SE AJUSTA EL VALOR EN CASO DE NULO.
 				COALESCE((CONVERT(VARCHAR(50),TMP.fecha_ultimo_seguimiento)), '') AS FECHA_ULTIMO_SEGUIMIENTO,
 				COALESCE((CONVERT(VARCHAR(50),TMP.monto_total_avaluo)), '0') AS MONTO_TOTAL_AVALUO,
 				COALESCE(TMP.fecha_construccion, '') AS FECHA_CONSTRUCCION,
@@ -4316,7 +4356,8 @@ SET NOCOUNT ON
 				COALESCE((CONVERT(VARCHAR(100), TMP.Indicador_Coberturas_Obligatorias)), '') AS COBERTURA_DE_BIEN,			
 				--FIN RQ: RQ_MANT_2015062410418218_00090
 				COALESCE((CONVERT(VARCHAR(50),TMP.porcentaje_responsabilidad)), '') AS PORCENTAJE_RESPONSABILIDAD, --RQ_MANT_2015111010495738_00610: Se agrega este campo.
-				COALESCE((CONVERT(VARCHAR(5), TMP.Tipo_Moneda_Tasacion)), '') AS TIPO_MONEDA_TASACION
+				COALESCE((CONVERT(VARCHAR(5), TMP.Tipo_Moneda_Tasacion)), '') AS TIPO_MONEDA_TASACION,
+				COALESCE((CONVERT(VARCHAR(100), ((ISNULL(TMP.monto_tasacion_actualizada_terreno, 0)) + (ISNULL(TMP.monto_tasacion_actualizada_no_terreno, 0))))), '0') AS MONTO_TOTAL_AVALUO_CALCULADO  --PBI 26539: SE AGREGA ESTE CAMPO.
 			FROM	dbo.AUX_GIROS_GARANTIAS_REALES GGR 
 				INNER JOIN dbo.GAR_SICC_BSMPC MPC 
 				ON MPC.bsmpc_sco_ident = CONVERT(DECIMAL, GGR.cedula_deudor)
