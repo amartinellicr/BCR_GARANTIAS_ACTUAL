@@ -1884,8 +1884,8 @@ namespace BCRGARANTIAS.Forms
 
             if ((ErrorGrave) || (ErrorGraveAvaluo))
             {
-                this.txtMontoTasActTerreno.Text = string.Empty;
-                this.txtMontoTasActNoTerreno.Text = string.Empty;
+                //this.txtMontoTasActTerreno.Text = string.Empty;
+                //this.txtMontoTasActNoTerreno.Text = string.Empty;
                 this.txtMontoTasActTerreno.Enabled = false;
                 this.txtMontoTasActNoTerreno.Enabled = false;
                 this.txtMontoUltTasacionTerreno.Enabled = false;

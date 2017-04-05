@@ -40,10 +40,10 @@
 															    BackColor="AntiqueWhite" Width="343px" MaxLength="50" ToolTip="Nombre del Fiador"></asp:textbox></td>
 												    </tr>
 												    <tr>
-													    <td class="td_Texto">Fecha de Actualización:</td>
+													    <td class="td_Texto">Fecha de Verificación Asalariado:</td>
 													    <td class="td_TextoIzq">
 													        <asp:TextBox ID="txtFechaActualizacion" BackColor="AliceBlue" tabIndex="3" runat="server" Width="80px" 
-										                         MaxLength="1" style="text-align:justify" ValidationGroup="MKE" ToolTip="Fecha de Valuación" />
+										                         MaxLength="1" style="text-align:justify" ValidationGroup="MKE" ToolTip="Fecha de Verificación Asalariado" />
                                                             <asp:ImageButton ID="igbCalendarioActualizacion" runat="server" ImageUrl="~/Images/Calendario.png" CausesValidation="False" />
                                                             <ajaxToolkit:MaskedEditExtender ID="meeFechaActualizacion" runat="server"
                                                                 TargetControlID="txtFechaActualizacion"
@@ -70,7 +70,7 @@
 													    </td>
 												    </tr>
 												    <tr>
-													    <td class="td_Texto">Ingreso&nbsp;Neto:</td>
+													    <td class="td_Texto">Salario&nbsp;Neto del Fiador:</td>
 													    <td class="td_TextoIzq">
 													        <asp:TextBox ID="txtSalario" tabIndex="4" runat="server" MaxLength="17" ValidationGroup="MKE" CssClass="id-tabla-texto"  
 										                     ToolTip="Ingreso Neto" BackColor="AliceBlue" Width="100px" />

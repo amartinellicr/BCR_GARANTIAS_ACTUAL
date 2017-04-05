@@ -443,7 +443,7 @@ SET NOCOUNT ON
 							WHEN GVR.fecha_ultimo_seguimiento = '19000101' THEN ''
 							ELSE CONVERT(VARCHAR(10),GVR.fecha_ultimo_seguimiento,103)
 						END AS fecha_ultimo_seguimiento, 
-						COALESCE(GVR.monto_tasacion_actualizada_terreno,0) + COALESCE(GVR.monto_tasacion_actualizada_no_terreno,0) AS monto_total_avaluo,
+						COALESCE(GVR.monto_total_avaluo,0) AS monto_total_avaluo,
 						CASE 
 							WHEN GVR.fecha_construccion IS NULL THEN ''
 							WHEN GVR.fecha_construccion = '19000101' THEN ''
@@ -519,6 +519,7 @@ SET NOCOUNT ON
 						GVR.monto_tasacion_actualizada_no_terreno, 
 						GVR.fecha_ultimo_seguimiento, 
 						GVR.fecha_construccion,
+						GVR.monto_total_avaluo,
 						GGR.cod_grado,
 						GGR.cedula_hipotecaria,
 						GGR.cod_clase_garantia,
@@ -2919,7 +2920,7 @@ SET NOCOUNT ON
 							WHEN CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103) = '01/01/1900' THEN ''
 							ELSE CONVERT(VARCHAR(10),VGR.fecha_ultimo_seguimiento,103)
 						END AS fecha_ultimo_seguimiento, 
-						COALESCE(VGR.monto_tasacion_actualizada_terreno,0) + COALESCE(VGR.monto_tasacion_actualizada_no_terreno,0) AS monto_total_avaluo,
+						COALESCE(VGR.monto_total_avaluo,0) AS monto_total_avaluo,
 						CASE 
 							WHEN  VGR.fecha_construccion IS NULL THEN ''
 							WHEN CONVERT(VARCHAR(10),VGR.fecha_construccion,103) = '01/01/1900' THEN ''
@@ -2982,7 +2983,7 @@ SET NOCOUNT ON
 					AND TMP.cod_tipo_garantia = 2
 					AND ((TMP.cod_tipo_operacion = 1) OR (TMP.cod_tipo_operacion = 3))
 					AND TMP.cod_usuario = @psCedula_Usuario
-
+					
 			CREATE CLUSTERED INDEX AUX_GARANTIAS_REALES_GR_IX_01 ON dbo.AUX_GARANTIAS_REALES_GR (cod_usuario ASC, cod_tipo_operacion ASC) ON [PRIMARY]
 			CREATE NONCLUSTERED INDEX AUX_GARANTIAS_REALES_GR_IX_02 ON dbo.AUX_GARANTIAS_REALES_GR (cod_oficina ASC, cod_moneda ASC, cod_producto ASC, operacion ASC, cod_tipo_garantia_real ASC, cod_tipo_operacion ASC) ON [PRIMARY]
 			CREATE NONCLUSTERED INDEX AUX_GARANTIAS_REALES_GR_IX_03 ON dbo.AUX_GARANTIAS_REALES_GR (cod_usuario ASC, cod_tipo_operacion ASC, cod_tipo_garantia ASC, cod_clase_garantia ASC) ON [PRIMARY]
